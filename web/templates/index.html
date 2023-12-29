@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>GPT Advance Prompt</title>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='icon/favicon.ico') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat&family=Dancing+Script&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style/index.css') }}">
+</head>
+
+<body style="background: linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)), url('{{ url_for('static', filename='icon/bg.jpg') }}') center/cover no-repeat fixed;">
+    <h1><strong>GPT Advance Prompt</strong></h1>
+
+    <p>Welcome to the GPT Advance Prompt Hub! Explore the functionalities of our platform:</p>
+    <div class="content-container">
+        <div class="main__cards cards">
+            <div class="cards__inner">
+                <div class="cards__card card">
+                    <h2 class="card__heading">Prompt library</h2>
+                    <p class="card__price">features:</p>
+                    <ul role="list" class="card__bullets flow">
+                        <li>houses a collection of prompt models</li>
+                        <li>each designed to enhance your prompt refinement and generation capabilities</li>
+                        <li>Discover the diverse functionalities and advanced features of each model</li>
+                    </ul>
+                    <a href="{{ url_for('index') }}" class="card__cta cta">click to begin</a>
+                </div>
+
+                <div class="cards__card card">
+                    <h2 class="card__heading">Prompt generator</h2>
+                    <p class="card__price">features:</p>
+                    <ul role="list" class="card__bullets flow">
+                        <li>create prompts tailored to your needs</li>
+                        <li>craft high-quality, engaging, and uniquely tailored prompts</li>
+                        <li>random option for a fun and surprising prompt</li>
+                    </ul>
+                    <a href="{{ url_for('generate') }}" class="card__cta cta">click to begin</a>
+                </div>
+            <div class="overlay cards__inner"></div>
+        </div>
+    </div>
+
+    <script defer src="{{ url_for('static', filename='script/card.js') }}"></script>
+</body>
+
+</html>

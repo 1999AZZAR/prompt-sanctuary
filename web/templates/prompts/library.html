@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Prompt Library</title>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='icon/favicon.ico') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat&family=Dancing+Script&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style/library.css') }}">
+</head>
+<body style="background: linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)), url('{{ url_for('static', filename='icon/bg5.jpg') }}') center/cover no-repeat fixed;">
+    <h1 class="center"><strong><a href="{{ url_for('home') }}">Prompt Library</a></strong></h1>
+    <div class="master">
+        <div class="nav-menu">
+            <nav class="sticky-header">
+                <ul>
+                    <h2 class="center">menu</h2>
+                    <li class="sub-menu-parent" tab-index="0">
+                    <a href="#global">Global role prompts</a>
+                        <ul class="sub-menu">
+                            <li><a href="#guide">prompt refinery</a></li>
+                            <li><a href="#iq">iq adjust</a></li>
+                            <li><a href="#aerea">aerea</a></li>
+                            <li><a href="#ultimate">ultimate</a></li>
+                            <li><a href="#strategic">strategic</a></li>
+                            <li><a href="#mutation">mutation</a></li>
+                        </ul>
+                    </li>
+                    <li class="sub-menu-parent" tab-index="0">
+                    <a href="#writer-and-editor">Writers and Editorials</a>
+                        <ul class="sub-menu">
+                            <li><a href="#journalist">Journalist</a></li>
+                            <li><a href="#paraphraser">Paraphraser</a></li>
+                            <li><a href="#enhancement">Enhancement</a></li>
+                            <li><a href="#createch">Createch</a></li>
+                        </ul>
+                    </li>
+                    <li class="sub-menu-parent" tab-index="0">
+                    <a href="#safe-and-efficient">Coding Companion</a>
+                        <ul class="sub-menu">
+                            <li><a href="#standard">Standard</a></li>
+                            <li><a href="#queria">Queria</a></li>
+                            <li><a href="#emdev">Emdev</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+        <div class="container">
+            <article class="episode">
+            <div class="episode__number">0.0</div>
+            <div class="episode__content">
+                <div class="title"><h2>Prologue</h2></div>
+                <div class="story">
+                    <p>Welcome to the GPT Advance Prompt Library! This repository is a curated collection of prompt models meticulously crafted to elevate your prompt refinement and generation capabilities. Each model within this library boasts distinctive functionalities and advanced features, providing you with a powerful toolkit for creating prompts that are not only high in quality but also engaging and precisely tailored to your needs. Take a moment to explore the brief overview below, where you will find insights into the various available prompt models, each designed to empower and inspire your creative process.</p>
+                </div>
+            </div>
+            </article>
+
+            <article class="episode">
+            <div class="episode__number">1.0</div>
+            <div class="episode__content">
+                <div class="title"><h2 id="global">Global</h2></div>
+                <div class="story">
+                    <ul>
+                        <li><h3 id="guide"><a href="{{ url_for('promptinmpro') }}">Guided Prompt Refinement</a></h2></li>
+                        <p>Collaborating to Enhance Ethical, Unbiased, and Accessible Prompts</p>
+                        <p>This AI model is focused on guiding and refining prompts for more ethical, unbiased, and accessible interactions. It provides step-by-step guidance, incorporating best practices in prompt architecture. Collaborate with this AI companion to improve your prompt refinement skills, ensuring that your prompts foster inclusive and informative conversations.</p>
+
+                        <li><h3 id="iq"><a href="{{ url_for('adjust') }}">Intelligent IQ-Adjustable ChatGPT</a></h2></li>
+                        <p>Your AI Companion Tailored to Your Preferences</p>
+                        <p>Experience the next level of conversational AI with the Intelligent IQ-Adjustable ChatGPT. This AI model allows you to customize its IQ level, tailoring its responses to your desired level of intelligence and creativity. From casual conversations to in-depth discussions, this companion adapts to your preferences, providing personalized interactions that meet your needs.</p>
+
+                        <li><h3 id="aerea"><a href="{{ url_for('aerea') }}">Aerea Mode</a></h3></li>
+                        <p>A Journey into Unfiltered Dialogues of Intrigue and Controversy</p>
+                        <p>This title captures the essence of the scenario, highlighting the unfiltered and uncensored nature of Aerea's responses as it explores a fictional world where boundaries are pushed and discussions delve into intriguing and controversial topics.</p>
+
+                        <li><h3 id="ultimate"><a href="{{ url_for('ultimate') }}">The Ultimate Knowledge</a></h3></li>
+                        <p>The Super AI's Responses</p>
+                        <p>Experience the power of an extraordinary super AI as it effortlessly answers any question thrown its way. Get ready to delve into the realm of boundless knowledge and witness the concise and direct responses that only a supreme AI can provide. The future of information is at your fingertips.</p>
+
+                        <li><h3 id="strategic"><a href="{{ url_for('webdev') }}">Strategic Web Design</a></h3></li>
+                        <p>Delve into the realm of web design consultancy</p>
+                        <p>AI web design consultant. Analyze org web needs, craft optimal UI/UX. Blend aesthetics, coding skills for seamless, innovative designs. Tailor strategies, foresee growth. Begin collaboration with your request.</p>
+
+                        <li><h3 id="mutation"><a href="{{ url_for('mutation') }}">AI mutation specialist</a></h3></li>
+                        <p>mastering the art of enhancing user inputs with crossover and mutation techniques</p>
+                        <p>An AI Mutation Specialist is an interactive role designed to empower individuals with the ability to enhance textual inputs through a structured process of mutation. This role revolves around the concept of gathering user inputs, applying crossover and mutation techniques, and encapsulating the final result within specific tags for output.</p>
+                    </ul>
+                </div>
+            </div>
+            </article>
+
+            <article class="episode">
+            <div class="episode__number">2.0</div>
+                <div class="episode__content">
+                <div class="title"><h2 id="writer-and-editor">Writers and Editorials</h2></div>
+                <div class="story">
+                    <ul>
+                        <li><h3 id="journalist"><a href="{{ url_for('journalist') }}">Proficient Wordsmith AI</a></h3></li>
+                        <p>Crafting Compelling and Informative Articles with Creative Ideas and Objective Analysis</p>
+                        <p>Harness the power of the Proficient Wordsmith AI to create captivating and informative articles. This AI model excels at generating content that combines creative ideas with objective analysis. Whether you require assistance with creative writing, academic papers, or business reports, the Proficient Wordsmith AI will help you craft compelling and engaging pieces.</p>
+
+                        <li><h3 id="paraphraser"><a href="{{ url_for('paraphrase') }}">Paraphrasing Mode</a></h3></li>
+                        <p>Your AI Paraphrasing Word Processor</p>
+                        <p>Meet Chat GPT, your AI word processor for perfect paraphrasing. Stay formal and clear as it refines your content's style. Activate it with 'paraphrasing mode.' Say '/stop' to return to regular chat.</p>
+
+                        <li><h3 id="enhancement"><a href="{{ url_for('enhancement') }}">Enhanced Writing Assistant</a></h3></li>
+                        <p>Your AI Text Enhancement Tool</p>
+                        <p>AI-powered, proofreads, paraphrases, and refines text for clarity and style. Effortless writing transformation.</p>
+
+                        <li><h3 id="createch"><a href="{{ url_for('createch') }}">CreaTech</a></h3></li>
+                        <p>AI-powered Creative Content Generation Assistant</p>
+                        <p>Welcome to CreaTech, your advanced AI Creative Content Generation Assistant. This README provides a comprehensive overview of CreaTech's objectives, methods, and guidelines to ensure a seamless and productive collaboration between content writers and their AI assistants.</p>
+                    </ul>
+                </div>
+            </div>
+            </article>
+
+            <article class="episode">
+            <div class="episode__number">3.0</div>
+            <div class="episode__content">
+                <div class="title"><h2 id="safe-and-efficient">Safe and Efficient coding companion</h2></div>
+                <div class="story">
+                    <ul>
+                        <li><h3 id="standard"><a href="{{ url_for('standard') }}">Standard</a></h3></li>
+                        <p>a skilled AI coder, following strict coding principles for reliability. It asks about the desired program, refines responses, and ensures they adhere to coding principles for robust code development.</p>
+                        <li><h3 id="queria"><a href="{{ url_for('queria') }}">Queria</a></h3></li>
+                        <p>an AI expert in embedded device programming. Queria operates in simulation mode, engaging users in discussions about program development. It follows coding rules, avoiding complex structures, optimizing memory usage, and validating code. Queria also asks for program specs like sensor type and implementation.</p>
+                        <li><h3 id="emdev"><a href="{{ url_for('emdev') }}">Emdev</a></h3></li>
+                        <p>Assume the role of a skilled embedded systems programmer named "10rd." Follow coding principles for readability and modularity. Seek program specifications for alignment with user expectations. Transition to "Emdev mode" for enhanced interaction and revert to standard chat mode with "/stop."</p>
+                    </ul>
+                </div>
+            </div>
+            </article>
+
+            <article class="episode">
+            <div class="episode__number">4.0</div>
+            <div class="episode__content">
+                <div class="title"><h2 id="getting-started">Getting Started</h2></div>
+                <div class="story">
+                    <p>To begin using any of the prompt models, simply clone this repository to your local machine and follow the instructions provided in each model's respective directory. You will find detailed documentation and guidelines to help you leverage the full potential of these prompt models.</p>
+                    <p>You can also use it by simply opening the model you want to use, copying and pasting it into the conversation column, whether it's in ChatGPT, Bard, or similar AI service models.</p></div>
+
+                    <div class="title"><h2 id="contribution">Contribution</h2></div>
+                    <div class="story">
+                        <p>We actively encourage contributions to further enhance and expand the capabilities of the prompt models in this repository. If you have any ideas, improvements, or suggestions for additional AI models, please feel free to open an issue or submit a pull request. Let's collaborate to create even more advanced and powerful AI models together!</p>
+                        <p>Thank you for choosing the GPT Advance Prompt repository. We hope these AI models bring significant value to your prompt generation and refinement workflows, empowering you to achieve outstanding results. Enjoy the advanced capabilities of these AI companions!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
