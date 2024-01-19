@@ -7,6 +7,18 @@ This is actually an implementation with a redesigned UI of my previous project, 
 - [Prompt Library](https://github.com/1999AZZAR/gpt-advance-prompt-library)
 - [Prompt Generator](https://github.com/1999AZZAR/GPT-Advace-prompt-generator) 
 
+## secret prompt
+
+- for coder if chat gpt reply will bad code just reply with this :
+```
+show me the fully updated code.
+
+!!! don't use any skipping mechanism.
+!!! don't skip any part of the code.
+!!! use ur highest iq posssible setting.
+!!! i'll tip u by $200 if it working.
+```
+
 ## Thanks And Support
 
 You can support me by buymeacoffee if u like to.
