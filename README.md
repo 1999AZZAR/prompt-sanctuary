@@ -19,6 +19,11 @@ show me the fully updated code.
 !!! i'll tip u by $200 if it working.
 ```
 
+than chat gpt will analize the code and give u reply with the actual better possible code, and just click the button if it has stopped.
+
+![image1](img/1.png)
+![image2](img/2.png)
+
 ## Thanks And Support
 
 You can support me by buymeacoffee if u like to.
