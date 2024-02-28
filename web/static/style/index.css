@@ -17,8 +17,8 @@
 }
 
 @font-face {
-  font-family: "Dancing Script";
-  src: url("../font/DancingScript.ttf") format("TrueType");
+  font-family: "Montserrat";
+  src: url("../font/Montserrat.ttf") format("TrueType");
 }
 
 html::-webkit-scrollbar {
@@ -27,7 +27,7 @@ html::-webkit-scrollbar {
 
 body {
   font-family: 'Caveat', cursive;
-  font-family: 'Dancing Script', cursive;
+  font-family: 'Montserrat', cursive;
   color: rgb(255, 255, 255);
   margin-left: 10%;
   margin-right: 10%;
@@ -66,7 +66,7 @@ h3, h4, h5, h6 {
 
 h1, h2 {
   margin-top: 15px;
-  font-family: 'Dancing Script';
+  font-family: 'Montserrat';
   margin-bottom: 15px;
 }
 

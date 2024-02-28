@@ -10,13 +10,13 @@
 }
 
 @font-face {
-  font-family: "Dancing Script";
-  src: url("../font/DancingScript.ttf") format("TrueType");
+  font-family: "Montserrat";
+  src: url("../font/Montserrat.ttf") format("TrueType");
 }
 
 body {
   font-family: 'Caveat', cursive;
-  font-family: 'Dancing Script', cursive;
+  font-family: 'Montserrat', cursive;
   color: rgb(255, 255, 255);
   background: linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)), url('../icon/bg3.jpg') center/cover no-repeat fixed;
   margin-left: 10%;
@@ -26,12 +26,12 @@ body {
 }
 
 h3, h4, h5, h6 {
-  font-family: 'Dancing Script';
+  font-family: 'Montserrat';
   text-align: center;
 }
 
 h1 {
-  font-family: 'Dancing Script';
+  font-family: 'Montserrat';
   font-size: 2.375rem;
   text-align: left;
   color: purple !important;
@@ -46,7 +46,7 @@ h1 a:hover {
 }
 
 h2 {
-  font-family: 'Dancing Script';
+  font-family: 'Montserrat';
   font-size: 1.875rem;
   color: #7d7d00;
   text-align: left;

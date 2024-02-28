@@ -2,3 +2,4 @@ other/
 reverseimage/
 sanctuary/
 web/.env
+.fuse_*
