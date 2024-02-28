@@ -1,0 +1,13 @@
+other/
+reverseimage/
+sanctuary/
+web/database/*.*
+web/.env
+web/get_model.py
+.fuse_*
+web/static/image/*.*
+web/__pycache__/
+monospace.json
+.vscode/
+web/database/community/shared.db
+.venv/

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prompt Sanctuary</title>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='icon/favicon.ico') }}">
+
+    <!-- Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+
+    <!-- FontAwesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
+    <!-- SpinKit CSS (Loading Animation) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/spinkit/2.0.1/spinkit.min.css">
+
+    <!-- JavaScript -->
+    <script src="{{ url_for('static', filename='script/login.js') }}"></script>
+    <script src="{{ url_for('static', filename='script/particles.min.js') }}"></script>
+    <script>
+        particlesJS.load('particles-js', '{{ url_for('static', filename='script/particles.json') }}', function() {
+            console.log('particles.js loaded - callback');
+        });
+    </script>
+
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Explore the functionalities of Prompt Sanctuary - a platform for generating and refining prompts. Access a Community Prompt, generate custom prompts, and explore advanced prompting features.">
+    <meta name="keywords" content="prompt sanctuary, prompt generator, Community Prompt, advanced prompting, prompt refinement, prompt generation, writing prompts, creative writing, prompt ideas, writing inspiration, writing exercises, writing generator, story prompts, fiction prompts, writing tools, writing community, writing resources, idea generator, story ideas, writing challenges, writing help, narrative prompts, plot inspiration, storytelling aids, writer's block solutions, creative story ideas, plot development tools, character creation prompts, dialogue prompts, writing prompt app, daily writing prompts, inspiration for writers, story starter, creative writing exercises, fictional writing prompts, writing prompt generator online, flash fiction prompts, novel writing prompts, writing practice, creative brainstorming, storytelling generator, prompting, prompt, llm, llama, gemini, openai, chatgpt">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://sanctuary01.pythonanywhere.com/">
+    <meta property="og:title" content="Prompt Sanctuary">
+    <meta property="og:description" content="Explore the functionalities of Prompt Sanctuary - a platform for generating and refining prompts. Access a Community Prompt, generate custom prompts, and explore advanced prompting features.">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://sanctuary01.pythonanywhere.com/">
+    <meta property="twitter:title" content="Prompt Sanctuary">
+    <meta property="twitter:description" content="Explore the functionalities of Prompt Sanctuary - a platform for generating and refining prompts. Access a Community Prompt, generate custom prompts, and explore advanced prompting features.">
+</head>
+
+<body class="bg-gray-900 text-white font-montserrat">
+    <div id="particles-js" class="absolute inset-0 z-0"></div>
+    <div class="relative mx-auto z-10 flex items-center justify-center min-h-screen">
+        <div class="w-full max-w-md">
+            <h1 class="text-4xl font-bold text-center mt-10"><strong>Prompt Sanctuary</strong></h1>
+
+            <!-- Loading Indicator (Initially Hidden) -->
+            <div id="loadingIndicator" class="hidden">
+                <div class="sk-chase">
+                    <div class="sk-chase-dot"></div>
+                    <div class="sk-chase-dot"></div>
+                    <div class="sk-chase-dot"></div>
+                    <div class="sk-chase-dot"></div>
+                    <div class="sk-chase-dot"></div>
+                    <div class="sk-chase-dot"></div>
+                </div>
+            </div>
+
+            <!-- main container -->
+            <div class="main container mx-auto px-4 mt-10">
+
+                <!-- welcome -->
+                <div class="welcome text-center mb-8">
+                    <p class="text-lg">Welcome to Prompt Sanctuary, Please Login to Explore the functionalities of our platform</p>
+                </div>
+                <!-- welcome end -->
+
+                <!-- forms -->
+                <div class="container max-w-md mx-auto bg-gray-800 p-8 rounded-lg shadow-lg">
+                    <!-- login -->
+                    <form id="loginForm" action="/login" method="post" class="mb-8">
+                        <h2 class="text-2xl font-bold mb-4">Login</h2>
+                        <input type="text" name="honeypot" class="hidden">
+                        <div class="mb-4">
+                            <label for="usernameLogin" class="block mb-2">Username:</label>
+                            <input type="text" id="usernameLogin" name="username" class="w-full px-3 py-2 bg-gray-700 rounded" required>
+                        </div>
+                        <div class="mb-4">
+                            <label for="passwordLogin" class="block mb-2">Password:</label>
+                            <input type="password" id="passwordLogin" name="password" class="w-full px-3 py-2 bg-gray-700 rounded" required>
+                        </div>
+                        <button type="submit" class="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600">Login</button>
+                        <p id="signupLink" class="mt-4 text-center">Don't have an account? <a href="#" onclick="toggleForms()" class="text-blue-400 hover:text-blue-300">Signup Now</a></p>
+                    </form>
+                    <!-- login end -->
+
+                    <!-- signup -->
+                    <form id="signupForm" action="/signup" method="post" class="hidden">
+                        <h2 class="text-2xl font-bold mb-4">Signup</h2>
+                        <input type="text" name="honeypot" class="hidden">
+                        <div class="mb-4">
+                            <label for="usernameSignup" class="block mb-2">Username:</label>
+                            <input type="text" id="usernameSignup" name="username" class="w-full px-3 py-2 bg-gray-700 rounded" required>
+                        </div>
+                        <div class="mb-4">
+                            <label for="passwordSignup" class="block mb-2">Password:</label>
+                            <input type="password" id="passwordSignup" name="password" class="w-full px-3 py-2 bg-gray-700 rounded" required>
+                        </div>
+                        <div class="mb-4">
+                            <label for="confirmPassword" class="block mb-2">Confirm Password:</label>
+                            <input type="password" id="confirmPassword" name="confirmPassword" class="w-full px-3 py-2 bg-gray-700 rounded" required>
+                        </div>
+                        <button type="submit" class="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600">Signup</button>
+                        <p id="loginLink" class="mt-4 text-center">Already have an account? <a href="#" onclick="toggleForms()" class="text-blue-400 hover:text-blue-300">Login</a></p>
+                    </form>
+                    <!-- signup end -->
+                </div>
+                <!-- forms ended -->
+            </div>
+            <!-- main container ended -->
+            <!-- Footer -->
+            <footer class="text-center py-6 mt-12">
+                <p class="text-gray-300">Prompt Sanctuary by <a href="https://1999azzar.github.io/1999AZZAR/" target="_blank" class="text-blue-400 hover:text-blue-300 transition duration-200">Azzar Budiyanto</a></p>
+            </footer>
+        </div>
+    </div>
+
+    <!-- JavaScript to Show/Hide Loading Indicator -->
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function() {
+            document.getElementById('loadingIndicator').classList.remove('hidden');
+        });
+
+        document.getElementById('signupForm').addEventListener('submit', function() {
+            document.getElementById('loadingIndicator').classList.remove('hidden');
+        });
+    </script>
+</body>
+</html>

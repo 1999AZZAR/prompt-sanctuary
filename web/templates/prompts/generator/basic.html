@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prompt Sanctuary</title>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='icon/favicon.ico') }}">
+
+    <!-- Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+
+    <!-- FontAwesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
+    <!-- JavaScript -->
+    <script defer src="{{ url_for('static', filename='script/feedback.js') }}"></script>
+    <script defer src="{{ url_for('static', filename='script/generator.js') }}"></script>
+    <script defer src="{{ url_for('static', filename='script/save.js') }}"></script>
+</head>
+
+<body class="bg-gray-900 text-white font-montserrat flex flex-col min-h-screen">
+    <!-- Sidebar -->
+    <div class="side-panel fixed left-0 top-0 h-full w-64 bg-gray-800 text-white transform -translate-x-full transition-transform duration-300 ease-in-out z-30" id="sidePanel">
+        <!-- Logo -->
+        <div class="p-6 border-b border-gray-700 flex items-center justify-center cursor-pointer" onclick="toggleSidePanel()">
+            <img src="{{ url_for('static', filename='icon/sanctuary.png') }}" alt="Logo" class="w-16 h-16">
+        </div>
+
+        <!-- Navigation Links -->
+        <div class="p-4">
+            <ul class="space-y-3">
+                <li onclick="window.location.href='{{ url_for('main.home') }}';" class="cursor-pointer hover:bg-gray-700 p-3 rounded-lg transition duration-200">
+                    <i class="fas fa-home mr-2"></i><strong>Home</strong>
+                </li>
+                <li onclick="window.location.href='{{ url_for('main.mylib') }}';" class="cursor-pointer hover:bg-gray-700 p-3 rounded-lg transition duration-200">
+                    <i class="fas fa-save mr-2"></i><strong>Saved Prompts</strong>
+                </li>
+                <li onclick="window.location.href='{{ url_for('main.trying') }}';" class="cursor-pointer hover:bg-gray-700 p-3 rounded-lg transition duration-200">
+                    <i class="fas fa-play mr-2"></i><strong>Prompt Trial</strong>
+                </li>
+                <li onclick="window.location.href='{{ url_for('main.library') }}';" class="cursor-pointer hover:bg-gray-700 p-3 rounded-lg transition duration-200">
+                    <i class="fas fa-users mr-2"></i><strong>Community Prompt</strong>
+                </li>
+                <li onclick="window.location.href='{{ url_for('main.generate') }}';" class="cursor-pointer hover:bg-gray-700 p-3 rounded-lg transition duration-200">
+                    <i class="fas fa-cogs mr-2"></i><strong>Basic Prompt</strong>
+                </li>
+                <li onclick="window.location.href='{{ url_for('main.advance') }}';" class="cursor-pointer hover:bg-gray-700 p-3 rounded-lg transition duration-200">
+                    <i class="fas fa-tools mr-2"></i><strong>Advance Prompt</strong>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Logout and Feedback -->
+        <div class="p-4 border-t border-gray-700">
+            <ul class="space-y-3">
+                <li onclick="window.location.href='{{ url_for('main.logout') }}';" class="cursor-pointer hover:bg-gray-700 p-3 rounded-lg transition duration-200">
+                    <i class="fas fa-sign-out-alt mr-2"></i><strong>Logout</strong>
+                </li>
+                <li onclick="openFeedbackPopup()" class="cursor-pointer hover:bg-gray-700 p-3 rounded-lg transition duration-200">
+                    <i class="fas fa-comment-dots mr-2"></i><strong>Feedback</strong>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="flex-grow p-8">
+        <!-- Hero Section -->
+        <div class="hero text-center mb-12 cursor-pointer" onclick="toggleSidePanel()">
+            <h1 class="text-5xl font-bold mb-4">Prompt Generator <span class="text-blue-500">(Basic)</span></h1>
+            <p class="text-lg text-gray-300">Create custom prompts tailored to your needs or use the random feature for inspiration.</p>
+        </div>
+
+        <!-- Welcome Section -->
+        <div class="welcome bg-gray-800 p-8 rounded-xl shadow-2xl mb-12">
+            <p class="text-lg text-gray-300">Here, you have the flexibility to <strong>create a customized prompt</strong> tailored to your specific requirements. Alternatively, you can opt to use the <strong>random feature</strong>, which will generate a prompt for you—ensuring not only variety but also an element of <strong>surprise and enjoyment</strong> in the process. Whether you have a <strong>specific idea</strong> in mind or are seeking <strong>inspiration</strong>, the Prompt Generator is designed to accommodate both your <strong>structured and spontaneous</strong> prompt needs.</p>
+        </div>
+
+        <!-- Tools Section -->
+        <div class="prompting grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
+            <!-- Text Prompt -->
+            <div class="bg-gray-800 p-8 rounded-xl shadow-2xl flex flex-col">
+                <h2 class="text-2xl font-bold mb-6">Generate Text Prompt</h2>
+                <form id="text-prompt-form" class="space-y-4 flex-grow">
+                    <div>
+                        <label for="user_input_text" class="block mb-2">Input:</label>
+                        <input type="text" name="user_input" id="user_input_text" placeholder="Write a Python code" class="w-full p-3 bg-gray-700 rounded-lg" required>
+                    </div>
+                    <div class="flex space-x-4">
+                        <input type="submit" value="Generate" class="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition duration-200 cursor-pointer">
+                        <input type="submit" value="Random" form="random-text-prompt-form" class="bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 transition duration-200 cursor-pointer">
+                    </div>
+                </form>
+
+                <!-- Add the random-text-prompt-form here -->
+                <form id="random-text-prompt-form" style="display: none;">
+                    <input type="submit" value="random">
+                    <!-- This form is hidden and used only for the random button -->
+                </form>
+            </div>
+
+            <!-- Image Prompt -->
+            <div class="bg-gray-800 p-8 rounded-xl shadow-2xl flex flex-col">
+                <h2 class="text-2xl font-bold mb-6">Generate Image Prompt</h2>
+                <div class="space-y-4 flex-grow">
+                    <div class="input-radio flex space-x-4">
+                        <label class="flex items-center space-x-2">
+                            <input type="radio" id="text-input-option" name="prompt-option" value="text" checked onclick="togglePromptInput('text')">
+                            <span>Text</span>
+                        </label>
+                        <label class="flex items-center space-x-2">
+                            <input type="radio" id="image-upload-option" name="prompt-option" value="image" onclick="togglePromptInput('image')">
+                            <span>File</span>
+                        </label>
+                        <label class="flex items-center space-x-2">
+                            <input type="radio" id="random-option" name="prompt-option" value="random" onclick="togglePromptInput('random')">
+                            <span>Random</span>
+                        </label>
+                    </div>
+
+                    <!-- Text Input Section -->
+                    <form id="image-prompt-form" class="space-y-4">
+                        <div>
+                            <label for="user_input_image" class="block mb-2">Input:</label>
+                            <input type="text" name="user_input" id="user_input_image" placeholder="Whale on the desert" class="w-full p-3 bg-gray-700 rounded-lg" required>
+                        </div>
+                    </form>
+
+                    <!-- Image Upload Section -->
+                    <form id="image-upload-form" enctype="multipart/form-data" class="space-y-4" style="display: none;">
+                        <div>
+                            <label for="image" class="block mb-2">Upload Image:</label>
+                            <input type="file" name="image" accept="image/*" class="w-full p-3 bg-gray-700 rounded-lg" required>
+                        </div>
+                    </form>
+
+                    <!-- Generate Button -->
+                    <button id="generate-button" onclick="generatePrompt()" class="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition duration-200 w-full">Generate</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Preview Section -->
+        <div class="image-preview mt-12">
+            <img id="preview-image" alt="Image Preview" src="{{ url_for('static', filename='icon/favicon.ico') }}" class="w-64 h-64 mx-auto rounded-lg">
+        </div>
+
+        <!-- Loading Section -->
+        <div class="loading hidden" id="loading">
+            <div class="spinner"></div>
+            <h1 class="text-center mt-4">Generating...</h1>
+        </div>
+
+        <!-- Result Section -->
+        <div class="result hidden bg-gray-800 p-8 rounded-xl shadow-2xl mt-8" id="resultSection">
+            <h2 class="text-2xl font-bold mb-6">Generated Prompt:</h2>
+            <div id="response" class="text-lg text-gray-300 space-y-4"></div>
+            <div class="flex space-x-4 mt-6">
+                <button onclick="copyToClipboard()" class="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition duration-200">Copy</button>
+                <button onclick="promptForTitle()" class="bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 transition duration-200">Save</button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-center py-6 mt-12">
+        <p class="text-gray-300">Prompt Sanctuary by <a href="https://1999azzar.github.io/1999AZZAR/" target="_blank" class="text-blue-400 hover:text-blue-300 transition duration-200">Azzar Budiyanto</a></p>
+    </footer>
+
+    <!-- Feedback Popup -->
+    <div id="feedback-popup" class="popup hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-40">
+        <div class="bg-gray-800 p-8 rounded-lg w-11/12 max-w-md">
+            <button id="close-popup" class="float-right text-gray-400 hover:text-white">
+                ✖️
+            </button>
+            <h2 class="text-2xl font-bold mb-6">Share your feedback</h2>
+            <form id="feedback-form">
+                <textarea class="w-full h-40 p-4 bg-gray-700 rounded-lg mb-6 resize-none" name="feedback" placeholder="Enter your feedback here" required></textarea>
+                <button type="submit" class="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition duration-200">Submit</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- JavaScript for Sidebar Behavior -->
+    <script>
+        // Toggle Sidebar
+        function toggleSidePanel() {
+            const sidePanel = document.getElementById('sidePanel');
+            sidePanel.classList.toggle('-translate-x-full');
+        }
+
+        // Close Sidebar When Clicking Outside
+        document.addEventListener('click', (event) => {
+            const sidePanel = document.getElementById('sidePanel');
+            const heroSection = document.querySelector('.hero');
+            const logo = document.querySelector('.side-panel .p-6');
+
+            if (!sidePanel.contains(event.target) && !heroSection.contains(event.target) && !logo.contains(event.target)) {
+                sidePanel.classList.add('-translate-x-full');
+            }
+        });
+    </script>
+</body>
+</html>

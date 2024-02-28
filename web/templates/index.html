@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prompt Sanctuary</title>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='icon/favicon.ico') }}">
+
+    <!-- Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+
+    <!-- FontAwesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
+    <!-- JavaScript -->
+    <script defer src="{{ url_for('static', filename='script/feedback.js') }}"></script>
+</head>
+
+<body class="bg-gray-900 text-white font-montserrat flex flex-col min-h-screen">
+    <!-- Sidebar -->
+    <div class="side-panel fixed left-0 top-0 h-full w-64 bg-gray-800 text-white transform -translate-x-full transition-transform duration-300 ease-in-out z-30" id="sidePanel">
+        <!-- Logo -->
+        <div class="p-6 border-b border-gray-700 flex items-center justify-center cursor-pointer" onclick="toggleSidePanel()">
+            <img src="{{ url_for('static', filename='icon/sanctuary.png') }}" alt="Logo" class="w-16 h-16">
+        </div>
+
+        <!-- Navigation Links -->
+        <div class="p-4">
+            <ul class="space-y-3">
+                <li onclick="window.location.href='{{ url_for('main.home') }}';" class="cursor-pointer hover:bg-gray-700 p-3 rounded-lg transition duration-200">
+                    <i class="fas fa-home mr-2"></i><strong>Home</strong>
+                </li>
+                <li onclick="window.location.href='{{ url_for('main.mylib') }}';" class="cursor-pointer hover:bg-gray-700 p-3 rounded-lg transition duration-200">
+                    <i class="fas fa-save mr-2"></i><strong>Saved Prompts</strong>
+                </li>
+                <li onclick="window.location.href='{{ url_for('main.trying') }}';" class="cursor-pointer hover:bg-gray-700 p-3 rounded-lg transition duration-200">
+                    <i class="fas fa-play mr-2"></i><strong>Prompt Trial</strong>
+                </li>
+                <li onclick="window.location.href='{{ url_for('main.library') }}';" class="cursor-pointer hover:bg-gray-700 p-3 rounded-lg transition duration-200">
+                    <i class="fas fa-users mr-2"></i><strong>Community Prompt</strong>
+                </li>
+                <li onclick="window.location.href='{{ url_for('main.generate') }}';" class="cursor-pointer hover:bg-gray-700 p-3 rounded-lg transition duration-200">
+                    <i class="fas fa-cogs mr-2"></i><strong>Basic Prompt</strong>
+                </li>
+                <li onclick="window.location.href='{{ url_for('main.advance') }}';" class="cursor-pointer hover:bg-gray-700 p-3 rounded-lg transition duration-200">
+                    <i class="fas fa-tools mr-2"></i><strong>Advance Prompt</strong>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Logout and Feedback -->
+        <div class="p-4 border-t border-gray-700">
+            <ul class="space-y-3">
+                <li onclick="window.location.href='{{ url_for('main.logout') }}';" class="cursor-pointer hover:bg-gray-700 p-3 rounded-lg transition duration-200">
+                    <i class="fas fa-sign-out-alt mr-2"></i><strong>Logout</strong>
+                </li>
+                <li onclick="openFeedbackPopup()" class="cursor-pointer hover:bg-gray-700 p-3 rounded-lg transition duration-200">
+                    <i class="fas fa-comment-dots mr-2"></i><strong>Feedback</strong>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="flex-grow p-8">
+        <!-- Hero Section -->
+        <div class="hero text-center mb-12 cursor-pointer" onclick="toggleSidePanel()">
+            <h1 class="text-5xl font-bold mb-4">Welcome to <span class="text-blue-500">Prompt Sanctuary</span></h1>
+            <p class="text-lg text-gray-300">Your ultimate platform for generating and refining creative prompts.</p>
+        </div>
+
+        <!-- Cards Section -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Basic Prompt Card -->
+            <div class="card bg-gray-800 p-8 rounded-xl shadow-2xl hover:shadow-3xl transition-shadow duration-300 flex flex-col">
+                <div class="flex-grow">
+                    <h2 class="text-2xl font-bold mb-6">Prompt Generator (Basic)</h2>
+                    <p class="text-lg mb-6 text-gray-300">Features:</p>
+                    <ul class="space-y-4 mb-6">
+                        <li class="flex items-center space-x-3">
+                            <i class="fas fa-check text-blue-500"></i>
+                            <span>Create prompts tailored to your needs</span>
+                        </li>
+                        <li class="flex items-center space-x-3">
+                            <i class="fas fa-check text-blue-500"></i>
+                            <span>Craft high-quality, engaging prompts</span>
+                        </li>
+                        <li class="flex items-center space-x-3">
+                            <i class="fas fa-check text-blue-500"></i>
+                            <span>Random option for fun and surprises</span>
+                        </li>
+                    </ul>
+                </div>
+                <a onclick="window.location.href='{{ url_for('main.generate') }}';" class="inline-block bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition duration-200 text-center">Get Started</a>
+            </div>
+
+            <!-- Advanced Prompt Card -->
+            <div class="card bg-gray-800 p-8 rounded-xl shadow-2xl hover:shadow-3xl transition-shadow duration-300 flex flex-col">
+                <div class="flex-grow">
+                    <h2 class="text-2xl font-bold mb-6">Prompt Generator (Advanced)</h2>
+                    <p class="text-lg mb-6 text-gray-300">Features:</p>
+                    <ul class="space-y-4 mb-6">
+                        <li class="flex items-center space-x-3">
+                            <i class="fas fa-check text-blue-500"></i>
+                            <span>Regenerate prompts with ease</span>
+                        </li>
+                        <li class="flex items-center space-x-3">
+                            <i class="fas fa-check text-blue-500"></i>
+                            <span>Craft prompts based on multiple parameters</span>
+                        </li>
+                        <li class="flex items-center space-x-3">
+                            <i class="fas fa-check text-blue-500"></i>
+                            <span>Tweak prompts to suit your needs</span>
+                        </li>
+                    </ul>
+                </div>
+                <a onclick="window.location.href='{{ url_for('main.advance') }}';" class="inline-block bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition duration-200 text-center">Get Started</a>
+            </div>
+
+            <!-- Additional Card (Optional) -->
+            <div class="card bg-gray-800 p-8 rounded-xl shadow-2xl hover:shadow-3xl transition-shadow duration-300 flex flex-col">
+                <div class="flex-grow">
+                    <h2 class="text-2xl font-bold mb-6">Community Prompts</h2>
+                    <p class="text-lg mb-6 text-gray-300">Features:</p>
+                    <ul class="space-y-4 mb-6">
+                        <li class="flex items-center space-x-3">
+                            <i class="fas fa-check text-blue-500"></i>
+                            <span>Explore prompts shared by the community</span>
+                        </li>
+                        <li class="flex items-center space-x-3">
+                            <i class="fas fa-check text-blue-500"></i>
+                            <span>Share your own prompts with others</span>
+                        </li>
+                        <li class="flex items-center space-x-3">
+                            <i class="fas fa-check text-blue-500"></i>
+                            <span>Get inspired by creative ideas</span>
+                        </li>
+                    </ul>
+                </div>
+                <a onclick="window.location.href='{{ url_for('main.library') }}';" class="inline-block bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition duration-200 text-center">Explore</a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-center py-6 mt-12">
+        <p class="text-gray-300">Prompt Sanctuary by <a href="https://1999azzar.github.io/1999AZZAR/" target="_blank" class="text-blue-400 hover:text-blue-300 transition duration-200">Azzar Budiyanto</a></p>
+    </footer>
+
+    <!-- Feedback Popup -->
+    <div id="feedback-popup" class="popup hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-40">
+        <div class="bg-gray-800 p-8 rounded-lg w-11/12 max-w-md">
+            <button id="close-popup" class="float-right text-gray-400 hover:text-white">
+                ✖️
+            </button>
+            <h2 class="text-2xl font-bold mb-6">Share your feedback</h2>
+            <form id="feedback-form">
+                <textarea class="w-full h-40 p-4 bg-gray-700 rounded-lg mb-6 resize-none" name="feedback" placeholder="Enter your feedback here" required></textarea>
+                <button type="submit" class="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition duration-200">Submit</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- JavaScript for Sidebar Behavior -->
+    <script>
+        // Toggle Sidebar
+        function toggleSidePanel() {
+            const sidePanel = document.getElementById('sidePanel');
+            sidePanel.classList.toggle('-translate-x-full');
+        }
+
+        // Close Sidebar When Clicking Outside
+        document.addEventListener('click', (event) => {
+            const sidePanel = document.getElementById('sidePanel');
+            const heroSection = document.querySelector('.hero');
+            const logo = document.querySelector('.side-panel .p-6');
+
+            if (!sidePanel.contains(event.target) && !heroSection.contains(event.target) && !logo.contains(event.target)) {
+                sidePanel.classList.add('-translate-x-full');
+            }
+        });
+    </script>
+</body>
+</html>
