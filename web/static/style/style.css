@@ -1,7 +1,7 @@
 /* Fonts */
 @font-face {
-  font-family: "purisa";
-  src: url("../font/purisa.ttf") format("TrueType");
+  font-family: "Rubik";
+  src: url("../font/Rubik.ttf") format("TrueType");
 }
 
 @font-face {
@@ -22,6 +22,7 @@ body {
   margin-right: 10%;
   margin-top: 8%;
   margin-bottom: 8%;
+  line-height: 1.3;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -73,7 +74,7 @@ a:hover {
 
 p {
   background-color: #00000065;
-  font-family: 'purisa';
+  font-family: 'Rubik';
   text-align: justify;
   font-size: 0.95rem;
   border: 2px solid #565656;
@@ -91,7 +92,7 @@ strong:hover{
 }
 
 code {
-  font-family: 'purisa';
+  font-family: 'Rubik';
   font-size: 1.25rem;
 }
 
@@ -128,7 +129,7 @@ article {
   margin: 10px;
   text-align: justify;
   width: 87%;
-  font-family: 'purisa';
+  font-family: 'Rubik';
 }
 
 summary {
@@ -163,7 +164,7 @@ ul li {
   position: relative;
   font-size: 1rem;
   display: block;
-  font-family: 'purisa';
+  font-family: 'Rubik';
 }
 
 ul li:before {
@@ -173,13 +174,13 @@ ul li:before {
 }
 
 li {
-  font-family: 'purisa';
+  font-family: 'Rubik';
   text-align: justify;
 }
 
 li a {
   color: white;
-  font-family: 'purisa';
+  font-family: 'Rubik';
 }
 
 li code {

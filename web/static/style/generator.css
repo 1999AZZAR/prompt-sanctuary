@@ -1,7 +1,7 @@
 /* Fonts */
 @font-face {
-  font-family: "purisa";
-  src: url("../font/purisa.ttf") format("TrueType");
+  font-family: "Rubik";
+  src: url("../font/Rubik.ttf") format("TrueType");
 }
 
 @font-face {
@@ -23,6 +23,7 @@ body {
   margin-right: 10%;
   margin-top: 8%;
   margin-bottom: 8%;
+  line-height: 1.3;
 }
 
 h3, h4, h5, h6 {
@@ -74,7 +75,7 @@ a:hover {
 }
 
 p {
-  font-family: 'purisa';
+  font-family: 'Rubik';
   text-align: justify;
   font-size: 0.95rem;
   /* border: 2px solid #565656; */
@@ -93,7 +94,7 @@ strong:hover{
 }
 
 #response {
-  font-family: 'purisa';
+  font-family: 'Rubik';
   text-align: justify;
   font-size: 0.8rem;
   border-radius: 10px;
@@ -113,7 +114,7 @@ strong:hover{
 
 button {
   color: rgb(255 255 255);
-  font-family: 'purisa';
+  font-family: 'Rubik';
   font-size: 1rem;
   background-color: #4b006e78;
   border: 2px solid #56565657;
@@ -126,7 +127,7 @@ button {
 
 form {
   color: white;
-  font-family: 'purisa';
+  font-family: 'Rubik';
   font-size: 1rem;
   background-color: #37373771;
   padding: 15px 20px;
@@ -142,7 +143,7 @@ form {
 
 form input {
   color: white;
-  font-family: 'purisa';
+  font-family: 'Rubik';
   font-size: 1rem;
   margin: 4px;
   background-color: #392c3ee3;
@@ -188,6 +189,12 @@ div {
   border-radius: 10px;
   background-color: #0000005b;
   border: 2px solid #37373771;
+}
+
+.welcome {
+  display: block;
+  max-width: 85%;
+  align-self: center;
 }
 
 form#random {
