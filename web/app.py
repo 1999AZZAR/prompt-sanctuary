@@ -47,13 +47,12 @@ def reverse_image():
         image_data = image_file.read()
 
         prompt_parts = [
-            "\nuse only English and write me the possible prompt to regenerate this image including the style and feels:\n",
+            "\nPlease write a detailed description in proper English to recreate this image in 400 to 600 characters. Include the style, mood, lighting, and other key details. Use complete sentences and proofread for spelling and grammar mistakes:",
             {"mime_type": "image/jpeg", "data": image_data},
-            "\nremember to make it as detailed as possible using from 300 up to 500 character long description.",
-            "\nalso give me the main style for that image based on this list (you can choose more than one):\n",
-            "1. photographic\n 2. enhance\n 3. anime\n 4. digital-art\n 5. comic-book\n 6. fantasy-art\n",
-            "7. line-art\n 8. analog-film\n 9. neon-punk\n 10. isometric\n 11. low-poly\n 12. origami\n",
-            "13. modeling-compound\n 14. cinematic\n 15. 3d-model\n 16. pixel-art\n 17. tile-texture\n"
+            "\nAlso select the main artistic style from this list (you can choose more than one): \n",
+            "1. Photographic\n2. Enhanced\n3. Anime\n4. Digital art\n5. Comic book\n6. Fantasy art\n",  
+            "7. Line art\n8. Analog film\n9. Neon punk\n10. Isometric\n11. Low poly\n12. Origami\n",
+            "13. Modeling compound\n14. Cinematic\n15. 3D model\n16. Pixel art\n17. Tile texture\n"
         ]
 
         generated_text = generate_content(prompt_parts)

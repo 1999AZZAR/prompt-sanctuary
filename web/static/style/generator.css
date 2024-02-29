@@ -101,6 +101,16 @@ strong:hover{
   margin: 0px 0px 10px;
 }
 
+.image-preview {
+  margin-top: 10px;
+}
+
+#preview-image {
+  max-height: 200px;
+  object-fit: contain;
+  margin-top: 10px;
+}
+
 button {
   color: rgb(255 255 255);
   font-family: 'purisa';

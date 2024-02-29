@@ -7,7 +7,7 @@ api_key = os.getenv('GENAI_API_KEY')
 genai.configure(api_key=api_key)
 
 generation_config = {
-    "temperature": 0.6,
+    "temperature": 0.75,
     "top_p": 0.65,
     "top_k": 35,
     "max_output_tokens": 4096,
