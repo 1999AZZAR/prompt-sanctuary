@@ -94,12 +94,15 @@ strong:hover{
 }
 
 #response {
+  align-content: center;
   font-family: 'Rubik';
   text-align: justify;
-  font-size: 0.8rem;
+  font-size: 0.94rem;
+  line-height: 1.5;
   border-radius: 10px;
   padding: 10px;
-  margin: 0px 0px 10px;
+  margin: 0px 5% 10px 5%;
+  width: 90%;
 }
 
 .image-preview {
