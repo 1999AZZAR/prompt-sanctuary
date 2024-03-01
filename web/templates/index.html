@@ -44,9 +44,20 @@
                     <h2 class="card__heading">Prompt reversal</h2>
                     <p class="card__price">features:</p>
                     <ul role="list" class="card__bullets flow">
-                        <li>Generate Prompt from an image</li>
+                        <li>Generate Prompt from an image "image to prompt"</li>
                         <li>craft high-quality prompt based on the image</li>
                         <li>Generate descriptive text based on user-uploaded images</li>
+                    </ul>
+                    <a href="{{ url_for('reverse') }}" class="card__cta cta">click to begin</a>
+                </div>
+
+                <div class="cards__card card">
+                    <h2 class="card__heading">Advanced prompting</h2>
+                    <p class="card__price">features:</p>
+                    <ul role="list" class="card__bullets flow">
+                        <li>help Regenerate your prompt</li>
+                        <li>craft high-quality prompt based on multiple parameter</li>
+                        <li>Tweaking your prompt to make it more suited to your need</li>
                     </ul>
                     <a href="{{ url_for('reverse') }}" class="card__cta cta">click to begin</a>
                 </div>

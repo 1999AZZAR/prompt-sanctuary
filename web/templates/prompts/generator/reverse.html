@@ -10,38 +10,44 @@
 </head>
 <body>
     <h1 class="center"><strong><a href="{{ url_for('home') }}">Prompt reversal</a></strong></h1>
-    
-    <div class="prompting">
-        <div class="container">
-            <p>reverse image prompt</p>
-            <div class="left-section">
-                <form action="/reverse/image" method="post" enctype="multipart/form-data" onsubmit="return validateForm()">
-                    <label for="image">Upload Image:</label>
-                    <div class="input">
-                        <input type="file" name="image" accept="image/*" required>
-                        <input type="submit" value="Generate">
-                    </div>
-                </form>
+    <div class="master">
+        <div class="welcome">
+            <p>Here, you have the flexibility to effortlessly generate <strong>detailed image descriptions</strong>, just upload your image and click generate there you will be provided with the image description that u can <strong>use as prompt</strong> to generate more image using the style and mood of your original image.</p>
+        </div>
+        <div class="prompting">
+            <div class="container">
+                <p>reverse image prompt</p>
+                <div class="left-section">
+                    <form action="/reverse/image" method="post" enctype="multipart/form-data" onsubmit="return validateForm()">
+                        <label for="image">Upload Image:</label>
+                        <div class="input">
+                            <input type="file" name="image" accept="image/*" required>
+                            <input type="submit" value="Generate">
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div class="image-preview">
-        <img id="preview-image" alt="Image Preview">
-    </div>
+        {% if not response %}
+            <div class="image-preview">
+                <img id="preview-image" alt="Image Preview">
+            </div>
+        {% endif %}
 
-    <div id="loading" class="loading">
-        <div class="spinner"></div>
-        <h1>Generating...</h1>
-    </div>
-
-    {% if response %}
-        <div class="result">
-            <h2>Generated Text:</h2>
-            <p id="response">{{ response }}</p>
-            <button onclick="copyToClipboard()">Copy Prompt</button>
+        <div id="loading" class="loading">
+            <div class="spinner"></div>
+            <h1>Generating...</h1>
         </div>
-    {% endif %}
+
+        {% if response %}
+            <div class="result">
+                <h2>Generated Text:</h2>
+                <p id="response">{{ response }}</p>
+                <button onclick="copyToClipboard()">Copy Prompt</button>
+            </div>
+        {% endif %}
+    </div>
 
     <script>
         function previewImage() {

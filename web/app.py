@@ -47,7 +47,7 @@ def reverse_image():
         image_data = image_file.read()
 
         prompt_parts = [
-            "\nPlease write a detailed description in proper English to recreate this image in 400 to 600 characters. Include the style, mood, lighting, and other key details. Use complete sentences and proofread for spelling and grammar mistakes:",
+            "\nPlease write a detailed description in proper English to recreate this image in 120 to 340 word. Include the style, mood, lighting, and other key details. Use complete sentences and proofread for spelling and grammar mistakes:",
             {"mime_type": "image/jpeg", "data": image_data},
             "\nAlso select the main artistic style from this list (you can choose more than one): \n",
             "1. Photographic\n2. Enhanced\n3. Anime\n4. Digital art\n5. Comic book\n6. Fantasy art\n",  
