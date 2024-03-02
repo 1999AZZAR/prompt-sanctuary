@@ -2,6 +2,8 @@
 from flask import Flask, render_template, request
 from gemini_text import generate_response, generate_random, generate_vrandom, generate_imgdescription
 from gemini_vis import generate_content
+from advance import response
+from werkzeug.exceptions import BadRequestKeyError
 
 
 app = Flask(__name__)
@@ -60,6 +62,27 @@ def reverse_image():
 
     except Exception as e:
         return f"Error: {str(e)}"
+
+@app.route('/advance')
+def advance():
+    return render_template('prompts/generator/advance.html', result=None)
+
+@app.route('/advance/generate', methods=['POST'])
+def generate_advance_response():
+    try:
+        use_case = request.form['use_case']
+        prompt_type = request.form['prompt_type'] 
+        harm_content = request.form['harm_content']
+        knowledge_base = request.form['knowledge_base']
+        
+        response_text = response(use_case, prompt_type, harm_content, knowledge_base)
+        
+        return render_template('prompts/generator/advance.html', result=response_text)
+    except BadRequestKeyError as e:
+        # Handle the case where one or more parameters are missing in the form data
+        error_message = f"Bad Request: {e.description}"
+        return render_template('prompts/generator/advance.html', result=error_message)
+
 
 @app.route('/library')
 def index():

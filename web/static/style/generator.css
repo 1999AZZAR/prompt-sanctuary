@@ -134,8 +134,8 @@ form {
   font-size: 1rem;
   background-color: #37373771;
   padding: 15px 20px;
-  /* margin: auto; */
   display: inline-flex;
+  flex-direction: column;
   flex-wrap: wrap;
   border-radius: 5px;
   -webkit-border-radius: 5px;
