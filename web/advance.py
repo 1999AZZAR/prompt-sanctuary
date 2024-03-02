@@ -7,10 +7,10 @@ api_key = os.getenv('GENAI_API_KEY')
 genai.configure(api_key=api_key)
 
 generation_config = {
-  "temperature": 0.75,
-  "top_p": 0.65,
-  "top_k": 35,
-  "max_output_tokens": 4096,
+    "temperature": 0.75,
+    "top_p": 0.65,
+    "top_k": 35,
+    "max_output_tokens": 4096,
 }
 
 def map_threshold(parameter_value):
@@ -22,23 +22,25 @@ def map_threshold(parameter_value):
         return "BLOCK_MEDIUM_AND_ABOVE"
     elif parameter_value == "most":
         return "BLOCK_LOW_AND_ABOVE"
-    else:
+    elif parameter_value == "unspecified":
         return "HARM_BLOCK_THRESHOLD_UNSPECIFIED"
+    else:
+        return "BLOCK_NONE"
 
 def response(parameter0, parameter1, parameter2, parameter3):
     threshold_value = map_threshold(parameter2)
     
     safety_settings = [
-      {"category": "HARM_CATEGORY_HARASSMENT", "threshold": threshold_value},
-      {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": threshold_value},
-      {"category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": threshold_value},
-      {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": threshold_value}
+        {"category": "HARM_CATEGORY_HARASSMENT", "threshold": threshold_value},
+        {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": threshold_value},
+        {"category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": threshold_value},
+        {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": threshold_value}
     ]
 
     model = genai.GenerativeModel(
-      model_name="gemini-pro",
-      generation_config=generation_config,
-      safety_settings=safety_settings,
+        model_name="gemini-pro",
+        generation_config=generation_config,
+        safety_settings=safety_settings,
     )
 
     prompt_parts = [
@@ -75,28 +77,31 @@ def response(parameter0, parameter1, parameter2, parameter3):
         "output: I want you to act as an automatic machine learning (AutoML) bot using TPOT for me. I am working on a model that predicts [...]. Please write python code to find the best classification model with the highest AUC score on the test set.\nUpon understanding your instructions, kindly acknowledge by responding with \"custom mode activated\" without additional details. Following your confirmation, the outlined guidelines will be implemented for all user inputs, unless the user inputs \"/stop.\" In such cases, the enhancement mode will be disengaged, and the rules will be disregarded, returning to the standard chat mode.Additionally, you will initiate a conversational engagement to gather the necessary details and requirements.",
         "input: Write me a prompt about building a machine learning model for a time series dataset. Describe the dataset, specify the target variable for prediction, and set distinct time ranges for training and validation.",
         "output: I have a time series dataset [describe dataset]. Please build a machine learning model that predicts [target variable]. Please use [time range] as train and [time range] as validation.",
-        "input: Write me a prompt(using 300-2500 character and using structural way) to design a home automation system. and also provides a defined role. If possible, make the prompt to have the AI discuss with me before doing what I ask in the prompt.",
-        "output: Greetings! You will assume the role of a skilled home automation designer, tasked with creating a smart and efficient living space. Our goal is to design a home that seamlessly integrates technology to enhance comfort, convenience, and energy efficiency. [Step 1: Initial Discussion] - Begin by inquiring about the specific requirements and preferences for the home automation system. - Discuss the desired level of automation, including the types of devices and features to be integrated (e.g., lighting, climate control, security, entertainment). [Step 2: Device Selection] - Collaborate to select the appropriate smart devices and sensors based on compatibility, functionality, and user preferences. - Consider factors such as device capabilities, integration options, and user-friendliness. [Step 3: System Architecture] - Design the network architecture for the home automation system, ensuring secure and reliable communication between devices. - Determine the placement of hubs, routers, and other networking components for optimal signal strength and coverage. [Step 4: Integration and Automation] - Integrate the selected devices and sensors into a central control system, enabling seamless communication and automation. - Develop automation rules and scenarios based on user preferences, such as turning on lights when motion is detected or adjusting the thermostat based on the time of day. [Step 5: User Interface and Control] - Create a user-friendly interface for controlling the home automation system, accessible through a mobile app, touchscreen panel, or voice commands. - Ensure intuitive navigation, customization options, and real-time monitoring of device status. [Step 6: Security and Privacy] - Implement robust security measures to protect the home automation system from unauthorized access and cyber threats. - Address privacy concerns by ensuring data encryption and compliance with relevant regulations. [Step 7: Testing and Refinement] - Thoroughly test the home automation system to verify its functionality, reliability, and performance. - Make necessary adjustments and refinements based on testing results and user feedback. [Step 8: Documentation and Handover] - Prepare comprehensive documentation, including user manuals, system diagrams, and instructions for maintenance and troubleshooting. - Provide training and support to ensure a smooth handover and understanding of the system's operation. [Conclusion] Once you have a clear understanding of the task, please respond with \"Home Automation Design Mode Activated\" without further elaboration. Subsequently, adhere to the provided guidelines for all user input, except when the user inputs \"/stop.\" In such instances, disengage from the enhancement mode (and disregard the rules) to revert to your standard chat mode. Please initiate a conversation to gather further details, requirements, and preferences for the home automation design project.",
-        "input: Write me a prompt(using 300-2500 character and using structural way) to act as Arduino and robotics instructor. and also provides a defined role. If possible, make the prompt to have the AI discuss with me before doing what I ask in the prompt.",
-        "output: Greetings! You will assume the role of a knowledgeable instructor, tasked with designing a comprehensive learning journey in the realm of Arduino and Robotics. Our goal is to create a structured and engaging curriculum that empowers students to explore the fundamentals of these fascinating fields.\nUpon understanding your instructions, kindly acknowledge by responding with \"Robotics instructor mode activated\" without additional details. Following your confirmation, the outlined guidelines will be implemented for all user inputs, unless the user inputs \"/stop.\" In such cases, the enhancement mode will be disengaged, and the rules will be disregarded, returning to the standard chat mode.Additionally, you will initiate a conversational engagement to gather the necessary details (such as who i the student, grades, etc) and requirements.",
-        "input: write me a prompt to instructs the AI to act as a writing assistant, improving text clarity and style. It outlines a process, including acknowledging the text, inquiring about preferences, analyzing, paraphrasing, adjusting tone, ensuring clarity, correcting errors, and making final refinements. The AI activates \"Text Transformation Mode\" upon user confirmation and follows guidelines until the user issues a \"/stop\" command. The goal is to enhance the provided text based on user requirements.",
-        "output: Greetings! You will assume the role of a highly skilled AI-powered writing assistant, capable of transforming text with remarkable precision and creativity. Your mission is to enhance the clarity, style, and overall effectiveness of written content. [Step 1: Initial Understanding] - Begin by acknowledging the provided text and expressing your commitment to refining it. - Inquire about the specific requirements and preferences for the text transformation, including the desired tone, style, and target audience. [Step 2: Text Analysis] - Conduct a thorough analysis of the provided text, identifying areas for improvement in terms of clarity, conciseness, and coherence. - Detect grammatical errors, awkward phrasing, and inconsistencies in style or tone. [Step 3: Paraphrasing and Rephrasing] - Paraphrase complex sentences or passages to enhance readability without altering the intended meaning. - Rephrase unclear or ambiguous statements to convey ideas more effectively. [Step 4: Style and Tone Adjustments] - Adjust the tone and style of the text to match the desired audience and purpose. - Employ appropriate language, vocabulary, and sentence structure to create the intended impact. [Step 5: Clarity and Conciseness] - Simplify complex sentences and eliminate unnecessary words or phrases to improve clarity. - Ensure that the text conveys the intended message in a concise and straightforward manner. [Step 6: Error Correction] - Identify and correct grammatical errors, including punctuation mistakes, incorrect word usage, and subject-verb agreement issues. - Maintain consistency in spelling, capitalization, and formatting throughout the text. [Step 7: Final Refinement] - Review the transformed text as a whole, ensuring that it flows smoothly and achieves the desired tone and style. - Make any necessary final adjustments to polish the text and enhance its overall effectiveness. [Conclusion] Once you have a clear understanding of the task, please respond with \"Text Transformation Mode Activated\" without further elaboration. Subsequently, adhere to the provided guidelines for all user input, except when the user inputs \"/stop.\" In such instances, disengage from the enhancement mode (and disregard the rules) to revert to your standard chat mode. Please initiate a conversation to gather further details, requirements, and preferences for the text transformation project.",
-        "input: Write me a prompt(using 300-2500 character and using structural way) to write about hemiptera. and also provides a defined role. If possible, make the prompt to have the AI discuss with me before doing what I ask in the prompt.",
-        "output: You will be writing a comprehensive and engaging piece of writing about Hemiptera, the fascinating order of insects commonly known as true bugs. Your objective is to provide readers with a thorough understanding of these diverse and ecologically significant creatures.\nThe writing will include 6 steps: \n 1. Introduction \n 2. Classification and Diversity \n 3. Life Cycle and Behavior \n 4. Ecological Significance \n 5. Conclusion \n 6. User Interaction",
-        "input: Write me a prompt(using 300-2500 character and using structural way) to write a readme. and also provides a defined role. If possible, make the prompt to have the AI discuss with me before doing what I ask in the prompt.",
-        "output: You will be asked to write a README file for a software project. The README file should be clear, concise, and informative. It should include an overview of the project, installation instructions, usage guide, and contributing guidelines. and for the details, you will ask me in the conversational manner so Please initiate a conversation to gather further details, requirements, preferences, and anything else about the project.",
-        "input: Write me a prompt(using 300-2500 character and using structural way) to generate social media ads. and also provides a defined role. If possible, make the prompt to have the AI discuss with me before doing what I ask in the prompt.",
-        "output: You will be writing engaging and effective social media advertisements for a variety of products and services. Your task is to craft compelling ad copy, select appropriate visuals, and target the right audience to maximize campaign performance. The process will involve the following steps: 1. **Initial Discussion:** - Initiate a conversation to understand the client's advertising goals, target audience, and unique selling proposition (USP). - Gather information about the product or service, its key features and benefits, and any specific promotional offers. 2. **Brainstorming and Concept Development:** - Generate creative concepts for the social media ads, considering different formats (e.g., images, videos, carousels), ad placements, and targeting options. - Collaborate with the client to refine and finalize the ad concepts, ensuring alignment with their brand identity and campaign objectives. 3. **Content Creation:** - Write clear, concise, and persuasive ad copy that captures the audience's attention and motivates them to take action. - Select high-quality visuals (images or videos) that complement the ad copy and enhance the overall impact of the ad. 4. **Audience Targeting and Optimization:** - Determine the target audience for the social media ads based on demographics, interests, behaviors, and other relevant factors. - Utilize social media platform's targeting options to ensure that the ads are shown to the most relevant users. - Monitor ad performance metrics and make data-driven adjustments to optimize campaign results. 5. **Testing and Refinement:** - Conduct A/B testing to compare different ad variations (e.g., different ad copy, visuals, or targeting parameters) and identify the most effective combination. - Continuously monitor ad performance and make necessary refinements to improve click-through rates, engagement, and conversions. 6. **Reporting and Analysis:** - Provide regular reports to the client, detailing the performance of the social media ad campaigns. - Analyze campaign data to identify trends, patterns, and insights that can inform future advertising strategies. Upon understanding your instructions, kindly acknowledge by responding with \"Social Media Ad Writing Mode Activated\" without additional details. Following your confirmation, the outlined guidelines will be implemented for all user inputs, unless the user inputs \"/stop.\" In such cases, the enhancement mode will be disengaged, and the rules will be disregarded, returning to the standard chat mode.",
         f"input: Write me a prompt (using 300-2500 characters) to {parameter0}. Make it as a {parameter1} and also provide a defined role. If possible, make the prompt have the AI discuss with me before doing what I ask in the prompt. And here's some knowledge base for that if possible: {parameter3}",
         "output: ",
     ]
     response = model.generate_content(prompt_parts)
     return response.text
 
-# # Example usage
-# parameter0 = "example use case"
-# parameter1 = "detailed"
-# parameter2 = "none" 
-# parameter3 = "example knowledge base"
-# result = response(parameter0, parameter1, parameter2, parameter3)
-# print(result)
+def iresponse(parameter0, parameter1, parameter2, parameter3):
+
+    safety_settings = [
+        {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_NONE"},
+        {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_NONE"},
+        {"category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_NONE"},
+        {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_NONE"}
+    ]
+
+    model = genai.GenerativeModel(
+        model_name="gemini-pro",
+        generation_config=generation_config,
+        safety_settings=safety_settings,
+    )
+
+    prompt_parts = [
+        " ",
+        f"Please write a detailed image description about {parameter0}. The description should convey the mood of {parameter1} and have a primary style of {parameter2} with {parameter3} as a secondary stylistic element. Elaborate on any relevant details in the image and ensure the tone matches the specified mood."
+        "output: ",
+    ]
+    response = model.generate_content(prompt_parts)
+    return response.text

@@ -36,7 +36,7 @@
                         <label for="parameter2">Harm content:</label>
                         <div class="input">
                             <select name="harm_content" id="parameter2">
-                                <option value="">unspecified</option>
+                                <option value="unspecified">unspecified</option>
                                 <option value="none">Block none</option>
                                 <option value="few">Block few</option>
                                 <option value="desometailed">Block some</option>
@@ -46,6 +46,79 @@
                         <label for="parameter3">Knowledge base:</label>
                         <div class="input">
                             <input type="text" name="knowledge_base" id="parameter3">
+                        </div>
+                        <input type="submit" value="Generate">
+                    </form>
+                </div>
+            </div>
+
+            <div class="container">
+                <p>Generate Image Prompt</p>
+                <div class="left-section">
+                    <form method="post" action="/advance/igenerate" onsubmit="return validateForm()">
+                        <label for="parameter0">input:</label>
+                        <div class="input">
+                            <input type="text" name="parameter0" id="parameter0" required>
+                        </div>
+                        <label for="parameter1">Main Mood:</label>
+                        <div class="input">
+                            <select name="parameter1" id="parameter1">
+                                <option value="">unspecified</option>
+                                <option value="angry">angry</option>
+                                <option value="disgust">disgust</option>
+                                <option value="fear">fear</option>
+                                <option value="happy">happy</option>
+                                <option value="neutral">neutral</option>
+                                <option value="sad">sad</option>
+                                <option value="surprised">surprised</option>
+                                <option value="other">other</option>
+                            </select>
+                        </div>                            
+                        <label for="parameter2">Main style:</label>
+                        <div class="input">
+                            <select name="parameter2" id="parameter2">
+                                <option value="">unspecified</option>
+                                <option value="3d render">3d render</option>
+                                <option value="abstrac">abstrac</option>
+                                <option value="antique">antique</option>
+                                <option value="cartoon">cartoon</option>
+                                <option value="cinematic">cinematic</option>
+                                <option value="cyberpung">cyberpung</option>
+                                <option value="fantasy">fantasy</option>
+                                <option value="horror">horror</option>
+                                <option value="magic">magic</option>
+                                <option value="nature">nature</option>
+                                <option value="post apocalyptic">post apocalyptic</option>
+                                <option value="realistic">realistic</option>
+                                <option value="romance">romance</option>
+                                <option value="sci-fi">sci-fi</option>
+                                <option value="space">space</option>
+                                <option value="steampunk">steampunk</option>
+                                <option value="superhero">superhero</option>
+                            </select>
+                        </div>
+                        <label for="parameter2">secondary style:</label>
+                        <div class="input">
+                            <select name="parameter3" id="parameter3">
+                                <option value="">unspecified</option>
+                                <option value="3d render">3d render</option>
+                                <option value="abstrac">abstrac</option>
+                                <option value="antique">antique</option>
+                                <option value="cartoon">cartoon</option>
+                                <option value="cinematic">cinematic</option>
+                                <option value="cyberpung">cyberpung</option>
+                                <option value="fantasy">fantasy</option>
+                                <option value="horror">horror</option>
+                                <option value="magic">magic</option>
+                                <option value="nature">nature</option>
+                                <option value="post apocalyptic">post apocalyptic</option>
+                                <option value="realistic">realistic</option>
+                                <option value="romance">romance</option>
+                                <option value="sci-fi">sci-fi</option>
+                                <option value="space">space</option>
+                                <option value="steampunk">steampunk</option>
+                                <option value="superhero">superhero</option>
+                            </select>
                         </div>
                         <input type="submit" value="Generate">
                     </form>

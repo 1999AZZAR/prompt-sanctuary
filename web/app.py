@@ -2,7 +2,7 @@
 from flask import Flask, render_template, request
 from gemini_text import generate_response, generate_random, generate_vrandom, generate_imgdescription
 from gemini_vis import generate_content
-from advance import response
+from advance import response, iresponse
 from werkzeug.exceptions import BadRequestKeyError
 
 
@@ -79,10 +79,23 @@ def generate_advance_response():
         
         return render_template('prompts/generator/advance.html', result=response_text)
     except BadRequestKeyError as e:
-        # Handle the case where one or more parameters are missing in the form data
         error_message = f"Bad Request: {e.description}"
         return render_template('prompts/generator/advance.html', result=error_message)
 
+@app.route('/advance/igenerate', methods=['POST'])
+def generate_advance_iresponse():
+    try:
+        parameter0 = request.form['parameter0']
+        parameter1 = request.form['parameter1'] 
+        parameter2 = request.form['parameter2']
+        parameter3 = request.form['parameter3']
+        
+        response_text = iresponse(parameter0, parameter1, parameter2, parameter3)
+        
+        return render_template('prompts/generator/advance.html', result=response_text)
+    except BadRequestKeyError as e:
+        error_message = f"Bad Request: {e.description}"
+        return render_template('prompts/generator/advance.html', result=error_message)
 
 @app.route('/library')
 def index():
