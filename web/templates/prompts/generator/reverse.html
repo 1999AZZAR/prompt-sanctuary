@@ -8,7 +8,7 @@
     <link rel="icon" href="{{ url_for('static', filename='icon/favicon.ico') }}" type="image/x-icon">
     <script defer src="{{ url_for('static', filename='script/generator.js') }}"></script>
 </head>
-<body>
+<body data-image-selected="false">
     <h1 class="center"><strong><a href="{{ url_for('home') }}">Prompt reversal</a></strong></h1>
     <div class="master">
         <div class="welcome">
@@ -31,7 +31,13 @@
 
         {% if not response %}
             <div class="image-preview">
-                <img id="preview-image" alt="Image Preview">
+                {% if not image_selected %}
+                    <!-- Fallback: Display favicon if no image is selected -->
+                    <img id="preview-image" alt="Image Preview" src="{{ url_for('static', filename='icon/favicon.ico') }}">
+                {% else %}
+                    <!-- Display selected image if available -->
+                    <img id="preview-image" alt="Image Preview">
+                {% endif %}
             </div>
         {% endif %}
 
@@ -62,11 +68,13 @@
     
                     reader.onload = function (e) {
                         preview.src = e.target.result;
+                        document.body.setAttribute('data-image-selected', 'true');
                     };
     
                     reader.readAsDataURL(file);
                 } else {
-                    preview.src = "";
+                    preview.src = "{{ url_for('static', filename='icon/favicon.ico') }}";
+                    document.body.setAttribute('data-image-selected', 'false');
                 }
             });
         }
