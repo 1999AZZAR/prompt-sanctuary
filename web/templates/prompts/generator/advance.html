@@ -21,7 +21,7 @@
                     <form method="post" action="/advance/generate" onsubmit="return validateForm()">
                         <label for="parameter0">Use case:</label>
                         <div class="input">
-                            <input type="text" name="parameter0" id="parameter0" required>
+                            <input type="text" name="parameter0" id="parameter0" placeholder="Enter your basic prompt" required maxlength="300">
                         </div>
                         <label for="parameter1">Prompt type:</label>
                         <div class="input">
@@ -45,7 +45,7 @@
                         </div>
                         <label for="parameter3">Knowledge base:</label>
                         <div class="input">
-                            <input type="text" name="parameter3" id="parameter3">
+                            <input type="text" name="parameter3" id="parameter3" placeholder="Enter the Knowledge base if any" required maxlength="1000">
                         </div>
                         <input type="submit" value="Generate">
                     </form>
@@ -58,12 +58,13 @@
                     <form method="post" action="/advance/igenerate" onsubmit="return validateForm()">
                         <label for="parameter0">input:</label>
                         <div class="input">
-                            <input type="text" name="parameter0" id="parameter0" required>
+                            <input type="text" name="parameter0" id="parameter0" placeholder="Enter your imagination" required maxlength="300">
                         </div>
-                        <label for="parameter1">Main Mood:</label>
+                        <label for="parameter1">primary mood:</label>
                         <div class="input">
                             <select name="parameter1" id="parameter1">
                                 <option value="">unspecified</option>
+                                <option value="random">random</option>
                                 <option value="angry">angry</option>
                                 <option value="disgust">disgust</option>
                                 <option value="fear">fear</option>
@@ -71,13 +72,15 @@
                                 <option value="neutral">neutral</option>
                                 <option value="sad">sad</option>
                                 <option value="surprised">surprised</option>
+                                <option value="surreal">surreal</option>
                                 <option value="other">other</option>
                             </select>
                         </div>                            
-                        <label for="parameter2">Main style:</label>
+                        <label for="parameter2">primary style:</label>
                         <div class="input">
                             <select name="parameter2" id="parameter2">
                                 <option value="">unspecified</option>
+                                <option value="random">random</option>
                                 <option value="3d render">3d render</option>
                                 <option value="abstrac">abstrac</option>
                                 <option value="antique">antique</option>
@@ -95,12 +98,14 @@
                                 <option value="space">space</option>
                                 <option value="steampunk">steampunk</option>
                                 <option value="superhero">superhero</option>
+                                <option value="other">other</option>
                             </select>
                         </div>
                         <label for="parameter2">secondary style:</label>
                         <div class="input">
                             <select name="parameter3" id="parameter3">
                                 <option value="">unspecified</option>
+                                <option value="random">random</option>
                                 <option value="3d render">3d render</option>
                                 <option value="abstrac">abstrac</option>
                                 <option value="antique">antique</option>
@@ -118,6 +123,7 @@
                                 <option value="space">space</option>
                                 <option value="steampunk">steampunk</option>
                                 <option value="superhero">superhero</option>
+                                <option value="other">other</option>
                             </select>
                         </div>
                         <input type="submit" value="Generate">

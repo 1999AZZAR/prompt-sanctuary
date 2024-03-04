@@ -249,6 +249,14 @@ form#random {
   100% { transform: rotate(360deg); }
 }
 
+select[name^="parameter"] {
+  background-color: #352a3a;
+  color: white;
+  border-radius: 15px;
+  font-size: 1rem;
+  margin: 4px;
+}
+
 /* Mobile Styles */
 @media only screen and (max-width: 480px) {
   body {

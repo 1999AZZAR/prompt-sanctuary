@@ -12,13 +12,13 @@
 </head>
 
 <body style="background: linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)), url('{{ url_for('static', filename='icon/bg.jpg') }}') center/cover no-repeat fixed;">
-    <h1><strong><a href="{{ url_for('home') }}">Prompt Sanctuary</a></strong></h1>
+    <h1><strong><a href="{{ url_for('home') }}" tabindex="1">Prompt Sanctuary</a></strong></h1>
 
     <p>Welcome to the Prompt Sanctuary, Explore the functionalities of our platform:</p>
     <div class="content-container">
         <div class="main__cards cards">
             <div class="cards__inner">
-                <div class="cards__card card">
+                <div class="cards__card card" tabindex="2">
                     <h2 class="card__heading">Prompt library</h2>
                     <p class="card__price">features:</p>
                     <ul role="list" class="card__bullets flow">
@@ -26,10 +26,10 @@
                         <li>each designed to enhance your prompt refinement and generation capabilities</li>
                         <li>Discover the diverse functionalities and advanced features of each model</li>
                     </ul>
-                    <a href="{{ url_for('index') }}" class="card__cta cta">click to begin</a>
+                    <a href="{{ url_for('index') }}" class="card__cta cta" tabindex="6">click to begin</a>
                 </div>
 
-                <div class="cards__card card">
+                <div class="cards__card card" tabindex="3">
                     <h2 class="card__heading">Prompt generator</h2>
                     <p class="card__price">features:</p>
                     <ul role="list" class="card__bullets flow">
@@ -37,10 +37,10 @@
                         <li>craft high-quality, engaging, and uniquely tailored prompts</li>
                         <li>random option for a fun and surprising prompt</li>
                     </ul>
-                    <a href="{{ url_for('generate') }}" class="card__cta cta">click to begin</a>
+                    <a href="{{ url_for('generate') }}" class="card__cta cta" tabindex="7">click to begin</a>
                 </div>
 
-                <div class="cards__card card">
+                <div class="cards__card card" tabindex="4">
                     <h2 class="card__heading">Prompt reversal</h2>
                     <p class="card__price">features:</p>
                     <ul role="list" class="card__bullets flow">
@@ -48,19 +48,20 @@
                         <li>craft high-quality prompt based on the image</li>
                         <li>Generate descriptive text based on user-uploaded images</li>
                     </ul>
-                    <a href="{{ url_for('reverse') }}" class="card__cta cta">click to begin</a>
+                    <a href="{{ url_for('reverse') }}" class="card__cta cta" tabindex="8">click to begin</a>
                 </div>
 
-                <div class="cards__card card">
+                <div class="cards__card card" tabindex="5">
                     <h2 class="card__heading">Advanced prompting</h2>
                     <p class="card__price">features:</p>
                     <ul role="list" class="card__bullets flow">
                         <li>help Regenerate your prompt</li>
-                        <li>craft high-quality prompt based on multiple parameter</li>
-                        <li>Tweaking your prompt to make it more suited to your need</li>
+                        <li>craft high-quality prompt based on multiple parameters</li>
+                        <li>Tweaking your prompt to make it more suited to your needs</li>
                     </ul>
-                    <a href="{{ url_for('advance') }}" class="card__cta cta">click to begin</a>
+                    <a href="{{ url_for('advance') }}" class="card__cta cta" tabindex="9">click to begin</a>
                 </div>
+            </div>
             <div class="overlay cards__inner"></div>
         </div>
     </div>
