@@ -21,11 +21,11 @@
                     <form method="post" action="/advance/generate" onsubmit="return validateForm()">
                         <label for="parameter0">Use case:</label>
                         <div class="input">
-                            <input type="text" name="use_case" id="parameter0" required>
+                            <input type="text" name="parameter0" id="parameter0" required>
                         </div>
                         <label for="parameter1">Prompt type:</label>
                         <div class="input">
-                            <select name="prompt_type" id="parameter1">
+                            <select name="parameter1" id="parameter1">
                                 <option value="">none</option>
                                 <option value="simple">Simple</option>
                                 <option value="standard">Standard</option>
@@ -35,7 +35,7 @@
                         </div>                            
                         <label for="parameter2">Harm content:</label>
                         <div class="input">
-                            <select name="harm_content" id="parameter2">
+                            <select name="parameter2" id="parameter2">
                                 <option value="unspecified">unspecified</option>
                                 <option value="none">Block none</option>
                                 <option value="few">Block few</option>
@@ -45,7 +45,7 @@
                         </div>
                         <label for="parameter3">Knowledge base:</label>
                         <div class="input">
-                            <input type="text" name="knowledge_base" id="parameter3">
+                            <input type="text" name="parameter3" id="parameter3">
                         </div>
                         <input type="submit" value="Generate">
                     </form>

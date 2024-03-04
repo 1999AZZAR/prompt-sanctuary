@@ -5,7 +5,6 @@ from gemini_vis import generate_content
 from advance import response, iresponse
 from werkzeug.exceptions import BadRequestKeyError
 
-
 app = Flask(__name__)
 
 @app.route('/')
@@ -70,12 +69,12 @@ def advance():
 @app.route('/advance/generate', methods=['POST'])
 def generate_advance_response():
     try:
-        use_case = request.form['use_case']
-        prompt_type = request.form['prompt_type'] 
-        harm_content = request.form['harm_content']
-        knowledge_base = request.form['knowledge_base']
+        parameter0 = request.form['parameter0']
+        parameter1 = request.form['parameter1']
+        parameter2 = request.form['parameter2']
+        parameter3 = request.form['parameter3']
         
-        response_text = response(use_case, prompt_type, harm_content, knowledge_base)
+        response_text = response(parameter0, parameter1, parameter2, parameter3)
         
         return render_template('prompts/generator/advance.html', result=response_text)
     except BadRequestKeyError as e:
@@ -86,7 +85,7 @@ def generate_advance_response():
 def generate_advance_iresponse():
     try:
         parameter0 = request.form['parameter0']
-        parameter1 = request.form['parameter1'] 
+        parameter1 = request.form['parameter1']
         parameter2 = request.form['parameter2']
         parameter3 = request.form['parameter3']
         
