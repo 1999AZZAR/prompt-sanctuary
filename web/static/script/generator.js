@@ -28,3 +28,30 @@ function copyToClipboard() {
 	document.body.removeChild(textArea);
 	alert("Response copied to clipboard!");
 }
+
+function previewImage() {
+	var input = document.querySelector('input[name="image"]');
+	var preview = document.getElementById('preview-image');
+	
+	input.addEventListener('change', function () {
+		var file = input.files[0];
+
+		if (file) {
+			var reader = new FileReader();
+
+			reader.onload = function (e) {
+				preview.src = e.target.result;
+				document.body.setAttribute('data-image-selected', 'true');
+			};
+
+			reader.readAsDataURL(file);
+		} else {
+			preview.src = "{{ url_for('static', filename='icon/favicon.ico') }}";
+			document.body.setAttribute('data-image-selected', 'false');
+		}
+	});
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+	previewImage();
+});

@@ -41,7 +41,7 @@ def vrandom_prompt():
 def reverse():
     return render_template('prompts/generator/reverse.html', result=None)
 
-@app.route('/reverse/image', methods=['POST'])
+@app.route('/generate/image', methods=['POST'])
 def reverse_image():
     try:
         image_file = request.files['image']
@@ -57,7 +57,7 @@ def reverse_image():
         ]
 
         generated_text = generate_content(prompt_parts)
-        return render_template('prompts/generator/reverse.html', response=generated_text)
+        return render_template('prompts/generator/generator.html', result=generated_text)
 
     except Exception as e:
         return f"Error: {str(e)}"
@@ -95,6 +95,28 @@ def generate_advance_iresponse():
     except BadRequestKeyError as e:
         error_message = f"Bad Request: {e.description}"
         return render_template('prompts/generator/advance.html', result=error_message)
+
+@app.route('/advance/image', methods=['POST'])
+def advance_image():
+    try:
+        image_file = request.files['image']
+        image_data = image_file.read()
+        parameter1 = request.form['parameter1']
+        parameter2 = request.form['parameter2']
+        parameter3 = request.form['parameter3']
+
+        prompt_parts = [
+            "\nPlease write a detailed description in proper English to recreate this image in 120 to 340 word. Include the style, mood, lighting, and other key details. Use complete sentences and proofread for spelling and grammar mistakes:",
+            {"mime_type": "image/jpeg", "data": image_data},
+            f"\naslo use this {parameter1} mood for the image description",
+            f"\nand for the image style please use the {parameter2} style for the main style also the {parameter3} as the secondary style."
+        ]
+
+        response_text = generate_content(prompt_parts)
+        return render_template('prompts/generator/advance.html', result=response_text)
+
+    except Exception as e:
+        return f"Error: {str(e)}"
 
 @app.route('/library')
 def index():
