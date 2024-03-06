@@ -13,6 +13,18 @@ function validateForm() {
 	}
 }
 
+function validateImageForm() {
+    var imageInput = document.getElementById("user_input_image");
+    var selectedFiles = imageInput.files;
+
+    if (selectedFiles.length === 0) {
+        alert("Please select an image.");
+        return false;
+    }
+
+    return true;
+}
+
 function hideLoading() {
 	var loading = document.getElementById("loading");
 	loading.style.display = "none";
@@ -54,4 +66,4 @@ function previewImage() {
 
 document.addEventListener("DOMContentLoaded", function () {
 	previewImage();
-});
+})

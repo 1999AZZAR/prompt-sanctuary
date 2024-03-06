@@ -18,43 +18,43 @@
             <div class="container">
                 <p>generate text prompt</p>
                 <div class="left-section">
-                <form method="post" action="/generate/tprompt" onsubmit="return validateForm()">
-                    <label for="user_input">Input:</label>
-                    <div class="input">
-                        <input type="text" name="user_input" id="user_input_text" placeholder="Enter your usecase" required>
-                        <input type="submit" value="Generate">
-                    </div>
-                </form>
+                    <form method="post" action="/generate/tprompt" onsubmit="return validateForm()">
+                        <label for="user_input">Input:</label>
+                        <div class="input">
+                            <input type="text" name="user_input" id="user_input_text" placeholder="Enter your usecase" required>
+                            <input type="submit" value="Generate">
+                        </div>
+                    </form>
                 </div>
                 <div class="right-section">
-                <form method="post" id="random" action="/generate/trandom">
-                    <input type="submit" value="random">
-                </form>
+                    <form method="post" id="random" action="/generate/trandom">
+                        <input type="submit" value="random">
+                    </form>
                 </div>
             </div>
 
             <div class="container">
                 <p>generate image prompt</p>
                 <div class="left-section">
-                <form method="post" action="/generate/iprompt" onsubmit="return validateForm()">
-                    <label for="user_input">Input:</label>
-                    <div class="input">
-                        <input type="text" name="user_input" id="user_input_image" placeholder="what image to generate" required>
-                        <input type="submit" value="Generate">
-                    </div>
-                </form>
+                    <form method="post" action="/generate/iprompt" onsubmit="return validateForm()">
+                        <label for="user_input">Input:</label>
+                        <div class="input">
+                            <input type="text" name="user_input" id="user_input_image" placeholder="what image to generate" required>
+                            <input type="submit" value="Generate">
+                        </div>
+                    </form>
                 </div>
                 <div class="right-section">
-                <form method="post" id="random" action="/generate/irandom">
-                    <input type="submit" value="random">
-                </form>
+                    <form method="post" id="random" action="/generate/irandom">
+                        <input type="submit" value="random">
+                    </form>
                 </div>
             </div>
 
             <div class="container">
                 <p>reverse image prompt</p>
                 <div class="left-section">
-                    <form action="/generate/image" method="post" enctype="multipart/form-data" onsubmit="return validateForm()">
+                    <form action="/generate/image" method="post" enctype="multipart/form-data" onsubmit="return validateImageForm()">
                         <label for="image">Upload Image:</label>
                         <div class="input">
                             <input type="file" name="image" accept="image/*" required>
@@ -66,11 +66,6 @@
         </div>
     </div>
 
-    <div class="loading" id="loading">
-        <div class="spinner"></div>
-        <h1>Generating...</h1>
-    </div>
-
     {% if not result %}
     <div class="image-preview">
         {% if not image_selected %}
@@ -80,6 +75,11 @@
         {% endif %}
     </div>
     {% endif %}
+
+    <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <h1>Generating...</h1>
+    </div>
 
     {% if result %}
         <div class="result">

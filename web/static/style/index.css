@@ -150,15 +150,15 @@ div h2 a:hover{
 }
 
 .card:nth-child(4) {
-  --hue: 100;
-  --saturation: 90%;
-  --lightness: 50%;
-}
-
-.card:nth-child(3) {
   --hue: 165;
   --saturation: 82.26%;
   --lightness: 51.37%;
+}
+
+.card:nth-child(3) {
+  --hue: 100;
+  --saturation: 90%;
+  --lightness: 50%;
 }
 
 .card:nth-child(2) {

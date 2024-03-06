@@ -106,10 +106,11 @@ def advance_image():
         parameter3 = request.form['parameter3']
 
         prompt_parts = [
-            "\nPlease write a detailed description in proper English to recreate this image in 120 to 340 word. Include the style, mood, lighting, and other key details. Use complete sentences and proofread for spelling and grammar mistakes:",
+            "\nPlease write a detailed description in proper English to recreate this image in 250 to 500 word. Include the style, mood, lighting, and other key details. Use complete sentences and proofread for spelling and grammar mistakes:",
             {"mime_type": "image/jpeg", "data": image_data},
             f"\naslo use this {parameter1} mood for the image description",
-            f"\nand for the image style please use the {parameter2} style for the main style also the {parameter3} as the secondary style."
+            f"\nand for the image style please use the {parameter2} style for the main style also the {parameter3} as the secondary style.",
+            f"\ndon't forget to make it as details and structural as possible"
         ]
 
         response_text = generate_content(prompt_parts)
