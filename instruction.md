@@ -3,6 +3,7 @@
 ## Initial Setup
 
 1. **Clone the Repository:**
+
    - Open a terminal or command prompt.
    - Run the following commands:
 
@@ -12,6 +13,7 @@
      ```
 
 2. **Create a Virtual Environment (Optional but recommended):**
+
    - If you don't have `virtualenv` installed, you can install it using:
 
      ```bash
@@ -25,6 +27,7 @@
      ```
 
    - Activate the virtual environment:
+
      - On Windows:
 
        ```bash
@@ -38,6 +41,7 @@
        ```
 
 3. **Install Dependencies:**
+
    - Install the required dependencies using:
 
      ```bash
@@ -45,17 +49,19 @@
      ```
 
 4. **Create the .env file:**
-    - Create a .env file on the `web` folder
-    - write this to that file:
 
-    ```text
-    GENAI_API_KEY="Your-api-key"
-    ```
+   - Create a .env file in the `web` folder.
+   - Add the following to the file:
 
-    - safe it and close the file.
-    - you can get your gemini api key from [here](https://makersuite.google.com/app/apikey) and follow the instruction there.
+   ```text
+   GENAI_API_KEY="Your-api-key"
+   ```
+
+   - Save and close the file.
+   - You can get your Gemini API key from [here](https://makersuite.google.com/app/apikey) and follow the instructions there.
 
 5. **Run the Application:**
+
    - Start the Flask application:
 
      ```bash
@@ -67,7 +73,9 @@
 ## Subsequent Runs
 
 1. **Activate Virtual Environment (if using venv):**
+
    - If the virtual environment is not already activated:
+
      - On Windows:
 
        ```bash
@@ -81,6 +89,7 @@
        ```
 
 2. **Run the Application:**
+
    - Start the Flask application:
 
      ```bash
@@ -91,14 +100,15 @@
 
 ## Usage
 
-- **access:**
-  - now you can access it trough `http://127.0.0.1:5000`.
+- **Access:**
+  - You can now access it through `http://127.0.0.1:5000`.
 
-NB: Remember to deactivate the virtual environment when you're done:
+Note: Remember to deactivate the virtual environment when you're done:
 
 ```bash
 # On Windows:
 deactivate
+
 # On Unix or MacOS:
 deactivate
 ```
