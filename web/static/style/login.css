@@ -1,0 +1,102 @@
+body {
+    font-family: 'Montserrat', sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column; /* Updated to column layout */
+    align-items: center;
+    height: 100vh;
+    background-color: #121212;
+    color: #fff;
+    margin: 12%;
+}
+
+h1 {
+    font-family: 'Caveat', cursive;
+    font-size: 2.5em;
+    text-align: center;
+    margin-top: 20px; /* Added margin on top */
+}
+
+.main {
+    text-align: center;
+}
+
+.welcome {
+    margin-bottom: 20px;
+}
+
+.container {
+    display: flex;
+    flex-direction: column; /* Adjusted to column layout */
+    align-items: center;
+    background-color: #212121;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+}
+
+form {
+    width: 65%;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    color: #fff;
+}
+
+input {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 16px;
+    box-sizing: border-box;
+    background-color: #333;
+    color: #fff;
+    border: 1px solid #555;
+    background-color: #352a3a;
+    color: white;
+    border-radius: 15px;
+    font-size: 1rem;
+    margin: 4px;
+}
+
+button {
+    background-color: #644cafd1;
+    color: #fff;
+    border: none;
+    padding: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 5%;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+/* Add the following to hide the signup form initially */
+#signupForm {
+    display: none;
+}
+
+/* Media queries for tablet and mobile styles */
+@media only screen and (max-width: 768px) {
+    body {
+        margin: 5%;
+    }
+
+    form {
+        width: 80%;
+    }
+}
+
+@media only screen and (max-width: 480px) {
+    body {
+        margin: 2%;
+    }
+
+    form {
+        width: 90%;
+    }
+}

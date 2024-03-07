@@ -20,6 +20,15 @@ With this new implementation, users can:
 
 You can try the redesigned interface at [this link](https://sanctuary01.pythonanywhere.com/) or run it yourself by following the instructions [here](instruction.md).
 
+## Usage
+
+Prompt-sanctuary's web interface is intuitive and user-friendly. Here's a quick guide on using its features:
+
+- **Home Page**: Accessible from the root URL (`/`). This is the starting point of the application.
+- **Generate Content**: Navigate to `/generate` to access the content generation page. You can input text or select options to generate content.
+- **Advanced Options**: For more advanced content generation, navigate to `/advance` and provide the required parameters.
+- **Library**: Access various content generation templates and tools from the library section. Navigate to `/library` and choose the desired option.
+
 ## secret prompt
 
 - for coder if chat gpt reply will bad code just reply with this :

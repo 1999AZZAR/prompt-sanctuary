@@ -1,47 +1,139 @@
 # app.py
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, url_for, session
 from gemini_text import generate_response, generate_random, generate_vrandom, generate_imgdescription
 from gemini_vis import generate_content
 from advance import response, iresponse
 from werkzeug.exceptions import BadRequestKeyError
+from werkzeug.security import generate_password_hash, check_password_hash
+from functools import wraps
+import sqlite3
 
 app = Flask(__name__)
+DATABASE = 'web/database/user.db'
 
+# Create table if not exists
+def create_table():
+    conn = sqlite3.connect(DATABASE)
+    cursor = conn.cursor()
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS users (
+            username TEXT NOT NULL,
+            password TEXT NOT NULL
+        )
+    ''')
+    conn.commit()
+    conn.close()
+
+# Initialize the app
+create_table()
+app.secret_key = 'hahahaha'  # Add this line
+
+# Login decorator
+def required_login(func):
+    @wraps(func)
+    def decorated_function(*args, **kwargs):
+        # Check if the user is logged in
+        if 'username' not in session:
+            return redirect(url_for('index'))
+        return func(*args, **kwargs)
+    return decorated_function
+
+# Routes
 @app.route('/')
+def index():
+    return render_template('login.html')
+
+@app.route('/signup', methods=['POST'])
+def signup():
+    username = request.form['username']
+    password = request.form['password']
+
+    conn = sqlite3.connect(DATABASE)
+    cursor = conn.cursor()
+
+    # Check if the username already exists
+    cursor.execute('SELECT * FROM users WHERE username = ?', (username,))
+    user = cursor.fetchone()
+
+    if user:
+        return 'Username already exists. Please choose another.'
+
+    # Hash the password before saving
+    hashed_password = generate_password_hash(password)
+
+    # Insert the new user into the database
+    cursor.execute('INSERT INTO users (username, password) VALUES (?, ?)', (username, hashed_password))
+
+    conn.commit()
+    conn.close()
+
+    return redirect(url_for('index'))
+
+@app.route('/login', methods=['POST'])
+def login():
+    username = request.form['username']
+    password = request.form['password']
+
+    conn = sqlite3.connect(DATABASE)
+    cursor = conn.cursor()
+
+    # Check if the username exists
+    cursor.execute('SELECT * FROM users WHERE username = ?', (username,))
+    user = cursor.fetchone()
+
+    conn.close()
+
+    if user and check_password_hash(user[1], password):  # Change the index to 1 for the password
+        # Set the username in the session to indicate a successful login
+        session['username'] = username
+        return redirect(url_for('home'))
+    else:
+        return 'Invalid username or password. Please try again.'
+
+@app.route('/home')
+@required_login
 def home():
     return render_template('index.html')
 
+
 @app.route('/generate')
+@required_login
 def generate():
     return render_template('prompts/generator/generator.html', result=None)
 
 @app.route('/generate/tprompt', methods=['POST'])
+@required_login
 def process():
     user_input = request.form['user_input']
     response_text = generate_response(user_input)
     return render_template('prompts/generator/generator.html', result=response_text)
 
 @app.route('/generate/trandom', methods=['POST'])
+@required_login
 def random_prompt():
     response_text = generate_random()
     return render_template('prompts/generator/generator.html', result=response_text)
 
 @app.route('/generate/iprompt', methods=['POST'])
+@required_login
 def vprocess():
     user_input = request.form['user_input']
     response_text = generate_imgdescription(user_input)
     return render_template('prompts/generator/generator.html', result=response_text)
 
 @app.route('/generate/irandom', methods=['POST'])
+@required_login
 def vrandom_prompt():
     response_text = generate_vrandom()
     return render_template('prompts/generator/generator.html', result=response_text)
 
 @app.route('/reverse')
+@required_login
 def reverse():
     return render_template('prompts/generator/reverse.html', result=None)
 
 @app.route('/generate/image', methods=['POST'])
+@required_login
 def reverse_image():
     try:
         image_file = request.files['image']
@@ -63,10 +155,12 @@ def reverse_image():
         return f"Error: {str(e)}"
 
 @app.route('/advance')
+@required_login
 def advance():
     return render_template('prompts/generator/advance.html', result=None)
 
 @app.route('/advance/generate', methods=['POST'])
+@required_login
 def generate_advance_response():
     try:
         parameter0 = request.form['parameter0']
@@ -82,6 +176,7 @@ def generate_advance_response():
         return render_template('prompts/generator/advance.html', result=error_message)
 
 @app.route('/advance/igenerate', methods=['POST'])
+@required_login
 def generate_advance_iresponse():
     try:
         parameter0 = request.form['parameter0']
@@ -97,6 +192,7 @@ def generate_advance_iresponse():
         return render_template('prompts/generator/advance.html', result=error_message)
 
 @app.route('/advance/image', methods=['POST'])
+@required_login
 def advance_image():
     try:
         image_file = request.files['image']
@@ -120,7 +216,7 @@ def advance_image():
         return f"Error: {str(e)}"
 
 @app.route('/library')
-def index():
+def library():
     return render_template('prompts/library.html')
 
 @app.route('/library/promptimpro')

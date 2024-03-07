@@ -1,6 +1,7 @@
 other/
 reverseimage/
 sanctuary/
+web/database/*.*
 web/.env
-web/__pycache__/*.*
+web/__pycache__
 .fuse_*

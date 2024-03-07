@@ -101,7 +101,11 @@
 ## Usage
 
 - **Access:**
-  - You can now access it through `http://127.0.0.1:5000`.
+  - You can now access it through `http://127.0.0.1:5000` or `http:localhost:5000`.
+- **Home Page**: Accessible from the root URL (`/`). This is the starting point of the application.
+- **Generate Content**: Navigate to `/generate` to access the content generation page. You can input text or select options to generate content.
+- **Advanced Options**: For more advanced content generation, navigate to `/advance` and provide the required parameters.
+- **Library**: Access various content generation templates and tools from the library section. Navigate to `/library` and choose the desired option.
 
 Note: Remember to deactivate the virtual environment when you're done:
 

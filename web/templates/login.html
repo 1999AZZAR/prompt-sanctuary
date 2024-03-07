@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style/login.css') }}">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='icon/favicon.ico') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <script src="{{ url_for('static', filename='script/login.js') }}"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <title>Login/Signup</title>
+</head>
+<body>
+    <h1><strong><a>Prompt Sanctuary</a></strong></h1>
+    <div class="main">
+        <div class="welcome">
+            <p>Welcome to the Prompt Sanctuary, Login to Explore the functionalities of our platform</p>
+        </div>
+
+        <div class="container">
+            <form id="loginForm" action="/login" method="post">
+                <h2>Login</h2>
+                <label for="usernameLogin">Username:</label>
+                <input type="text" id="usernameLogin" name="username" required>
+                <label for="passwordLogin">Password:</label>
+                <input type="password" id="passwordLogin" name="password" required>
+                <button type="submit">Login</button>
+                <p id="signupLink">Don't have an account? <a href="#" onclick="toggleForms()">Signup</a></p>
+            </form>
+
+            <form id="signupForm" action="/signup" method="post">
+                <h2>Signup</h2>
+                <label for="usernameSignup">Username:</label>
+                <input type="text" id="usernameSignup" name="username" required>
+                <label for="passwordSignup">Password:</label>
+                <input type="password" id="passwordSignup" name="password" required>
+                <label for="confirmPassword">Confirm Password:</label>
+                <input type="password" id="confirmPassword" name="confirmPassword" required>
+                <button type="submit">Signup</button>
+                <p id="loginLink">Already have an account? <a href="#" onclick="toggleForms()">Login</a></p>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
