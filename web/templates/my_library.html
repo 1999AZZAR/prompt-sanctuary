@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>My Library</title>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='icon/favicon.ico') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style/index.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style/side.css') }}">
+    <script defer src="{{ url_for('static', filename='script/side_panel.js') }}"></script>
+    <script defer src="{{ url_for('static', filename='script/card.js') }}"></script>
+</head>
+
+<body style="background: linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)), url('{{ url_for('static', filename='icon/bg.jpg') }}') center/cover no-repeat fixed;">
+    <!-- Side Panel -->
+    <div class="side-panel" id="sidePanel">
+        <div class="image-logo">
+            <img id="preview-logo" alt="Image Preview" src="{{ url_for('static', filename='icon/sanctuary.png') }}">
+        </div>
+        <div class="side-list" id="side-list">
+            <ul>
+                <li><a href="{{ url_for('logout') }}">Logout</a></li>
+                <li><a href="{{ url_for('home') }}">home</a></li>
+                <li><a href="{{ url_for('mylib')}}">My Library</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <h1 id="toggleButton" onclick="toggleSidePanel()"><strong>Personal Prompts Library</strong></h1>
+
+    <div class="main">
+        <h3>Here are Your saved prompts:</h3>
+        {% if saved_prompts %}
+            <div id="imageBoxContainer" class="flex-container">
+                {% for prompt in saved_prompts %}
+                    <div class="prompt-box">
+                        <h4>{{ prompt[0] }}</h4>
+                        <p>{{ prompt[1] }}</p>
+                        <button class="copy-button" data-clipboard-text="{{ prompt[1] }}">Copy Prompt</button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p>No saved prompts yet.</p>
+        {% endif %}
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.8/clipboard.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            new ClipboardJS('.copy-button', {
+                text: function (trigger) {
+                    return trigger.getAttribute('data-clipboard-text');
+                }
+            }).on('success', function (e) {
+                e.clearSelection();
+                alert('Prompt copied to clipboard!');
+            });
+        });
+    </script>
+</body>
+</html>

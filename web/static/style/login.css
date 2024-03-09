@@ -18,6 +18,18 @@ h1 {
     margin-top: 20px; /* Added margin on top */
 }
 
+strong:hover{
+    color:#ffd477;
+}
+
+a {
+    color: aqua;
+}
+
+a:hover {
+    color: rgb(183, 255, 0);
+}
+
 .main {
     text-align: center;
 }
@@ -30,7 +42,7 @@ h1 {
     display: flex;
     flex-direction: column; /* Adjusted to column layout */
     align-items: center;
-    background-color: #212121;
+    background-color: #2121219c;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);

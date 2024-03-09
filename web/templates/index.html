@@ -8,11 +8,27 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Caveat&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='style/index.css') }}">
+    <script defer src="{{ url_for('static', filename='script/side_panel.js') }}"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style/side.css') }}">
     <script defer src="{{ url_for('static', filename='script/card.js') }}"></script>
 </head>
 
 <body style="background: linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)), url('{{ url_for('static', filename='icon/bg.jpg') }}') center/cover no-repeat fixed;">
-    <h1><strong><a href="{{ url_for('home') }}" tabindex="1">Prompt Sanctuary</a></strong></h1>
+    <!-- Side Panel -->
+    <div class="side-panel" id="sidePanel">
+        <div class="image-logo">
+            <img id="preview-logo" alt="Image Preview" src="{{ url_for('static', filename='icon/sanctuary.png') }}">
+        </div>
+        <div class="side-list" id="side-list">
+            <ul>
+                <li><a href="{{ url_for('logout') }}">Logout</a></li>
+                <li><a href="{{ url_for('home') }}">home</a></li>
+                <li><a href="{{ url_for('mylib')}}">My Library</a></li>
+            </ul>
+        </div>
+    </div>
+    
+    <h1 id="toggleButton" onclick="toggleSidePanel()"><strong>Prompt Sanctuary</strong></h1>
 
     <p>Welcome to the Prompt Sanctuary, Explore the functionalities of our platform:</p>
     <div class="content-container">

@@ -35,7 +35,7 @@ body {
 }
 
 p {
-  background-color: #00000065;
+  background-color: #000000ab;
   font-family: 'Rubik';
   text-align: justify;
   font-size: 0.95rem;
@@ -241,6 +241,20 @@ nav > ul > li:first-child {
   list-style: none;
 }
 
+@media only screen and (max-width: 810px) {
+  .episode {
+    display: block;
+  }
+
+  .nav-menu {
+    display: none;
+  }
+
+  .episode__number {
+    display: none;
+  }
+}
+
 /* Common Styles for Mobile and Tablet */
 @media only screen and (max-width: 768px) {
   body {
@@ -255,14 +269,11 @@ nav > ul > li:first-child {
   }
 
   .episode__number {
-    font-size: 10vw;
-    height: auto;
+    display: none;
   }
 
-  .sub-menu-parent:focus .sub-menu,
-  .sub-menu-parent:focus-within .sub-menu,
-  .sub-menu-parent:hover .sub-menu {
-    transform: translateY(0) translateX(-90%);
+  .episode {
+    display: block;
   }
 
   .nav-menu {
@@ -273,7 +284,7 @@ nav > ul > li:first-child {
 /* Mobile Styles */
 @media only screen and (max-width: 480px) {
   .nav-menu {
-    justify-content: space-between;
+    display: none;
   }
 
   nav ul {

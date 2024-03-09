@@ -9,11 +9,11 @@ from functools import wraps
 import sqlite3
 
 app = Flask(__name__)
-DATABASE = 'web/database/user.db'
+USER_DATABASE = 'web/database/user.db'
+PROMPT_DATABASE = 'web/database/prompt_data.db'
 
-# Create table if not exists
 def create_table():
-    conn = sqlite3.connect(DATABASE)
+    conn = sqlite3.connect(USER_DATABASE)
     cursor = conn.cursor()
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS users (
@@ -23,16 +23,29 @@ def create_table():
     ''')
     conn.commit()
     conn.close()
-
-# Initialize the app
+    
 create_table()
-app.secret_key = 'hahahaha'  # Add this line
+app.secret_key = 'hahahaha' 
+
+def create_prompt_table(username):
+    conn = sqlite3.connect(PROMPT_DATABASE)
+    cursor = conn.cursor()
+
+    cursor.execute(f'''
+        CREATE TABLE IF NOT EXISTS {username} (
+            title TEXT,
+            prompt TEXT,
+            time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    ''')
+
+    conn.commit()
+    conn.close()
 
 # Login decorator
 def required_login(func):
     @wraps(func)
     def decorated_function(*args, **kwargs):
-        # Check if the user is logged in
         if 'username' not in session:
             return redirect(url_for('index'))
         return func(*args, **kwargs)
@@ -48,20 +61,17 @@ def signup():
     username = request.form['username']
     password = request.form['password']
 
-    conn = sqlite3.connect(DATABASE)
+    conn = sqlite3.connect(USER_DATABASE)
     cursor = conn.cursor()
 
-    # Check if the username already exists
     cursor.execute('SELECT * FROM users WHERE username = ?', (username,))
     user = cursor.fetchone()
 
     if user:
         return 'Username already exists. Please choose another.'
 
-    # Hash the password before saving
     hashed_password = generate_password_hash(password)
 
-    # Insert the new user into the database
     cursor.execute('INSERT INTO users (username, password) VALUES (?, ?)', (username, hashed_password))
 
     conn.commit()
@@ -74,27 +84,59 @@ def login():
     username = request.form['username']
     password = request.form['password']
 
-    conn = sqlite3.connect(DATABASE)
+    conn = sqlite3.connect(USER_DATABASE)
     cursor = conn.cursor()
 
-    # Check if the username exists
     cursor.execute('SELECT * FROM users WHERE username = ?', (username,))
     user = cursor.fetchone()
 
     conn.close()
 
-    if user and check_password_hash(user[1], password):  # Change the index to 1 for the password
-        # Set the username in the session to indicate a successful login
+    if user and check_password_hash(user[1], password): 
         session['username'] = username
         return redirect(url_for('home'))
     else:
         return 'Invalid username or password. Please try again.'
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('index'))
 
 @app.route('/home')
 @required_login
 def home():
     return render_template('index.html')
 
+from sqlite3 import OperationalError
+
+@app.route('/mylib')
+@required_login
+def mylib():
+    try:
+        username = session['username']
+        table_name = username  # Use the actual username as the table name
+
+        conn = sqlite3.connect(PROMPT_DATABASE)
+        cursor = conn.cursor()
+
+        try:
+            # Check if the table exists
+            cursor.execute(f'SELECT 1 FROM {table_name} LIMIT 1')
+        except OperationalError:
+            # Table doesn't exist, display a message
+            conn.close()
+            return render_template('my_library.html', saved_prompts=None)
+
+        # Retrieve saved prompts for the user
+        cursor.execute(f'SELECT title, prompt, time FROM {table_name}')
+        saved_prompts = cursor.fetchall()
+
+        conn.close()
+
+        return render_template('my_library.html', saved_prompts=saved_prompts)
+    except Exception as e:
+        return f"Error: {str(e)}"
 
 @app.route('/generate')
 @required_login
@@ -215,7 +257,30 @@ def advance_image():
     except Exception as e:
         return f"Error: {str(e)}"
 
+@app.route('/advance/save', methods=['POST'])
+@required_login
+def save_prompt():
+    try:
+        title = request.form['title']
+        prompt = request.form['prompt']
+
+        username = session['username']
+        create_prompt_table(username)  # Ensure the table is created before attempting to insert data
+
+        conn = sqlite3.connect(PROMPT_DATABASE)
+        cursor = conn.cursor()
+
+        cursor.execute(f'INSERT INTO {username} (title, prompt) VALUES (?, ?)', (title, prompt))
+
+        conn.commit()
+        conn.close()
+
+        return 'Prompt saved successfully!'
+    except Exception as e:
+        return f"Error: {str(e)}"
+
 @app.route('/library')
+@required_login
 def library():
     return render_template('prompts/library.html')
 

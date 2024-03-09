@@ -5,29 +5,12 @@
   margin: 0;
 }
 
-/* font  */
-@font-face {
-  font-family: "Rubik";
-  src: url("../font/Rubik.ttf") format("TrueType");
-}
-
-@font-face {
-  font-family: "Caveat";
-  src: url("../font/Caveat.ttf") format("TrueType");
-}
-
-@font-face {
-  font-family: "Montserrat";
-  src: url("../font/Montserrat.ttf") format("TrueType");
-}
-
 html::-webkit-scrollbar {
   display: none;
 }
 
 body {
-  font-family: 'Caveat', cursive;
-  font-family: 'Montserrat', cursive;
+  font-family: 'Montserrat', sans-serif;
   color: rgb(255, 255, 255);
   margin-left: 10%;
   margin-right: 10%;
@@ -67,11 +50,11 @@ h3, h4, h5, h6 {
 
 h1, h2 {
   margin-top: 15px;
-  font-family: 'Montserrat';
   margin-bottom: 15px;
 }
 
 h1 {
+  font-family: 'Caveat', cursive;
   font-size: 2.375rem;
   color: purple !important;
 }
@@ -89,6 +72,7 @@ h1 strong:hover{
 }
 
 h2 {
+  font-family: 'Montserrat';
   font-size: 2.125rem;
   color: yellow;
 }
@@ -100,6 +84,7 @@ h3 {
 
 h4 {
   font-size: 1.625rem;
+  font-family: 'Caveat', cursive;
 }
 
 a {
@@ -145,7 +130,7 @@ div h2 a:hover{
   grid-template-rows: auto auto auto 1fr;
   align-items: start;
   gap: 0.8em;
-  background-color: #2b2b2b69;
+  background-color: #2b2b2b9a;
   border-radius: 15px;
 }
 
@@ -331,5 +316,13 @@ div h2 a:hover{
 
   .cta {
     font-size: 1.2rem;
+  }
+
+  .side-panel {
+    display: none; /* Hide side panel on smaller screens */
+  }
+
+  .main-content {
+      margin-left: 0;
   }
 }
