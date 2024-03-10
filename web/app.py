@@ -1,4 +1,5 @@
 # app.py
+import secrets
 from flask import Flask, render_template, request, redirect, url_for, session
 from gemini_text import generate_response, generate_random, generate_vrandom, generate_imgdescription
 from gemini_vis import generate_content
@@ -33,6 +34,7 @@ def create_prompt_table(username):
 
     cursor.execute(f'''
         CREATE TABLE IF NOT EXISTS {username} (
+            random_val TEXT,
             title TEXT,
             prompt TEXT,
             time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -42,7 +44,6 @@ def create_prompt_table(username):
     conn.commit()
     conn.close()
 
-# Login decorator
 def required_login(func):
     @wraps(func)
     def decorated_function(*args, **kwargs):
@@ -51,7 +52,6 @@ def required_login(func):
         return func(*args, **kwargs)
     return decorated_function
 
-# Routes
 @app.route('/')
 def index():
     return render_template('login.html')
@@ -115,21 +115,18 @@ from sqlite3 import OperationalError
 def mylib():
     try:
         username = session['username']
-        table_name = username  # Use the actual username as the table name
+        table_name = username 
 
         conn = sqlite3.connect(PROMPT_DATABASE)
         cursor = conn.cursor()
 
         try:
-            # Check if the table exists
             cursor.execute(f'SELECT 1 FROM {table_name} LIMIT 1')
         except OperationalError:
-            # Table doesn't exist, display a message
             conn.close()
             return render_template('my_library.html', saved_prompts=None)
 
-        # Retrieve saved prompts for the user
-        cursor.execute(f'SELECT title, prompt, time FROM {table_name}')
+        cursor.execute(f'SELECT random_val, title, prompt, time FROM {table_name}')
         saved_prompts = cursor.fetchall()
 
         conn.close()
@@ -263,19 +260,39 @@ def save_prompt():
     try:
         title = request.form['title']
         prompt = request.form['prompt']
+        random_value = secrets.token_urlsafe(8)  # Generate a random value
 
         username = session['username']
-        create_prompt_table(username)  # Ensure the table is created before attempting to insert data
+        create_prompt_table(username)
 
         conn = sqlite3.connect(PROMPT_DATABASE)
         cursor = conn.cursor()
 
-        cursor.execute(f'INSERT INTO {username} (title, prompt) VALUES (?, ?)', (title, prompt))
+        cursor.execute(f'INSERT INTO {username} (random_val, title, prompt) VALUES (?, ?, ?)', (random_value, title, prompt))
 
         conn.commit()
         conn.close()
 
         return 'Prompt saved successfully!'
+    except Exception as e:
+        return f"Error: {str(e)}"
+
+@app.route('/delete_prompt', methods=['POST'])
+@required_login
+def delete_prompt():
+    try:
+        prompt_id = request.form['prompt_id']
+        username = session['username']
+
+        conn = sqlite3.connect(PROMPT_DATABASE)
+        cursor = conn.cursor()
+
+        cursor.execute(f'DELETE FROM {username} WHERE random_val = ?', (prompt_id,))
+
+        conn.commit()
+        conn.close()
+
+        return redirect(url_for('mylib'))
     except Exception as e:
         return f"Error: {str(e)}"
 

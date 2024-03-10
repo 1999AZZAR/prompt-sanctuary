@@ -1,3 +1,4 @@
 google-generativeai
 flask
 python-dotenv
+retrying

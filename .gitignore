@@ -4,4 +4,5 @@ sanctuary/
 web/database/*.*
 web/.env
 web/__pycache__
+web/get_model.py
 .fuse_*

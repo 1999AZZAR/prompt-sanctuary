@@ -1,0 +1,29 @@
+.prompt-box {
+    margin: 5% 5% 2% 2%;
+}
+
+.prompt-box p {
+    margin-left: 3%;
+    font-size: 0.95em;
+}
+
+.prompt-box h4 {
+    font-size: 1.94em;
+}
+
+button {
+    color: rgb(255 255 255);
+    font-family: 'Rubik';
+    font-size: 1rem;
+    background-color: #4b006e78;
+    border: 2px solid #56565657;
+    border-radius: 15px;
+    -webkit-border-radius: 15px;
+    -moz-border-radius: 15px;
+    -ms-border-radius: 15px;
+    -o-border-radius: 15px;
+}
+
+button:hover {
+    background-color: #5c0187e2;
+}

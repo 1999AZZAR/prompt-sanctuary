@@ -1,5 +1,5 @@
- /* font  */
- @font-face {
+/* Font */
+@font-face {
   font-family: "Rubik";
   src: url("../font/Rubik.ttf") format("TrueType");
 }
@@ -14,7 +14,7 @@
   src: url("../font/Montserrat.ttf") format("TrueType");
 }
 
-/* global */
+/* Global Styles */
 *,
 *::before,
 *::after {
@@ -23,11 +23,8 @@
 
 body {
   font-family: 'Montserrat', cursive;
-  color: rgb(255, 255, 255);
-  margin-left: 5%;
-  margin-right: 10%;
-  margin-top: 8%;
-  margin-bottom: 8%;
+  color: #ffffff;
+  margin: 8% 10%;
   display: grid;
   place-items: center;
   transition: margin-right 0.3s ease;
@@ -40,17 +37,17 @@ p {
   text-align: justify;
   font-size: 0.95rem;
   border: 2px solid #565656;
-  border-radius: 10px; 
+  border-radius: 10px;
   padding: 10px;
-  margin: 10px 0px;
+  margin: 10px 0;
 }
 
 p:hover {
-  color:rgb(254, 230, 203)
+  color: #fee6cb;
 }
 
-strong:hover{
-  color:#ffd477;
+strong:hover {
+  color: #ffd477;
 }
 
 a {
@@ -59,15 +56,13 @@ a {
 }
 
 a:hover {
-  color: rgb(255, 132, 0);
+  color: #ff8400;
   text-decoration: none;
 }
 
-
 h1, h2 {
-  margin-top: 15px;
+  margin: 15px 0;
   font-family: 'Montserrat';
-  margin-bottom: 15px;
 }
 
 h1 {
@@ -75,15 +70,7 @@ h1 {
   color: purple !important;
 }
 
-h1 a {
-  color: purple !important;
-}
-
-h1 a:hover {
-  color: rgb(204, 0, 255) !important;
-}
-
-h1 strong:hover{
+h1 a, h1 a:hover, h1 strong:hover {
   color: rgb(204, 0, 255) !important;
 }
 
@@ -115,7 +102,7 @@ ul {
   padding-bottom: 20px;
 }
 
-/* number sides */
+/* Number Sides */
 .container {
   width: 95%;
   max-width: 1220px;
@@ -146,25 +133,23 @@ ul {
 }
 
 .episode__content .title {
-  font-weight: 600
+  font-weight: 600;
 }
 
 .episode__content .story {
   line-height: 26px;
 }
 
-
-
 html::-webkit-scrollbar {
   display: none;
 }
 
-/* menu items */
+/* Menu Items */
 .sticky-header {
   position: relative;
   top: 0;
   right: 0;
-  padding: 0px 0px 0px 15px;
+  padding: 0 0 0 15px;
   z-index: 100;
 }
 
@@ -241,15 +226,13 @@ nav > ul > li:first-child {
   list-style: none;
 }
 
+/* Media Queries */
 @media only screen and (max-width: 810px) {
   .episode {
     display: block;
   }
 
-  .nav-menu {
-    display: none;
-  }
-
+  .nav-menu,
   .episode__number {
     display: none;
   }
@@ -258,10 +241,7 @@ nav > ul > li:first-child {
 /* Common Styles for Mobile and Tablet */
 @media only screen and (max-width: 768px) {
   body {
-    margin-left: 3%;
-    margin-right: 3%;
-    margin-top: 5%;
-    margin-bottom: 5%;
+    margin: 5% 3%;
   }
 
   h1 {
@@ -272,12 +252,9 @@ nav > ul > li:first-child {
     display: none;
   }
 
-  .episode {
-    display: block;
-  }
-
+  .episode,
   .nav-menu {
-    display: none;
+    display: block;
   }
 }
 

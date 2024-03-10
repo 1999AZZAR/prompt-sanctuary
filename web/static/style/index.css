@@ -239,6 +239,11 @@ div h2 a:hover{
   background: hsla(var(--hsl), 0.1);
 }
 
+div#imageBoxContainer {
+  display: flex;
+  flex-direction: column-reverse;
+}
+
 /* Mobile Styles */
 @media only screen and (max-width: 480px) {
   body {
