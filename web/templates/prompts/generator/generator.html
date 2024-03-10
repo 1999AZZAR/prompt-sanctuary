@@ -14,7 +14,7 @@
 <body>
     <!-- Side Panel -->
     <div class="side-panel" id="sidePanel">
-        <div class="image-logo">
+        <div id="toggleButton" onclick="toggleSidePanel()" class="image-logo">
             <img id="preview-logo" alt="Image Preview" src="{{ url_for('static', filename='icon/sanctuary.png') }}">
         </div>
         <div class="side-list" id="side-list">

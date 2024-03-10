@@ -14,7 +14,7 @@
 <body>
     <!-- Side Panel -->
     <div class="side-panel" id="sidePanel">
-        <div class="image-logo">
+        <div id="toggleButton" onclick="toggleSidePanel()" class="image-logo">
             <img id="preview-logo" alt="Image Preview" src="{{ url_for('static', filename='icon/sanctuary.png') }}">
         </div>
         <div class="side-list" id="side-list">
@@ -62,7 +62,7 @@
                         </div>
                         <label for="parameter3">Knowledge base:</label>
                         <div class="input">
-                            <input type="text" name="parameter3" id="parameter3" placeholder="Enter the Knowledge base if any" required maxlength="1000">
+                            <input type="text" name="parameter3" id="parameter3" placeholder="Enter the Knowledge base if any" maxlength="1000">
                         </div>
                         <input type="submit" value="Generate">
                     </form>

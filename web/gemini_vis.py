@@ -3,8 +3,16 @@ import google.generativeai as genai
 from dotenv import load_dotenv
 
 load_dotenv()
-api_key = os.getenv('GENAI_API_KEY')
-genai.configure(api_key=api_key)
+api_keys = os.getenv('GENAI_API_KEY').split(',')
+current_key_index = 0
+
+def get_current_api_key():
+    global current_key_index
+    key = api_keys[current_key_index]
+    current_key_index = (current_key_index + 1) % len(api_keys)
+    return key
+
+genai.configure(api_key=get_current_api_key())
 
 generation_config = {
     "temperature": 0.75,
