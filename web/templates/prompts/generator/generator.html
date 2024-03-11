@@ -24,6 +24,13 @@
                 <li><a href="{{ url_for('mylib')}}">My Library</a></li>
             </ul>
         </div>
+        <div class="side-list" id="side-list">
+            <ul>
+                <li><a href="{{ url_for('library') }}">Prompt Library</a></li>
+                <li><a href="{{ url_for('generate') }}">Basic Prompt</a></li>
+                <li><a href="{{ url_for('advance')}}">Advance Prompt</a></li>
+            </ul>
+        </div>
     </div>
     
     <h1 class="center" id="toggleButton" onclick="toggleSidePanel()"><strong>Prompt Generator</strong></h1>
@@ -44,7 +51,7 @@
                     </form>
                 </div>
                 <div class="right-section">
-                    <form method="post" id="random" action="/generate/trandom">
+                    <form method="post" id="random" action="/generate/trandom" onsubmit="return loadingAnimation()">
                         <input type="submit" value="random">
                     </form>
                 </div>
@@ -62,7 +69,7 @@
                     </form>
                 </div>
                 <div class="right-section">
-                    <form method="post" id="random" action="/generate/irandom">
+                    <form method="post" id="random" action="/generate/irandom" onsubmit="return loadingAnimation()">
                         <input type="submit" value="random">
                     </form>
                 </div>
@@ -71,7 +78,7 @@
             <div class="container">
                 <p>reverse image prompt</p>
                 <div class="left-section">
-                    <form action="/generate/image" method="post" enctype="multipart/form-data" onsubmit="return validateImageForm()">
+                    <form action="/generate/image" method="post" enctype="multipart/form-data" onsubmit="return validateForm()">
                         <label for="image">Upload Image:</label>
                         <div class="input">
                             <input type="file" name="image" accept="image/*" required>

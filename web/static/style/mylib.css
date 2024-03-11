@@ -27,3 +27,7 @@ button {
 button:hover {
     background-color: #5c0187e2;
 }
+
+ol li {
+    font-family: 'Caveat', cursive;
+}

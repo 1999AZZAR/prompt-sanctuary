@@ -24,6 +24,13 @@
                 <li><a href="{{ url_for('mylib')}}">My Library</a></li>
             </ul>
         </div>
+        <div class="side-list" id="side-list">
+            <ul>
+                <li><a href="{{ url_for('library') }}">Prompt Library</a></li>
+                <li><a href="{{ url_for('generate') }}">Basic Prompt</a></li>
+                <li><a href="{{ url_for('advance')}}">Advance Prompt</a></li>
+            </ul>
+        </div>
     </div>
     
     <h1 class="center" id="toggleButton" onclick="toggleSidePanel()"><strong>Advanced Prompting</strong></h1>
@@ -35,7 +42,7 @@
             <div class="container">
                 <p>Generate Text Prompt</p>
                 <div class="left-section">
-                    <form method="post" action="/advance/generate" onsubmit="return validateForm()">
+                    <form method="post" action="/advance/generate" onsubmit="return loadingAnimation()">
                         <label for="parameter0">Use case:</label>
                         <div class="input">
                             <input type="text" name="parameter0" id="parameter0" placeholder="Enter your basic prompt" required maxlength="300">
@@ -72,7 +79,7 @@
             <div class="container">
                 <p>Generate Image Prompt</p>
                 <div class="left-section">
-                    <form method="post" action="/advance/igenerate" onsubmit="return validateForm()">
+                    <form method="post" action="/advance/igenerate" onsubmit="return loadingAnimation()">
                         <label for="parameter0">input:</label>
                         <div class="input">
                             <input type="text" name="parameter0" id="parameter0" placeholder="Enter your imagination" required maxlength="300">
@@ -151,7 +158,7 @@
             <div class="container">
                 <p>reverse image prompt</p>
                 <div class="left-section">
-                    <form action="/advance/image" method="post" enctype="multipart/form-data" onsubmit="return validateForm()">
+                    <form action="/advance/image" method="post" enctype="multipart/form-data" onsubmit="return loadingAnimation()">
                         <label for="image">Upload Image:</label>
                         <div class="input">
                             <input type="file" name="image" accept="image/*" required>

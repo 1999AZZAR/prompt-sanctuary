@@ -1,10 +1,10 @@
 function validateForm() {
-	var userInputText = document.getElementById("user_input_text").value.trim();
-	var userInputImage = document.getElementById("user_input_image").value.trim();
+	var far1 = document.getElementById("user_input_text").value.trim();
+	var far2 = document.getElementById("parameter0").value.trim();
+	var far3 = document.getElementById("user_input_image").value.trim();
 	var loading = document.getElementById("loading");
 
-	if (userInputText !== "" || userInputImage !== "") {
-		// Show loading animation
+	if (far1 !== "" || far2 !== "" || far3 !== "") {
 		loading.style.display = "flex";
 		return true;
 	} else {
@@ -12,23 +12,6 @@ function validateForm() {
 		return false;
 	}
 }
-
-function validateImageForm() {
-    var imageInput = document.getElementById("user_input_image");
-    var selectedFiles = imageInput.files;
-
-    if (selectedFiles.length === 0) {
-        alert("Please select an image.");
-        return false;
-    }
-
-    return true;
-}
-
-function hideLoading() {
-	var loading = document.getElementById("loading");
-	loading.style.display = "none";
-}        
 
 function copyToClipboard() {
 	var responseText = document.getElementById("response");
@@ -67,3 +50,10 @@ function previewImage() {
 document.addEventListener("DOMContentLoaded", function () {
 	previewImage();
 })
+
+function loadingAnimation() {
+    var loading = document.getElementById("loading");
+    loading.style.display = "flex";
+    
+    return true; 
+}

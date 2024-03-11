@@ -73,7 +73,7 @@ a:hover {
 }
 
 p {
-  background-color: #00000065;
+  background-color: #000000a1;
   font-family: 'Rubik';
   text-align: justify;
   font-size: 0.95rem;
@@ -120,7 +120,7 @@ code {
 }
 
 article {
-  background-color: rgba(0, 0, 0, 0);
+  background-color: rgb(0 0 0 / 59%);
   color: white;
   font-size: 0.9rem;
   border: 2px solid #565656;
@@ -146,7 +146,7 @@ details {
 }
 
 ul {
-  background-color: #00000075;
+  background-color: #000000a8;
   border-radius: 15px;
   padding-top: 10px;
   padding-bottom: 10px;

@@ -59,3 +59,12 @@ h4 {
 strong:hover{
     color:#ffd477;
 }
+
+
+@media only screen and (min-width: 481px) and (max-width: 768px) {
+
+    .side-panel {
+        width: 35%;
+        max-width: 318px;
+    }
+}
