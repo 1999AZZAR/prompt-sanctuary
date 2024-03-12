@@ -112,6 +112,7 @@ div h2 a:hover{
 }
 
 .cards {
+  margin: auto;
   position: relative;
 }
 
