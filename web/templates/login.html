@@ -21,6 +21,7 @@
         <div class="container">
             <form id="loginForm" action="/login" method="post">
                 <h2>Login</h2>
+                <input type="text" name="honeypot" style="display:none;">
                 <label for="usernameLogin">Username:</label>
                 <input type="text" id="usernameLogin" name="username" required>
                 <label for="passwordLogin">Password:</label>
@@ -31,6 +32,7 @@
 
             <form id="signupForm" action="/signup" method="post">
                 <h2>Signup</h2>
+                <input type="text" name="honeypot" style="display:none;">
                 <label for="usernameSignup">Username:</label>
                 <input type="text" id="usernameSignup" name="username" required>
                 <label for="passwordSignup">Password:</label>

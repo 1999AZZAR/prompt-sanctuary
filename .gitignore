@@ -6,3 +6,4 @@ web/.env
 web/__pycache__
 web/get_model.py
 .fuse_*
+web/static/image/*.*

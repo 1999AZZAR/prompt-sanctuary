@@ -1,17 +1,23 @@
 # app.py
 import secrets
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 from gemini_text import generate_response, generate_random, generate_vrandom, generate_imgdescription
 from gemini_vis import generate_content
 from advance import response, iresponse
 from werkzeug.exceptions import BadRequestKeyError
 from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
+from sqlite3 import OperationalError
 import sqlite3
+from response import GeminiChat
+from stability import Image_gen
+
 
 app = Flask(__name__)
 USER_DATABASE = 'web/database/user.db'
 PROMPT_DATABASE = 'web/database/prompt_data.db'
+chat_app = None  # Placeholder for GeminiChat instance
+image_generator = Image_gen()  # Initialize the Image_gen class
 
 def create_table():
     conn = sqlite3.connect(USER_DATABASE)
@@ -56,8 +62,35 @@ def required_login(func):
 def index():
     return render_template('login.html')
 
+@app.route('/trying')
+def trying():
+    return render_template('try.html')
+
+@app.route('/user_input', methods=['POST'])
+def handle_user_input():
+    user_input = request.get_json().get('user_input', '')
+    if user_input.startswith('/image'):
+        # Extract prompt from user input after '/image'
+        prompt = user_input[len('/image'):].strip()
+        prompt_text = prompt if prompt else 'Your prompt here'
+        image_path = image_generator.generate_image(prompt_text)
+        if image_path:
+            # Return the image file as a response
+            return jsonify({'image_path': image_path})
+        else:
+            return jsonify({'bot_response': 'Error generating image'})
+    else:
+        response = chat_app.generate_chat(user_input)
+        return jsonify({'bot_response': response})
+
 @app.route('/signup', methods=['POST'])
 def signup():
+    # Check the honeypot field
+    honeypot_value = request.form.get('honeypot', '')
+    if honeypot_value:
+        # Reject the request if the honeypot field is not empty
+        return 'Bot activity detected. Access denied.'
+    
     username = request.form['username']
     password = request.form['password']
 
@@ -81,6 +114,12 @@ def signup():
 
 @app.route('/login', methods=['POST'])
 def login():
+    # Check the honeypot field
+    honeypot_value = request.form.get('honeypot', '')
+    if honeypot_value:
+        # Reject the request if the honeypot field is not empty
+        return 'Bot activity detected. Access denied.'
+    
     username = request.form['username']
     password = request.form['password']
 
@@ -107,8 +146,6 @@ def logout():
 @required_login
 def home():
     return render_template('index.html')
-
-from sqlite3 import OperationalError
 
 @app.route('/mylib')
 @required_login
@@ -354,4 +391,5 @@ def standard():
     return render_template('prompts/coding_companion/standard.html')
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0",port=5000, debug=True)
+    chat_app = GeminiChat()  # Initialize chat_app here
+    app.run(host="0.0.0.0", port=5000, debug=True)

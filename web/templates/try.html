@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Bot Interface</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style/index.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style/try.css') }}">
+    <script defer src="{{ url_for('static', filename='script/side_panel.js') }}"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style/side.css') }}">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='icon/favicon.ico') }}">
+</head>
+<body style="background: linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)), url('{{ url_for('static', filename='icon/bg.jpg') }}') center/cover no-repeat fixed;">
+
+    <!-- Side Panel -->
+    <div class="side-panel" id="sidePanel">
+        <div id="toggleButton" onclick="toggleSidePanel()" class="image-logo">
+            <img id="preview-logo" alt="Image Preview" src="{{ url_for('static', filename='icon/sanctuary.png') }}">
+        </div>
+        <div class="side-list" id="side-list">
+            <ul>
+                <li><a href="{{ url_for('logout') }}">Logout</a></li>
+                <li><a href="{{ url_for('home') }}">home</a></li>
+                <li><a href="{{ url_for('mylib')}}">My Library</a></li>
+                <li><a href="{{ url_for('trying')}}">Prompt trial</a></li>
+            </ul>
+        </div>
+        <div class="side-list" id="side-list">
+            <ul>
+                <li><a href="{{ url_for('library') }}">Prompt Library</a></li>
+                <li><a href="{{ url_for('generate') }}">Basic Prompt</a></li>
+                <li><a href="{{ url_for('advance')}}">Advance Prompt</a></li>
+            </ul>
+        </div>
+    </div>
+    
+    <h1 id="toggleButton" onclick="toggleSidePanel()"><strong>Prompt Sanctuary</strong></h1>
+
+    <div id="chat-container">
+        <div id="chat-history">
+            <div id="loading-indicator" class="loading-indicator"></div>
+        </div>
+        <div id="input-area">
+            <input type="text" id="message-input" placeholder="Type a message...">
+            <button id="send-btn">Send</button>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='script/try.js') }}"></script>
+</body>
+</html>

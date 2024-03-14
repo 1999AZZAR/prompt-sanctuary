@@ -11,6 +11,23 @@
     <script defer src="{{ url_for('static', filename='script/side_panel.js') }}"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='style/side.css') }}">
     <script defer src="{{ url_for('static', filename='script/card.js') }}"></script>
+
+    <!-- seo -->
+    <meta name="description" content="Explore the functionalities of Prompt Sanctuary - a platform for generating and refining prompts. Access a prompt library, generate custom prompts, and explore advanced prompting features.">
+    <meta name="keywords" content="prompt sanctuary, prompt generator, prompt library, advanced prompting, prompt refinement, prompt generation, writing prompts, creative writing, prompt ideas, writing inspiration, writing exercises, writing generator, story prompts, fiction prompts, writing tools, writing community, writing resources, idea generator, story ideas, writing challenges, writing help">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://sanctuary01.pythonanywhere.com/">
+    <meta property="og:title" content="Prompt Sanctuary">
+    <meta property="og:description" content="Explore the functionalities of Prompt Sanctuary - a platform for generating and refining prompts. Access a prompt library, generate custom prompts, and explore advanced prompting features.">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://sanctuary01.pythonanywhere.com/">
+    <meta property="twitter:title" content="Prompt Sanctuary">
+    <meta property="twitter:description" content="Explore the functionalities of Prompt Sanctuary - a platform for generating and refining prompts. Access a prompt library, generate custom prompts, and explore advanced prompting features.">
+    <!-- seo end -->
 </head>
 
 <body style="background: linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)), url('{{ url_for('static', filename='icon/bg.jpg') }}') center/cover no-repeat fixed;">
@@ -24,6 +41,7 @@
                 <li><a href="{{ url_for('logout') }}">Logout</a></li>
                 <li><a href="{{ url_for('home') }}">home</a></li>
                 <li><a href="{{ url_for('mylib')}}">My Library</a></li>
+                <li><a href="{{ url_for('trying')}}">prompt trial</a></li>
             </ul>
         </div>
         <div class="side-list" id="side-list">
@@ -34,6 +52,7 @@
             </ul>
         </div>
     </div>
+    <!-- end of side panel -->
     
     <h1 id="toggleButton" onclick="toggleSidePanel()"><strong>Prompt Sanctuary</strong></h1>
 
