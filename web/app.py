@@ -14,8 +14,8 @@ from stability import Image_gen
 
 
 app = Flask(__name__)
-USER_DATABASE = 'web/database/user.db'
-PROMPT_DATABASE = 'web/database/prompt_data.db'
+USER_DATABASE = './web/database/user.db'
+PROMPT_DATABASE = './web/database/prompt_data.db'
 chat_app = None 
 image_generator = Image_gen() 
 
@@ -160,7 +160,7 @@ def handle_user_input():
         return 'Bot activity detected. Access denied.'
     user_input = request.get_json().get('user_input', '')
     if user_input.startswith('imagine'):
-        prompt = user_input[len('/image'):].strip()
+        prompt = user_input[len('imagine'):].strip()
         prompt_text = prompt if prompt else 'Your prompt here'
         image_path = image_generator.generate_image(prompt_text)
         if image_path:
