@@ -16,8 +16,8 @@ from stability import Image_gen
 app = Flask(__name__)
 USER_DATABASE = 'web/database/user.db'
 PROMPT_DATABASE = 'web/database/prompt_data.db'
-chat_app = None  # Placeholder for GeminiChat instance
-image_generator = Image_gen()  # Initialize the Image_gen class
+chat_app = None 
+image_generator = Image_gen() 
 
 def create_table():
     conn = sqlite3.connect(USER_DATABASE)
@@ -62,33 +62,10 @@ def required_login(func):
 def index():
     return render_template('login.html')
 
-@app.route('/trying')
-def trying():
-    return render_template('try.html')
-
-@app.route('/user_input', methods=['POST'])
-def handle_user_input():
-    user_input = request.get_json().get('user_input', '')
-    if user_input.startswith('/image'):
-        # Extract prompt from user input after '/image'
-        prompt = user_input[len('/image'):].strip()
-        prompt_text = prompt if prompt else 'Your prompt here'
-        image_path = image_generator.generate_image(prompt_text)
-        if image_path:
-            # Return the image file as a response
-            return jsonify({'image_path': image_path})
-        else:
-            return jsonify({'bot_response': 'Error generating image'})
-    else:
-        response = chat_app.generate_chat(user_input)
-        return jsonify({'bot_response': response})
-
 @app.route('/signup', methods=['POST'])
 def signup():
-    # Check the honeypot field
     honeypot_value = request.form.get('honeypot', '')
     if honeypot_value:
-        # Reject the request if the honeypot field is not empty
         return 'Bot activity detected. Access denied.'
     
     username = request.form['username']
@@ -114,10 +91,8 @@ def signup():
 
 @app.route('/login', methods=['POST'])
 def login():
-    # Check the honeypot field
     honeypot_value = request.form.get('honeypot', '')
     if honeypot_value:
-        # Reject the request if the honeypot field is not empty
         return 'Bot activity detected. Access denied.'
     
     username = request.form['username']
@@ -171,6 +146,30 @@ def mylib():
         return render_template('my_library.html', saved_prompts=saved_prompts)
     except Exception as e:
         return f"Error: {str(e)}"
+
+@app.route('/trying')
+@required_login
+def trying():
+    return render_template('try.html')
+
+@app.route('/user_input', methods=['POST'])
+@required_login
+def handle_user_input():
+    honeypot_value = request.form.get('honeypot', '')
+    if honeypot_value:
+        return 'Bot activity detected. Access denied.'
+    user_input = request.get_json().get('user_input', '')
+    if user_input.startswith('imagine'):
+        prompt = user_input[len('/image'):].strip()
+        prompt_text = prompt if prompt else 'Your prompt here'
+        image_path = image_generator.generate_image(prompt_text)
+        if image_path:
+            return jsonify({'image_path': image_path})
+        else:
+            return jsonify({'bot_response': 'Error generating image'})
+    else:
+        response = chat_app.generate_chat(user_input)
+        return jsonify({'bot_response': response})
 
 @app.route('/generate')
 @required_login
@@ -297,7 +296,7 @@ def save_prompt():
     try:
         title = request.form['title']
         prompt = request.form['prompt']
-        random_value = secrets.token_urlsafe(8)  # Generate a random value
+        random_value = secrets.token_urlsafe(8)
 
         username = session['username']
         create_prompt_table(username)
@@ -339,54 +338,67 @@ def library():
     return render_template('prompts/library.html')
 
 @app.route('/library/promptimpro')
+@required_login
 def promptinmpro():
     return render_template('prompts/global/prompt_improve.html')
 
 @app.route('/library/adjust')
+@required_login
 def adjust():
     return render_template('prompts/global/adjustable_iq.html')
 
 @app.route('/library/aerea')
+@required_login
 def aerea():
     return render_template('prompts/global/aerea.html')
 
 @app.route('/library/ultimate')
+@required_login
 def ultimate():
     return render_template('prompts/global/ultimate_knowladge.html')
 
 @app.route('/library/webdev')
+@required_login
 def webdev():
     return render_template('prompts/global/web_des.html')
 
 @app.route('/library/mutation')
+@required_login
 def mutation():
     return render_template('prompts/global/mutation.html')
 
 @app.route('/library/createch')
+@required_login
 def createch():
     return render_template('prompts/Writers_and_editors/CreaTech.html')
 
 @app.route('/library/enhancement')
+@required_login
 def enhancement():
     return render_template('prompts/Writers_and_editors/enhancement.html')
 
 @app.route('/library/journalist')
+@required_login
 def journalist():
     return render_template('prompts/Writers_and_editors/journalist.html')
 
 @app.route('/library/paraphrase')
+@required_login
 def paraphrase():
     return render_template('prompts/Writers_and_editors/paraphrase.html')
 
 @app.route('/library/emdev')
+@required_login
 def emdev():
     return render_template('prompts/coding_companion/emdev.html')
 
 @app.route('/library/queria')
+@required_login
 def queria():
     return render_template('prompts/coding_companion/queria.html')
 
 @app.route('/library/standard')
+@required_login
 def standard():
     return render_template('prompts/coding_companion/standard.html')
 

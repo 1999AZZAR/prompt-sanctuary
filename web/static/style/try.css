@@ -1,21 +1,24 @@
 body, html {
     height: 100%;
-    margin: 0;
-    font-family: 'Montserrat', sans-serif;
-    background-color: #121212;
-    color: #e0e0e0;
     display: flex;
     flex-direction: column;
+    align-items: center;
+}
+
+h1 {
+    margin: -12px;
 }
 
 #chat-container {
     display: flex;
     flex-direction: column;
+    position: absolute;
     height: 90%;
-    margin: 3% auto;
-    max-width: 800px;
+    margin: 5% 8%;
+    width: 84%;
     background-color: #1e1e1e;
     border-radius: 10px;
+    flex-wrap: nowrap;
 }
 
 #chat-history {
@@ -24,7 +27,6 @@ body, html {
     flex-grow: 1;
     padding: 10px;
     overflow-y: auto;
-    background-color: #262626;
     border-bottom: 1px solid #333;
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
@@ -36,7 +38,6 @@ body, html {
     background: #2c2c2c;
     border-bottom-left-radius: 10px;
     border-bottom-right-radius: 10px;
-    align-items: center;
 }
 
 #message-input {
@@ -68,7 +69,6 @@ body, html {
     margin: 5px 0;
     border-radius: 8px;
     max-width: 80%;
-    font-size: 0.9em;
 }
 
 .bot-message {
@@ -84,12 +84,6 @@ body, html {
     border: 1px solid #333;
 }
 
-.img-class {
-    align-self: flex-start;
-    max-width: 240px;
-    border-radius: 25px;
-}
-
 .loading-indicator {
     display: none;
     border: 3px solid #f3f3f3;
@@ -102,6 +96,14 @@ body, html {
     margin-right: 15px;
 }
 
+.img-class {
+    align-self: flex-start;
+    max-width: 240px;
+    border-radius: 15px;
+    padding: 1%;
+    background-color: #3c3f41;
+}
+
 @keyframes spin {
     0% {
         transform: rotate(0deg);
@@ -110,4 +112,34 @@ body, html {
     100% {
         transform: rotate(360deg);
     }
+}
+
+.modal-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999; /* Ensure it appears on top of other content */
+}
+
+.modal-content {
+    background-color: #262626de;
+    border-radius: 12px;
+    padding: 20px;
+    width: fit-content;
+    max-width: 700px;
+}
+
+.modal-content img {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+html::-webkit-scrollbar {
+    display: none;
 }
