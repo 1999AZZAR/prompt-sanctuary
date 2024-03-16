@@ -6,33 +6,45 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Caveat&family=Dancing+Script&display=swap" rel="stylesheet">
+    <!-- css -->
     <link rel="stylesheet" href="{{ url_for('static', filename='style/library.css') }}">
-    <script defer src="{{ url_for('static', filename='script/side_panel.js') }}"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='style/side.css') }}">
+    <!-- css end -->
+    <!-- js -->
+    <script defer src="{{ url_for('static', filename='script/side_panel.js') }}"></script>
+    <!-- js end -->
 
     <!-- seo -->
+    <!-- general -->
     <meta name="description" content="Explore the functionalities of Prompt Sanctuary - a platform for generating and refining prompts. Access a prompt library, generate custom prompts, and explore advanced prompting features.">
     <meta name="keywords" content="prompt sanctuary, prompt generator, prompt library, advanced prompting, prompt refinement, prompt generation, writing prompts, creative writing, prompt ideas, writing inspiration, writing exercises, writing generator, story prompts, fiction prompts, writing tools, writing community, writing resources, idea generator, story ideas, writing challenges, writing help, narrative prompts, plot inspiration, storytelling aids, writer's block solutions, creative story ideas, plot development tools, character creation prompts, dialogue prompts, writing prompt app, daily writing prompts, inspiration for writers, story starter, creative writing exercises, fictional writing prompts, writing prompt generator online, flash fiction prompts, novel writing prompts, writing practice, creative brainstorming, storytelling generator, prompting, prompt, llm, llama, gemini, openai, chatgpt">    
-    
+    <!-- general end -->
+
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://sanctuary01.pythonanywhere.com/">
     <meta property="og:title" content="Prompt Sanctuary">
     <meta property="og:description" content="Explore the functionalities of Prompt Sanctuary - a platform for generating and refining prompts. Access a prompt library, generate custom prompts, and explore advanced prompting features.">
+    <!-- Open Graph / Facebook end -->
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://sanctuary01.pythonanywhere.com/">
     <meta property="twitter:title" content="Prompt Sanctuary">
     <meta property="twitter:description" content="Explore the functionalities of Prompt Sanctuary - a platform for generating and refining prompts. Access a prompt library, generate custom prompts, and explore advanced prompting features.">
+    <!-- Twitter end -->
     <!-- seo end -->
 </head>
 <body style="background: linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)), url('{{ url_for('static', filename='icon/bg5.jpg') }}') center/cover no-repeat fixed;">
     <!-- Side Panel -->
     <div class="side-panel" id="sidePanel">
+        <!-- logo -->
         <div id="toggleButton" onclick="toggleSidePanel()" class="image-logo">
             <img id="preview-logo" alt="Image Preview" src="{{ url_for('static', filename='icon/sanctuary.png') }}">
         </div>
+        <!-- logo end -->
+
+        <!-- primary -->
         <div class="side-list" id="side-list">
             <ul>
                 <li><a href="{{ url_for('logout') }}">Logout</a></li>
@@ -40,6 +52,9 @@
                 <li><a href="{{ url_for('mylib')}}">My Library</a></li>
             </ul>
         </div>
+        <!-- primary end -->
+
+        <!-- secondary -->
         <div class="side-list" id="side-list">
             <ul>
                 <li><a href="{{ url_for('library') }}">Prompt Library</a></li>
@@ -47,10 +62,15 @@
                 <li><a href="{{ url_for('advance')}}">Advance Prompt</a></li>
             </ul>
         </div>
+        <!-- secondary end -->
     </div>
+    <!-- side panel ended -->
     
     <h1 id="toggleButton" onclick="toggleSidePanel()"><strong>Prompt Library</strong></h1>
+
+    <!-- main -->
     <div class="master">
+        <!-- nav bar -->
         <div class="nav-menu">
             <nav class="sticky-header">
                 <ul>
@@ -86,7 +106,11 @@
                 </ul>
             </nav>
         </div>
+        <!-- nav bar end -->
+
+        <!-- listing -->
         <div class="container">
+            <!-- 00 -->
             <article class="episode">
             <div class="episode__number">0.0</div>
             <div class="episode__content">
@@ -96,7 +120,9 @@
                 </div>
             </div>
             </article>
+            <!-- 00 end -->
 
+            <!-- 01 -->
             <article class="episode">
             <div class="episode__number">1.0</div>
             <div class="episode__content">
@@ -130,7 +156,9 @@
                 </div>
             </div>
             </article>
+            <!-- 01 end -->
 
+            <!-- 02 -->
             <article class="episode">
             <div class="episode__number">2.0</div>
                 <div class="episode__content">
@@ -156,7 +184,9 @@
                 </div>
             </div>
             </article>
+            <!-- 02 end -->
 
+            <!-- 03 -->
             <article class="episode">
             <div class="episode__number">3.0</div>
             <div class="episode__content">
@@ -173,7 +203,9 @@
                 </div>
             </div>
             </article>
+            <!-- 03 end -->
 
+            <!-- 04 -->
             <article class="episode">
             <div class="episode__number">4.0</div>
             <div class="episode__content">
@@ -189,7 +221,11 @@
                     </div>
                 </div>
             </div>
+            </article>
+            <!-- 04 end -->
         </div>
+        <!-- listing end -->
     </div>
+    <!-- main end -->
 </body>
 </html>

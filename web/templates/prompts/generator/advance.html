@@ -1,39 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <title>Advanced Prompting</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advanced Prompting</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style/generator.css') }}">
     <link rel="icon" href="{{ url_for('static', filename='icon/favicon.ico') }}" type="image/x-icon">
+    <!-- css -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style/generator.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style/side.css') }}">
+    <!-- css end -->
+    <!-- js -->
     <script defer src="{{ url_for('static', filename='script/generator.js') }}"></script>
     <script defer src="{{ url_for('static', filename='script/side_panel.js') }}"></script>
     <script defer src="{{ url_for('static', filename='script/save.js') }}"></script>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style/side.css') }}">
+    <!-- js end -->
 
     <!-- seo -->
+    <!-- general -->
     <meta name="description" content="Explore the functionalities of Prompt Sanctuary - a platform for generating and refining prompts. Access a prompt library, generate custom prompts, and explore advanced prompting features.">
     <meta name="keywords" content="prompt sanctuary, prompt generator, prompt library, advanced prompting, prompt refinement, prompt generation, writing prompts, creative writing, prompt ideas, writing inspiration, writing exercises, writing generator, story prompts, fiction prompts, writing tools, writing community, writing resources, idea generator, story ideas, writing challenges, writing help, narrative prompts, plot inspiration, storytelling aids, writer's block solutions, creative story ideas, plot development tools, character creation prompts, dialogue prompts, writing prompt app, daily writing prompts, inspiration for writers, story starter, creative writing exercises, fictional writing prompts, writing prompt generator online, flash fiction prompts, novel writing prompts, writing practice, creative brainstorming, storytelling generator, prompting, prompt, llm, llama, gemini, openai, chatgpt">    
-    
+    <!-- general end -->
+
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://sanctuary01.pythonanywhere.com/">
     <meta property="og:title" content="Prompt Sanctuary">
     <meta property="og:description" content="Explore the functionalities of Prompt Sanctuary - a platform for generating and refining prompts. Access a prompt library, generate custom prompts, and explore advanced prompting features.">
+    <!-- Open Graph / Facebook end -->
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://sanctuary01.pythonanywhere.com/">
     <meta property="twitter:title" content="Prompt Sanctuary">
     <meta property="twitter:description" content="Explore the functionalities of Prompt Sanctuary - a platform for generating and refining prompts. Access a prompt library, generate custom prompts, and explore advanced prompting features.">
+    <!-- Twitter end -->
     <!-- seo end -->
 </head>
 <body>
     <!-- Side Panel -->
     <div class="side-panel" id="sidePanel">
+        <!-- logo -->
         <div id="toggleButton" onclick="toggleSidePanel()" class="image-logo">
             <img id="preview-logo" alt="Image Preview" src="{{ url_for('static', filename='icon/sanctuary.png') }}">
         </div>
+        <!-- logo end -->
+
+        <!-- primary -->
         <div class="side-list" id="side-list">
             <ul>
                 <li><a href="{{ url_for('logout') }}">Logout</a></li>
@@ -41,6 +53,9 @@
                 <li><a href="{{ url_for('mylib')}}">My Library</a></li>
             </ul>
         </div>
+        <!-- primary end -->
+
+        <!-- secondary -->
         <div class="side-list" id="side-list">
             <ul>
                 <li><a href="{{ url_for('library') }}">Prompt Library</a></li>
@@ -48,22 +63,35 @@
                 <li><a href="{{ url_for('advance')}}">Advance Prompt</a></li>
             </ul>
         </div>
+        <!-- secondary end -->
     </div>
+    <!-- side panel ended -->
     
     <h1 class="center" id="toggleButton" onclick="toggleSidePanel()"><strong>Advanced Prompting</strong></h1>
+
+    <!-- main -->
     <div class="master">
+        <!-- welcome -->
         <div class="welcome">
             <p>Here, you have the flexibility to <strong>create a custom but specialized prompt</strong> tailored to your specific requirements.</p>
         </div>
+        <!-- welcome end -->
+
+        <!-- tools -->
         <div class="prompting">
+            <!-- text prompt -->
             <div class="container">
                 <p>Generate Text Prompt</p>
                 <div class="left-section">
                     <form method="post" action="/advance/generate" onsubmit="return loadingAnimation()">
+                        <!-- parameter 0 -->
                         <label for="parameter0">Use case:</label>
                         <div class="input">
                             <input type="text" name="parameter0" id="parameter0" placeholder="write a README file" required maxlength="300">
                         </div>
+                        <!-- parameter 0 end -->
+
+                        <!-- parameter 1 -->
                         <label for="parameter1">Prompt type:</label>
                         <div class="input">
                             <select name="parameter1" id="parameter1">
@@ -73,7 +101,10 @@
                                 <option value="detailed">Detailed</option>
                                 <option value="step-by-step">Step by Step</option>
                             </select>
-                        </div>                            
+                        </div>                    
+                        <!-- parameter 1 end -->
+
+                        <!-- parameter 2 -->
                         <label for="parameter2">Harm content:</label>
                         <div class="input">
                             <select name="parameter2" id="parameter2">
@@ -84,23 +115,34 @@
                                 <option value="most">Block most</option>
                             </select>
                         </div>
+                        <!-- parameter 2 end -->
+
+                        <!-- parameter 3 -->
                         <label for="parameter3">Knowledge base:</label>
                         <div class="input">
                             <input type="text" name="parameter3" id="parameter3" placeholder="Enter the Knowledge base if any" maxlength="1000">
                         </div>
+                        <!-- parameter 3 end -->
+
                         <input type="submit" value="Generate">
                     </form>
                 </div>
             </div>
+            <!-- text prompt end -->
 
+            <!-- image prompt -->
             <div class="container">
                 <p>Generate Image Prompt</p>
                 <div class="left-section">
                     <form method="post" action="/advance/igenerate" onsubmit="return loadingAnimation()">
+                        <!-- parameter 0 -->
                         <label for="parameter0">input:</label>
                         <div class="input">
                             <input type="text" name="parameter0" id="parameter0" placeholder="cat on the sky" required maxlength="300">
                         </div>
+                        <!-- parameter 0 end-->
+
+                        <!-- parameter 1 -->
                         <label for="parameter1">primary mood:</label>
                         <div class="input">
                             <select name="parameter1" id="parameter1">
@@ -116,7 +158,10 @@
                                 <option value="surreal">surreal</option>
                                 <option value="other">other</option>
                             </select>
-                        </div>                            
+                        </div>                         
+                        <!-- parameter 1 end -->
+
+                        <!-- parameter 2 -->
                         <label for="parameter2">primary style:</label>
                         <div class="input">
                             <select name="parameter2" id="parameter2">
@@ -142,7 +187,10 @@
                                 <option value="other">other</option>
                             </select>
                         </div>
-                        <label for="parameter2">secondary style:</label>
+                        <!--parameter 2 end -->
+
+                        <!-- parameter 3-->
+                        <label for="parameter3">secondary style:</label>
                         <div class="input">
                             <select name="parameter3" id="parameter3">
                                 <option value="">unspecified</option>
@@ -167,19 +215,27 @@
                                 <option value="other">other</option>
                             </select>
                         </div>
+                        <!-- parameter 3 end -->
+
                         <input type="submit" value="Generate">
                     </form>
                 </div>
             </div>
+            <!-- image prompt end -->
 
+            <!-- image to prompt -->
             <div class="container">
                 <p>reverse image prompt</p>
                 <div class="left-section">
                     <form action="/advance/image" method="post" enctype="multipart/form-data" onsubmit="return loadingAnimation()">
+                        <!-- parameter 0 -->
                         <label for="image">Upload Image:</label>
                         <div class="input">
                             <input type="file" name="image" accept="image/*" required>
                         </div>
+                        <!-- parameter 0 end -->
+
+                        <!-- parameter 1 -->
                         <label for="parameter1">primary mood:</label>
                         <div class="input">
                             <select name="parameter1" id="parameter1">
@@ -195,7 +251,10 @@
                                 <option value="surreal">surreal</option>
                                 <option value="other">other</option>
                             </select>
-                        </div> 
+                        </div>
+                        <!-- parameter 1 end -->
+
+                        <!-- parameter 2 -->
                         <label for="parameter2">primary style:</label>
                         <div class="input">
                             <select name="parameter2" id="parameter2">
@@ -221,7 +280,10 @@
                                 <option value="other">other</option>
                             </select>
                         </div>
-                        <label for="parameter2">secondary style:</label>
+                        <!-- parameter 2 end -->
+
+                        <!-- parameter 3 -->
+                        <label for="parameter3">secondary style:</label>
                         <div class="input">
                             <select name="parameter3" id="parameter3">
                                 <option value="original">original</option>
@@ -245,15 +307,19 @@
                                 <option value="superhero">superhero</option>
                                 <option value="other">other</option>
                             </select>
-                        </div> 
+                        </div>
+                        <!-- parameter 3 end -->
                         <input type="submit" value="Generate">
                     </form>
                 </div>
             </div>
-
+            <!-- image to prompt end-->
         </div>
+        <!-- tools end -->
     </div>
+    <!-- main end -->
 
+    <!-- preview -->
     {% if not result %}
     <div class="image-preview">
         {% if not image_selected %}
@@ -263,12 +329,16 @@
         {% endif %}
     </div>
     {% endif %}
+    <!-- preview end -->
 
+    <!-- loading -->
     <div class="loading" id="loading">
         <div class="spinner"></div>
         <h1>Generating...</h1>
     </div>
+    <!-- loading end -->
 
+    <!-- result -->
     {% if result %}
     <div class="result">
         <h2>generated prompt:</h2>
@@ -277,5 +347,6 @@
         <button onclick="promptForTitle()">Save to Library</button>
     </div>
     {% endif %}
+    <!-- result end -->
 </body>
 </html>

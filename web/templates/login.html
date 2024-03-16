@@ -1,41 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <title>Login/Signup</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='style/login.css') }}">
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='icon/favicon.ico') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <script src="{{ url_for('static', filename='script/login.js') }}"></script>
     <link href="https://fonts.googleapis.com/css2?family=Caveat&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-    <title>Login/Signup</title>
+    <!-- css -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style/login.css') }}">
+    <!-- css end -->
+    <!-- js -->
+    <script src="{{ url_for('static', filename='script/login.js') }}"></script>
+    <!-- js end -->
 
     <!-- seo -->
+    <!-- general -->
     <meta name="description" content="Explore the functionalities of Prompt Sanctuary - a platform for generating and refining prompts. Access a prompt library, generate custom prompts, and explore advanced prompting features.">
     <meta name="keywords" content="prompt sanctuary, prompt generator, prompt library, advanced prompting, prompt refinement, prompt generation, writing prompts, creative writing, prompt ideas, writing inspiration, writing exercises, writing generator, story prompts, fiction prompts, writing tools, writing community, writing resources, idea generator, story ideas, writing challenges, writing help, narrative prompts, plot inspiration, storytelling aids, writer's block solutions, creative story ideas, plot development tools, character creation prompts, dialogue prompts, writing prompt app, daily writing prompts, inspiration for writers, story starter, creative writing exercises, fictional writing prompts, writing prompt generator online, flash fiction prompts, novel writing prompts, writing practice, creative brainstorming, storytelling generator, prompting, prompt, llm, llama, gemini, openai, chatgpt">    
-    
+    <!-- general end -->
+
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://sanctuary01.pythonanywhere.com/">
     <meta property="og:title" content="Prompt Sanctuary">
     <meta property="og:description" content="Explore the functionalities of Prompt Sanctuary - a platform for generating and refining prompts. Access a prompt library, generate custom prompts, and explore advanced prompting features.">
+    <!-- Open Graph / Facebook end -->
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://sanctuary01.pythonanywhere.com/">
     <meta property="twitter:title" content="Prompt Sanctuary">
     <meta property="twitter:description" content="Explore the functionalities of Prompt Sanctuary - a platform for generating and refining prompts. Access a prompt library, generate custom prompts, and explore advanced prompting features.">
+    <!-- Twitter end -->
     <!-- seo end -->
 </head>
 <body style="background: linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)), url('{{ url_for('static', filename='icon/bg.jpg') }}') center/cover no-repeat fixed;">
     <h1><strong>Prompt Sanctuary</strong></h1>
+
+    <!-- main container -->
     <div class="main">
+
+        <!-- welcome -->
         <div class="welcome">
             <p>Welcome to Prompt Sanctuary, you may Login to Explore the functionalities of our platform</p>
         </div>
+        <!-- welcome end -->
 
+        <!-- forms -->
         <div class="container">
+            <!-- login -->
             <form id="loginForm" action="/login" method="post">
                 <h2>Login</h2>
                 <input type="text" name="honeypot" style="display:none;">
@@ -46,7 +61,9 @@
                 <button type="submit">Login</button>
                 <p id="signupLink">Don't have an account? <a href="#" onclick="toggleForms()">Signup</a></p>
             </form>
+            <!-- login end -->
 
+            <!-- signup -->
             <form id="signupForm" action="/signup" method="post">
                 <h2>Signup</h2>
                 <input type="text" name="honeypot" style="display:none;">
@@ -59,7 +76,11 @@
                 <button type="submit">Signup</button>
                 <p id="loginLink">Already have an account? <a href="#" onclick="toggleForms()">Login</a></p>
             </form>
+            <!-- signup end -->
         </div>
+        <!-- forms ended -->
     </div>
+    <!-- main container ended -->
+
 </body>
 </html>

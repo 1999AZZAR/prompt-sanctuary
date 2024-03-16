@@ -8,6 +8,7 @@ load_dotenv()
 
 class Image_gen:
 
+    # add watermark to the generated image.
     def add_watermark(self, input_image_path, output_image_path, watermark_image_path, transparency=25):
         if watermark_image_path is None or not os.path.exists(watermark_image_path):
             original_image = Image.open(input_image_path)
@@ -22,6 +23,7 @@ class Image_gen:
             watermark = watermark.resize(watermark_size)
             if watermark.mode != 'RGBA':
                 watermark = watermark.convert('RGBA')
+
             image_with_watermark = original_image.copy()
             position = (0, original_image.size[1] - watermark.size[1])
             image_with_watermark.paste(watermark, position, watermark)
@@ -29,19 +31,21 @@ class Image_gen:
             alpha = ImageEnhance.Brightness(alpha).enhance(transparency / 100.0)
             watermark.putalpha(alpha)
             image_with_watermark.save(output_image_path)
+
         except Exception as e:
             print(f"Error adding watermark: {e}")
             original_image.save(output_image_path)
 
+    # generate the image using user input.
     def generate_image(self, prompt):
         api_key = os.getenv('STABILITY_API_KEY')
         common_params = {
             "samples": 1,
             "steps": 50,
             "cfg_scale": 5.5,
+            "clip_guidance_preset": "FAST_BLUE",
             "height": 1024,
             "width": 1024,
-            # "style_preset": "None",
             "text_prompts": [
                 {
                     "text"  : prompt, 
@@ -83,6 +87,7 @@ class Image_gen:
 
             if response.status_code != 200:
                 raise Exception("Non-200 response: " + str(response.text))
+
             data = response.json()            
             artifacts = data.get("artifacts", [])
             if not artifacts:
@@ -91,6 +96,7 @@ class Image_gen:
             output_directory = "web/static/image"
             if not os.path.exists(output_directory):
                 os.makedirs(output_directory)
+
             file_name = f'{data["artifacts"][0]["seed"]}.png'
             generated_image_path = f'{output_directory}/{file_name}'
             with open(generated_image_path, "wb") as f:
@@ -99,9 +105,8 @@ class Image_gen:
             watermark_image_path = 'web/static/icon/sanctuary.png' 
             output_with_watermark_path = generated_image_path
             self.add_watermark(generated_image_path, output_with_watermark_path, watermark_image_path, transparency=25)
-            
-            # Return the absolute path to the generated image file
             return file_name
+        
         except Exception as e:
             print(f"Error in generate_image: {e}")
             return None

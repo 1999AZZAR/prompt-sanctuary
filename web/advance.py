@@ -14,6 +14,7 @@ def get_current_api_key():
 
 genai.configure(api_key=get_current_api_key())
 
+# general config
 generation_config = {
     "temperature": 0.75,
     "top_p": 0.65,
@@ -21,6 +22,7 @@ generation_config = {
     "max_output_tokens": 2048,
 }
 
+# map the threshold
 def map_threshold(parameter_value):
     if parameter_value == "none":
         return "BLOCK_NONE"
@@ -35,6 +37,7 @@ def map_threshold(parameter_value):
     else:
         return "BLOCK_NONE"
 
+# generate response.
 def response(parameter0, parameter1, parameter2, parameter3):
     threshold_value = map_threshold(parameter2)
     
@@ -45,6 +48,7 @@ def response(parameter0, parameter1, parameter2, parameter3):
         {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": threshold_value}
     ]
 
+    # model call
     model = genai.GenerativeModel(
         model_name="gemini-1.0-pro-001",
         generation_config=generation_config,
@@ -123,12 +127,13 @@ def response(parameter0, parameter1, parameter2, parameter3):
     return response.text
 
 def iresponse(parameter0, parameter1, parameter2, parameter3):
-
+    threshold_value = map_threshold("none")
+    
     safety_settings = [
-        {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_NONE"},
-        {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_NONE"},
-        {"category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_NONE"},
-        {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_NONE"}
+        {"category": "HARM_CATEGORY_HARASSMENT", "threshold": threshold_value},
+        {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": threshold_value},
+        {"category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": threshold_value},
+        {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": threshold_value}
     ]
 
     model = genai.GenerativeModel(
@@ -146,5 +151,6 @@ def iresponse(parameter0, parameter1, parameter2, parameter3):
         f"input: write me a detailed possible image description about {parameter0}. The description should convey the mood of {parameter1}. and have a primary style of {parameter2} with {parameter3} as a secondary stylistic element. Elaborate on any relevant details in the image and ensure the tone matches the specified mood."
         "output: ",
     ]
+
     response = model.generate_content(prompt_parts)
     return response.text

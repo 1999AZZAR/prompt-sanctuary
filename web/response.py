@@ -78,4 +78,3 @@ class GeminiChat:
 
         except Exception as e:
             return f"An error occurred: {str(e)}"
-

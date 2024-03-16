@@ -12,6 +12,8 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style/mylib.css') }}">
     <script defer src="{{ url_for('static', filename='script/side_panel.js') }}"></script>
     <script defer src="{{ url_for('static', filename='script/card.js') }}"></script>
+    <script defer src="{{ url_for('static', filename='script/library_copy.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.8/clipboard.min.js"></script>
 
     <!-- seo -->
     <meta name="description" content="Explore the functionalities of Prompt Sanctuary - a platform for generating and refining prompts. Access a prompt library, generate custom prompts, and explore advanced prompting features.">
@@ -52,12 +54,15 @@
             </ul>
         </div>
     </div>
+    <!-- side panel ended -->
 
     <h1 id="toggleButton" onclick="toggleSidePanel()"><strong>Personal Prompts Library</strong></h1>
 
+    <!-- main library -->
     <div class="main">
         <h3>Here are Your saved prompts:</h3>
         {% if saved_prompts %}
+            <!-- prompt list -->
             <div id="imageBoxContainer" class="flex-container">
             <ol>
                 {% for prompt in saved_prompts %}
@@ -73,23 +78,11 @@
                 {% endfor %}
             </ol>
             </div>
+            <!-- prompt list ended -->
         {% else %}
             <h4>You have No saved prompts yet.</h4>
         {% endif %}
     </div>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.8/clipboard.min.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            new ClipboardJS('.copy-button', {
-                text: function (trigger) {
-                    return trigger.getAttribute('data-clipboard-text');
-                }
-            }).on('success', function (e) {
-                e.clearSelection();
-                alert('Prompt copied to clipboard!');
-            });
-        });
-    </script>
+    <!-- main library ended -->
 </body>
 </html>
