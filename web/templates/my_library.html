@@ -36,9 +36,13 @@
 <body style="background: linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)), url('{{ url_for('static', filename='icon/bg.jpg') }}') center/cover no-repeat fixed;">
     <!-- Side Panel -->
     <div class="side-panel" id="sidePanel">
+        <!-- logo -->
         <div id="toggleButton" onclick="toggleSidePanel()" class="image-logo">
             <img id="preview-logo" alt="Image Preview" src="{{ url_for('static', filename='icon/sanctuary.png') }}">
         </div>
+        <!-- logo end -->
+
+        <!-- primary -->
         <div class="side-list" id="side-list">
             <ul>
                 <li><a href="{{ url_for('logout') }}">Logout</a></li>
@@ -46,6 +50,9 @@
                 <li><a href="{{ url_for('mylib')}}">My Library</a></li>
             </ul>
         </div>
+        <!-- primary end -->
+
+        <!-- secondary -->
         <div class="side-list" id="side-list">
             <ul>
                 <li><a href="{{ url_for('library') }}">Prompt Library</a></li>
@@ -53,6 +60,7 @@
                 <li><a href="{{ url_for('advance')}}">Advance Prompt</a></li>
             </ul>
         </div>
+        <!-- secondary end -->
     </div>
     <!-- side panel ended -->
 

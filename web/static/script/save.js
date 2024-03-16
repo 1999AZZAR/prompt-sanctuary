@@ -7,7 +7,7 @@ function promptForTitle() {
 }
 
 function saveToLibrary(title, prompt) {
-    fetch('/advance/save', {
+    fetch('/save_prompt', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',

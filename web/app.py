@@ -1,4 +1,6 @@
 # app.py
+
+# library and import
 import secrets
 from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 from gemini_text import generate_response, generate_random, generate_vrandom, generate_imgdescription
@@ -12,13 +14,14 @@ import sqlite3
 from response import GeminiChat
 from stability import Image_gen
 
-
+# microservices call
 app = Flask(__name__)
 USER_DATABASE = './web/database/user.db'
 PROMPT_DATABASE = './web/database/prompt_data.db'
-chat_app = None 
+chat_app = GeminiChat()
 image_generator = Image_gen() 
 
+# user database
 def create_table():
     conn = sqlite3.connect(USER_DATABASE)
     cursor = conn.cursor()
@@ -30,10 +33,12 @@ def create_table():
     ''')
     conn.commit()
     conn.close()
-    
+
+# calculation word for user database
 create_table()
 app.secret_key = 'hahahaha' 
 
+# personal user prompt database
 def create_prompt_table(username):
     conn = sqlite3.connect(PROMPT_DATABASE)
     cursor = conn.cursor()
@@ -46,10 +51,10 @@ def create_prompt_table(username):
             time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     ''')
-
     conn.commit()
     conn.close()
 
+# login check
 def required_login(func):
     @wraps(func)
     def decorated_function(*args, **kwargs):
@@ -58,10 +63,12 @@ def required_login(func):
         return func(*args, **kwargs)
     return decorated_function
 
+# index
 @app.route('/')
 def index():
     return render_template('login.html')
 
+# signup
 @app.route('/signup', methods=['POST'])
 def signup():
     honeypot_value = request.form.get('honeypot', '')
@@ -70,25 +77,20 @@ def signup():
     
     username = request.form['username']
     password = request.form['password']
-
     conn = sqlite3.connect(USER_DATABASE)
     cursor = conn.cursor()
-
     cursor.execute('SELECT * FROM users WHERE username = ?', (username,))
     user = cursor.fetchone()
-
     if user:
         return 'Username already exists. Please choose another.'
 
     hashed_password = generate_password_hash(password)
-
     cursor.execute('INSERT INTO users (username, password) VALUES (?, ?)', (username, hashed_password))
-
     conn.commit()
     conn.close()
-
     return redirect(url_for('index'))
 
+# login
 @app.route('/login', methods=['POST'])
 def login():
     honeypot_value = request.form.get('honeypot', '')
@@ -97,38 +99,38 @@ def login():
     
     username = request.form['username']
     password = request.form['password']
-
     conn = sqlite3.connect(USER_DATABASE)
     cursor = conn.cursor()
-
     cursor.execute('SELECT * FROM users WHERE username = ?', (username,))
     user = cursor.fetchone()
-
     conn.close()
 
     if user and check_password_hash(user[1], password): 
         session['username'] = username
         return redirect(url_for('home'))
+
     else:
         return 'Invalid username or password. Please try again.'
 
+# logout
 @app.route('/logout')
 def logout():
     session.clear()
     return redirect(url_for('index'))
 
+# home
 @app.route('/home')
 @required_login
 def home():
     return render_template('index.html')
 
+# user personal library
 @app.route('/mylib')
 @required_login
 def mylib():
     try:
         username = session['username']
         table_name = username 
-
         conn = sqlite3.connect(PROMPT_DATABASE)
         cursor = conn.cursor()
 
@@ -140,24 +142,26 @@ def mylib():
 
         cursor.execute(f'SELECT random_val, title, prompt, time FROM {table_name}')
         saved_prompts = cursor.fetchall()
-
         conn.close()
-
         return render_template('my_library.html', saved_prompts=saved_prompts)
+
     except Exception as e:
         return f"Error: {str(e)}"
 
+# prompt trial / chat bot
 @app.route('/trying')
 @required_login
 def trying():
     return render_template('try.html')
 
+# chat bot form and reply
 @app.route('/user_input', methods=['POST'])
 @required_login
 def handle_user_input():
     honeypot_value = request.form.get('honeypot', '')
     if honeypot_value:
         return 'Bot activity detected. Access denied.'
+
     user_input = request.get_json().get('user_input', '')
     if user_input.startswith('imagine'):
         prompt = user_input[len('imagine'):].strip()
@@ -167,15 +171,18 @@ def handle_user_input():
             return jsonify({'image_path': image_path})
         else:
             return jsonify({'bot_response': 'Error generating image'})
+
     else:
         response = chat_app.generate_chat(user_input)
         return jsonify({'bot_response': response})
 
+# basic generator
 @app.route('/generate')
 @required_login
 def generate():
     return render_template('prompts/generator/generator.html', result=None)
 
+# basic generator / text prompt
 @app.route('/generate/tprompt', methods=['POST'])
 @required_login
 def process():
@@ -183,12 +190,14 @@ def process():
     response_text = generate_response(user_input)
     return render_template('prompts/generator/generator.html', result=response_text)
 
+# basic generator / random text prompt
 @app.route('/generate/trandom', methods=['POST'])
 @required_login
 def random_prompt():
     response_text = generate_random()
     return render_template('prompts/generator/generator.html', result=response_text)
 
+# basic generator / image prompt
 @app.route('/generate/iprompt', methods=['POST'])
 @required_login
 def vprocess():
@@ -196,17 +205,14 @@ def vprocess():
     response_text = generate_imgdescription(user_input)
     return render_template('prompts/generator/generator.html', result=response_text)
 
+# basic generator / random image prompt
 @app.route('/generate/irandom', methods=['POST'])
 @required_login
 def vrandom_prompt():
     response_text = generate_vrandom()
     return render_template('prompts/generator/generator.html', result=response_text)
 
-@app.route('/reverse')
-@required_login
-def reverse():
-    return render_template('prompts/generator/reverse.html', result=None)
-
+# basic generator / image to prompt
 @app.route('/generate/image', methods=['POST'])
 @required_login
 def reverse_image():
@@ -229,11 +235,13 @@ def reverse_image():
     except Exception as e:
         return f"Error: {str(e)}"
 
+# advance generator
 @app.route('/advance')
 @required_login
 def advance():
     return render_template('prompts/generator/advance.html', result=None)
 
+# advance generator / text prompt
 @app.route('/advance/generate', methods=['POST'])
 @required_login
 def generate_advance_response():
@@ -250,6 +258,7 @@ def generate_advance_response():
         error_message = f"Bad Request: {e.description}"
         return render_template('prompts/generator/advance.html', result=error_message)
 
+# advance generator / image prompt
 @app.route('/advance/igenerate', methods=['POST'])
 @required_login
 def generate_advance_iresponse():
@@ -266,6 +275,7 @@ def generate_advance_iresponse():
         error_message = f"Bad Request: {e.description}"
         return render_template('prompts/generator/advance.html', result=error_message)
 
+# advance generator / image to prompt
 @app.route('/advance/image', methods=['POST'])
 @required_login
 def advance_image():
@@ -290,7 +300,8 @@ def advance_image():
     except Exception as e:
         return f"Error: {str(e)}"
 
-@app.route('/advance/save', methods=['POST'])
+# save prompt to user library
+@app.route('/save_prompt', methods=['POST'])
 @required_login
 def save_prompt():
     try:
@@ -313,6 +324,7 @@ def save_prompt():
     except Exception as e:
         return f"Error: {str(e)}"
 
+# delete prompt from user library
 @app.route('/delete_prompt', methods=['POST'])
 @required_login
 def delete_prompt():
@@ -332,6 +344,7 @@ def delete_prompt():
     except Exception as e:
         return f"Error: {str(e)}"
 
+# general prompt library
 @app.route('/library')
 @required_login
 def library():
@@ -403,5 +416,4 @@ def standard():
     return render_template('prompts/coding_companion/standard.html')
 
 if __name__ == '__main__':
-    chat_app = GeminiChat()  # Initialize chat_app here
     app.run(host="0.0.0.0", port=5000, debug=True)

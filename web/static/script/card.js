@@ -1,11 +1,14 @@
+// 
 console.clear();
 
+// 
 const cardsContainer = document.querySelector(".cards");
 const cardsContainerInner = document.querySelector(".cards__inner");
 const cards = Array.from(document.querySelectorAll(".card"));
 const overlayContainer = document.querySelector(".overlay");
 const contentContainer = document.querySelector(".content-container");
 
+// apply overlay mask based on mouse position
 const applyOverlayMask = (e) => {
     const overlayEl = overlayContainer;
     const x = e.pageX - cardsContainer.offsetLeft;
@@ -14,6 +17,7 @@ const applyOverlayMask = (e) => {
     overlayEl.style = `--opacity: 1; --x: ${x}px; --y:${y}px;`;
 };
 
+// 
 const createOverlayCta = (overlayCard, ctaEl) => {
     const overlayCta = document.createElement("div");
     overlayCta.classList.add("cta");
@@ -22,6 +26,7 @@ const createOverlayCta = (overlayCard, ctaEl) => {
     overlayCard.append(overlayCta);
 };
 
+// 
 const observer = new ResizeObserver((entries) => {
     entries.forEach((entry) => {
         const cardIndex = cards.indexOf(entry.target);
@@ -35,6 +40,7 @@ const observer = new ResizeObserver((entries) => {
     });
 });
 
+// initialize overlay card
 const initOverlayCard = (cardEl) => {
     const overlayCard = document.createElement("div");
     overlayCard.classList.add("card");
@@ -43,5 +49,6 @@ const initOverlayCard = (cardEl) => {
     observer.observe(cardEl);
 };
 
+// 
 cards.forEach(initOverlayCard);
 contentContainer.addEventListener("pointermove", applyOverlayMask);

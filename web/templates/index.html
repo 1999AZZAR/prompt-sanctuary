@@ -75,6 +75,7 @@
     <div class="content-container">
         <div class="main__cards cards">
             <div class="cards__inner">
+                <!-- left -->
                 <div class="cards__card card" tabindex="2">
                     <h2 class="card__heading">Prompt library</h2>
                     <p class="card__price">features:</p>
@@ -85,7 +86,9 @@
                     </ul>
                     <a href="{{ url_for('library') }}" class="card__cta cta" tabindex="6">click to begin</a>
                 </div>
+                <!-- left end -->
 
+                <!-- middle -->
                 <div class="cards__card card" tabindex="3">
                     <h2 class="card__heading">Prompt generator</h2>
                     <p class="card__price">features:</p>
@@ -96,7 +99,9 @@
                     </ul>
                     <a href="{{ url_for('generate') }}" class="card__cta cta" tabindex="7">click to begin</a>
                 </div>
+                <!-- middle end -->
 
+                <!-- right -->
                 <div class="cards__card card" tabindex="5">
                     <h2 class="card__heading">Advanced prompting</h2>
                     <p class="card__price">features:</p>
@@ -107,6 +112,7 @@
                     </ul>
                     <a href="{{ url_for('advance') }}" class="card__cta cta" tabindex="9">click to begin</a>
                 </div>
+                <!-- right end -->
             </div>
             <div class="overlay cards__inner"></div>
         </div>
