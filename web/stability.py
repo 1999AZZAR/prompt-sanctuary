@@ -109,15 +109,25 @@ class Image_gen:
             with open(generated_image_path, "wb") as f:
                 f.write(base64.b64decode(data["artifacts"][0]["base64"]))
 
-            # 
+            # add watermark
             watermark_image_path = 'web/static/icon/sanctuary.png' 
             output_with_watermark_path = generated_image_path
             self.add_watermark(generated_image_path, output_with_watermark_path, watermark_image_path, transparency=25)
-            return file_name
+            # Downsize/scale the image
+            self.downsize_image(output_with_watermark_path)
 
-        # 
+            return file_name
         except Exception as e:
             print(f"Error in generate_image: {e}")
             return None
+
+    def downsize_image(self, image_path):
+        try:
+            img = Image.open(image_path)
+            # Resize the image to be 3 times smaller or to a maximum size of 200KB
+            img.thumbnail((img.size[0] // 3, img.size[1] // 3))
+            img.save(image_path, quality=95)  # Adjust quality as needed to meet size requirements
+        except Exception as e:
+            print(f"Error downsizing image: {e}")
 
 image_gen = Image_gen()
