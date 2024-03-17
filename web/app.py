@@ -2,6 +2,8 @@
 
 # library and import
 import secrets
+import time
+import os
 from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 from gemini_text import generate_response, generate_random, generate_vrandom, generate_imgdescription
 from gemini_vis import generate_content
@@ -18,6 +20,7 @@ from stability import Image_gen
 app = Flask(__name__)
 USER_DATABASE = './web/database/user.db'
 PROMPT_DATABASE = './web/database/prompt_data.db'
+IMAGE_LOG = './web/database/image_log.db'
 chat_app = GeminiChat()
 image_generator = Image_gen() 
 
@@ -38,11 +41,23 @@ def create_table():
 create_table()
 app.secret_key = 'hahahaha' 
 
+# image log database
+def image_table():
+    conn = sqlite3.connect(IMAGE_LOG)
+    cursor = conn.cursor()
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS images(
+            filename TEXT,
+            creation_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        ''')
+    conn.commit()
+    conn.close()
+
 # personal user prompt database
 def create_prompt_table(username):
     conn = sqlite3.connect(PROMPT_DATABASE)
     cursor = conn.cursor()
-
     cursor.execute(f'''
         CREATE TABLE IF NOT EXISTS {username} (
             random_val TEXT,
@@ -62,6 +77,24 @@ def required_login(func):
             return redirect(url_for('index'))
         return func(*args, **kwargs)
     return decorated_function
+
+# Function to delete old images from database and filesystem
+def delete_old_images():
+    conn = sqlite3.connect(IMAGE_LOG)
+    c = conn.cursor()
+    image_dir = "./web/static/image"
+    if os.path.exists(image_dir):
+        now = time.time()
+        for row in c.execute("SELECT filename, creation_time FROM images"):
+            filename, creation_time = row
+            file_path = os.path.join(image_dir, filename)
+            if os.path.isfile(file_path):
+                # Check if file is older than 1/2 hour
+                if now - creation_time > 1800:
+                    os.remove(file_path)
+                    c.execute("DELETE FROM images WHERE filename=?", (filename,))
+                    conn.commit()
+    conn.close()
 
 # index
 @app.route('/')
@@ -168,10 +201,17 @@ def handle_user_input():
         prompt_text = prompt if prompt else 'Your prompt here'
         image_path = image_generator.generate_image(prompt_text)
         if image_path:
+            # Delete old images before returning response
+            delete_old_images()
+            # Insert metadata into database
+            conn = sqlite3.connect(IMAGE_LOG)
+            c = conn.cursor()
+            c.execute("INSERT INTO images (filename) VALUES (?)", (image_path,))
+            conn.commit()
+            conn.close()
             return jsonify({'image_path': image_path})
         else:
             return jsonify({'bot_response': 'Error generating image'})
-
     else:
         response = chat_app.generate_chat(user_input)
         return jsonify({'bot_response': response})
