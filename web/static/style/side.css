@@ -16,17 +16,26 @@
 }
 
 .side-panel ul {
-    margin-top: 30%;
+    margin-top: 15%;
     list-style: none;
     display: flex;
     flex-direction: column;
     background-color: #4a4d4dc2;
     border-radius: 20px;
     padding: 10%;
+    position: relative;
+    justify-content: space-around;
+    flex-wrap: nowrap;
+    font-size: medium;
 }
 
 .side-panel li {
     margin-bottom: 10px;
+}
+
+.side-panel ul li {
+    margin: 5%;
+    padding: 0%;
 }
 
 .side-panel a {
