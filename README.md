@@ -2,11 +2,13 @@
 
 Modify, generate, or get a random prompt to optimize AI assistant responses.
 
-This project provides a redesigned UI and expanded capabilities building on my previous work, which was composed of two parts:
+This project provides a redesigned UI and expanded capabilities building on my previous work, which was composed of three parts:
 
 - [Prompt Library](https://github.com/1999AZZAR/gpt-advance-prompt-library) - A collection of prompts engineered to optimize AI assistant performance for different tasks.
 
 - [Prompt Generator](https://github.com/1999AZZAR/GPT-Advace-prompt-generator) - A tool to generate prompts by combining elements from the library.
+
+- [stability chat](https://github.com/1999AZZAR/stability_chat_bot) - A chatbot web app built with flask to generate image using stability api and text using gemini.
 
 With this new implementation, users can:
 
