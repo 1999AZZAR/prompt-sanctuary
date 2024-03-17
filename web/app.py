@@ -44,13 +44,13 @@ app.secret_key = 'hahahaha'
 # image log database
 def image_table():
     conn = sqlite3.connect(IMAGE_LOG)
-    cursor = conn.cursor()
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS images(
+    c = conn.cursor()
+    c.execute('''
+        CREATE TABLE IF NOT EXISTS images (
             filename TEXT,
             creation_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            )
-        ''')
+        )
+    ''')
     conn.commit()
     conn.close()
 
@@ -82,6 +82,7 @@ def required_login(func):
 def delete_old_images():
     conn = sqlite3.connect(IMAGE_LOG)
     c = conn.cursor()
+    image_table()
     image_dir = "./web/static/image"
     if os.path.exists(image_dir):
         now = time.time()
