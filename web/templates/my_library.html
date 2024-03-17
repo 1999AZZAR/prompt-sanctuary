@@ -44,7 +44,7 @@
 
         <!-- primary -->
         <div class="side-list" id="side-list">
-            <ul>
+            <ul id="side-top">
                 <li><a href="{{ url_for('home') }}">home</a></li>
                 <li><a href="{{ url_for('mylib')}}">My Library</a></li>
                 <li><a href="{{ url_for('trying') }}">prompt trial</a></li>
@@ -54,7 +54,7 @@
 
         <!-- secondary -->
         <div class="side-list" id="side-list">
-            <ul>
+            <ul id="side-middle">
                 <li><a href="{{ url_for('library') }}">Prompt Library</a></li>
                 <li><a href="{{ url_for('generate') }}">Basic Prompt</a></li>
                 <li><a href="{{ url_for('advance')}}">Advance Prompt</a></li>
@@ -64,7 +64,7 @@
 
         <!-- logout -->
         <div class="side-list" id="side-list">
-            <ul>
+            <ul id="side-bottom">
                 <li><a href="{{ url_for('logout') }}">Logout</a></li>
             </ul>
         </div>
