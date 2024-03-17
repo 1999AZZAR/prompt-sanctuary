@@ -162,7 +162,7 @@ def handle_user_input():
     if honeypot_value:
         return 'Bot activity detected. Access denied.'
 
-    user_input = request.get_json().get('user_input', '')
+    user_input = request.get_json().get('user_input', '').lower()
     if user_input.startswith('imagine'):
         prompt = user_input[len('imagine'):].strip()
         prompt_text = prompt if prompt else 'Your prompt here'
@@ -221,12 +221,14 @@ def reverse_image():
         image_data = image_file.read()
 
         prompt_parts = [
-            "\nPlease write a detailed description in proper English to recreate this image in 120 to 340 word. Include the style, mood, lighting, and other key details. Use complete sentences and proofread for spelling and grammar mistakes:",
+            "\nPlease provide a detailed description, written in proper English, to recreate this image in 250 to 500 words. Include information about the style, mood, lighting, and other important details. Ensure your sentences are complete and free from spelling and grammar errors:",
             {"mime_type": "image/jpeg", "data": image_data},
-            "\nAlso select the main artistic style from this list (you can choose more than one): \n",
-            "1. Photographic\n2. Enhanced\n3. Anime\n4. Digital art\n5. Comic book\n6. Fantasy art\n",  
+            "\nPlease select and use the main artistic style from the following list (you can choose more than one): \n",
+            "1. Photographic\n2. Enhanced\n3. Anime\n4. Digital art\n5. Comic book\n6. Fantasy art\n",
             "7. Line art\n8. Analog film\n9. Neon punk\n10. Isometric\n11. Low poly\n12. Origami\n",
-            "13. Modeling compound\n14. Cinematic\n15. 3D model\n16. Pixel art\n17. Tile texture\n"
+            "13. Modeling compound\n14. Cinematic\n15. 3D model\n16. Pixel art\n17. Tile texture\n",
+            "18. Surrealism\n19. Impressionism\n20. Abstract\n21. Cubism\n22. Graffiti\n23. Surrealism\n24. Pop art\n",
+            "Try to make your description as similar as possible to the original image, just like an audio describer would. Remember to begin your description with the word 'imagine.' For example, 'imagine a red-hooded woman in the forest...'",
         ]
 
         generated_text = generate_content(prompt_parts)
@@ -287,11 +289,13 @@ def advance_image():
         parameter3 = request.form['parameter3']
 
         prompt_parts = [
-            "\nPlease write a detailed description in proper English to recreate this image in 250 to 500 word. Include the style, mood, lighting, and other key details. Use complete sentences and proofread for spelling and grammar mistakes:",
+            "\nPlease provide a detailed description in proper English to recreate this image in 250 to 500 words. Include information about the style, mood, lighting, and other key details. Ensure your sentences are complete and free from spelling and grammar errors:",
             {"mime_type": "image/jpeg", "data": image_data},
-            f"\naslo use this {parameter1} mood for the image description",
-            f"\nand for the image style please use the {parameter2} style for the main style also the {parameter3} as the secondary style.",
-            f"\ndon't forget to make it as details and structural as possible"
+            f"\nAdditionally, incorporate the '{parameter1}' mood into the image description.",
+            f"\nFor the image style, please adopt the '{parameter2}' style as the main style, with '{parameter3}' serving as the secondary style.",
+            "\nEnsure that your description is rich in detail and structure.",
+            "\nTry to make your description as similar as possible to the original image with the adjustments I have requested, just like an audio describer would.",
+            "\nRemember to begin your description with the word 'imagine.' For example, 'imagine a red-hooded woman in the forest...'",
         ]
 
         response_text = generate_content(prompt_parts)

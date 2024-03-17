@@ -84,7 +84,7 @@
                 <p>generate text prompt</p>
                 <!-- input -->
                 <div class="left-section">
-                    <form method="post" action="/generate/tprompt" onsubmit="return validateForm()">
+                    <form method="post" action="/generate/tprompt" onsubmit="return loadingAnimation()">
                         <label for="user_input">Input:</label>
                         <div class="input">
                             <input type="text" name="user_input" id="user_input_text" placeholder="write a python code" required>
@@ -109,7 +109,7 @@
                 <p>generate image prompt</p>
                 <!-- input -->
                 <div class="left-section">
-                    <form method="post" action="/generate/iprompt" onsubmit="return validateForm()">
+                    <form method="post" action="/generate/iprompt" onsubmit="return loadingAnimation()">
                         <label for="user_input">Input:</label>
                         <div class="input">
                             <input type="text" name="user_input" id="user_input_image" placeholder="whale on the desert" required>
@@ -134,7 +134,7 @@
                 <p>reverse image prompt</p>
                 <!-- input -->
                 <div class="left-section">
-                    <form action="/generate/image" method="post" enctype="multipart/form-data" onsubmit="return validateForm()">
+                    <form action="/generate/image" method="post" enctype="multipart/form-data" onsubmit="return loadingAnimation()">
                         <label for="image">Upload Image:</label>
                         <div class="input">
                             <input type="file" name="image" accept="image/*" required>

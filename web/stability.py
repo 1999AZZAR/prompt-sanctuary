@@ -15,6 +15,7 @@ class Image_gen:
             original_image.save(output_image_path)
             return
 
+        # 
         try:
             original_image = Image.open(input_image_path)
             watermark = Image.open(watermark_image_path)
@@ -24,6 +25,7 @@ class Image_gen:
             if watermark.mode != 'RGBA':
                 watermark = watermark.convert('RGBA')
 
+            #
             image_with_watermark = original_image.copy()
             position = (0, original_image.size[1] - watermark.size[1])
             image_with_watermark.paste(watermark, position, watermark)
@@ -32,6 +34,7 @@ class Image_gen:
             watermark.putalpha(alpha)
             image_with_watermark.save(output_image_path)
 
+        # 
         except Exception as e:
             print(f"Error adding watermark: {e}")
             original_image.save(output_image_path)
@@ -74,6 +77,7 @@ class Image_gen:
             ],
         }
 
+        # 
         try:
             response = requests.post(
                 "https://api.stability.ai/v1/generation/stable-diffusion-xl-1024-v1-0/text-to-image",
@@ -88,25 +92,30 @@ class Image_gen:
             if response.status_code != 200:
                 raise Exception("Non-200 response: " + str(response.text))
 
+            # 
             data = response.json()            
             artifacts = data.get("artifacts", [])
             if not artifacts:
                 raise Exception("No artifacts returned by the API")   
 
+            # 
             output_directory = "web/static/image"
             if not os.path.exists(output_directory):
                 os.makedirs(output_directory)
 
+            # 
             file_name = f'{data["artifacts"][0]["seed"]}.png'
             generated_image_path = f'{output_directory}/{file_name}'
             with open(generated_image_path, "wb") as f:
                 f.write(base64.b64decode(data["artifacts"][0]["base64"]))
-            
+
+            # 
             watermark_image_path = 'web/static/icon/sanctuary.png' 
             output_with_watermark_path = generated_image_path
             self.add_watermark(generated_image_path, output_with_watermark_path, watermark_image_path, transparency=25)
             return file_name
-        
+
+        # 
         except Exception as e:
             print(f"Error in generate_image: {e}")
             return None
