@@ -33,6 +33,16 @@ Prompt-sanctuary's web interface is intuitive and user-friendly. Here's a quick 
 - **Library**: Access various content generation templates and tools from the library section. Navigate to `/library` and choose the desired option.
 - **My library**: contain per user prompt that they have saved before.
 
+## demo
+
+here some of the screenshot of the app:
+
+![landing page](img/3.png)
+![home page](img/4.png)
+![generate page](img/5.png)
+![side panel](img/6.png)
+![library page](img/9.png)
+
 ## secret prompt
 
 - for coder if chat gpt reply will bad code just reply with this :
