@@ -140,6 +140,7 @@ h1 {
 }
 
 .modal-content {
+    transform: scale(1.5);
     background-color: #262626de;
     border-radius: 12px;
     padding: 20px;
