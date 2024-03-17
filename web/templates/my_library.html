@@ -45,9 +45,9 @@
         <!-- primary -->
         <div class="side-list" id="side-list">
             <ul>
-                <li><a href="{{ url_for('logout') }}">Logout</a></li>
                 <li><a href="{{ url_for('home') }}">home</a></li>
                 <li><a href="{{ url_for('mylib')}}">My Library</a></li>
+                <li><a href="{{ url_for('trying') }}">prompt trial</a></li>
             </ul>
         </div>
         <!-- primary end -->
@@ -61,6 +61,14 @@
             </ul>
         </div>
         <!-- secondary end -->
+
+        <!-- logout -->
+        <div class="side-list" id="side-list">
+            <ul>
+                <li><a href="{{ url_for('logout') }}">Logout</a></li>
+            </ul>
+        </div>
+        <!-- logout end -->
     </div>
     <!-- side panel ended -->
 
