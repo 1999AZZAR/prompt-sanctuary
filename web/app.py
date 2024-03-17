@@ -88,6 +88,8 @@ def delete_old_images():
         now = time.time()
         for row in c.execute("SELECT filename, creation_time FROM images"):
             filename, creation_time = row
+            # Convert creation_time to a numeric timestamp
+            creation_time = time.mktime(time.strptime(creation_time, "%Y-%m-%d %H:%M:%S"))
             file_path = os.path.join(image_dir, filename)
             if os.path.isfile(file_path):
                 # Check if file is older than 1/2 hour
