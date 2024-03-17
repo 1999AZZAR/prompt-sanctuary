@@ -39,9 +39,11 @@ here some of the screenshot of the app:
 
 ![landing page](img/3.png)
 ![home page](img/4.png)
-![generate page](img/5.png)
-![side panel](img/6.png)
-![library page](img/9.png)
+![my library](img/5.png)
+![prompt trial](img/6.png)
+![global library](img/7.png)
+![basic generator](img/8.png)
+![advance generator](img/9.png)
 
 ## secret prompt
 
