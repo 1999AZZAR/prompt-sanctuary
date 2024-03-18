@@ -44,6 +44,9 @@ p {
 
 p:hover {
   color: #fee6cb;
+  transform: scale(1.1);
+  cursor: pointer;
+  transition: transform 0.3s linear; /* Added transition property for smooth scaling */
 }
 
 strong:hover {

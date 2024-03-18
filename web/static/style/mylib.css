@@ -24,18 +24,18 @@
 button {
     color: rgb(255 255 255);
     font-family: 'Rubik';
-    font-size: 1rem;
+    font-size: 0.9em;
     background-color: #4b006e78;
     border: 2px solid #56565657;
-    border-radius: 15px;
-    -webkit-border-radius: 15px;
-    -moz-border-radius: 15px;
-    -ms-border-radius: 15px;
-    -o-border-radius: 15px;
+    cursor: pointer;
+    margin: 2px;
+    transition: transform 0.3s linear;
+    border-radius: 10px;
 }
 
 button:hover {
     background-color: #5c0187e2;
+    transform: scale(1.1);
 }
 
 ol li {
