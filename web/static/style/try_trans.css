@@ -39,6 +39,8 @@ h1 {
     flex-grow: 1;
     padding: 10px;
     overflow-y: auto;
+    background-color: #5b5b5b30;
+    border-radius: 10px;
 }
 
 #input-area {
