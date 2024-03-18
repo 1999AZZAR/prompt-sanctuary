@@ -70,7 +70,10 @@ h1 {
 }
 
 #send-btn:hover {
-    background-color: #0056b3;
+    transform: scale(1.1);
+    cursor: pointer;
+    transition: transform 0.3s ease; /* Added transition property for smooth scaling */
+    background-color: #cc00ff;
 }
 
 .message {
@@ -111,6 +114,13 @@ h1 {
     border-radius: 15px;
     padding: 1%;
     background-color: #3c3f41;
+    transition: transform 0.2s linear;
+}
+
+img.img-class:hover {
+    transform: scale(1.1);
+    cursor: pointer;
+    transition: transform 0.5s ease; /* Added transition property for smooth scaling */
 }
 
 @keyframes spin {

@@ -203,6 +203,14 @@ div {
   align-content: space-between;
   border-radius: 10px;
   background-color: #000000c9;
+  transition: transform 0.2s linear;
+}
+
+
+.container:hover {
+    transform: scale(1.1);
+    cursor: pointer;
+    transition: transform 0.3s ease;
 }
 
 .welcome {

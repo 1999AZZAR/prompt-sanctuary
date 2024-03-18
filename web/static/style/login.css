@@ -3,7 +3,7 @@ body {
     margin: 0;
     padding: 0;
     display: flex;
-    flex-direction: column; /* Updated to column layout */
+    flex-direction: column;
     align-items: center;
     height: 100vh;
     background-color: #121212;
@@ -15,7 +15,7 @@ h1 {
     font-family: 'Caveat', cursive;
     font-size: 2.5em;
     text-align: center;
-    margin-top: 20px; /* Added margin on top */
+    margin-top: 20px;
 }
 
 strong:hover{
@@ -40,7 +40,7 @@ a:hover {
 
 .container {
     display: flex;
-    flex-direction: column; /* Adjusted to column layout */
+    flex-direction: column;
     align-items: center;
     background-color: #2121219c;
     padding: 20px;
@@ -71,23 +71,33 @@ input {
     border-radius: 15px;
     font-size: 1rem;
     margin: 4px;
+    transition: transform 0.2s linear;
+}
+
+input:hover {
+    transform: scale(1.1);
+    cursor: pointer;
+    transition: transform 0.3s linear(0 0%, 0 2.27%, 0.02 4.53%, 0.04 6.8%, 0.06 9.07%, 0.1 11.33%, 0.14 13.6%, 0.25 18.15%, 0.39 22.7%, 0.56 27.25%, 0.77 31.8%, 1 36.35%, 0.89 40.9%, 0.85 43.18%, 0.81 45.45%, 0.79 47.72%, 0.77 50%, 0.75 52.27%, 0.75 54.55%, 0.75 56.82%, 0.77 59.1%, 0.79 61.38%, 0.81 63.65%, 0.85 65.93%, 0.89 68.2%, 1 72.7%, 0.97 74.98%, 0.95 77.25%, 0.94 79.53%, 0.94 81.8%, 0.94 84.08%, 0.95 86.35%, 0.97 88.63%, 1 90.9%, 0.99 93.18%, 0.98 95.45%, 0.99 97.73%, 1 100%);
 }
 
 button {
-    background-color: #644cafd1;
+    background-color: #800080;
     color: #fff;
     border: none;
     padding: 10px;
     border-radius: 4px;
     cursor: pointer;
     margin-top: 5%;
+    transition: transform 0.2s linear;
 }
 
 button:hover {
-    background-color: #45a049;
+    transform: scale(1.1);
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    background-color: #cc00ff;
 }
 
-/* Add the following to hide the signup form initially */
 #signupForm {
     display: none;
 }
