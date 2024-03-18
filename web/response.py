@@ -58,7 +58,11 @@ class GeminiChat:
         GeminiChatConfig.initialize_genai_api()
 
     def process_user_input(self, user_input):
-        return f"master: {user_input.strip().lower()}"
+        return f"master: {user_input}"
+
+    def process_tittle(self, user_input):
+        input = f'give this a tittle, here the description : {user_input}. use only max to 5 word'
+        return f"master: {input}"
 
     def generate_chat(self, user_input):
         generation_config = GeminiChatConfig.gemini_generation_config()
@@ -74,6 +78,24 @@ class GeminiChat:
         try:
             user_input = self.process_user_input(user_input)
             response = chat.send_message(instruction + user_input)
+            return response.text
+
+        except Exception as e:
+            return f"An error occurred: {str(e)}"
+
+    def generate_tittle(self, user_input):
+        generation_config = GeminiChatConfig.gemini_generation_config()
+        safety_settings = GeminiChatConfig.gemini_safety_settings()
+        model = genai.GenerativeModel(
+            model_name="gemini-1.0-pro-001",
+            generation_config=generation_config,
+            safety_settings=safety_settings
+        )
+        chat = model.start_chat(history=[])
+
+        try:
+            input = self.process_tittle(user_input)
+            response = chat.send_message(input)
             return response.text
 
         except Exception as e:

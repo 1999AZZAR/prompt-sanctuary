@@ -199,6 +199,7 @@ def handle_user_input():
         return 'Bot activity detected. Access denied.'
 
     user_input = request.get_json().get('user_input', '').lower()
+    # handle the image tag input
     if user_input.startswith('imagine'):
         prompt = user_input[len('imagine'):].strip()
         prompt_text = prompt if prompt else 'Your prompt here'
@@ -215,9 +216,22 @@ def handle_user_input():
             return jsonify({'image_path': image_path})
         else:
             return jsonify({'bot_response': 'Error generating image'})
+    # handle the tittle tag input
+    elif user_input.startswith('tittle'):
+        prompt = user_input[len('tittle'):].strip()
+        prompt_text = prompt if prompt else 'Your prompt here'
+        response = chat_app.generate_tittle(user_input)
+        if response:
+            return jsonify({'bot_response': response})
+        else:
+            return jsonify({'bot_response': 'Error generating tittle'})
+    # handle global input
     else:
         response = chat_app.generate_chat(user_input)
-        return jsonify({'bot_response': response})
+        if response:
+            return jsonify({'bot_response': response})
+        else:
+            return jsonify({'bot_response': 'Error generating response'})
 
 # basic generator
 @app.route('/generate')
@@ -263,14 +277,21 @@ def reverse_image():
         image_file = request.files['image']
         image_data = image_file.read()
 
+        image_styles = [
+            "3d-model", "abstract", "analog-film", "anime", "chalk-art",
+            "cinematic", "comic-book", "cyberpunk", "cubism", "decoupage",
+            "digital-art", "enhance", "expressionistic", "fantasy-art", 
+            "glitch-art", "graffiti", "hyperrealistic", "impressionistic",
+            "isometric", "line-art", "low-poly", "minimalist", "modeling-compound",
+            "neon-punk", "origami", "paper-cut", "photographic", "pixel-art", 
+            "pop-art", "steampunk", "surreal", "tile-texture", "vaporwave",
+            "watercolor",
+        ]
+
         prompt_parts = [
             "\nPlease provide a detailed description, written in proper English, to recreate this image in 250 to 500 words. Include information about the style, mood, lighting, and other important details. Ensure your sentences are complete and free from spelling and grammar errors:",
             {"mime_type": "image/jpeg", "data": image_data},
-            "\nPlease select and use the main artistic style from the following list (you can choose more than one): \n",
-            "1. Photographic\n2. Enhanced\n3. Anime\n4. Digital art\n5. Comic book\n6. Fantasy art\n",
-            "7. Line art\n8. Analog film\n9. Neon punk\n10. Isometric\n11. Low poly\n12. Origami\n",
-            "13. Modeling compound\n14. Cinematic\n15. 3D model\n16. Pixel art\n17. Tile texture\n",
-            "18. Surrealism\n19. Impressionism\n20. Abstract\n21. Cubism\n22. Graffiti\n23. Surrealism\n24. Pop art\n",
+            f"\nPlease select and use up to four different artistic styles from the following list: \n{', '.join(image_styles)}\nYou can choose the same style multiple times if desired.",
             "Try to make your description as similar as possible to the original image, just like an audio describer would. Remember to begin your description with the word 'imagine.' For example, 'imagine a red-hooded woman in the forest...'",
         ]
 

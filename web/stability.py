@@ -126,7 +126,7 @@ class Image_gen:
             img = Image.open(image_path)
             # Resize the image to be 3 times smaller or to a maximum size of 200KB
             img.thumbnail((img.size[0] // 3, img.size[1] // 3))
-            img.save(image_path, quality=95)  # Adjust quality as needed to meet size requirements
+            img.save(image_path, quality=100)
         except Exception as e:
             print(f"Error downsizing image: {e}")
 

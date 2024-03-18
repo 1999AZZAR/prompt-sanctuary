@@ -2,6 +2,7 @@
 import os
 import google.generativeai as genai
 from dotenv import load_dotenv
+import random
 
 load_dotenv()
 api_keys = os.getenv('GENAI_API_KEY').split(',')
@@ -118,19 +119,43 @@ def generate_random():
   return response.text
 
 def generate_imgdescription(user_input_image):
-  prompt_parts = [
-    " ",
-    f"input: write me an image description about {user_input_image} by using maximum 3 of this image style ( 3d-model, analog-film, anime, cinematic, comic-book, digital-art, enhance, fantasy-art, isometric, line-art, low-poly, modeling-compound, neon-punk, origami, photographic, pixel-art, tile-texture)(chose randomly) and use 200 to 400 character long description.\n Remember to begin your description with the word 'imagine.' For example, 'imagine a red-hooded woman in the forest...'",
-    "output: ",
-  ]
-  response = model.generate_content(prompt_parts)
-  return response.text
+    image_styles = [
+        "3d-model", "abstract", "analog-film", "anime", "chalk-art",
+        "cinematic", "comic-book", "cyberpunk", "cubism", "decoupage",
+        "digital-art", "enhance", "expressionistic", "fantasy-art", 
+        "glitch-art", "graffiti", "hyperrealistic", "impressionistic",
+        "isometric", "line-art", "low-poly", "minimalist", "modeling-compound",
+        "neon-punk", "origami", "paper-cut", "photographic", "pixel-art", 
+        "pop-art", "steampunk", "surreal", "tile-texture", "vaporwave",
+        "watercolor",
+    ]
+    
+    chosen_styles = random.sample(image_styles, k=3)
+    prompt_parts = [
+        " ",
+        f"Input: Use the following styles ({', '.join(chosen_styles)}) to create a compelling image description abou {user_input_image}. if possible Incorporate elements all of those styles into your description. Your narrative should be between 200 to 400 characters, evoking a vivid and imaginative scene. Start your description with the word 'imagine,' e.g., 'imagine a hyperrealistic portrait in a dreamlike landscape...'",
+        "Output: ",
+    ]
+    response = model.generate_content(prompt_parts)
+    return response.text
 
 def generate_vrandom():
-  prompt_parts = [
-    " ",
-    "input: write me an image description using maximum 3 of this image style ( 3d-model,,analog-film, anime, cinematic, comic-book, digital-art, enhance, fantasy-art, isometric, line-art, low-poly, modeling-compound, neon-punk, origami, photographic, pixel-art, tile-texture)(chose randomly) to generate a random image description (use 200 to 400 character and make it as random and beautiful as possible).\n Remember to begin your description with the word 'imagine.' For example, 'imagine a red-hooded woman in the forest...'",
-    "output: ",
-  ]
-  response = model.generate_content(prompt_parts)
-  return response.text
+    image_styles = [
+        "3d-model", "abstract", "analog-film", "anime", "chalk-art",
+        "cinematic", "comic-book", "cyberpunk", "cubism", "decoupage",
+        "digital-art", "enhance", "expressionistic", "fantasy-art", 
+        "glitch-art", "graffiti", "hyperrealistic", "impressionistic",
+        "isometric", "line-art", "low-poly", "minimalist", "modeling-compound",
+        "neon-punk", "origami", "paper-cut", "photographic", "pixel-art", 
+        "pop-art", "steampunk", "surreal", "tile-texture", "vaporwave",
+        "watercolor",
+    ]
+
+    chosen_styles = random.sample(image_styles, k=3)
+    prompt_parts = [
+        " ",
+        f"Input: Use the following styles ({', '.join(chosen_styles)}) to create a compelling image description. if possible Incorporate elements all of those styles into your description. Your narrative should be between 200 to 400 characters, evoking a vivid and imaginative scene. Start your description with the word 'imagine,' e.g., 'imagine a hyperrealistic portrait in a dreamlike landscape...'",
+        "Output: ",
+    ]
+    response = model.generate_content(prompt_parts)
+    return response.text
