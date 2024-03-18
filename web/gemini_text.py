@@ -133,7 +133,7 @@ def generate_imgdescription(user_input_image):
     chosen_styles = random.sample(image_styles, k=3)
     prompt_parts = [
         " ",
-        f"Input: Use the following styles ({', '.join(chosen_styles)}) to create a compelling image description abou {user_input_image}. if possible Incorporate elements all of those styles into your description. Your narrative should be between 200 to 400 characters, evoking a vivid and imaginative scene. Start your description with the word 'imagine,' e.g., 'imagine a hyperrealistic portrait in a dreamlike landscape...'",
+        f"Input: Use the following styles ({', '.join(chosen_styles)}) to create a compelling image description about {user_input_image}. if possible Incorporate elements all of those styles into your description. Your narrative should be between 200 to 400 characters, evoking a vivid and imaginative scene. Start your description with the word 'imagine,' e.g., 'imagine a hyperrealistic portrait in a dreamlike landscape...'",
         "Output: ",
     ]
     response = model.generate_content(prompt_parts)
