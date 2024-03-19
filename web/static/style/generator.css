@@ -124,16 +124,20 @@ strong:hover{
 }
 
 button {
-  color: rgb(255 255 255);
-  font-family: 'Rubik';
-  font-size: 1rem;
-  background-color: #4b006e78;
-  border: 2px solid #56565657;
-  border-radius: 15px;
-  -webkit-border-radius: 15px;
-  -moz-border-radius: 15px;
-  -ms-border-radius: 15px;
-  -o-border-radius: 15px;
+    color: rgb(255 255 255);
+    font-family: 'Rubik';
+    font-size: 0.9em;
+    background-color: #4b006e78;
+    border: 2px solid #56565657;
+    cursor: pointer;
+    margin: 2px;
+    transition: transform 0.3s linear;
+    border-radius: 10px;
+}
+
+button:hover {
+    background-color: #5c0187e2;
+    transform: scale(1.1);
 }
 
 form {
@@ -157,20 +161,21 @@ form:hover{
 }
 
 form input {
-  color: white;
-  font-family: 'Rubik';
-  font-size: 1rem;
-  margin: 4px;
-  background-color: #392c3ee3;
-  border-radius: 15px;
-  -webkit-border-radius: 15px;
-  -moz-border-radius: 15px;
-  -ms-border-radius: 15px;
-  -o-border-radius: 15px;
+    width: 100%;
+    padding: 7px;
+    box-sizing: border-box;
+    background-color: #352a3a;
+    color: white;
+    border-radius: 18px;
+    font-size: 0.93rem;
+    margin: 4px;
+    transition: transform 0.2s linear;
 }
 
-input:hover{
-  background-color: #9c30c78d;
+input:hover {
+    transform: scale(1.1);
+    cursor: pointer;
+    transition: transform 0.3s linear(0 0%, 0 2.27%, 0.02 4.53%, 0.04 6.8%, 0.06 9.07%, 0.1 11.33%, 0.14 13.6%, 0.25 18.15%, 0.39 22.7%, 0.56 27.25%, 0.77 31.8%, 1 36.35%, 0.89 40.9%, 0.85 43.18%, 0.81 45.45%, 0.79 47.72%, 0.77 50%, 0.75 52.27%, 0.75 54.55%, 0.75 56.82%, 0.77 59.1%, 0.79 61.38%, 0.81 63.65%, 0.85 65.93%, 0.89 68.2%, 1 72.7%, 0.97 74.98%, 0.95 77.25%, 0.94 79.53%, 0.94 81.8%, 0.94 84.08%, 0.95 86.35%, 0.97 88.63%, 1 90.9%, 0.99 93.18%, 0.98 95.45%, 0.99 97.73%, 1 100%);
 }
 
 html::-webkit-scrollbar {
