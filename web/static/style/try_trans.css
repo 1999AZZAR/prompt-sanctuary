@@ -1,7 +1,7 @@
 body, html {
     height: 100%;
     color: #e0e0e0;
-    margin: 3% 0 0 0;
+    margin-top: 7%;
     display: flex;
     flex-direction: column;
     justify-content: space-around;
@@ -25,11 +25,10 @@ h1 {
     flex-direction: column;
     height: 85%;
     position: fixed;
-    width: 60%;
-    max-width: 800px;
+    width: 800px;
+    max-width: 75%;
     border-radius: 10px;
-    margin: 0% auto;
-    margin-bottom: 1%;
+    padding-bottom: 3%;
     font-size: 0.95em;
 }
 
@@ -40,15 +39,16 @@ h1 {
     padding: 10px;
     overflow-y: auto;
     background-color: #5b5b5b30;
-    border-radius: 10px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
 }
 
 #input-area {
     display: flex;
     padding: 10px;
     background: #2c2c2c;
-    border-radius: 10px;
-    bottom: 2%;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
 }
 
 #message-input {
@@ -160,4 +160,13 @@ img.img-class:hover {
 .modal-content img {
     max-width: 100%;
     max-height: 100%;
+}
+
+@media only screen and (min-width: 481px) and (max-width: 768px) {
+    #chat-container {
+        height: 80%;
+        width: 800px;
+        max-width: 98%;
+        margin-top: 10%;
+    }
 }

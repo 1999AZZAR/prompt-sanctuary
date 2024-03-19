@@ -32,16 +32,51 @@ window.onload = function () {
         document.getElementById("confirmPassword").value = "";
     }
 
+    // Add event listener for form submission
+    loginForm.addEventListener("submit", function (event) {
+        const username = document.getElementById("usernameLogin").value;
+        const password = document.getElementById("passwordLogin").value;
+
+        if (username.includes(" ")) {
+            event.preventDefault();
+            showErrorPopup("Username cannot contain spaces.");
+            return;
+        }
+
+        if (username === password) {
+            event.preventDefault();
+            showErrorPopup("Username cannot be equal to password.");
+            return;
+        }
+    });
+
+    // Add event listener for form submission
+    signupForm.addEventListener("submit", function (event) {
+        const username = document.getElementById("usernameSignup").value;
+        const password = document.getElementById("passwordSignup").value;
+        const confirmPassword = document.getElementById("confirmPassword").value;
+
+        if (username.includes(" ")) {
+            event.preventDefault();
+            showErrorPopup("Username cannot contain spaces.");
+            return;
+        }
+
+        if (username === password) {
+            event.preventDefault();
+            showErrorPopup("Username cannot be equal to password.");
+            return;
+        }
+
+        if (password !== confirmPassword) {
+            event.preventDefault();
+            showErrorPopup("Passwords do not match.");
+            return;
+        }
+    });
+
     // Show error popup
     function showErrorPopup(message) {
-        console.error("Error:", message);
-        resetLoginForm();
-        resetSignupForm();
-    }
-
-    // Show error if present
-    const errorMessage = '{{ error_message }}';
-    if (errorMessage && errorMessage.trim() !== '') {
-        showErrorPopup(errorMessage);
+        alert("Error: " + message);
     }
 };

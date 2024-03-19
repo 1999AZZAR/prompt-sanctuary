@@ -93,6 +93,10 @@ strong:hover{
 
 h1 {
     transition: transform 0.2s linear;
+    -webkit-transition: transform 0.2s linear;
+    -moz-transition: transform 0.2s linear;
+    -ms-transition: transform 0.2s linear;
+    -o-transition: transform 0.2s linear;
 }
 
 h1#toggleButton:hover {
@@ -102,9 +106,100 @@ h1#toggleButton:hover {
 }
 
 @media only screen and (min-width: 481px) and (max-width: 768px) {
-
     .side-panel {
-        width: 35%;
-        max-width: 318px;
+        display: block; 
+        width: 40%; 
+        max-width: none; 
+        box-shadow: none; 
+        padding: 10px; 
+        background-color: #333; 
+        color: #fff; 
+        z-index: 999;
+        transition: transform 0.3s ease; 
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100%;
+    }
+
+    .side-panel ul {
+        margin-top: 10%; /* Adjust margin */
+        padding: 5%; /* Adjust padding */
+    }
+
+    .side-panel li {
+        margin-bottom: 5px; /* Adjust margin */
+    }
+
+    .image-preview {
+        margin-top: 5px;
+    }
+
+    img#preview-logo {
+        max-width: 120px; 
+        margin-top: 5%; 
+    }
+
+    .side-list {
+        border-radius: 10px; 
+    }
+
+    .side-list:hover {
+        transform: scale(1); 
+    }
+
+    #bottom-list a:hover {
+        color: #ffd700;
+    }
+
+    h1#toggleButton:hover {
+        transform: scale(1); 
+    }
+}
+
+@media only screen and (min-width: 300px) and (max-width: 480px) {
+    .side-panel {
+        width: 100%;
+        max-width: none;
+        height: 100%;
+        box-shadow: none;
+        color: #fff;
+        position: fixed;
+        top: 0;
+        left: 0;
+    }
+    .side-panel ul {
+        margin-top: 10%; /* Adjust margin */
+        padding: 5%; /* Adjust padding */
+        list-style: kannada;
+    }
+
+    .side-panel li {
+        margin-bottom: 5px; /* Adjust margin */
+    }
+
+    .image-preview {
+        margin-top: 5px;
+    }
+
+    img#preview-logo {
+        max-width: 120px; 
+        margin-top: 5%; 
+    }
+
+    .side-list {
+        border-radius: 10px; 
+    }
+
+    .side-list:hover {
+        transform: scale(1); 
+    }
+
+    #bottom-list a:hover {
+        color: #ffd700;
+    }
+
+    h1#toggleButton:hover {
+        transform: scale(1); 
     }
 }
