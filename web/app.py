@@ -4,17 +4,19 @@
 import secrets
 import time
 import os
+from datetime import datetime, timedelta
 from flask import Flask, render_template, request, redirect, url_for, session, jsonify
-from gemini_text import generate_response, generate_random, generate_vrandom, generate_imgdescription
-from gemini_vis import generate_content
-from advance import response, iresponse
 from werkzeug.exceptions import BadRequestKeyError
 from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
 from sqlite3 import OperationalError
 import sqlite3
-from response import GeminiChat
+# dedicated models
+from gemini_text_res import GeminiChat
 from stability import Image_gen
+from basic import generate_response, generate_random, generate_vrandom, generate_imgdescription
+from gemini_vis_res import generate_content
+from advance import response, iresponse
 
 # microservices call
 app = Flask(__name__)
@@ -82,7 +84,6 @@ def required_login(func):
 def delete_old_images():
     conn = sqlite3.connect(IMAGE_LOG)
     c = conn.cursor()
-    image_table()
     image_dir = "./web/static/image"
     if os.path.exists(image_dir):
         now = time.time()
@@ -207,10 +208,11 @@ def handle_user_input():
         if image_path:
             # Delete old images before returning response
             delete_old_images()
-            # Insert metadata into database
+            # Insert metadata into database with current timestamp
             conn = sqlite3.connect(IMAGE_LOG)
             c = conn.cursor()
-            c.execute("INSERT INTO images (filename) VALUES (?)", (image_path,))
+            current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            c.execute("INSERT INTO images (filename, creation_time) VALUES (?, ?)", (image_path, current_time))
             conn.commit()
             conn.close()
             return jsonify({'image_path': image_path})
