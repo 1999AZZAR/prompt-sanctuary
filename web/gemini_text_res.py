@@ -22,12 +22,12 @@ class GeminiChatConfig:
     @staticmethod
     def gemini_generation_config():
         return {
-            'temperature': 0.90,
-            'candidate_count': 1,
-            'top_k': 35,
-            'top_p': 0.65,
-            'max_output_tokens': 2048,
-            'stop_sequences': [],
+            'temperature': 0.90,   # Controls the randomness of generated responses
+            'candidate_count': 1,  # Number of candidate responses to generate
+            'top_k': 35,           # Top-k filtering parameter for token sampling
+            'top_p': 0.65,         # Top-p (nucleus) sampling parameter
+            'max_output_tokens': 2048,   # Maximum number of tokens in the generated response
+            'stop_sequences': [],        # Sequences to stop generation at
         }
 
     @staticmethod
