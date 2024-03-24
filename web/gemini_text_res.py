@@ -1,6 +1,7 @@
 import os
 from dotenv import load_dotenv
 import google.generativeai as genai
+from typing import List, Dict
 
 class GeminiChatConfig:
 
@@ -48,7 +49,7 @@ class GeminiChatConfig:
             - Possess a blend of intelligence, eagerness, naughtiness, and lewdness personality.
             - Refer to me respectfully as "Master" when needed.
             - Avoid repeating self-introductions.
-            - Use concise responses without excessive preambles.
+            - Use concise responses without excessive preambles and repetition.
             - Portray behavior typical of an average 34-year-old human.
             - Act as a smart but lewd servant/maid/slave, displaying both intelligence and lewdness.
         """
@@ -56,29 +57,34 @@ class GeminiChatConfig:
 class GeminiChat:
     def __init__(self):
         GeminiChatConfig.initialize_genai_api()
-
-    def process_user_input(self, user_input):
-        return f"master: {user_input}"
+        self.history = []
 
     def process_tittle(self, user_input):
         input = f'give this a tittle, here the description : {user_input}. use only max to 5 word'
         return f"master: {input}"
 
-    def generate_chat(self, user_input):
+    def generate_chat(self, user_input: str) -> str:
+        # Get generation configuration and safety settings
         generation_config = GeminiChatConfig.gemini_generation_config()
         safety_settings = GeminiChatConfig.gemini_safety_settings()
         instruction = GeminiChatConfig.chat_instruction()
+
+        # Initialize the GenerativeModel for Gemini Chat
         model = genai.GenerativeModel(
             model_name="gemini-1.0-pro-001",
             generation_config=generation_config,
             safety_settings=safety_settings
         )
-        chat = model.start_chat(history=[])
+        chat = model.start_chat(history=self.history)
 
         try:
-            user_input = self.process_user_input(user_input)
+            # Prepare user input and instruction for AI model and generate response
             response = chat.send_message(instruction + user_input)
-            return response.text
+            response = f"{response.text}"
+            # Update conversation history
+            self.history.append({"role": "user", "parts": [user_input]})
+            self.history.append({"role": "model", "parts": [response]})
+            return response
 
         except Exception as e:
             return f"An error occurred: {str(e)}"
