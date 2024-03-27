@@ -2,9 +2,11 @@ import os
 import google.generativeai as genai
 from dotenv import load_dotenv
 
+
 load_dotenv()
 api_keys = os.getenv('GENAI_API_KEY').split(',')
 current_key_index = 0
+
 
 def get_current_api_key():
     global current_key_index
@@ -14,6 +16,7 @@ def get_current_api_key():
 
 genai.configure(api_key=get_current_api_key())
 
+
 # general config
 generation_config = {
     "temperature": 0.75,
@@ -21,6 +24,7 @@ generation_config = {
     "top_k": 35,
     "max_output_tokens": 2048,
 }
+
 
 # map the threshold
 def map_threshold(parameter_value):
@@ -36,6 +40,7 @@ def map_threshold(parameter_value):
         return "HARM_BLOCK_THRESHOLD_UNSPECIFIED"
     else:
         return "BLOCK_NONE"
+
 
 # generate response.
 def response(parameter0, parameter1, parameter2, parameter3):
@@ -127,6 +132,7 @@ def response(parameter0, parameter1, parameter2, parameter3):
     ]
     response = model.generate_content(prompt_parts)
     return response.text
+
 
 def iresponse(parameter0, parameter1, parameter2, parameter3):
     threshold_value = map_threshold("none")

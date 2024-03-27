@@ -3,11 +3,13 @@ from dotenv import load_dotenv
 import google.generativeai as genai
 from typing import List, Dict
 
+# class config for the gemini chat model
 class GeminiChatConfig:
 
     _current_key_index = 0
     _api_keys = []
 
+    # model initialization
     @staticmethod
     def initialize_genai_api():
         load_dotenv()
@@ -20,6 +22,7 @@ class GeminiChatConfig:
 
         genai.configure(api_key=get_current_api_key())
 
+    # model configuration
     @staticmethod
     def gemini_generation_config():
         return {
@@ -31,6 +34,7 @@ class GeminiChatConfig:
             'stop_sequences': [],        # Sequences to stop generation at
         }
 
+    # safety settings
     @staticmethod
     def gemini_safety_settings():
         return [
@@ -40,6 +44,7 @@ class GeminiChatConfig:
             {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_NONE"}
         ]
 
+    # instruction for the model
     @staticmethod
     def chat_instruction():
         return """
@@ -54,15 +59,19 @@ class GeminiChatConfig:
             - Act as a smart but lewd servant/maid/slave, displaying both intelligence and lewdness.
         """
 
+# gemini chat config
 class GeminiChat:
+    # load the config and history
     def __init__(self):
         GeminiChatConfig.initialize_genai_api()
         self.history = []
 
+    # user input process
     def process_tittle(self, user_input):
         input = f'give this a tittle, here the description : {user_input}. use only max to 5 word'
-        return f"master: {input}"
+        return f"user: {input}"
 
+    # generate chat
     def generate_chat(self, user_input: str) -> str:
         # Get generation configuration and safety settings
         generation_config = GeminiChatConfig.gemini_generation_config()
@@ -89,6 +98,7 @@ class GeminiChat:
         except Exception as e:
             return f"An error occurred: {str(e)}"
 
+    # generate the tittle from user input
     def generate_tittle(self, user_input):
         generation_config = GeminiChatConfig.gemini_generation_config()
         safety_settings = GeminiChatConfig.gemini_safety_settings()

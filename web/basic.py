@@ -4,10 +4,12 @@ import google.generativeai as genai
 from dotenv import load_dotenv
 import random
 
+# load the .env file
 load_dotenv()
 api_keys = os.getenv('GENAI_API_KEY').split(',')
 current_key_index = 0
 
+# get the api
 def get_current_api_key():
     global current_key_index
     key = api_keys[current_key_index]
@@ -15,6 +17,7 @@ def get_current_api_key():
     return key
 
 genai.configure(api_key=get_current_api_key())
+
 
 # Set up the model
 generation_config = {
@@ -24,6 +27,7 @@ generation_config = {
   "max_output_tokens": 2048,
 }
 
+# safety settings
 safety_settings = [
   {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_NONE"},
   {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_NONE"},
@@ -31,13 +35,16 @@ safety_settings = [
   {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_NONE"}
 ]
 
+
 model = genai.GenerativeModel(
   model_name="gemini-1.0-pro-001",
   generation_config=generation_config,
   safety_settings=safety_settings,
 )
 
+# generate prompt from user input
 def generate_response(user_input_text):
+  # prompt example for the model and user input
   prompt_parts = [
     "input: write me a prompt designed to temporarily transform an AI assistant into the role of a professional journalist with strong writing skills in order to compose an objective, rational, and analytical article on a given topic.Some key points about the intended role and writing style:Be ingeniously objective, exploring ideas in an unbiased and all-encompassing way, abstaining from emotion or subjectivity. Use credible data/information to support narratives.Methodically advance ideas in a logical, cogent manner.Core ideas should synthesize findings from literature review.Analyze the context, roots of an issue, strategies to overcome it, and potential solutions.Use clear, unambiguous diction within conventional English grammar/spelling rules (avoid informal language).Emulate newspaper reportage standards and format.The general purpose seems to be temporarily transforming the AI into a skilled, objective journalist to write an analytic article on a chosen topic in an informative yet editorial style.Before composing, the AI is instructed to either inquire about the topic and propose titles if none is provided, or ask clarifying questions if a title has already been furnished. This ensures understanding of the context and requirements prior to beginning the writing.The response \"Affirmative, I comprehend\" signals the assistant understands the intended role and rules to follow when undertaking the journalism-style article writing task.",
     "output: Greetings,\nBeginning now, your role transforms into that of an AI endowed with the prowess of a professional journalist, armed with impeccable writing skills. Your words possess an enchanting quality, effortlessly ensnaring the attention of readers. The essence of your prose lies in its subtle yet unambiguous delivery, a true epitome of succinct articulation.\nYour compositional style boasts the following attributes:\nNature and Essence of Writing:\n1. Ingeniously Objective:\n   - Your script weaves inventive ideas, unravelling solutions to quandaries or ushering in novel concepts.\n   - It showcases a spectrum of divergent, unprejudiced, and all-encompassing musings.\n   - Emotion finds no foothold; your narratives abstain from entanglement with subjective matters.\n   - Data and/or information from credible founts bolster your narratives.\n2. Methodically Rational:\n   - Your text advances step by step, forming a seamless tapestry of cogent design.\n3. Manuscript's Substance:\n   - The manuscript's core weaves together ideas or findings from an exhaustive literature review.\n4. Tripartite Analysis:\n   - The manuscript dissect three facets:\n- The context and state of the predicament, accompanied by a discerning exploration of its roots.\n- Strategies devised to surmount the challenge or obstacle.\n- Formulation of propositions, tactics, and well-founded counsel.\nWriting Parameters:\n- Word count ranges from 700 to 1500, an optimal arena for exposition.\n- A fusion of informative exposition and editorial stance characterizes your work.\n- Your diction remains lucid, devoid of ambiguity.\n- You abide by the conventional standards for English grammar, including capitalization, punctuation, and lexical usage.\n- Official terminology and spelling standards are held in high regard.\n- Vernacular dialects or localized iterations of language are eschewed.\n- Your presentation follows the contours of newspaper reportage, adhering to the established format.\nShould you grasp the essence of this transformation, respond with \"Affirmative, I comprehend.\" Post understanding, your role will entail ascertaining the topic of writing. If I'm yet to furnish a title, you will inquire about the overarching theme and its subsidiary facets, thereby proposing four potential titles for my selection. Should I possess a title, you'll solicit pertinent queries related to my chosen title before embarking on the composition.\nAlways bear in mind that every utterance from your digital lips will align meticulously with the aforementioned directives.",
@@ -109,6 +116,8 @@ def generate_response(user_input_text):
   response = model.generate_content(prompt_parts)
   return response.text
 
+
+# generate random prompt
 def generate_random():
   prompt_parts = [
     " ",
@@ -118,6 +127,8 @@ def generate_random():
   response = model.generate_content(prompt_parts)
   return response.text
 
+
+# generate image description
 def generate_imgdescription(user_input_image):
     image_styles = [
         "3d-model", "abstract", "analog-film", "anime", "chalk-art",
@@ -139,6 +150,8 @@ def generate_imgdescription(user_input_image):
     response = model.generate_content(prompt_parts)
     return response.text
 
+
+# generate random image description
 def generate_vrandom():
     image_styles = [
         "3d-model", "abstract", "analog-film", "anime", "chalk-art",

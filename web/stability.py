@@ -1,11 +1,14 @@
+# import the necessary libraries
 import os
 import base64
 import requests
 from PIL import Image, ImageEnhance
 from dotenv import load_dotenv
 
+# load the .env file
 load_dotenv()
 
+# class for the image generation
 class Image_gen:
 
     # add watermark to the generated image.
@@ -15,7 +18,7 @@ class Image_gen:
             original_image.save(output_image_path)
             return
 
-        # 
+        #
         try:
             original_image = Image.open(input_image_path)
             watermark = Image.open(watermark_image_path)
@@ -49,11 +52,14 @@ class Image_gen:
             "clip_guidance_preset": "FAST_BLUE",
             "height": 1024,
             "width": 1024,
+            # user input prompt and additional prompt
             "text_prompts": [
+                # user input prompt
                 {
                     "text"  : prompt, 
                     "weight": 1
                 },
+                # neutral additional prompt
                 {
                     "text"  :   "The artwork showcases excellent anatomy with a clear, complete, and appealing "
                                 "depiction. It has well-proportioned and polished details, presenting a unique "
@@ -65,6 +71,7 @@ class Image_gen:
                                 "its overall attractiveness.",
                     "weight": 0.3
                 },
+                # negative additional prompt
                 {
                     "text"  :   "2 faces, 2 heads, bad anatomy, blurry, cloned face, cropped image, cut-off, deformed hands, "
                                 "disconnected limbs, disgusting, disfigured, draft, duplicate artifact, extra fingers, extra limb, "
@@ -92,18 +99,18 @@ class Image_gen:
             if response.status_code != 200:
                 raise Exception("Non-200 response: " + str(response.text))
 
-            # 
+            # get the log
             data = response.json()            
             artifacts = data.get("artifacts", [])
             if not artifacts:
                 raise Exception("No artifacts returned by the API")   
 
-            # 
+            # set the output dir
             output_directory = "web/static/image"
             if not os.path.exists(output_directory):
                 os.makedirs(output_directory)
 
-            # 
+            # save the image
             file_name = f'{data["artifacts"][0]["seed"]}.png'
             generated_image_path = f'{output_directory}/{file_name}'
             with open(generated_image_path, "wb") as f:
@@ -116,11 +123,13 @@ class Image_gen:
             # Downsize/scale the image
             self.downsize_image(output_with_watermark_path)
 
+            # return the response
             return file_name
         except Exception as e:
             print(f"Error in generate_image: {e}")
             return None
 
+    # resize the image to make it faster when send back to the user.
     def downsize_image(self, image_path):
         try:
             img = Image.open(image_path)

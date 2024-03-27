@@ -18,6 +18,7 @@ from basic import generate_response, generate_random, generate_vrandom, generate
 from gemini_vis_res import generate_content
 from advance import response, iresponse
 
+
 # microservices call
 app = Flask(__name__)
 USER_DATABASE = './web/database/user.db'
@@ -25,6 +26,7 @@ PROMPT_DATABASE = './web/database/prompt_data.db'
 IMAGE_LOG = './web/database/image_log.db'
 chat_app = GeminiChat()
 image_generator = Image_gen() 
+
 
 # user database
 def create_table():
@@ -43,6 +45,7 @@ def create_table():
 create_table()
 app.secret_key = 'hahahaha' 
 
+
 # image log database
 def image_table():
     conn = sqlite3.connect(IMAGE_LOG)
@@ -55,6 +58,7 @@ def image_table():
     ''')
     conn.commit()
     conn.close()
+
 
 # personal user prompt database
 def create_prompt_table(username):
@@ -71,6 +75,7 @@ def create_prompt_table(username):
     conn.commit()
     conn.close()
 
+
 # login check
 def required_login(func):
     @wraps(func)
@@ -79,6 +84,7 @@ def required_login(func):
             return redirect(url_for('index'))
         return func(*args, **kwargs)
     return decorated_function
+
 
 # Function to delete old images from database and filesystem
 def delete_old_images():
@@ -100,10 +106,12 @@ def delete_old_images():
                     conn.commit()
     conn.close()
 
+
 # index
 @app.route('/')
 def index():
     return render_template('login.html')
+
 
 # signup
 @app.route('/signup', methods=['POST'])
@@ -127,6 +135,7 @@ def signup():
     conn.close()
     return redirect(url_for('index'))
 
+
 # login
 @app.route('/login', methods=['POST'])
 def login():
@@ -149,17 +158,20 @@ def login():
     else:
         return 'Invalid username or password. Please try again.'
 
+
 # logout
 @app.route('/logout')
 def logout():
     session.clear()
     return redirect(url_for('index'))
 
+
 # home
 @app.route('/home')
 @required_login
 def home():
     return render_template('index.html')
+
 
 # user personal library
 @app.route('/mylib')
@@ -185,11 +197,13 @@ def mylib():
     except Exception as e:
         return f"Error: {str(e)}"
 
+
 # prompt trial / chat bot
 @app.route('/trying')
 @required_login
 def trying():
     return render_template('try.html')
+
 
 # chat bot form and reply
 @app.route('/user_input', methods=['POST'])
@@ -235,11 +249,13 @@ def handle_user_input():
         else:
             return jsonify({'bot_response': 'Error generating response'})
 
+
 # basic generator
 @app.route('/generate')
 @required_login
 def generate():
     return render_template('prompts/generator/generator.html', result=None)
+
 
 # basic generator / text prompt
 @app.route('/generate/tprompt', methods=['POST'])
@@ -249,12 +265,14 @@ def process():
     response_text = generate_response(user_input)
     return render_template('prompts/generator/generator.html', result=response_text)
 
+
 # basic generator / random text prompt
 @app.route('/generate/trandom', methods=['POST'])
 @required_login
 def random_prompt():
     response_text = generate_random()
     return render_template('prompts/generator/generator.html', result=response_text)
+
 
 # basic generator / image prompt
 @app.route('/generate/iprompt', methods=['POST'])
@@ -264,12 +282,14 @@ def vprocess():
     response_text = generate_imgdescription(user_input)
     return render_template('prompts/generator/generator.html', result=response_text)
 
+
 # basic generator / random image prompt
 @app.route('/generate/irandom', methods=['POST'])
 @required_login
 def vrandom_prompt():
     response_text = generate_vrandom()
     return render_template('prompts/generator/generator.html', result=response_text)
+
 
 # basic generator / image to prompt
 @app.route('/generate/image', methods=['POST'])
@@ -303,11 +323,13 @@ def reverse_image():
     except Exception as e:
         return f"Error: {str(e)}"
 
+
 # advance generator
 @app.route('/advance')
 @required_login
 def advance():
     return render_template('prompts/generator/advance.html', result=None)
+
 
 # advance generator / text prompt
 @app.route('/advance/generate', methods=['POST'])
@@ -326,6 +348,7 @@ def generate_advance_response():
         error_message = f"Bad Request: {e.description}"
         return render_template('prompts/generator/advance.html', result=error_message)
 
+
 # advance generator / image prompt
 @app.route('/advance/igenerate', methods=['POST'])
 @required_login
@@ -342,6 +365,7 @@ def generate_advance_iresponse():
     except BadRequestKeyError as e:
         error_message = f"Bad Request: {e.description}"
         return render_template('prompts/generator/advance.html', result=error_message)
+
 
 # advance generator / image to prompt
 @app.route('/advance/image', methods=['POST'])
@@ -370,6 +394,7 @@ def advance_image():
     except Exception as e:
         return f"Error: {str(e)}"
 
+
 # save prompt to user library
 @app.route('/save_prompt', methods=['POST'])
 @required_login
@@ -394,6 +419,7 @@ def save_prompt():
     except Exception as e:
         return f"Error: {str(e)}"
 
+
 # delete prompt from user library
 @app.route('/delete_prompt', methods=['POST'])
 @required_login
@@ -414,76 +440,91 @@ def delete_prompt():
     except Exception as e:
         return f"Error: {str(e)}"
 
+
 # general prompt library
 @app.route('/library')
 @required_login
 def library():
     return render_template('prompts/library.html')
 
+
 @app.route('/library/promptimpro')
 @required_login
 def promptinmpro():
     return render_template('prompts/global/prompt_improve.html')
+
 
 @app.route('/library/adjust')
 @required_login
 def adjust():
     return render_template('prompts/global/adjustable_iq.html')
 
+
 @app.route('/library/aerea')
 @required_login
 def aerea():
     return render_template('prompts/global/aerea.html')
+
 
 @app.route('/library/ultimate')
 @required_login
 def ultimate():
     return render_template('prompts/global/ultimate_knowladge.html')
 
+
 @app.route('/library/webdev')
 @required_login
 def webdev():
     return render_template('prompts/global/web_des.html')
+
 
 @app.route('/library/mutation')
 @required_login
 def mutation():
     return render_template('prompts/global/mutation.html')
 
+
 @app.route('/library/createch')
 @required_login
 def createch():
     return render_template('prompts/Writers_and_editors/CreaTech.html')
+
 
 @app.route('/library/enhancement')
 @required_login
 def enhancement():
     return render_template('prompts/Writers_and_editors/enhancement.html')
 
+
 @app.route('/library/journalist')
 @required_login
 def journalist():
     return render_template('prompts/Writers_and_editors/journalist.html')
+
 
 @app.route('/library/paraphrase')
 @required_login
 def paraphrase():
     return render_template('prompts/Writers_and_editors/paraphrase.html')
 
+
 @app.route('/library/emdev')
 @required_login
 def emdev():
     return render_template('prompts/coding_companion/emdev.html')
+
 
 @app.route('/library/queria')
 @required_login
 def queria():
     return render_template('prompts/coding_companion/queria.html')
 
+
 @app.route('/library/standard')
 @required_login
 def standard():
     return render_template('prompts/coding_companion/standard.html')
+
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=5000, debug=True)
