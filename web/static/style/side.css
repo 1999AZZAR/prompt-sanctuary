@@ -1,20 +1,22 @@
 /* side panel */
 .side-panel {
-    display: none;
+    display: block;
     position: fixed;
     top: 0;
     left: 0;
-    border-bottom-right-radius: 15px;
-    border-top-right-radius: 15px;
+    border-bottom-right-radius: 10px;
+    border-top-right-radius: 10px;
     height: 100%;
-    width: 25%;
-    max-width: 218px;
+    width: 273px;
+    max-width: 25%;
     box-sizing: border-box;
     background-color: #333;
     color: #fff;
     padding: 20px;
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
     z-index: 999;
+    transition: transform 0.4s cubic-bezier(0.89, 0.75, 0.62, 0.96);
+    transform: translateX(-100%);
 }
 
 .side-panel ul {
@@ -26,18 +28,24 @@
     border-radius: 20px;
     padding: 10%;
     position: relative;
-    justify-content: space-around;
     flex-wrap: nowrap;
     font-size: medium;
-}
-
-.side-panel li {
-    margin-bottom: 10px;
+    align-items: stretch;
+    justify-content: space-around;
 }
 
 .side-panel ul li {
+    box-shadow: 5px 5px 4px 1px rgb(11 11 11 / 14%);
+    background-color: #333333d9;
+    border-radius: 5px;
     margin: 5%;
-    padding: 0%;
+    padding: 2% 0% 2% 3%;
+    transition: transform 0.2s linear;
+}
+
+.side-panel ul li:hover {
+    transform: scale(1.2);
+    animation: scale 0.2s cubic-bezier(0.43, 0.12, 0.57, 0.53) infinite;
 }
 
 .side-panel a {
@@ -59,7 +67,9 @@
 img#preview-logo {
     max-width: 150px;
     margin-top: 10%;
+    margin-left: 8%;
     object-fit: contain;
+    position: relative;
 }
 
 h4 {

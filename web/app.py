@@ -254,7 +254,7 @@ def handle_user_input():
 @app.route('/generate')
 @required_login
 def generate():
-    return render_template('prompts/generator/generator.html', result=None)
+    return render_template('prompts/generator/generator.html')
 
 
 # basic generator / text prompt
@@ -263,7 +263,7 @@ def generate():
 def process():
     user_input = request.form['user_input']
     response_text = generate_response(user_input)
-    return render_template('prompts/generator/generator.html', result=response_text)
+    return response_text
 
 
 # basic generator / random text prompt
@@ -271,7 +271,7 @@ def process():
 @required_login
 def random_prompt():
     response_text = generate_random()
-    return render_template('prompts/generator/generator.html', result=response_text)
+    return response_text
 
 
 # basic generator / image prompt
@@ -280,7 +280,7 @@ def random_prompt():
 def vprocess():
     user_input = request.form['user_input']
     response_text = generate_imgdescription(user_input)
-    return render_template('prompts/generator/generator.html', result=response_text)
+    return response_text
 
 
 # basic generator / random image prompt
@@ -288,7 +288,7 @@ def vprocess():
 @required_login
 def vrandom_prompt():
     response_text = generate_vrandom()
-    return render_template('prompts/generator/generator.html', result=response_text)
+    return response_text
 
 
 # basic generator / image to prompt
@@ -317,8 +317,8 @@ def reverse_image():
             "Try to make your description as similar as possible to the original image, just like an audio describer would. Remember to begin your description with the word 'imagine.' For example, 'imagine a red-hooded woman in the forest...'",
         ]
 
-        generated_text = generate_content(prompt_parts)
-        return render_template('prompts/generator/generator.html', result=generated_text)
+        response_text = generate_content(prompt_parts)
+        return response_text
 
     except Exception as e:
         return f"Error: {str(e)}"
