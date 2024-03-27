@@ -7,3 +7,4 @@ web/get_model.py
 .fuse_*
 web/static/image/*.*
 web/__pycache__/
+monospace.json
