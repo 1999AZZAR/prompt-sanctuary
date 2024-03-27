@@ -8,3 +8,5 @@ web/get_model.py
 web/static/image/*.*
 web/__pycache__/
 monospace.json
+.vscode/
+.idx/
