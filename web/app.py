@@ -41,8 +41,8 @@ def create_table():
     conn.commit()
     conn.close()
 
-# calculation word for user database
 create_table()
+#secret for user account table
 app.secret_key = 'hahahaha' 
 
 
@@ -58,6 +58,8 @@ def image_table():
     ''')
     conn.commit()
     conn.close()
+
+image_table()
 
 
 # personal user prompt database
@@ -328,7 +330,7 @@ def reverse_image():
 @app.route('/advance')
 @required_login
 def advance():
-    return render_template('prompts/generator/advance.html', result=None)
+    return render_template('prompts/generator/advance.html')
 
 
 # advance generator / text prompt
@@ -343,10 +345,10 @@ def generate_advance_response():
         
         response_text = response(parameter0, parameter1, parameter2, parameter3)
         
-        return render_template('prompts/generator/advance.html', result=response_text)
+        return response_text
     except BadRequestKeyError as e:
         error_message = f"Bad Request: {e.description}"
-        return render_template('prompts/generator/advance.html', result=error_message)
+        return error_message
 
 
 # advance generator / image prompt
@@ -361,10 +363,10 @@ def generate_advance_iresponse():
         
         response_text = iresponse(parameter0, parameter1, parameter2, parameter3)
         
-        return render_template('prompts/generator/advance.html', result=response_text)
+        return response_text
     except BadRequestKeyError as e:
         error_message = f"Bad Request: {e.description}"
-        return render_template('prompts/generator/advance.html', result=error_message)
+        return error_message
 
 
 # advance generator / image to prompt
@@ -389,7 +391,7 @@ def advance_image():
         ]
 
         response_text = generate_content(prompt_parts)
-        return render_template('prompts/generator/advance.html', result=response_text)
+        return response_text
 
     except Exception as e:
         return f"Error: {str(e)}"

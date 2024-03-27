@@ -92,7 +92,7 @@
                 <p>generate text prompt</p>
                 <!-- input -->
                 <div class="left-section">
-                    <form id="text-prompt-form" method="post" action="/generate/tprompt" onsubmit="return loadingAnimation()">
+                    <form id="text-prompt-form" onsubmit="submitForm('text-prompt-form', '/generate/tprompt'); return false;">
                         <label for="user_input">Input:</label>
                         <div class="input">
                             <input type="text" name="user_input" id="user_input_text" placeholder="write a python code" required>
@@ -104,7 +104,7 @@
 
                 <!-- random -->
                 <div class="right-section">
-                    <form method="post" id="random-text-prompt-form" action="/generate/trandom" onsubmit="return loadingAnimation()">
+                    <form id="random-text-prompt-form" onsubmit="submitForm('random-text-prompt-form', '/generate/trandom'); return false;">
                         <input type="submit" value="random">
                     </form>
                 </div>
@@ -117,7 +117,7 @@
                 <p>generate image prompt</p>
                 <!-- input -->
                 <div class="left-section">
-                    <form method="post" id="image-prompt-form" action="/generate/iprompt" onsubmit="return loadingAnimation()">
+                    <form id="image-prompt-form" onsubmit="submitForm('image-prompt-form', '/generate/iprompt'); return false;">
                         <label for="user_input">Input:</label>
                         <div class="input">
                             <input type="text" name="user_input" id="user_input_image" placeholder="whale on the desert" required>
@@ -129,7 +129,7 @@
 
                 <!-- random -->
                 <div class="right-section">
-                    <form method="post" id="random-image-prompt-form" action="/generate/irandom" onsubmit="return loadingAnimation()">
+                    <form id="random-image-prompt-form" onsubmit="submitForm('random-image-prompt-form', '/generate/irandom'); return false;">
                         <input type="submit" value="random">
                     </form>
                 </div>
@@ -142,7 +142,7 @@
                 <p>reverse image prompt</p>
                 <!-- input -->
                 <div class="left-section">
-                    <form id="image-upload-form" action="/generate/image" method="post" enctype="multipart/form-data" onsubmit="return loadingAnimation()">
+                    <form id="image-upload-form"  enctype="multipart/form-data" onsubmit="submitForm('image-upload-form', '/generate/image'); return false;">
                         <label for="image">Upload Image:</label>
                         <div class="input">
                             <input type="file" name="image" accept="image/*" required>
@@ -159,7 +159,6 @@
     <!-- main end -->
 
     <!-- preview -->
-    {% if not result %}
     <div class="image-preview">
         {% if not image_selected %}
             <img id="preview-image" alt="Image Preview" src="{{ url_for('static', filename='icon/favicon.ico') }}">
@@ -167,7 +166,6 @@
             <img id="preview-image" alt="Image Preview">
         {% endif %}
     </div>
-    {% endif %}
     <!-- preview end -->
 
     <!-- loading -->

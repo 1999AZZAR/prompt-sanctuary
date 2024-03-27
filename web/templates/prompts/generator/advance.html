@@ -91,7 +91,7 @@
             <div class="container">
                 <p>Generate Text Prompt</p>
                 <div class="left-section">
-                    <form method="post" action="/advance/generate" onsubmit="return loadingAnimation()">
+                    <form id="a-text-prompt-form" onsubmit="submitForm('a-text-prompt-form', '/advance/generate'); return false;">
                         <!-- parameter 0 -->
                         <label for="parameter0">Use case:</label>
                         <div class="input">
@@ -142,7 +142,7 @@
             <div class="container">
                 <p>Generate Image Prompt</p>
                 <div class="left-section">
-                    <form method="post" action="/advance/igenerate" onsubmit="return loadingAnimation()">
+                    <form id="a-image-prompt-form" enctype="multipart/form-data" onsubmit="submitForm('a-image-prompt-form', '/advance/igenerate'); return false;">
                         <!-- parameter 0 -->
                         <label for="parameter0">input:</label>
                         <div class="input">
@@ -296,7 +296,7 @@
             <div class="container">
                 <p>reverse image prompt</p>
                 <div class="left-section">
-                    <form action="/advance/image" method="post" enctype="multipart/form-data" onsubmit="return loadingAnimation()">
+                    <form id="a-reverse-image-form" enctype="multipart/form-data" onsubmit="submitForm('a-reverse-image-form', '/advance/image'); return false;">
                         <!-- parameter 0 -->
                         <label for="image">Upload Image:</label>
                         <div class="input">
@@ -469,14 +469,13 @@
     <!-- loading end -->
 
     <!-- result -->
-    {% if result %}
-    <div class="result">
-        <h2>generated prompt:</h2>
-        <p id="response">{{ result }}</p>
+    <div class="result" id="resultSection" style="display: none;">
+        <h2>Generated Prompt:</h2>
+        <p id="response"></p>
         <button onclick="copyToClipboard()">Copy Prompt</button>
         <button onclick="promptForTitle()">Save to Library</button>
     </div>
-    {% endif %}
     <!-- result end -->
+    
 </body>
 </html>

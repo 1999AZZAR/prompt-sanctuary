@@ -36,49 +36,6 @@ function submitForm(formId, url) {
 }
 
 
-// Handle form submission for text prompt
-document.getElementById('text-prompt-form').addEventListener('submit', function(event) {
-    event.preventDefault(); // Prevent default form submission behavior
-    submitForm('text-prompt-form', '/generate/tprompt'); // Submit form asynchronously
-});
-
-// Handle form submission for random text prompt
-document.getElementById('random-text-prompt-form').addEventListener('submit', function(event) {
-    event.preventDefault(); // Prevent default form submission behavior
-    submitForm('random-text-prompt-form', '/generate/trandom'); // Submit form asynchronously
-});
-
-// Handle form submission for image prompt
-document.getElementById('image-prompt-form').addEventListener('submit', function(event) {
-    event.preventDefault(); // Prevent default form submission behavior
-    submitForm('image-prompt-form', '/generate/iprompt'); // Submit form asynchronously
-});
-
-// Handle form submission for random image prompt
-document.getElementById('random-image-prompt-form').addEventListener('submit', function(event) {
-    event.preventDefault(); // Prevent default form submission behavior
-    submitForm('random-image-prompt-form', '/generate/irandom'); // Submit form asynchronously
-});
-
-// Handle form submission for reverse image prompt
-document.getElementById('image-upload-form').addEventListener('submit', function(event) {
-    event.preventDefault(); // Prevent default form submission behavior
-    submitForm('image-upload-form', '/generate/image'); // Submit form asynchronously
-});
-
-
-// copy the response to the clipboard
-function copyToClipboard() {
-	var responseText = document.getElementById("response");
-	var textArea = document.createElement("textarea");
-	textArea.value = responseText.innerText;
-	document.body.appendChild(textArea);
-	textArea.select();
-	document.execCommand('copy');
-	document.body.removeChild(textArea);
-	alert("Response copied to clipboard!");
-}
-
 // image input preview
 function previewImage() {
 	var input = document.querySelector('input[name="image"]');
@@ -97,20 +54,90 @@ function previewImage() {
 			};
 
 			reader.readAsDataURL(file);
-			// 
 		} else {
+			// Set the default image source using Flask's url_for function
 			preview.src = "{{ url_for('static', filename='icon/favicon.ico') }}";
 			document.body.setAttribute('data-image-selected', 'false');
 		}
 	});
 }
 
-// 
+// Initialize the image preview function when the DOM content is loaded
 document.addEventListener("DOMContentLoaded", function () {
 	previewImage();
-})
+});
 
-// 
+
+// Handle form submission for text prompt
+document.getElementById('text-prompt-form').addEventListener('submit', function(event) {
+    event.preventDefault(); // Prevent default form submission behavior
+    submitForm('text-prompt-form', '/generate/tprompt'); // Submit form asynchronously
+});
+
+
+// Handle form submission for random text prompt
+document.getElementById('random-text-prompt-form').addEventListener('submit', function(event) {
+    event.preventDefault(); // Prevent default form submission behavior
+    submitForm('random-text-prompt-form', '/generate/trandom'); // Submit form asynchronously
+});
+
+
+// Handle form submission for image prompt
+document.getElementById('image-prompt-form').addEventListener('submit', function(event) {
+    event.preventDefault(); // Prevent default form submission behavior
+    submitForm('image-prompt-form', '/generate/iprompt'); // Submit form asynchronously
+});
+
+
+// Handle form submission for random image prompt
+document.getElementById('random-image-prompt-form').addEventListener('submit', function(event) {
+    event.preventDefault(); // Prevent default form submission behavior
+    submitForm('random-image-prompt-form', '/generate/irandom'); // Submit form asynchronously
+});
+
+
+// Handle form submission for reverse image prompt
+document.getElementById('image-upload-form').addEventListener('submit', function(event) {
+    event.preventDefault(); // Prevent default form submission behavior
+    submitForm('image-upload-form', '/generate/image'); // Submit form asynchronously
+});
+
+
+// Handle form submission for advanced text prompt
+document.getElementById('a-text-prompt-form').addEventListener('submit', function(event) {
+    event.preventDefault(); // Prevent default form submission behavior
+    submitForm('a-text-prompt-form', '/advance/generate'); // Submit form asynchronously
+});
+
+
+// Handle form submission for advanced image prompt
+document.getElementById('a-image-prompt-form').addEventListener('submit', function(event) {
+    event.preventDefault(); // Prevent default form submission behavior
+    submitForm('a-image-prompt-form', '/advance/igenerate'); // Submit form asynchronously
+});
+
+
+// Handle form submission for advanced image prompt
+document.getElementById('a-reverse-image-form').addEventListener('submit', function(event) {
+    event.preventDefault(); // Prevent default form submission behavior
+    submitForm('a-reverse-image-form', '/advance/image'); // Submit form asynchronously
+});
+
+
+// copy the response to the clipboard
+function copyToClipboard() {
+	var responseText = document.getElementById("response");
+	var textArea = document.createElement("textarea");
+	textArea.value = responseText.innerText;
+	document.body.appendChild(textArea);
+	textArea.select();
+	document.execCommand('copy');
+	document.body.removeChild(textArea);
+	alert("Response copied to clipboard!");
+}
+
+
+// loading animation
 function loadingAnimation() {
 	var loading = document.getElementById("loading");
 	loading.style.display = "flex";
