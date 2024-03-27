@@ -40,8 +40,8 @@
     <!-- seo end -->
 </head>
 <body style="background: linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)), url('{{ url_for('static', filename='icon/bg.jpg') }}') center/cover no-repeat fixed;">
-    <!-- Side Panel -->
-    <div class="side-panel" id="sidePanel">
+     <!-- Side Panel -->
+     <div class="side-panel" id="sidePanel">
         <!-- logo -->
         <div id="toggleButton" onclick="toggleSidePanel()" class="image-logo">
             <img id="preview-logo" alt="Image Preview" src="{{ url_for('static', filename='icon/sanctuary.png') }}">
@@ -51,9 +51,10 @@
         <!-- primary -->
         <div class="side-list" id="side-list">
             <ul id="side-top">
-                <li><a href="{{ url_for('home') }}">home</a></li>
-                <li><a href="{{ url_for('mylib')}}">My Library</a></li>
-                <li><a href="{{ url_for('trying') }}">prompt trial</a></li>
+        <div class="side-list" id="side-list">
+                <li onclick="window.location.href='{{ url_for('home') }}';"><strong>home</strong></li>
+                <li onclick="window.location.href='{{ url_for('mylib') }}';"><strong>My Library</strong></li>
+                <li onclick="window.location.href='{{ url_for('trying') }}';"><strong>prompt trial</strong></li>
             </ul>
         </div>
         <!-- primary end -->
@@ -61,9 +62,9 @@
         <!-- secondary -->
         <div class="side-list" id="side-list">
             <ul id="side-middle">
-                <li><a href="{{ url_for('library') }}">Prompt Library</a></li>
-                <li><a href="{{ url_for('generate') }}">Basic Prompt</a></li>
-                <li><a href="{{ url_for('advance')}}">Advance Prompt</a></li>
+                <li onclick="window.location.href='{{ url_for('library') }}';"><strong>Prompt Library</strong></li>
+                <li onclick="window.location.href='{{ url_for('generate') }}';"><strong>Basic Prompt</strong></li>
+                <li onclick="window.location.href='{{ url_for('advance') }}';"><strong>Advance Prompt</strong></li>
             </ul>
         </div>
         <!-- secondary end -->
@@ -71,13 +72,13 @@
         <!-- logout -->
         <div class="side-list" id="bottom-list">
             <ul id="side-bottom">
-                <li><a href="{{ url_for('logout') }}">Logout</a></li>
+                <li onclick="window.location.href='{{ url_for('logout') }}';"><strong>Logout</strong></li>
             </ul>
         </div>
         <!-- logout end -->
     </div>
     <!-- side panel ended -->
-    
+
     <h1 id="toggleButton" onclick="toggleSidePanel()"><strong>Prompt Sanctuary</strong></h1>
 
     <!-- chat container begun -->

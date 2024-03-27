@@ -48,9 +48,9 @@
         <!-- primary -->
         <div class="side-list" id="side-list">
             <ul id="side-top">
-                <li><a href="{{ url_for('home') }}">home</a></li>
-                <li><a href="{{ url_for('mylib')}}">My Library</a></li>
-                <li><a href="{{ url_for('trying') }}">prompt trial</a></li>
+                <li onclick="window.location.href='{{ url_for('home') }}';"><strong>home</strong></li>
+                <li onclick="window.location.href='{{ url_for('mylib') }}';"><strong>My Library</strong></li>
+                <li onclick="window.location.href='{{ url_for('trying') }}';"><strong>prompt trial</strong></li>
             </ul>
         </div>
         <!-- primary end -->
@@ -58,9 +58,9 @@
         <!-- secondary -->
         <div class="side-list" id="side-list">
             <ul id="side-middle">
-                <li><a href="{{ url_for('library') }}">Prompt Library</a></li>
-                <li><a href="{{ url_for('generate') }}">Basic Prompt</a></li>
-                <li><a href="{{ url_for('advance')}}">Advance Prompt</a></li>
+                <li onclick="window.location.href='{{ url_for('library') }}';"><strong>Prompt Library</strong></li>
+                <li onclick="window.location.href='{{ url_for('generate') }}';"><strong>Basic Prompt</strong></li>
+                <li onclick="window.location.href='{{ url_for('advance') }}';"><strong>Advance Prompt</strong></li>
             </ul>
         </div>
         <!-- secondary end -->
@@ -68,13 +68,13 @@
         <!-- logout -->
         <div class="side-list" id="bottom-list">
             <ul id="side-bottom">
-                <li><a href="{{ url_for('logout') }}">Logout</a></li>
+                <li onclick="window.location.href='{{ url_for('logout') }}';"><strong>Logout</strong></li>
             </ul>
         </div>
         <!-- logout end -->
     </div>
     <!-- side panel ended -->
-    
+
     <h1 class="center" id="toggleButton" onclick="toggleSidePanel()"><strong>Prompt Generator</strong></h1>
 
     <!-- main -->
