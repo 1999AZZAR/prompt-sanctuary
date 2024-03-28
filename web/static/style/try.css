@@ -60,6 +60,10 @@ h1 {
     color: #ddd;
     border: 1px solid #444;
     border-radius: 4px;
+    resize: vertical; /* Allow vertical resizing */
+    overflow-y: auto; /* Add scrollbar when content exceeds height */
+    min-height: 50px; /* Set minimum height */
+    box-sizing: border-box; /* Include padding in width calculation */
 }
 
 #send-btn {

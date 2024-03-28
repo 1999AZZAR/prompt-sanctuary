@@ -59,6 +59,9 @@ h1 {
     color: #ddd;
     border: 1px solid #444;
     border-radius: 4px;
+    resize: vertical;
+    overflow-y: auto;
+    min-height: 50px;
 }
 
 #send-btn {
@@ -89,6 +92,7 @@ h1 {
     background-color: #3c3f41;
     color: #e0e0e0;
     align-self: flex-start;
+    text-align: justify;
 }
 
 .user-message {
@@ -96,6 +100,7 @@ h1 {
     color: white;
     align-self: flex-end;
     border: 1px solid #333;
+    text-align: justify;
 }
 
 .loading-indicator {
