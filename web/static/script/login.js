@@ -80,3 +80,51 @@ window.onload = function () {
         alert("Error: " + message);
     }
 };
+
+// Function to show loading animation on button click
+function showLoadingAnimation(form) {
+    // Create the loading animation container
+    var loadingContainer = document.createElement("div");
+    loadingContainer.classList.add("loading-container");
+
+    // Create the loading animation circle
+    var loadingAnimation = document.createElement("div");
+    loadingAnimation.classList.add("loading-animation");
+
+    // Create the dots
+    for (var i = 0; i < 5; i++) {
+        var dot = document.createElement("div");
+        dot.classList.add("dot");
+        loadingAnimation.appendChild(dot);
+    }
+
+    // Add the Loading
+    var loadingText = document.createElement("div");
+    loadingContainer.appendChild(loadingAnimation);
+    loadingContainer.appendChild(loadingText);
+
+    // Insert the loading animation container before the form
+    form.parentNode.insertBefore(loadingContainer, form);
+
+    // Hide the form
+    form.style.display = 'none';
+
+    // Simulate form submission
+    setTimeout(function() {
+        form.submit(); // Replace this with your actual form submission logic
+    }, 2000); // Adjust the delay as needed
+}
+
+// Event listeners for login and signup buttons
+document.addEventListener("DOMContentLoaded", function() {
+    document.getElementById("loginForm").addEventListener("submit", function(event) {
+        event.preventDefault(); // Prevent default form submission
+        showLoadingAnimation(this); // Show loading animation on login form submit
+    });
+
+    document.getElementById("signupForm").addEventListener("submit", function(event) {
+        event.preventDefault(); // Prevent default form submission
+        showLoadingAnimation(this); // Show loading animation on signup form submit
+    });
+});
+
