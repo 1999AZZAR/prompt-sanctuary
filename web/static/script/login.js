@@ -112,7 +112,7 @@ function showLoadingAnimation(form) {
     // Simulate form submission
     setTimeout(function() {
         form.submit(); // Replace this with your actual form submission logic
-    }, 2000); // Adjust the delay as needed
+    }, 0); // Adjust the delay as needed
 }
 
 // Event listeners for login and signup buttons

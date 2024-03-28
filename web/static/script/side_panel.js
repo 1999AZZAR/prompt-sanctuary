@@ -20,11 +20,6 @@ function toggleLoadingAnimation(liElement) {
 
     // Insert the loading animation container before the li element
     liElement.parentNode.insertBefore(loadingAnimationContainer, liElement);
-    
-    // Remove the loading animation container after a delay (for demonstration purposes)
-    setTimeout(function() {
-        loadingAnimationContainer.remove();
-    }, 2000); // Adjust the delay as needed
 }
 
 function handleLiClick(event) {
