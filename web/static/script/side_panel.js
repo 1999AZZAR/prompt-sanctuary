@@ -5,3 +5,33 @@ function toggleSidePanel() {
 
     sidePanel.style.transform = isPanelVisible ? 'translateX(-100%)' : 'translateX(0%)';
 }
+
+function toggleLoadingAnimation(liElement) {
+    // Create the loading animation container
+    var loadingAnimationContainer = document.createElement("div");
+    loadingAnimationContainer.classList.add("loading-animation");
+
+    // Create the dots
+    for (var i = 0; i < 5; i++) {
+        var dot = document.createElement("div");
+        dot.classList.add("dot");
+        loadingAnimationContainer.appendChild(dot);
+    }
+
+    // Insert the loading animation container before the li element
+    liElement.parentNode.insertBefore(loadingAnimationContainer, liElement);
+    
+    // Remove the loading animation container after a delay (for demonstration purposes)
+    setTimeout(function() {
+        loadingAnimationContainer.remove();
+    }, 2000); // Adjust the delay as needed
+}
+
+function handleLiClick(event) {
+    var liElement = event.target;
+    toggleLoadingAnimation(liElement);
+}
+
+document.querySelectorAll(".side-list li").forEach(function(li) {
+    li.addEventListener("click", handleLiClick);
+});
