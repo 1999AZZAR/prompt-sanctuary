@@ -2,12 +2,12 @@ import os
 import google.generativeai as genai
 from dotenv import load_dotenv
 
-
+# read the .env file
 load_dotenv()
 api_keys = os.getenv('GENAI_API_KEY').split(',')
 current_key_index = 0
 
-
+# get the api key for the model
 def get_current_api_key():
     global current_key_index
     key = api_keys[current_key_index]
@@ -19,10 +19,11 @@ genai.configure(api_key=get_current_api_key())
 
 # general config
 generation_config = {
-    "temperature": 0.75,
-    "top_p": 0.65,
-    "top_k": 35,
-    "max_output_tokens": 2048,
+    "temperature": 0.75,        # Controls the randomness of generated responses
+    "top_p": 0.65,              # Top-p (nucleus) sampling parameter
+    "top_k": 35,                # Top-k filtering parameter for token sampling
+    "max_output_tokens": 2048,  # Maximum number of tokens in the generated response
+    'stop_sequences': [],       # Sequences to stop generation at
 }
 
 
@@ -42,7 +43,7 @@ def map_threshold(parameter_value):
         return "BLOCK_NONE"
 
 
-# generate response.
+# generate text prompt response.
 def response(parameter0, parameter1, parameter2, parameter3):
     threshold_value = map_threshold(parameter2)
     
@@ -133,10 +134,11 @@ def response(parameter0, parameter1, parameter2, parameter3):
     response = model.generate_content(prompt_parts)
     return response.text
 
-
+# generate image prompt response
 def iresponse(parameter0, parameter1, parameter2, parameter3):
     threshold_value = map_threshold("none")
     
+    # safety settings
     safety_settings = [
         {"category": "HARM_CATEGORY_HARASSMENT", "threshold": threshold_value},
         {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": threshold_value},
@@ -144,12 +146,14 @@ def iresponse(parameter0, parameter1, parameter2, parameter3):
         {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": threshold_value}
     ]
 
+    # model settings
     model = genai.GenerativeModel(
         model_name="gemini-1.0-pro-001",
         generation_config=generation_config,
         safety_settings=safety_settings,
     )
 
+    # prompt example and user input
     prompt_parts = [
         " ",
         "input: Start your description with the word 'imagine,' e.g., 'imagine a mystical forest shrouded in fog...'\n\nwrite me a detailed possible image description about a lone traveler on a mist-covered path. The description should convey the mood of solitude, mystery, and anticipation, with a primary style of atmospheric and a secondary stylistic element of surrealism. Elaborate on any relevant details in the image and ensure the tone matches the specified mood.",

@@ -118,10 +118,12 @@ def index():
 # signup
 @app.route('/signup', methods=['POST'])
 def signup():
+    # prevent bot with honeypot
     honeypot_value = request.form.get('honeypot', '')
     if honeypot_value:
         return 'Bot activity detected. Access denied.'
     
+    # add user to the database
     username = request.form['username']
     password = request.form['password']
     conn = sqlite3.connect(USER_DATABASE)
@@ -131,6 +133,7 @@ def signup():
     if user:
         return 'Username already exists. Please choose another.'
 
+    # hashing the user password
     hashed_password = generate_password_hash(password)
     cursor.execute('INSERT INTO users (username, password) VALUES (?, ?)', (username, hashed_password))
     conn.commit()
@@ -141,10 +144,12 @@ def signup():
 # login
 @app.route('/login', methods=['POST'])
 def login():
+    # prevent bot with honeypot
     honeypot_value = request.form.get('honeypot', '')
     if honeypot_value:
         return 'Bot activity detected. Access denied.'
     
+    # retrieve user database
     username = request.form['username']
     password = request.form['password']
     conn = sqlite3.connect(USER_DATABASE)
@@ -153,6 +158,7 @@ def login():
     user = cursor.fetchone()
     conn.close()
 
+    # check if user exists and password matches
     if user and check_password_hash(user[1], password): 
         session['username'] = username
         return redirect(url_for('home'))
@@ -234,6 +240,7 @@ def handle_user_input():
             return jsonify({'image_path': image_path})
         else:
             return jsonify({'bot_response': 'Error generating image'})
+    
     # handle the tittle tag input
     elif user_input.startswith('tittle'):
         prompt = user_input[len('tittle'):].strip()
@@ -243,6 +250,7 @@ def handle_user_input():
             return jsonify({'bot_response': response})
         else:
             return jsonify({'bot_response': 'Error generating tittle'})
+    
     # handle global input
     else:
         response = chat_app.generate_chat(user_input)
@@ -301,6 +309,7 @@ def reverse_image():
         image_file = request.files['image']
         image_data = image_file.read()
 
+        # style list
         image_styles = [
             "3d-model", "abstract", "analog-film", "anime", "chalk-art",
             "cinematic", "comic-book", "cyberpunk", "cubism", "decoupage",
@@ -312,6 +321,7 @@ def reverse_image():
             "watercolor",
         ]
 
+        # prompt part example
         prompt_parts = [
             "\nPlease provide a detailed description, written in proper English, to recreate this image in 250 to 500 words. Include information about the style, mood, lighting, and other important details. Ensure your sentences are complete and free from spelling and grammar errors:",
             {"mime_type": "image/jpeg", "data": image_data},
@@ -347,8 +357,7 @@ def generate_advance_response():
         
         return response_text
     except BadRequestKeyError as e:
-        error_message = f"Bad Request: {e.description}"
-        return error_message
+        return f"Bad Request: {e.description}"
 
 
 # advance generator / image prompt
@@ -365,8 +374,7 @@ def generate_advance_iresponse():
         
         return response_text
     except BadRequestKeyError as e:
-        error_message = f"Bad Request: {e.description}"
-        return error_message
+        return f"Bad Request: {e.description}"
 
 
 # advance generator / image to prompt
@@ -449,84 +457,84 @@ def delete_prompt():
 def library():
     return render_template('prompts/library.html')
 
-
+# general prompt library / improvement prompt
 @app.route('/library/promptimpro')
 @required_login
 def promptinmpro():
     return render_template('prompts/global/prompt_improve.html')
 
-
+# general prompt library / adjustable iq
 @app.route('/library/adjust')
 @required_login
 def adjust():
     return render_template('prompts/global/adjustable_iq.html')
 
-
+# general prompt library / aerea mode
 @app.route('/library/aerea')
 @required_login
 def aerea():
     return render_template('prompts/global/aerea.html')
 
-
+# general prompt library / ultimate knowladge
 @app.route('/library/ultimate')
 @required_login
 def ultimate():
     return render_template('prompts/global/ultimate_knowladge.html')
 
-
+# general prompt library / web dev mode
 @app.route('/library/webdev')
 @required_login
 def webdev():
     return render_template('prompts/global/web_des.html')
 
-
+# general prompt library / io mutation mode
 @app.route('/library/mutation')
 @required_login
 def mutation():
     return render_template('prompts/global/mutation.html')
 
-
+# general prompt library / createch mode
 @app.route('/library/createch')
 @required_login
 def createch():
     return render_template('prompts/Writers_and_editors/CreaTech.html')
 
-
+# general prompt library / text enhancement mode
 @app.route('/library/enhancement')
 @required_login
 def enhancement():
     return render_template('prompts/Writers_and_editors/enhancement.html')
 
-
+# general prompt library / journalist mode
 @app.route('/library/journalist')
 @required_login
 def journalist():
     return render_template('prompts/Writers_and_editors/journalist.html')
 
-
+# general prompt library / paraphrase mode
 @app.route('/library/paraphrase')
 @required_login
 def paraphrase():
     return render_template('prompts/Writers_and_editors/paraphrase.html')
 
-
+# general prompt library / programming emdev mode
 @app.route('/library/emdev')
 @required_login
 def emdev():
     return render_template('prompts/coding_companion/emdev.html')
 
-
+# general prompt library / programming queria mode
 @app.route('/library/queria')
 @required_login
 def queria():
     return render_template('prompts/coding_companion/queria.html')
 
-
+# general prompt library / programming standard mode
 @app.route('/library/standard')
 @required_login
 def standard():
     return render_template('prompts/coding_companion/standard.html')
 
-
+# run the app
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=5000)

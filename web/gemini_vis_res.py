@@ -18,10 +18,11 @@ genai.configure(api_key=get_current_api_key())
 
 # model config
 generation_config = {
-    "temperature": 0.75,
-    "top_p": 0.65,
-    "top_k": 35,
-    "max_output_tokens": 4096,
+    "temperature": 0.75,        # Controls the randomness of generated responses
+    "top_p": 0.65,              # Top-p (nucleus) sampling parameter
+    "top_k": 35,                # Top-k filtering parameter for token sampling
+    "max_output_tokens": 4096,  # Maximum number of tokens in the generated response
+    'stop_sequences': [],       # Sequences to stop generation at
 }
 
 # safety settings
