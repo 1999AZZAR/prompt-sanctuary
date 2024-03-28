@@ -3,18 +3,20 @@
     display: block;
     position: fixed;
     top: 0;
+    bottom: 0;
     left: 0;
     border-bottom-right-radius: 10px;
     border-top-right-radius: 10px;
-    height: 100%;
+    max-height: 100%;
     width: 273px;
     max-width: 25%;
     box-sizing: border-box;
     background-color: #333;
     color: #fff;
     padding: 20px;
+    margin: 1% 0%;
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
-    z-index: 999;
+    z-index: 1000;
     transition: transform 0.4s cubic-bezier(0.89, 0.75, 0.62, 0.96);
     transform: translateX(-100%);
 }
@@ -32,6 +34,7 @@
     font-size: medium;
     align-items: stretch;
     justify-content: space-around;
+    filter: none;
 }
 
 .side-panel ul li {
@@ -115,21 +118,12 @@ h1#toggleButton:hover {
     transition: transform 0.5s ease;
 }
 
+
 @media only screen and (min-width: 481px) and (max-width: 768px) {
     .side-panel {
-        display: block; 
-        width: 40%; 
-        max-width: none; 
-        box-shadow: none; 
-        padding: 10px; 
-        background-color: #333; 
-        color: #fff; 
-        z-index: 999;
-        transition: transform 0.3s ease; 
-        position: fixed;
-        top: 0;
-        left: 0;
-        height: 100%;
+        max-width: 40%;
+        box-shadow: none;
+        padding: 10px;
     }
 
     .side-panel ul {
@@ -167,25 +161,26 @@ h1#toggleButton:hover {
     }
 }
 
+
 @media only screen and (min-width: 300px) and (max-width: 480px) {
     .side-panel {
         width: 100%;
         max-width: none;
-        height: 100%;
         box-shadow: none;
-        color: #fff;
-        position: fixed;
-        top: 0;
-        left: 0;
+        margin: 0px;
     }
     .side-panel ul {
-        margin-top: 10%; /* Adjust margin */
+        margin-top: 7%; /* Adjust margin */
         padding: 5%; /* Adjust padding */
-        list-style: kannada;
     }
 
     .side-panel li {
         margin-bottom: 5px; /* Adjust margin */
+    }
+
+    .side-panel ul li {
+        margin: 3%;
+        padding: 2% 0% 2% 3%;
     }
 
     .image-preview {
