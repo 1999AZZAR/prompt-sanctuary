@@ -21,6 +21,12 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
+    // Function to clear the chat history
+    function clearChatHistory() {
+        const chatHistory = document.getElementById('chat-history');
+        chatHistory.innerHTML = ''; // Clear the chat history
+    }
+
     function showImageFullScreen(imageElement) {
         // Create a modal container
         const modalContainer = document.createElement('div');
@@ -69,7 +75,11 @@ document.addEventListener('DOMContentLoaded', function () {
                         chatHistory.scrollTop = chatHistory.scrollHeight;
                         // Post text response
                     } else {
-                        postMessage(response.bot_response, 'bot');
+                        if (userInput.trim().toLowerCase() === 'clear') {
+                            clearChatHistory(); // Clear the chat history if user input is 'clear'
+                        } else {
+                            postMessage(response.bot_response, 'bot');
+                        }
                     }
                     // Handle error
                 } else {

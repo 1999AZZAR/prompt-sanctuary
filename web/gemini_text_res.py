@@ -65,29 +65,34 @@ class GeminiChat:
     def __init__(self):
         GeminiChatConfig.initialize_genai_api()
         self.history = []
-
-    # user input process
-    def process_tittle(self, user_input):
-        input = f'give this a tittle, here the description : {user_input}. use only max to 5 word'
-        return f"user: {input}"
+        self.model = None  # Initialize model as None
 
     # generate chat
     def generate_chat(self, user_input: str) -> str:
-        # Get generation configuration and safety settings
-        generation_config = GeminiChatConfig.gemini_generation_config()
-        safety_settings = GeminiChatConfig.gemini_safety_settings()
-        instruction = GeminiChatConfig.chat_instruction()
+        if user_input.strip().lower() == "reset":
+            self.history.clear()  # Clear history
+            self.model = None  # Reset model
+            return "Reset success, and history has been cleared."
 
-        # Initialize the GenerativeModel for Gemini Chat
-        model = genai.GenerativeModel(
-            model_name="gemini-1.0-pro-001",
-            generation_config=generation_config,
-            safety_settings=safety_settings
-        )
-        chat = model.start_chat(history=self.history)
+        if self.model is None:
+            # Get generation configuration and safety settings
+            generation_config = GeminiChatConfig.gemini_generation_config()
+            safety_settings = GeminiChatConfig.gemini_safety_settings()
+            instruction = GeminiChatConfig.chat_instruction()
+        else:
+            instruction = ""  # If model is already initialized, no need for instruction
 
         try:
-            # Prepare user input and instruction for AI model and generate response
+            if self.model is None:
+                # Initialize the GenerativeModel for Gemini Chat
+                self.model = genai.GenerativeModel(
+                    model_name="gemini-1.0-pro-001",
+                    generation_config=generation_config,
+                    safety_settings=safety_settings
+                )
+
+            # Prepare user input for AI model and generate response
+            chat = self.model.start_chat(history=self.history)
             response = chat.send_message(instruction + user_input)
             response = f"{response.text}"
             # Update conversation history
@@ -109,10 +114,12 @@ class GeminiChat:
         )
         chat = model.start_chat(history=[])
 
+        # process the input
         try:
-            input = self.process_tittle(user_input)
+            input = f'give this a tittle, here the description : {user_input}. use only max to 5 word'
             response = chat.send_message(input)
             return response.text
 
+        # error exception
         except Exception as e:
             return f"An error occurred: {str(e)}"
