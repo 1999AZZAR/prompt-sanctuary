@@ -7,13 +7,18 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Caveat&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <!-- css  -->
     <link rel="stylesheet" href="{{ url_for('static', filename='style/index.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='style/side.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='style/mylib.css') }}">
+    <!-- css end  -->
+
+    <!-- js -->
     <script defer src="{{ url_for('static', filename='script/side_panel.js') }}"></script>
     <script defer src="{{ url_for('static', filename='script/card.js') }}"></script>
     <script defer src="{{ url_for('static', filename='script/library_copy.js') }}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.8/clipboard.min.js"></script>
+    <!-- js end -->
 
     <!-- seo -->
     <meta name="description" content="Explore the functionalities of Prompt Sanctuary - a platform for generating and refining prompts. Access a prompt library, generate custom prompts, and explore advanced prompting features.">
@@ -100,5 +105,11 @@
         {% endif %}
     </div>
     <!-- main library ended -->
+
+    <!-- footer -->
+    <footer>
+        <p>promt sanctuary by <a href="mailto:azzar.mr.zs@gmail.com">azzar budiyanto</a></p>
+    </footer>
+    <!-- footer end -->
 </body>
 </html>
