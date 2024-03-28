@@ -21,9 +21,9 @@ from advance import response, iresponse
 
 # microservices call
 app = Flask(__name__)
-USER_DATABASE = './web/database/user.db'
-PROMPT_DATABASE = './web/database/prompt_data.db'
-IMAGE_LOG = './web/database/image_log.db'
+USER_DATABASE = './database/user.db'
+PROMPT_DATABASE = './database/prompt_data.db'
+IMAGE_LOG = './database/image_log.db'
 chat_app = GeminiChat()
 image_generator = Image_gen() 
 
@@ -529,4 +529,4 @@ def standard():
 
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(host="0.0.0.0", port=5000)

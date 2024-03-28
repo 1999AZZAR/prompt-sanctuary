@@ -65,6 +65,7 @@
    - Start the Flask application:
 
      ```bash
+     cd web/
      python app.py
      ```
 
@@ -93,7 +94,8 @@
    - Start the Flask application:
 
      ```bash
-     python web/app.py
+     cd web/
+     python app.py
      ```
 
      The application will start, and you can access it through the specified port.

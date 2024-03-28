@@ -106,7 +106,7 @@ class Image_gen:
                 raise Exception("No artifacts returned by the API")   
 
             # set the output dir
-            output_directory = "./web/static/image"
+            output_directory = "./static/image"
             if not os.path.exists(output_directory):
                 os.makedirs(output_directory)
 
@@ -117,7 +117,7 @@ class Image_gen:
                 f.write(base64.b64decode(data["artifacts"][0]["base64"]))
 
             # add watermark
-            watermark_image_path = './web/static/icon/sanctuary.png' 
+            watermark_image_path = './static/icon/sanctuary.png' 
             output_with_watermark_path = generated_image_path
             self.add_watermark(generated_image_path, output_with_watermark_path, watermark_image_path, transparency=25)
             # Downsize/scale the image
