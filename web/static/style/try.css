@@ -167,11 +167,22 @@ img.img-class:hover {
     max-height: 100%;
 }
 
-@media only screen and (min-width: 481px) and (max-width: 768px) {
+footer {
+    display: block;
+    position: fixed;
+    z-index: -100;
+    margin: 0% 20%;
+}
+
+@media only screen and (min-width: 250px) and (max-width: 768px) {
     #chat-container {
         height: 80%;
         width: 800px;
         max-width: 98%;
         margin-top: 10%;
+    }
+
+    footer {
+        display: none;
     }
 }
