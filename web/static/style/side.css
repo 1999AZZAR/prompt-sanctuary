@@ -144,14 +144,14 @@ h1#toggleButton:hover {
     border-radius: 50%;
 }
 
-.dot:nth-child(1) {
+.dot:nth-child(5) {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%) rotate(0deg) translate(20px) rotate(-0deg);
     background-color: #bf47ff;
 }
 
-.dot:nth-child(2) {
+.dot:nth-child(4) {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%) rotate(72deg) translate(20px) rotate(-72deg);
@@ -165,14 +165,14 @@ h1#toggleButton:hover {
     background-color: #622285;
 }
 
-.dot:nth-child(4) {
+.dot:nth-child(2) {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%) rotate(216deg) translate(20px) rotate(-216deg);
     background-color: #361746;
 }
 
-.dot:nth-child(5) {
+.dot:nth-child(1) {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%) rotate(288deg) translate(20px) rotate(-288deg);

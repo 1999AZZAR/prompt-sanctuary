@@ -127,4 +127,3 @@ document.addEventListener("DOMContentLoaded", function() {
         showLoadingAnimation(this); // Show loading animation on signup form submit
     });
 });
-

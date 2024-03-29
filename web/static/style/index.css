@@ -21,7 +21,6 @@ body {
   line-height: 1.5;
 }
 
-
 p {
   background-color: #00000065;
   font-family: 'Rubik';
@@ -248,6 +247,7 @@ div#imageBoxContainer {
   flex-direction: column-reverse;
 }
 
+
 /* Mobile Styles */
 @media only screen and (max-width: 480px) {
   body {
@@ -287,6 +287,7 @@ div#imageBoxContainer {
     font-size: 1rem;
   }
 }
+
 
 /* Tablet Styles */
 @media only screen and (min-width: 481px) and (max-width: 768px) {
