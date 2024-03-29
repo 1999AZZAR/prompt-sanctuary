@@ -1,6 +1,6 @@
 /* side panel */
 .side-panel {
-    display: block;
+    display: table-cell;
     position: fixed;
     top: 0;
     bottom: 0;
@@ -22,45 +22,33 @@
 }
 
 .side-panel ul {
-    margin-top: 15%;
+    margin-top: 7%;
     list-style: none;
-    display: flex;
+    /* display: flex; */
     flex-direction: column;
     background-color: #4a4d4dc2;
     border-radius: 20px;
-    padding: 10%;
+    padding: 8% 10%;
     position: relative;
-    flex-wrap: nowrap;
     font-size: medium;
     align-items: stretch;
-    justify-content: space-around;
-    filter: none;
+    bottom: 10%;
 }
 
 .side-panel ul li {
-    box-shadow: 5px 5px 4px 1px rgb(11 11 11 / 14%);
+    color: #cabfcb;
+    box-shadow: inset 5px 5px 4px 1px rgb(11 11 11 / 14%);
     background-color: #333333d9;
-    border-radius: 5px;
+    border-radius: 15px;
     margin: 5%;
-    padding: 2% 0% 2% 3%;
+    padding: 5%;
     transition: transform 0.2s linear;
 }
 
 .side-panel ul li:hover {
-    color: rgb(255, 132, 0);
+    color: #ffd477;
     transform: scale(1.2);
     animation: scale 0.2s cubic-bezier(0.43, 0.12, 0.57, 0.53) infinite;
-}
-
-.side-panel a {
-    color: #fff;
-    text-decoration: none;
-    font-size: 16px;
-    font-weight: bold;
-}
-
-.side-panel a:hover {
-    color: #ffd700;
 }
 
 .image-preview {
@@ -102,7 +90,7 @@ strong:hover{
     animation: scale 0.2s cubic-bezier(0.43, 0.12, 0.57, 0.53) infinite;
 }
 
-#bottom-list a:hover {
+#bottom-list li:hover {
     color: #ff6f6f;
 }
 
@@ -221,10 +209,6 @@ h1#toggleButton:hover {
         transform: scale(1); 
     }
 
-    #bottom-list a:hover {
-        color: #ffd700;
-    }
-
     h1#toggleButton:hover {
         transform: scale(1); 
     }
@@ -267,10 +251,6 @@ h1#toggleButton:hover {
 
     .side-list:hover {
         transform: scale(1); 
-    }
-
-    #bottom-list a:hover {
-        color: #ffd700;
     }
 
     h1#toggleButton:hover {
