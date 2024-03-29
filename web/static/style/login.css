@@ -1,3 +1,9 @@
+html {
+    display: block;
+    position: static;
+    max-height: fit-content;
+}
+
 body {
     font-family: 'Montserrat', sans-serif;
     margin: 0;
@@ -5,10 +11,10 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    height: 100vh;
     background-color: #121212;
     color: #fff;
-    margin: 12%;
+    position: sticky;
+    margin-top: 12%;
 }
 
 h1 {

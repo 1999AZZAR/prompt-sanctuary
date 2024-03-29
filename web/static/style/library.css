@@ -94,11 +94,9 @@ ul {
 }
 
 .master {
-  display: flex;
-  flex-direction: row-reverse;
-  flex-wrap: nowrap;
-  justify-content: space-between;
-  align-items: flex-start;
+  display: block;
+  margin: 0;
+  padding: 0;
 }
 
 .center {
