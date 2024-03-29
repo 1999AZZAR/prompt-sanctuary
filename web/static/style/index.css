@@ -16,7 +16,7 @@ body {
   margin-right: 10%;
   margin-top: 8%;
   margin-bottom: 8%;
-  display: grid;
+  display: block;
   place-items: center;
   line-height: 1.5;
 }
@@ -25,9 +25,9 @@ body {
 p {
   background-color: #00000065;
   font-family: 'Rubik';
-  text-align: justify;
+  text-align: center;
   font-size: 0.95rem;
-  border-radius: 10px; 
+  border-radius: 10px;
   padding: 10px;
   margin: 10px 0px;
 }
@@ -56,6 +56,7 @@ h1, h2 {
 h1 {
   font-family: 'Caveat', cursive;
   font-size: 2.375rem;
+  text-align: center;
   color: purple !important;
 }
 
@@ -118,8 +119,10 @@ div h2 a:hover{
 
 .cards__inner {
   display: flex;
-  flex-wrap: wrap;
   gap: 2.5em;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  align-content: space-around;
 }
 
 .card {
@@ -322,10 +325,6 @@ div#imageBoxContainer {
 
   .cta {
     font-size: 1.2rem;
-  }
-
-  .side-panel {
-    display: none; /* Hide side panel on smaller screens */
   }
 
   .main-content {

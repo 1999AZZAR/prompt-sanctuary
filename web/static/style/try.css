@@ -1,7 +1,7 @@
 body, html {
     height: 100%;
     color: #e0e0e0;
-    margin: 3% 0 0 0;
+    margin-top: 7%;
     display: flex;
     flex-direction: column;
     justify-content: space-around;
@@ -10,6 +10,8 @@ body, html {
 
 h1 {
     margin: -12px;
+    position: fixed;
+    top: 7%;
 }
 
 #main {
@@ -21,15 +23,13 @@ h1 {
 #chat-container {
     display: flex;
     flex-direction: column;
-    height: 80%;
-    position: relative;
-    width: 60%;
-    max-width: 800px;
-    background-color: #1e1e1e;
+    height: 85%;
+    position: fixed;
+    width: 800px;
+    max-width: 75%;
     border-radius: 10px;
-    margin: 0% auto;
+    padding-bottom: 3%;
     font-size: 0.95em;
-    flex-wrap: nowrap;
 }
 
 #chat-history {
@@ -38,8 +38,7 @@ h1 {
     flex-grow: 1;
     padding: 10px;
     overflow-y: auto;
-    background-color: #262626;
-    border-bottom: 1px solid #333;
+    background-color: #5b5b5b30;
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
 }
@@ -60,10 +59,9 @@ h1 {
     color: #ddd;
     border: 1px solid #444;
     border-radius: 4px;
-    resize: vertical; /* Allow vertical resizing */
-    overflow-y: auto; /* Add scrollbar when content exceeds height */
-    min-height: 50px; /* Set minimum height */
-    box-sizing: border-box; /* Include padding in width calculation */
+    resize: vertical;
+    overflow-y: auto;
+    min-height: 50px;
 }
 
 #send-btn {
@@ -94,6 +92,7 @@ h1 {
     background-color: #3c3f41;
     color: #e0e0e0;
     align-self: flex-start;
+    text-align: justify;
 }
 
 .user-message {
@@ -101,6 +100,7 @@ h1 {
     color: white;
     align-self: flex-end;
     border: 1px solid #333;
+    text-align: justify;
 }
 
 .loading-indicator {
@@ -110,7 +110,7 @@ h1 {
     border-radius: 50%;
     width: 15px;
     height: 15px;
-    animation: spin 1s linear infinite;
+    animation: spin 1s cubic-bezier(0.78, -0.11, 0.25, 0.98) infinite;
     align-self: flex-start;
     margin-right: 15px;
 }
@@ -165,4 +165,13 @@ img.img-class:hover {
 .modal-content img {
     max-width: 100%;
     max-height: 100%;
+}
+
+@media only screen and (min-width: 481px) and (max-width: 768px) {
+    #chat-container {
+        height: 80%;
+        width: 800px;
+        max-width: 98%;
+        margin-top: 10%;
+    }
 }

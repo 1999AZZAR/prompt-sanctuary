@@ -109,9 +109,9 @@ function showLoadingAnimation(form) {
     // Hide the form
     form.style.display = 'none';
 
-    // Simulate form submission
+    // Delay the form submission
     setTimeout(function() {
-        form.submit(); // Replace this with your actual form submission logic
+        form.submit(); 
     }, 0); // Adjust the delay as needed
 }
 
