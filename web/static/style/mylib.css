@@ -103,9 +103,11 @@ button {
     background-color: #4b006e78;
     border: 2px solid #56565657;
     cursor: pointer;
-    margin: 2px;
+    margin: 1%;
+    padding: 1px;
     transition: transform 0.3s linear;
     border-radius: 10px;
+    min-width: 80px;
 }
 
 button:hover {
