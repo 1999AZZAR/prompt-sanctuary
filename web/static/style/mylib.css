@@ -1,25 +1,97 @@
+body {
+    font-family: 'Montserrat', sans-serif;
+    color: rgb(255, 255, 255);
+    line-height: 1.5;
+}
+
+p {
+    background-color: #00000065;
+    font-family: 'Rubik';
+    text-align: center;
+    font-size: 0.95rem;
+    border-radius: 10px;
+    padding: 10px;
+    margin: 10px 0px;
+}
+
+p:hover {
+    color:rgb(254, 230, 203)
+}
+
+strong:hover {
+    color:#ffd477;
+}
+
+h1 {
+    font-family: 'Caveat', cursive;
+    font-size: 2.375rem;
+    text-align: center;
+    color: purple !important;
+}
+
+h1 a {
+    color: purple !important;
+}
+
+h1 a:hover,
+h1 strong:hover {
+    color: rgb(204, 0, 255) !important;
+}
+
+h2 {
+    font-family: 'Montserrat';
+    font-size: 2.125rem;
+    color: yellow;
+}
+
+h3 {
+    font-size: 1.75rem;
+    margin: 0%;
+    color: yellow;
+    text-align: center;
+}
+
+h4 {
+    font-size: 1.625rem;
+    margin: 2% 0%;
+}
+
+a {
+    color: rgba(255, 255, 0, 0.863);
+    text-decoration: none;
+}
+
+a:hover {
+    color: rgb(255, 132, 0);
+    text-decoration: none;
+}
+
 .main {
-    display: flex;
-    flex-direction: column;
+    display: block;
     align-items: center;
+    flex-wrap: wrap;
+    flex-direction: column;
 }
 
 .prompt-box {
-    margin: 1% 2% 2% 2%;
+    display: block;
+    margin: 1% 1%;
     padding: 2% 4% 3% 5%;
     border-radius: 15px;
+    width: 50%;
+    height: fit-content;
+    max-width: 450px;
     background-color: #2d2d2dc2;
+    align-content: normal;
+    line-height: 1.2;
 }
 
 .prompt-box p {
-    font-size: 0.95em;
     padding: 2.5%;
     margin: 1% 0% 2% 3%;
     text-align: justify;
-}
-
-.prompt-box h4 {
-    font-size: 1.94em;
+    line-height: 1.1;
+    font-family: "Rubik";
 }
 
 button {
@@ -41,4 +113,26 @@ button:hover {
 
 ol li {
     font-family: 'Caveat', cursive;
+}
+
+ol {
+    display: flex;
+    flex-direction: row;
+    align-content: normal;
+    flex-wrap: wrap;
+    /* max-width: 90%; */
+}
+
+div#imageBoxContainer {
+    display: inline-flex;
+    width: -webkit-fill-available;
+    justify-content: space-evenly;
+    height: fit-content;
+}
+
+div.prompt-container {
+    list-style: none;
+    display: inline-flex;
+    width: -webkit-fill-available;
+    margin: auto 3%;
 }

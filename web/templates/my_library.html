@@ -8,7 +8,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Caveat&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
     <!-- css  -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='style/index.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='style/side.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='style/mylib.css') }}">
     <!-- css end  -->
@@ -85,19 +84,19 @@
         {% if saved_prompts %}
             <!-- prompt list -->
             <div id="imageBoxContainer" class="flex-container">
-            <ol>
-                {% for prompt in saved_prompts %}
-                <div class="prompt-box">
-                    <li><h4>{{ prompt[1] }}</h4></li>
-                    <p>{{ prompt[2] }}</p>
-                    <button class="copy-button" data-clipboard-text="{{ prompt[2] }}">Copy Prompt</button>
-                    <form action="{{ url_for('delete_prompt') }}" method="post" style="display: inline;">
-                        <input type="hidden" name="prompt_id" value="{{ prompt[0] }}">
-                        <button type="submit" class="delete-button">Delete Prompt</button>
-                    </form>
+                <div class="prompt-container">
+                    {% for prompt in saved_prompts %}
+                    <div class="prompt-box">
+                        <li><h4>{{ prompt[1] }}</h4></li>
+                        <p>{{ prompt[2] }}</p>
+                        <button class="copy-button" data-clipboard-text="{{ prompt[2] }}">Copy Prompt</button>
+                        <form action="{{ url_for('delete_prompt') }}" method="post" style="display: inline;">
+                            <input type="hidden" name="prompt_id" value="{{ prompt[0] }}">
+                            <button type="submit" class="delete-button">Delete Prompt</button>
+                        </form>
+                    </div>
+                    {% endfor %}
                 </div>
-                {% endfor %}
-            </ol>
             </div>
             <!-- prompt list ended -->
         {% else %}

@@ -249,7 +249,7 @@ div#imageBoxContainer {
 
 
 /* Mobile Styles */
-@media only screen and (max-width: 480px) {
+/* @media only screen and (max-width: 480px) {
   body {
     margin: 3%;
   }
@@ -286,11 +286,11 @@ div#imageBoxContainer {
   .cta {
     font-size: 1rem;
   }
-}
+} */
 
 
 /* Tablet Styles */
-@media only screen and (min-width: 481px) and (max-width: 768px) {
+@media only screen and (min-width: 250px) and (max-width: 768px) {
   body {
     margin: 5%;
   }

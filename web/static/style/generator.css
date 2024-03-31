@@ -281,44 +281,16 @@ select[name^="parameter"] {
   margin: 4px;
 }
 
-/* Mobile Styles */
-@media only screen and (max-width: 480px) {
-  body {
-      margin: 8% 2%;
-  }
-
-  .prompting {
-      flex-direction: column;
-  }
-
-  .container {
-      padding: 10px;
-      max-width: 100%;
-  }
-
-  .left-section,
-  .right-section {
-      width: 100%;
-      margin: 4px 0;
-  }
-
-  .result {
-      margin: 15px;
-      text-align: center;
-  }
-
-  .loading {
-      h1 {
-          font-size: 1.2rem;
-      }
-  }
-}
-
 /* Tablet Styles */
-@media only screen and (min-width: 481px) and (max-width: 768px) {
+@media only screen and (min-width: 250px) and (max-width: 768px) {
   body {
       margin: 8% 5%;
   }
+
+  .container {    
+    width: 85%;
+    align-content: normal;
+}
 
   .result {
       margin: 15px;

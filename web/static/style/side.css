@@ -19,12 +19,12 @@
     z-index: 1000;
     transition: transform 0.35s cubic-bezier(0.89, 0.75, 0.62, 0.96);
     transform: translateX(-100%);
+    overflow-y: auto; 
 }
 
 .side-panel ul {
     margin-top: 7%;
     list-style: none;
-    /* display: flex; */
     flex-direction: column;
     background-color: #4a4d4dc2;
     border-radius: 20px;
@@ -33,6 +33,7 @@
     font-size: medium;
     align-items: stretch;
     bottom: 10%;
+    overflow-y: auto; 
 }
 
 .side-panel ul li {
