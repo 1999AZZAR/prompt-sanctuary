@@ -146,14 +146,15 @@ form {
   font-size: 1rem;
   background-color: #3737378f;
   padding: 15px 20px;
+  width: -webkit-fill-available;
   display: inline-flex;
-  flex-direction: column;
-  flex-wrap: wrap;
   border-radius: 5px;
   -webkit-border-radius: 5px;
   -moz-border-radius: 5px;
   -ms-border-radius: 5px;
   -o-border-radius: 5px;
+  flex-wrap: wrap;
+  flex-direction: column;
 }
 
 form:hover{
@@ -201,14 +202,14 @@ div {
 
 .container {
   display: flex;
+  min-width: 260px;
   max-width: 600px;
-  margin: 8px auto 8px auto;
+  margin: 8px  auto;
   padding: 20px 30px;
-  flex-wrap: wrap;
-  align-content: space-between;
   border-radius: 10px;
   background-color: #000000c9;
   transition: transform 0.2s linear;
+  flex-wrap: wrap;
 }
 
 
