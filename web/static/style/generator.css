@@ -124,15 +124,17 @@ strong:hover{
 }
 
 button {
-    color: rgb(255 255 255);
-    font-family: 'Rubik';
-    font-size: 0.9em;
-    background-color: #4b006e78;
-    border: 2px solid #56565657;
-    cursor: pointer;
-    margin: 2px;
-    transition: transform 0.3s linear;
-    border-radius: 10px;
+  color: rgb(255 255 255);
+  font-family: 'Rubik';
+  font-size: 0.9em;
+  background-color: #4b006e78;
+  border: 2px solid #56565657;
+  cursor: pointer;
+  margin: 0.4%;
+  padding: 1px;
+  transition: transform 0.3s linear;
+  border-radius: 10px;
+  min-width: 80px;
 }
 
 button:hover {
