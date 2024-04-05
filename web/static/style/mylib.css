@@ -146,6 +146,42 @@ div.prompt-box {
     width: calc(50% - 20px); /* Adjust width for two items in one row */
 }
 
+/* edit popup */
+#editPopup {
+    display: none;
+    position: fixed;
+    min-width: 350px;
+    max-width: 90%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #232323;
+    padding: 1% 2%;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+}
+
+#editPopup input{
+    width: 90%;
+    padding: 3%;
+    border-radius: 8px;
+    color: #ffffff;
+    background-color: #151515;
+}
+
+#editPopup textarea {
+    margin-bottom: 10px;
+    width: 90%;
+    padding: 3%;
+    height: 200px;
+    border-radius: 8px;
+    text-align: justify;
+    color: #ffffff;
+    background-color: #151515;
+}
+
+
 @media only screen and (min-width: 250px) and (max-width: 768px) {
     div.prompt-box {
         width: 90%; /* Fill 90% of the width of the display */

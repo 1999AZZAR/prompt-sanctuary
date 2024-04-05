@@ -206,6 +206,31 @@ def mylib():
         return f"Error: {str(e)}"
 
 
+# save new prompt that have been edited
+@app.route('/save_edit', methods=['POST'])
+@required_login
+def save_edit():
+    try:
+        username = session['username']
+        table_name = username 
+        conn = sqlite3.connect(PROMPT_DATABASE)
+        cursor = conn.cursor()
+
+        random_val = request.form['random_val']  # Get the random_val from the form
+        edited_title = request.form['edited_title']  # Get the edited title from the form
+        edited_prompt = request.form['edited_prompt']  # Get the edited prompt from the form
+
+        # Update the title and prompt in the database using the random_val as the key
+        cursor.execute(f'UPDATE {table_name} SET title=?, prompt=? WHERE random_val=?', (edited_title, edited_prompt, random_val))
+        conn.commit()
+        conn.close()
+
+        return redirect(url_for('mylib'))
+
+    except Exception as e:
+        return f"Error: {str(e)}"
+
+
 # prompt trial / chat bot
 @app.route('/trying')
 @required_login
