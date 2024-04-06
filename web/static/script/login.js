@@ -11,7 +11,7 @@ window.onload = function () {
         resetLoginForm();
     });
 
-    // Toggle login form 
+    // Toggle login form
     document.getElementById("loginLink").addEventListener("click", function (event) {
         event.preventDefault();
         loginForm.style.display = "block";
@@ -48,6 +48,12 @@ window.onload = function () {
             showErrorPopup("Username cannot be equal to password.");
             return;
         }
+
+        if (username.toLowerCase() === "system" || username.toLowerCase() === "admin" || username.toLowerCase() === "consol" || username.toLowerCase() === "sysadmin" || username.toLowerCase() === "useradmin") {
+            event.preventDefault();
+            showErrorPopup("Username cannot be one of: system, admin, consol, sysadmin, useradmin.");
+            return;
+        }
     });
 
     // Add event listener for form submission
@@ -65,6 +71,12 @@ window.onload = function () {
         if (username === password) {
             event.preventDefault();
             showErrorPopup("Username cannot be equal to password.");
+            return;
+        }
+
+        if (username.toLowerCase() === "system" || username.toLowerCase() === "admin" || username.toLowerCase() === "consol" || username.toLowerCase() === "sysadmin" || username.toLowerCase() === "useradmin") {
+            event.preventDefault();
+            showErrorPopup("Username cannot be one of: system, admin, consol, sysadmin, useradmin.");
             return;
         }
 
@@ -111,7 +123,7 @@ function showLoadingAnimation(form) {
 
     // Delay the form submission
     setTimeout(function() {
-        form.submit(); 
+        form.submit();
     }, 0); // Adjust the delay as needed
 }
 
