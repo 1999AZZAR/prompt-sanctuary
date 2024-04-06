@@ -142,7 +142,8 @@ button:hover {
     transform: scale(1.1);
 }
 
-form {
+form,
+.input-radio {
   color: white;
   font-family: 'Rubik';
   font-size: 1rem;
@@ -163,7 +164,8 @@ form:hover{
   background-color: #272727c6;
 }
 
-form input {
+form input,
+button#generate-button{
     width: 100%;
     padding: 7px;
     box-sizing: border-box;
@@ -196,6 +198,7 @@ div {
   flex-wrap: wrap;
   flex-direction: row;
   align-content: space-between;
+  align-items: flex-start;
 }
 
 .center { 
@@ -204,9 +207,10 @@ div {
 
 .container {
   display: flex;
-  min-width: 260px;
+  min-width: 270px;
   max-width: 600px;
-  margin: 8px  auto;
+  width: 40%;
+  margin: 1.5%  auto;
   padding: 20px 30px;
   border-radius: 10px;
   background-color: #000000c9;
@@ -227,12 +231,6 @@ div {
   align-self: center;
 }
 
-form#random {
-  text-align: center;
-  display: block;
-  margin-block: auto;
-}
-
 .container p {
   text-align: center;
 }
@@ -242,6 +240,12 @@ form#random {
   box-sizing: border-box;
   margin: 4px;
   text-align: center;
+}
+
+.input-radio{
+  margin: 4px 0;
+  justify-content: space-evenly;
+  flex-direction: row;
 }
 
 .result {

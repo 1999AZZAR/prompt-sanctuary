@@ -83,24 +83,60 @@ document.getElementById('random-text-prompt-form').addEventListener('submit', fu
 
 
 // Handle form submission for image prompt
-document.getElementById('image-prompt-form').addEventListener('submit', function(event) {
-    event.preventDefault(); // Prevent default form submission behavior
-    submitForm('image-prompt-form', '/generate/iprompt'); // Submit form asynchronously
-});
+// document.getElementById('image-prompt-form').addEventListener('submit', function(event) {
+//     event.preventDefault(); // Prevent default form submission behavior
+//     submitForm('image-prompt-form', '/generate/iprompt'); // Submit form asynchronously
+// });
 
 
-// Handle form submission for random image prompt
-document.getElementById('random-image-prompt-form').addEventListener('submit', function(event) {
-    event.preventDefault(); // Prevent default form submission behavior
-    submitForm('random-image-prompt-form', '/generate/irandom'); // Submit form asynchronously
-});
+// // Handle form submission for random image prompt
+// document.getElementById('random-image-prompt-form').addEventListener('submit', function(event) {
+//     event.preventDefault(); // Prevent default form submission behavior
+//     submitForm('random-image-prompt-form', '/generate/irandom'); // Submit form asynchronously
+// });
 
 
-// Handle form submission for reverse image prompt
-document.getElementById('image-upload-form').addEventListener('submit', function(event) {
-    event.preventDefault(); // Prevent default form submission behavior
-    submitForm('image-upload-form', '/generate/image'); // Submit form asynchronously
-});
+// // Handle form submission for reverse image prompt
+// document.getElementById('image-upload-form').addEventListener('submit', function(event) {
+//     event.preventDefault(); // Prevent default form submission behavior
+//     submitForm('image-upload-form', '/generate/image'); // Submit form asynchronously
+// });
+
+// Function to toggle prompt input based on user's selection
+function togglePromptInput(option) {
+    var textInputForm = document.getElementById('image-prompt-form');
+    var imageUploadForm = document.getElementById('image-upload-form');
+
+    if (option === 'text') {
+        textInputForm.style.display = 'block';
+        imageUploadForm.style.display = 'none';
+        document.getElementById('generate-button').textContent = 'Generate';
+    } else if (option === 'image') {
+        textInputForm.style.display = 'none';
+        imageUploadForm.style.display = 'block';
+        document.getElementById('generate-button').textContent = 'Generate';
+    } else if (option === 'random') {
+        textInputForm.style.display = 'none';
+        imageUploadForm.style.display = 'none';
+        if (!document.getElementById('user_input_image').value) {
+            document.getElementById('generate-button').textContent = 'Random';
+        } else {
+            document.getElementById('generate-button').textContent = 'Generate';
+        }
+    }
+}
+
+// Function to handle form submission based on user's selection
+function generatePrompt() {
+    var option = document.querySelector('input[name="prompt-option"]:checked').value;
+    if (option === "text") {
+        submitForm('image-prompt-form', '/generate/iprompt');
+    } else if (option === "image") {
+        submitForm('image-upload-form', '/generate/image');
+    } else if (option === "random") {
+        submitForm('random-text-prompt-form', '/generate/irandom');
+    }
+}
 
 
 // Handle form submission for advanced text prompt

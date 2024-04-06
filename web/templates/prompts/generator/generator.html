@@ -112,47 +112,44 @@
             </div>
             <!-- text prompt end -->
 
-            <!-- image prompt -->
+            <!-- Combined image prompt and image to prompt -->
             <div class="container">
-                <p>generate image prompt</p>
-                <!-- input -->
+                <!-- Generate from option -->
+                <p>Generate Image prompt:</p>
                 <div class="left-section">
-                    <form id="image-prompt-form" onsubmit="submitForm('image-prompt-form', '/generate/iprompt'); return false;">
-                        <label for="user_input">Input:</label>
-                        <div class="input">
+                    <div class="input-radio">
+                        <input type="radio" id="text-input-option" name="prompt-option" value="text" checked onclick="togglePromptInput('text')">
+                        <label for="text-input-option">Text</label>
+                        <input type="radio" id="image-upload-option" name="prompt-option" value="image" onclick="togglePromptInput('image')">
+                        <label for="image-upload-option">File</label>
+                        <input type="radio" id="random-option" name="prompt-option" value="random" onclick="togglePromptInput('random')">
+                        <label for="random-option">Random</label>
+                    </div>
+
+                    <!-- Text input section -->
+                    <form id="image-prompt-form">
+                        <label>
                             <input type="text" name="user_input" id="user_input_image" placeholder="whale on the desert" required>
-                            <input type="submit" value="Generate">
-                        </div>
+                        </label>
                     </form>
-                </div>
-                <!-- input end -->
-
-                <!-- random -->
-                <div class="right-section">
-                    <form id="random-image-prompt-form" onsubmit="submitForm('random-image-prompt-form', '/generate/irandom'); return false;">
-                        <input type="submit" value="random">
-                    </form>
-                </div>
-                <!-- random end-->
-            </div>
-            <!-- image prompt end -->
-
-            <!-- image to prompt -->
-            <div class="container">
-                <p>reverse image prompt</p>
-                <!-- input -->
-                <div class="left-section">
-                    <form id="image-upload-form"  enctype="multipart/form-data" onsubmit="submitForm('image-upload-form', '/generate/image'); return false;">
-                        <label for="image">Upload Image:</label>
-                        <div class="input">
+                    
+                    <!-- Image upload section -->
+                    <form id="image-upload-form" enctype="multipart/form-data" style="display: none;">
+                        <label>
                             <input type="file" name="image" accept="image/*" required>
-                            <input type="submit" value="Generate">
-                        </div>
+                        </label>
                     </form>
                 </div>
-                <!-- input end -->
+                <!-- Generate from option end -->
+
+                <!-- Generate button -->
+                <div class="right-section">
+                        <button id="generate-button" onclick="generatePrompt()">Generate</button>
+                </div>
+                <!-- Generate button end -->
             </div>
-            <!-- image to prompt end -->
+            <!-- Combined image prompt and image to prompt end -->
+
         </div>
         <!-- tools end -->
     </div>
