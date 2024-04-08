@@ -5,4 +5,5 @@
 5. Add tags to the library.
 6. Categorize prompts and implement a search mechanism.
 7. Combine the image generator input.
-8. Add prompt refinery capabilities 
+8. Add prompt refinery capabilities.
+9. Add the language switch mechanism.
