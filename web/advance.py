@@ -47,7 +47,7 @@ def map_threshold(parameter_value):
 def response(parameter0, parameter1, parameter2, parameter3):
     threshold_value = map_threshold(parameter2)
     
-    # safety treshold settings
+    # safety threshold settings
     safety_settings = [
         {"category": "HARM_CATEGORY_HARASSMENT", "threshold": threshold_value},
         {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": threshold_value},
