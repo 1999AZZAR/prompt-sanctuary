@@ -185,12 +185,12 @@ h1#toggleButton:hover {
     }
 
     .side-panel ul {
-        margin-top: 10%; /* Adjust margin */
-        padding: 5%; /* Adjust padding */
+        margin-top: 10%;
+        padding: 5%;
     }
 
     .side-panel li {
-        margin-bottom: 5px; /* Adjust margin */
+        margin-bottom: 5px;
     }
 
     .image-preview {
@@ -224,12 +224,12 @@ h1#toggleButton:hover {
         margin: 0px;
     }
     .side-panel ul {
-        margin-top: 7%; /* Adjust margin */
-        padding: 5%; /* Adjust padding */
+        margin-top: 7%; 
+        padding: 5%;
     }
 
     .side-panel li {
-        margin-bottom: 5px; /* Adjust margin */
+        margin-bottom: 5px;
     }
 
     .side-panel ul li {

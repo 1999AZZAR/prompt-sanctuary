@@ -248,47 +248,6 @@ div#imageBoxContainer {
 }
 
 
-/* Mobile Styles */
-/* @media only screen and (max-width: 480px) {
-  body {
-    margin: 3%;
-  }
-
-  h1 {
-    font-size: 1.8rem;
-  }
-
-  p {
-    font-size: 0.9rem;
-  }
-
-  .cards__inner {
-    gap: 1em;
-  }
-
-  .card {
-    flex: 1 1 100%;
-    padding: 1em;
-  }
-
-  .card__heading {
-    font-size: 1.5rem;
-  }
-
-  .card__price {
-    font-size: 1.2rem;
-  }
-
-  .card__bullets {
-    font-size: 0.85rem;
-  }
-
-  .cta {
-    font-size: 1rem;
-  }
-} */
-
-
 /* Tablet Styles */
 @media only screen and (min-width: 250px) and (max-width: 768px) {
   body {
