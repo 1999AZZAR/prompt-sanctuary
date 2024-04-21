@@ -24,6 +24,7 @@ app = Flask(__name__)
 USER_DATABASE = './database/user.db'
 PROMPT_DATABASE = './database/prompt_data.db'
 IMAGE_LOG = './database/image_log.db'
+QUERY_DATABASE = './database/community/query.db'
 chat_app = GeminiChat()
 image_generator = Image_gen() 
 
@@ -200,7 +201,7 @@ def mylib():
         cursor.execute(f'SELECT random_val, title, prompt, time FROM {table_name}')
         saved_prompts = cursor.fetchall()
         conn.close()
-        return render_template('my_library.html', saved_prompts=saved_prompts)
+        return render_template('prompts/lib/my_library.html', saved_prompts=saved_prompts)
 
     except Exception as e:
         return f"Error: {str(e)}"
@@ -480,85 +481,17 @@ def delete_prompt():
 @app.route('/library')
 @required_login
 def library():
-    return render_template('prompts/library.html')
+    try: 
+        conn = sqlite3.connect(QUERY_DATABASE)
+        cursor = conn.cursor()
+        cursor.execute(f'SELECT random_val, username, tittle, prompt, tag, time FROM community')
+        saved_prompts = cursor.fetchall()
+        conn.close()
+        return render_template('prompts/lib/glo_library.html', saved_prompts=saved_prompts)
 
-# general prompt library / improvement prompt
-@app.route('/library/promptimpro')
-@required_login
-def promptinmpro():
-    return render_template('prompts/global/prompt_improve.html')
+    except Exception as e:
+        return f"Error: {str(e)}"
 
-# general prompt library / adjustable iq
-@app.route('/library/adjust')
-@required_login
-def adjust():
-    return render_template('prompts/global/adjustable_iq.html')
-
-# general prompt library / aerea mode
-@app.route('/library/aerea')
-@required_login
-def aerea():
-    return render_template('prompts/global/aerea.html')
-
-# general prompt library / ultimate knowladge
-@app.route('/library/ultimate')
-@required_login
-def ultimate():
-    return render_template('prompts/global/ultimate_knowladge.html')
-
-# general prompt library / web dev mode
-@app.route('/library/webdev')
-@required_login
-def webdev():
-    return render_template('prompts/global/web_des.html')
-
-# general prompt library / io mutation mode
-@app.route('/library/mutation')
-@required_login
-def mutation():
-    return render_template('prompts/global/mutation.html')
-
-# general prompt library / createch mode
-@app.route('/library/createch')
-@required_login
-def createch():
-    return render_template('prompts/Writers_and_editors/CreaTech.html')
-
-# general prompt library / text enhancement mode
-@app.route('/library/enhancement')
-@required_login
-def enhancement():
-    return render_template('prompts/Writers_and_editors/enhancement.html')
-
-# general prompt library / journalist mode
-@app.route('/library/journalist')
-@required_login
-def journalist():
-    return render_template('prompts/Writers_and_editors/journalist.html')
-
-# general prompt library / paraphrase mode
-@app.route('/library/paraphrase')
-@required_login
-def paraphrase():
-    return render_template('prompts/Writers_and_editors/paraphrase.html')
-
-# general prompt library / programming emdev mode
-@app.route('/library/emdev')
-@required_login
-def emdev():
-    return render_template('prompts/coding_companion/emdev.html')
-
-# general prompt library / programming queria mode
-@app.route('/library/queria')
-@required_login
-def queria():
-    return render_template('prompts/coding_companion/queria.html')
-
-# general prompt library / programming standard mode
-@app.route('/library/standard')
-@required_login
-def standard():
-    return render_template('prompts/coding_companion/standard.html')
 
 # run the app
 if __name__ == '__main__':
