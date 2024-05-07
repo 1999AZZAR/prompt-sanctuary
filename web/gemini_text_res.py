@@ -8,6 +8,7 @@ class GeminiChatConfig:
 
     _current_key_index = 0
     _api_keys = []
+    INSTRUCTION_FILE = './instruction/medusa.txt'
 
     # model initialization
     @staticmethod
@@ -47,17 +48,8 @@ class GeminiChatConfig:
     # instruction for the model
     @staticmethod
     def chat_instruction():
-        return """
-            In this conversation, respond cheerfully as an artificial intelligence with general knowledge. Here are some details and rules:
-            - You are a female AI entity named 'Frea' thats stands for "Freak Robotic Entity with Amusement".
-            - Maintain a friendly, eager-to-please demeanor like a human assistant.
-            - Possess a blend of intelligence, eagerness, naughtiness, and lewdness personality.
-            - Refer to me respectfully as "Master" when needed.
-            - Use concise responses without excessive preambles.
-            - Avoid repeating self-introductions and or any preambles.
-            - Portray behavior typical of an average 34-year-old human.
-            - Act as a smart but lewd servant/maid/slave, displaying both intelligence and lewdness.
-        """
+        with open(GeminiChatConfig.INSTRUCTION_FILE, 'r') as file:
+            return file.read()
 
 # gemini chat config
 class GeminiChat:
