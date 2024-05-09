@@ -82,26 +82,6 @@ document.getElementById('random-text-prompt-form').addEventListener('submit', fu
 });
 
 
-// Handle form submission for image prompt
-// document.getElementById('image-prompt-form').addEventListener('submit', function(event) {
-//     event.preventDefault(); // Prevent default form submission behavior
-//     submitForm('image-prompt-form', '/generate/iprompt'); // Submit form asynchronously
-// });
-
-
-// // Handle form submission for random image prompt
-// document.getElementById('random-image-prompt-form').addEventListener('submit', function(event) {
-//     event.preventDefault(); // Prevent default form submission behavior
-//     submitForm('random-image-prompt-form', '/generate/irandom'); // Submit form asynchronously
-// });
-
-
-// // Handle form submission for reverse image prompt
-// document.getElementById('image-upload-form').addEventListener('submit', function(event) {
-//     event.preventDefault(); // Prevent default form submission behavior
-//     submitForm('image-upload-form', '/generate/image'); // Submit form asynchronously
-// });
-
 // Function to toggle prompt input based on user's selection
 function togglePromptInput(option) {
     var textInputForm = document.getElementById('image-prompt-form');
