@@ -38,7 +38,7 @@ safety_settings = [
 
 # model settings
 model = genai.GenerativeModel(
-    model_name="gemini-1.0-pro-001",
+    model_name="gemini-1.5-pro-latest",
     generation_config=generation_config,
     safety_settings=safety_settings,
 )
@@ -76,8 +76,8 @@ def generate_imgdescription(user_input_image):
     # style list
     image_styles = [
         "3d-model", "abstract", "analog-film", "anime", "chalk-art",
-        "cinematic", "comic-book", "cyberpunk", "cubism", "decoupage",
-        "digital-art", "enhance", "expressionistic", "fantasy-art", 
+        "cartoon", "cinematic", "comic-book", "cyberpunk", "cubism", "decoupage",
+        "digital-art", "disney", "enhance", "expressionistic", "fantasy-art", 
         "glitch-art", "graffiti", "hyperrealistic", "impressionistic",
         "isometric", "line-art", "low-poly", "minimalist", "modeling-compound",
         "neon-punk", "origami", "paper-cut", "photographic", "pixel-art", 
@@ -101,8 +101,8 @@ def generate_vrandom():
     # style list
     image_styles = [
         "3d-model", "abstract", "analog-film", "anime", "chalk-art",
-        "cinematic", "comic-book", "cyberpunk", "cubism", "decoupage",
-        "digital-art", "enhance", "expressionistic", "fantasy-art", 
+        "cartoon", "cinematic", "comic-book", "cyberpunk", "cubism", "decoupage",
+        "digital-art", "disney", "enhance", "expressionistic", "fantasy-art", 
         "glitch-art", "graffiti", "hyperrealistic", "impressionistic",
         "isometric", "line-art", "low-poly", "minimalist", "modeling-compound",
         "neon-punk", "origami", "paper-cut", "photographic", "pixel-art", 

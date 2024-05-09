@@ -338,8 +338,8 @@ def reverse_image():
         # style list
         image_styles = [
             "3d-model", "abstract", "analog-film", "anime", "chalk-art",
-            "cinematic", "comic-book", "cyberpunk", "cubism", "decoupage",
-            "digital-art", "enhance", "expressionistic", "fantasy-art", 
+            "cartoon", "cinematic", "comic-book", "cyberpunk", "cubism", "decoupage",
+            "digital-art", "disney", "enhance", "expressionistic", "fantasy-art", 
             "glitch-art", "graffiti", "hyperrealistic", "impressionistic",
             "isometric", "line-art", "low-poly", "minimalist", "modeling-compound",
             "neon-punk", "origami", "paper-cut", "photographic", "pixel-art", 

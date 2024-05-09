@@ -74,7 +74,7 @@ def response(parameter0, parameter1, parameter2, parameter3):
 
     # model call
     model = genai.GenerativeModel(
-        model_name="gemini-1.0-pro-001",
+        model_name="gemini-1.5-pro-latest",
         generation_config=generation_config,
         safety_settings=safety_settings,
     )
@@ -99,7 +99,7 @@ def iresponse(parameter0, parameter1, parameter2, parameter3):
 
     # model settings
     model = genai.GenerativeModel(
-        model_name="gemini-1.0-pro-001",
+        model_name="gemini-1.5-pro-latest",
         generation_config=generation_config,
         safety_settings=safety_settings,
     )
