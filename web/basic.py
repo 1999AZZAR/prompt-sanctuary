@@ -30,34 +30,35 @@ generation_config = {
 
 # safety settings
 safety_settings = [
-  {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_NONE"},
-  {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_NONE"},
-  {"category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_NONE"},
-  {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_NONE"}
+    {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_NONE"},
+    {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_NONE"},
+    {"category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_NONE"},
+    {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_NONE"}
 ]
 
 # model settings
 model = genai.GenerativeModel(
-  model_name="gemini-1.0-pro-001",
-  generation_config=generation_config,
-  safety_settings=safety_settings,
+    model_name="gemini-1.0-pro-001",
+    generation_config=generation_config,
+    safety_settings=safety_settings,
 )
 
+
 # Read the prompt parts from the file
-def read_prompt_parts_from_file(file_path, user_input_text):
+def read_prompt_parts_from_file(file_path, user_input_text=''):
     with open(file_path, 'r') as file:
-        prompt_parts = file.read().split('\n\n')
-    # Replace {user_input_text} with actual user input
-    for i, part in enumerate(prompt_parts):
-        if '{user_input_text}' in part:
-            prompt_parts[i] = part.replace('{user_input_text}', user_input_text)
+        prompt_parts = file.read()
+    # Replace {user_input_text} with actual user input if provided
+    if user_input_text:
+            if '{user_input_text}' in prompt_parts:
+                prompt_parts = prompt_parts.replace('{user_input_text}', user_input_text)
     return prompt_parts
 
 
 # Generate response based on user input
 def generate_response(user_input_text):
     # Read prompt parts from the file and replace {user_input_text}
-    prompt_parts = read_prompt_parts_from_file('./instruction/examples.txt', user_input_text)
+    prompt_parts = read_prompt_parts_from_file('./instruction/examples1.txt', user_input_text)
     # Pass the prompt parts to model.generate_content
     response = model.generate_content(prompt_parts)
     return response.text
@@ -65,13 +66,9 @@ def generate_response(user_input_text):
 
 # generate random prompt
 def generate_random():
-  prompt_parts = [
-    " ",
-    "input: generate one random role, provide that role into a structural prompt (using 200-2000 character and make it as random as possible) without any explanation.",
-    "output: ",
-  ]
-  response = model.generate_content(prompt_parts)
-  return response.text
+    prompt_parts = read_prompt_parts_from_file('./instruction/examples2.txt')
+    response = model.generate_content(prompt_parts)
+    return response.text
 
 
 # generate image description
