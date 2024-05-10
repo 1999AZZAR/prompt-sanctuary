@@ -18,7 +18,7 @@ body {
   font-family: 'Caveat', cursive;
   font-family: 'Montserrat', cursive;
   color: rgb(255, 255, 255);
-  background: linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)), url('../icon/bg3.jpg') center/cover no-repeat fixed;
+  background: linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)), url('../icon/bg.jpg') center/cover no-repeat fixed;
   margin-left: 10%;
   margin-right: 10%;
   margin-top: 8%;

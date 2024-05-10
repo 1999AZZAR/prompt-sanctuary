@@ -11,6 +11,7 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
+    background: linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)), url('../icon/bg.jpg') center/cover no-repeat fixed;
     background-color: #121212;
     color: #fff;
     position: sticky;

@@ -11,6 +11,7 @@ html::-webkit-scrollbar {
 
 body {
   font-family: 'Montserrat', sans-serif;
+  background: linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)), url('../icon/bg.jpg') center/cover no-repeat fixed;
   color: rgb(255, 255, 255);
   margin-left: 10%;
   margin-right: 10%;
