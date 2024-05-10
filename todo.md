@@ -4,5 +4,6 @@
 4. Add tags to the library. (database ✔️)
 5. Categorize prompts and implement a search mechanism.
 6. Combine the image generator input. 50%✔️
-7. Add the language switch mechanism.
-8.  Add point system and pos mechanism.
+7. Add account setting page.
+8. Add the language switch mechanism.
+9.  Add point system and pos mechanism.
