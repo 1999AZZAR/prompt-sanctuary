@@ -201,7 +201,7 @@ def mylib():
         cursor.execute(f'SELECT random_val, title, prompt, time FROM {table_name}')
         saved_prompts = cursor.fetchall()
         conn.close()
-        return render_template('prompts/lib/my_library.html', saved_prompts=saved_prompts)
+        return render_template('prompts/lib/personal_library.html', saved_prompts=saved_prompts)
 
     except Exception as e:
         return f"Error: {str(e)}"
@@ -227,6 +227,43 @@ def save_edit():
         conn.close()
 
         return redirect(url_for('mylib'))
+
+    except Exception as e:
+        return f"Error: {str(e)}"
+
+
+# delete prompt from user library
+@app.route('/delete_prompt', methods=['POST'])
+@required_login
+def delete_prompt():
+    try:
+        prompt_id = request.form['prompt_id']
+        username = session['username']
+
+        conn = sqlite3.connect(PROMPT_DATABASE)
+        cursor = conn.cursor()
+
+        cursor.execute(f'DELETE FROM {username} WHERE random_val = ?', (prompt_id,))
+
+        conn.commit()
+        conn.close()
+
+        return redirect(url_for('mylib'))
+    except Exception as e:
+        return f"Error: {str(e)}"
+
+
+# community prompt library
+@app.route('/library')
+@required_login
+def library():
+    try: 
+        conn = sqlite3.connect(QUERY_DATABASE)
+        cursor = conn.cursor()
+        cursor.execute(f'SELECT random_val, username, tittle, prompt, tag, time FROM community')
+        saved_prompts = cursor.fetchall()
+        conn.close()
+        return render_template('prompts/lib/community_library.html', saved_prompts=saved_prompts)
 
     except Exception as e:
         return f"Error: {str(e)}"
@@ -290,7 +327,7 @@ def handle_user_input():
 @app.route('/generate')
 @required_login
 def generate():
-    return render_template('prompts/generator/generator.html')
+    return render_template('prompts/generator/basic.html')
 
 
 # basic generator / text prompt
@@ -452,43 +489,6 @@ def save_prompt():
         conn.close()
 
         return 'Prompt saved successfully!'
-    except Exception as e:
-        return f"Error: {str(e)}"
-
-
-# delete prompt from user library
-@app.route('/delete_prompt', methods=['POST'])
-@required_login
-def delete_prompt():
-    try:
-        prompt_id = request.form['prompt_id']
-        username = session['username']
-
-        conn = sqlite3.connect(PROMPT_DATABASE)
-        cursor = conn.cursor()
-
-        cursor.execute(f'DELETE FROM {username} WHERE random_val = ?', (prompt_id,))
-
-        conn.commit()
-        conn.close()
-
-        return redirect(url_for('mylib'))
-    except Exception as e:
-        return f"Error: {str(e)}"
-
-
-# general prompt library
-@app.route('/library')
-@required_login
-def library():
-    try: 
-        conn = sqlite3.connect(QUERY_DATABASE)
-        cursor = conn.cursor()
-        cursor.execute(f'SELECT random_val, username, tittle, prompt, tag, time FROM community')
-        saved_prompts = cursor.fetchall()
-        conn.close()
-        return render_template('prompts/lib/glo_library.html', saved_prompts=saved_prompts)
-
     except Exception as e:
         return f"Error: {str(e)}"
 
