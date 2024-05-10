@@ -14,9 +14,9 @@ import sqlite3
 # dedicated models
 from gemini_text_res import GeminiChat
 from stability import Image_gen
-from basic import generate_response, generate_random, generate_vrandom, generate_imgdescription
+from prompt_basic import generate_response, generate_random, generate_vrandom, generate_imgdescription
 from gemini_vis_res import generate_content
-from advance import response, iresponse
+from prompt_advance import response, iresponse
 
 
 # microservices call
