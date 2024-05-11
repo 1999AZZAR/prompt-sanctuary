@@ -6,7 +6,7 @@ This project provides a redesigned UI and expanded capabilities building on my p
 
 - [Prompt Library](https://github.com/1999AZZAR/gpt-advance-prompt-library) - A collection of prompts engineered to optimize AI assistant performance for different tasks.
 
-- [Prompt Generator](https://github.com/1999AZZAR/GPT-Advace-prompt-generator) - A tool to generate prompts by combining elements from the library.
+- [Prompt Generator](https://github.com/1999AZZAR/prompt-generator) - A tool to generate prompts by combining elements from the library.
 
 - [stability chat](https://github.com/1999AZZAR/stability_chat_bot) - A chatbot web app built with flask to generate image using stability api and text using gemini.
 
