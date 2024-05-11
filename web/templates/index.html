@@ -38,8 +38,8 @@
 </head>
 
 <body>
-     <!-- Side Panel -->
-     <div class="side-panel" id="sidePanel">
+    <!-- Side Panel -->
+    <div class="side-panel" id="sidePanel">
         <!-- logo -->
         <div id="toggleButton" onclick="toggleSidePanel()" class="image-logo">
             <img id="preview-logo" alt="Image Preview" src="{{ url_for('static', filename='icon/sanctuary.png') }}">
@@ -49,9 +49,9 @@
         <!-- primary -->
         <div class="side-list" id="side-list">
             <ul id="side-top">
-                <li onclick="window.location.href='{{ url_for('home') }}';"><strong>home</strong></li>
-                <li onclick="window.location.href='{{ url_for('mylib') }}';"><strong>My Library</strong></li>
-                <li onclick="window.location.href='{{ url_for('trying') }}';"><strong>prompt trial</strong></li>
+                <li onclick="window.location.href='{{ url_for('home') }}';"><strong>Home</strong></li>
+                <li onclick="window.location.href='{{ url_for('mylib') }}';"><strong>Saved Prompts</strong></li>
+                <li onclick="window.location.href='{{ url_for('trying') }}';"><strong>Prompt Trial</strong></li>
             </ul>
         </div>
         <!-- primary end -->
