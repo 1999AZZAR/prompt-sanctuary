@@ -196,7 +196,7 @@ def mylib():
             cursor.execute(f'SELECT 1 FROM {table_name} LIMIT 1')
         except OperationalError:
             conn.close()
-            return render_template('my_library.html', saved_prompts=None)
+            return render_template('prompts/lib/personal_library.html', saved_prompts=None)
 
         cursor.execute(f'SELECT random_val, title, prompt, time FROM {table_name}')
         saved_prompts = cursor.fetchall()

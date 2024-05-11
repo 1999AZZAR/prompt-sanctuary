@@ -1,4 +1,4 @@
-1. Fix the edit button. ✔️
+1. Fix the edit button. (65%)✔️
 2. Add community library and replace general library with community library. ✔️
 3. Implement database backup sequence, including weekly database library backup.
 4. Add tags to the library. (database ✔️)
