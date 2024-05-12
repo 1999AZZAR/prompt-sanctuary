@@ -8,7 +8,7 @@ class GeminiChatConfig:
 
     _current_key_index = 0
     _api_keys = []
-    INSTRUCTION_FILE = './instruction/medusa.txt'
+    INSTRUCTION_FILE = './instruction/freya.txt'
 
     # model initialization
     @staticmethod

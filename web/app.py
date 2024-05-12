@@ -12,7 +12,7 @@ from functools import wraps
 from sqlite3 import OperationalError
 import sqlite3
 # dedicated models
-from gemini_text_res import GeminiChat #used on ptompt trial
+from gemini_text_res import GeminiChat #used on prompt trial
 from stability import Image_gen #used on prompt trial
 from prompt_basic import generate_response, generate_random, generate_vrandom, generate_imgdescription #used to generate prompt(s)
 from gemini_vis_res import generate_content #used to reverse image to text
