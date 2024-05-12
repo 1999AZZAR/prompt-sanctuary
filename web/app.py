@@ -113,7 +113,7 @@ def delete_old_images():
 # index
 @app.route('/')
 def index():
-    return render_template('login.html')
+    return render_template('login.html', error_message=None)
 
 
 # signup
@@ -132,7 +132,8 @@ def signup():
     cursor.execute('SELECT * FROM users WHERE username = ?', (username,))
     user = cursor.fetchone()
     if user:
-        return 'Username already exists. Please choose another.'
+        error_message = 'Username already exists. Please choose another.'
+        return render_template('login.html', error_message=error_message)
 
     # hashing the user password
     hashed_password = generate_password_hash(password)
@@ -148,7 +149,9 @@ def login():
     # prevent bot with honeypot
     honeypot_value = request.form.get('honeypot', '')
     if honeypot_value:
-        return 'Bot activity detected. Access denied.'
+        error_message = 'Bot activity detected. Access denied.'
+        return render_template('login.html', error_message=error_message)
+
     
     # retrieve user database
     username = request.form['username']
@@ -165,7 +168,8 @@ def login():
         return redirect(url_for('home'))
 
     else:
-        return 'Invalid username or password. Please try again.'
+        error_message = 'Invalid username or password. Please try again.'
+        return render_template('login.html', error_message=error_message)
 
 
 # logout

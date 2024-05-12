@@ -93,6 +93,42 @@ window.onload = function () {
     }
 };
 
+// Function to handle form submission
+function handleFormSubmission(form, action) {
+    const formData = new FormData(form);
+    fetch(action, {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(data => {
+                showErrorPopup(data.error);
+            });
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.success) {
+            handleSuccess(); // Call function to handle success
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}
+
+// Function to handle success
+function handleSuccess() {
+    // Redirect to a different page or perform other actions
+    window.location.href = '/home'; // Example: Redirect to a success page
+}
+
+// Show error popup
+function showErrorPopup(message) {
+    alert("Error: " + message);
+}
+
 // Function to show loading animation on button click
 function showLoadingAnimation(form) {
     // Create the loading animation container
