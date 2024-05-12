@@ -12,11 +12,11 @@ from functools import wraps
 from sqlite3 import OperationalError
 import sqlite3
 # dedicated models
-from gemini_text_res import GeminiChat
-from stability import Image_gen
-from prompt_basic import generate_response, generate_random, generate_vrandom, generate_imgdescription
-from gemini_vis_res import generate_content
-from prompt_advance import response, iresponse
+from gemini_text_res import GeminiChat #used on ptompt trial
+from stability import Image_gen #used on prompt trial
+from prompt_basic import generate_response, generate_random, generate_vrandom, generate_imgdescription #used to generate prompt(s)
+from gemini_vis_res import generate_content #used to reverse image to text
+from prompt_advance import response, iresponse #used on generator(advance)
 
 
 # microservices call
@@ -372,17 +372,9 @@ def reverse_image():
         image_file = request.files['image']
         image_data = image_file.read()
 
-        # style list
-        image_styles = [
-            "3d-model", "abstract", "analog-film", "anime", "chalk-art",
-            "cartoon", "cinematic", "comic-book", "cyberpunk", "cubism", "decoupage",
-            "digital-art", "disney", "enhance", "expressionistic", "fantasy-art", 
-            "glitch-art", "graffiti", "hyperrealistic", "impressionistic",
-            "isometric", "line-art", "low-poly", "minimalist", "modeling-compound",
-            "neon-punk", "origami", "paper-cut", "photographic", "pixel-art", 
-            "pop-art", "steampunk", "surreal", "tile-texture", "vaporwave",
-            "watercolor",
-        ]
+        # Read image styles from file
+        with open('./instruction/image_styles.txt', 'r') as file:
+            image_styles = [line.strip() for line in file.readlines()]
 
         # prompt part example
         prompt_parts = [
