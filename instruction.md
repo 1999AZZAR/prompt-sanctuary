@@ -48,15 +48,10 @@
      pip install -r requirements.txt
      ```
 
-4. **Create the .env file:**
+4. **The .env file:**
 
-   - Create a .env file in the `web` folder.
-   - Add the following to the file:
-
-   ```text
-   GENAI_API_KEY="Your-api-key"
-   ```
-
+   - Rename the `.env.example` file in the `web` folder to `.env`.
+   - Fill out the necessary api key.
    - Save and close the file.
    - You can get your Gemini API key from [here](https://makersuite.google.com/app/apikey) and follow the instructions there.
 
