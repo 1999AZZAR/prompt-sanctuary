@@ -11,6 +11,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
 from sqlite3 import OperationalError
 import sqlite3
+# from flask_wtf.csrf import CSRFProtect
 # dedicated models
 from gemini_text_res import GeminiChat #used on prompt trial
 from stability import Image_gen #used on prompt trial
@@ -25,6 +26,7 @@ USER_DATABASE = './database/user.db'
 PROMPT_DATABASE = './database/prompt_data.db'
 IMAGE_LOG = './database/image_log.db'
 QUERY_DATABASE = './database/community/query.db'
+COMMUNITY_DATABASE = './database/community/shared.db'
 chat_app = GeminiChat()
 image_generator = Image_gen() 
 
@@ -45,7 +47,8 @@ def create_table():
 create_table()
 #secret for user account table
 app.secret_key = 'hahahaha' 
-
+# Initialize CSRF protection
+# csrf = CSRFProtect(app)
 
 # image log database
 def image_table():
@@ -77,6 +80,25 @@ def create_prompt_table(username):
     ''')
     conn.commit()
     conn.close()
+
+
+# shared user prompt database
+def create_prompt_table():
+    conn = sqlite3.connect(COMMUNITY_DATABASE)
+    cursor = conn.cursor()
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS shared (
+            owner TEXT,
+            random_val TEXT,
+            title TEXT,
+            prompt TEXT,
+            time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    ''')
+    conn.commit()
+    conn.close()
+
+create_prompt_table()
 
 
 # login check
@@ -235,6 +257,38 @@ def save_edit():
     except Exception as e:
         return f"Error: {str(e)}"
 
+# share to community
+@app.route('/share_prompt', methods=['POST'])
+@required_login
+def share_prompt():
+    try:
+        data = request.json
+        print('Received data:', data)  # Log the received data
+
+        owner = session['username']
+        if not owner:
+            return jsonify({'success': False, 'error': 'User not logged in'}), 401
+
+        random_val = data.get('prompt_id')
+        title = data.get('title')
+        prompt = data.get('prompt')
+
+        if not random_val or not title or not prompt:
+            return jsonify({'success': False, 'error': 'Missing data'}), 400
+
+        conn = sqlite3.connect(COMMUNITY_DATABASE)
+        cursor = conn.cursor()
+        cursor.execute('''
+            INSERT INTO shared (owner, random_val, title, prompt)
+            VALUES (?, ?, ?, ?)
+        ''', (owner, random_val, title, prompt))
+        conn.commit()
+        conn.close()
+        return jsonify({'success': True})
+    except Exception as e:
+        print(e)
+        return jsonify({'success': False, 'error': str(e)}), 500
+
 
 # delete prompt from user library
 @app.route('/delete_prompt', methods=['POST'])
@@ -265,9 +319,14 @@ def library():
         conn = sqlite3.connect(QUERY_DATABASE)
         cursor = conn.cursor()
         cursor.execute(f'SELECT random_val, username, tittle, prompt, tag, time FROM community')
-        saved_prompts = cursor.fetchall()
+        system_prompts = cursor.fetchall()
         conn.close()
-        return render_template('prompts/lib/community_library.html', saved_prompts=saved_prompts)
+        conn = sqlite3.connect(COMMUNITY_DATABASE)
+        cursor = conn.cursor()
+        cursor.execute(f'SELECT owner, random_val, title, prompt, time FROM shared')
+        shared_prompts = cursor.fetchall()
+        conn.close()
+        return render_template('prompts/lib/community_library.html', system_prompts=system_prompts, shared_prompts=shared_prompts)
 
     except Exception as e:
         return f"Error: {str(e)}"

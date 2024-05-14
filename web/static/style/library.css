@@ -80,6 +80,7 @@ a:hover {
     padding: 2% 3%;
     border-radius: 15px;
     height: fit-content;
+    border: 1px solid #3c0031;
     min-width: 450px;
     max-width: 450px;
     background-color: #2d2d2dc2;
@@ -143,6 +144,15 @@ div.prompt-container {
     max-width: 100%;
 }
 
+div.prompt-system {
+    list-style: none;
+    display: flex;
+    overflow-x: scroll;
+    justify-content: flex-start;
+    max-width: 100%;
+    flex-direction: row;
+}
+
 div.prompt-box {
     width: calc(50% - 20px); /* Adjust width for two items in one row */
 }
@@ -163,8 +173,14 @@ div.prompt-box {
     z-index: 9999;
 }
 
+#editPopup form {
+    padding: 1%;
+    width: max-content;
+    max-width: 550px;
+}
+
 #editPopup input{
-    width: 90%;
+    width: 92%;
     padding: 3%;
     border-radius: 8px;
     color: #ffffff;
@@ -173,7 +189,7 @@ div.prompt-box {
 
 #editPopup textarea {
     margin-bottom: 10px;
-    width: 90%;
+    width: 92%;
     padding: 3%;
     height: 200px;
     border-radius: 8px;
@@ -193,9 +209,9 @@ div.prompt-box {
         display: block; /* Change to block display */
     }
 
-    @media (max-width: 450px) {
-        div.prompt-box {
-            width: calc(100% - 20px); /* Adjust width to fill screen */
-        }
+
+    div.prompt-box {
+        width: calc(100% - 20px); /* Adjust width to fill screen */
     }
+
 }

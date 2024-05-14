@@ -9,10 +9,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Caveat&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
     <!-- css  -->
     <link rel="stylesheet" href="{{ url_for('static', filename='style/side.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='style/mylib.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style/library.css') }}">
     <!-- css end  -->
 
     <!-- js -->
+    <script defer src="{{ url_for('static', filename='script/share.js') }}"></script>
     <script defer src="{{ url_for('static', filename='script/side_panel.js') }}"></script>
     <script defer src="{{ url_for('static', filename='script/library_copy.js') }}"></script>
     <script defer src="{{ url_for('static', filename='script/edit_prompt.js') }}"></script>
@@ -108,6 +109,7 @@
                         <p>{{ prompt[2] }}</p>
                         <button class="copy-button" data-clipboard-text="{{ prompt[2] }}">Copy</button>
                         <button class="edit-button" onclick="openEditPopup('{{ prompt[0] }}', '{{ prompt[1] }}', '{{ prompt[2] }}')">Edit</button>
+                        <button class="share-button" data-prompt-id="{{ prompt[0] }}" data-title="{{ prompt[1] }}" data-prompt="{{ prompt[2] }}">Share</button>
                         <form action="{{ url_for('delete_prompt') }}" method="post" style="display: inline;">
                             <input type="hidden" name="prompt_id" value="{{ prompt[0] }}">
                             <button type="submit" class="delete-button">Delete</button>

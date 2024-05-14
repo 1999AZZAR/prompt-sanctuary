@@ -1,3 +1,17 @@
+/* Hide the scrollbar but allow scrolling */
+body, .element {
+    overflow: auto; /* Ensure scrolling is still possible */
+    
+    /* WebKit browsers */
+    ::-webkit-scrollbar {
+        display: none;
+    }
+    
+    /* Firefox */
+    scrollbar-width: none;
+}
+
+
 /* side panel */
 .side-panel {
     display: table-cell;
