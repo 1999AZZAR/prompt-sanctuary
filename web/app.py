@@ -81,9 +81,11 @@ def create_prompt_table(username):
     conn.commit()
     conn.close()
 
+# create_prompt_table()
+
 
 # shared user prompt database
-def create_prompt_table():
+def create_community_table():
     conn = sqlite3.connect(COMMUNITY_DATABASE)
     cursor = conn.cursor()
     cursor.execute('''
@@ -98,7 +100,7 @@ def create_prompt_table():
     conn.commit()
     conn.close()
 
-create_prompt_table()
+create_community_table()
 
 
 # login check

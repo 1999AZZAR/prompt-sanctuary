@@ -14,6 +14,12 @@
     <!-- css end -->
     <!-- js -->
     <script src="{{ url_for('static', filename='script/login.js') }}"></script>
+    <script src="{{ url_for('static', filename='script/particles.min.js') }}"></script>
+    <script>
+        particlesJS.load('particles-js', '{{ url_for('static', filename='script/particles.json') }}', function() {
+            console.log('particles.js loaded - callback');
+        });
+    </script>
     <!-- js end -->
 
     <!-- seo -->
@@ -39,6 +45,7 @@
     <!-- seo end -->
 </head>
 <body>
+    <div id="particles-js"></div>
     <h1><strong>Prompt Sanctuary</strong></h1>
 
     <!-- main container -->
