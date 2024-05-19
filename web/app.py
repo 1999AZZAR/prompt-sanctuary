@@ -11,14 +11,11 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
 from sqlite3 import OperationalError
 import sqlite3
-# from flask_wtf.csrf import CSRFProtect
 # dedicated models
-from gemini_text_res import GeminiChat #used on prompt trial
+from chat_area import GeminiChat #used on prompt trial
 from stability import Image_gen #used on prompt trial
-from prompt_basic import generate_response, generate_random, generate_vrandom, generate_imgdescription #used to generate prompt(s)
-from gemini_vis_res import generate_content #used to reverse image to text
-from prompt_advance import response, iresponse #used on generator(advance)
-
+from response2 import GenerativeAI
+from response import GenerativeModel
 
 # microservices call
 app = Flask(__name__)
@@ -29,7 +26,8 @@ QUERY_DATABASE = './database/community/query.db'
 COMMUNITY_DATABASE = './database/community/shared.db'
 chat_app = GeminiChat()
 image_generator = Image_gen() 
-
+ai = GenerativeAI()
+model = GenerativeModel()
 
 # user database
 def create_table():
@@ -400,7 +398,7 @@ def generate():
 @required_login
 def process():
     user_input = request.form['user_input']
-    response_text = generate_response(user_input)
+    response_text = model.generate_response('./instruction/examples1.txt',user_input)
     return response_text
 
 
@@ -408,7 +406,7 @@ def process():
 @app.route('/generate/trandom', methods=['POST'])
 @required_login
 def random_prompt():
-    response_text = generate_random()
+    response_text = model.generate_random('./instruction/examples2.txt')
     return response_text
 
 
@@ -417,7 +415,7 @@ def random_prompt():
 @required_login
 def vprocess():
     user_input = request.form['user_input']
-    response_text = generate_imgdescription(user_input)
+    response_text = model.generate_imgdescription('./instruction/image_styles.txt', user_input)
     return response_text
 
 
@@ -425,7 +423,7 @@ def vprocess():
 @app.route('/generate/irandom', methods=['POST'])
 @required_login
 def vrandom_prompt():
-    response_text = generate_vrandom()
+    response_text = model.generate_vrandom('./instruction/image_styles.txt')
     return response_text
 
 
@@ -437,21 +435,8 @@ def reverse_image():
         image_file = request.files['image']
         image_data = image_file.read()
 
-        # Read image styles from file
-        with open('./instruction/image_styles.txt', 'r') as file:
-            image_styles = [line.strip() for line in file.readlines()]
-
-        # prompt part example
-        prompt_parts = [
-            "\nPlease provide a detailed description, written in proper English, to recreate this image in 250 to 500 words. Include information about the style, mood, lighting, and other important details. Ensure your sentences are complete and free from spelling and grammar errors:",
-            {"mime_type": "image/jpeg", "data": image_data},
-            f"\nPlease select and use up to four different artistic styles from the following list: \n{', '.join(image_styles)}\nYou can choose the same style multiple times if desired.",
-            "Try to make your description as similar as possible to the original image, just like an audio describer would. Remember to begin your description with the word 'imagine.' For example, 'imagine a red-hooded woman in the forest...'",
-        ]
-
-        response_text = generate_content(prompt_parts)
+        response_text = model.generate_visual('./instruction/image_styles.txt', image_data)
         return response_text
-
     except Exception as e:
         return f"Error: {str(e)}"
 
@@ -473,8 +458,7 @@ def generate_advance_response():
         parameter2 = request.form['parameter2']
         parameter3 = request.form['parameter3']
         
-        response_text = response(parameter0, parameter1, parameter2, parameter3)
-        
+        response_text = ai.response(parameter0, parameter1, parameter2, parameter3, './instruction/parameters.txt')
         return response_text
     except BadRequestKeyError as e:
         return f"Bad Request: {e.description}"
@@ -490,8 +474,7 @@ def generate_advance_iresponse():
         parameter2 = request.form['parameter2']
         parameter3 = request.form['parameter3']
         
-        response_text = iresponse(parameter0, parameter1, parameter2, parameter3)
-        
+        response_text = ai.response(parameter0, parameter1, parameter2, parameter3, './instruction/parameters2.txt')
         return response_text
     except BadRequestKeyError as e:
         return f"Bad Request: {e.description}"
@@ -508,19 +491,8 @@ def advance_image():
         parameter2 = request.form['parameter2']
         parameter3 = request.form['parameter3']
 
-        prompt_parts = [
-            "\nPlease provide a detailed description in proper English to recreate this image in 250 to 500 words. Include information about the style, mood, lighting, and other key details. Ensure your sentences are complete and free from spelling and grammar errors:",
-            {"mime_type": "image/jpeg", "data": image_data},
-            f"\nAdditionally, incorporate the '{parameter1}' mood into the image description.",
-            f"\nFor the image style, please adopt the '{parameter2}' style as the main style, with '{parameter3}' serving as the secondary style.",
-            "\nEnsure that your description is rich in detail and structure.",
-            "\nTry to make your description as similar as possible to the original image with the adjustments I have requested, just like an audio describer would.",
-            "\nRemember to begin your description with the word 'imagine.' For example, 'imagine a red-hooded woman in the forest...'",
-        ]
-
-        response_text = generate_content(prompt_parts)
+        response_text = model.generate_visual2(image_data, parameter1, parameter2, parameter3)
         return response_text
-
     except Exception as e:
         return f"Error: {str(e)}"
 
