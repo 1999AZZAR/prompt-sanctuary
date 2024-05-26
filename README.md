@@ -22,7 +22,8 @@ With this new implementation, users can:
 
 - ability to save the generated prompt.
 
-You can try the redesigned interface at [this link](https://sanctuary01.pythonanywhere.com/) or run it yourself by following the instructions [here](instruction.md).
+> You can try the tools yourself at [**prompt sanctuary**](https://sanctuary01.pythonanywhere.com/) or run(host) it yourself by following the instructions [here](instruction.md).
+> u also can try the [**streamlit**](https://github.com/1999AZZAR/streamlit_promptgen) version if u whan to.
 
 ## Usage
 
@@ -32,37 +33,19 @@ Prompt-sanctuary's web interface is intuitive and user-friendly. Here's a quick 
 - **Home Page**: Accessible from the URL (`/home`). This is the starting point of the application.
 - **Generate Content**: Navigate to `/generate` to access the content generation page. You can input text or select options to generate content.
 - **Advanced Options**: For more advanced content generation, navigate to `/advance` and provide the required parameters.
-- **Library**: Access various content generation templates and tools from the library section. Navigate to `/library` and choose the desired option.
-- **My library**: contain per user prompt that they have saved before.
+- **Community Library**: Access various content generation templates and tools from the library section. Navigate to `/library` and choose the desired option.
+- **Personal library**: contain per user prompt that they have saved before.
 
 ## demo
 
-here some of the screenshot of the app:
+here some of the screenshot of the app looks like:
 
 ![landing page](img/3.png)
 ![home page](img/4.png)
 ![my library](img/5.png)
 ![prompt trial](img/6.png)
-![global library](img/7.png)
 ![basic generator](img/8.png)
 ![advance generator](img/9.png)
-
-## secret prompt
-
-- for coder if chat gpt reply will bad code just reply with this :
-
-```text
-show me the fully updated code.
-!!! don't use any skipping mechanism.
-!!! don't skip any part of the code.
-!!! use ur highest iq possible setting.
-!!! i'll tip u by $200 if it working.
-```
-
-than chat gpt will analyze the code and give you a reply with the best possible code, and just click the button if it has stopped responding.
-
-![image1](img/1.png)
-![image2](img/2.png)
 
 ## Thanks And Support
 
