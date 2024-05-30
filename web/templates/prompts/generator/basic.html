@@ -99,7 +99,7 @@
                 <p>generate text prompt</p>
                 <!-- input -->
                 <div class="left-section">
-                    <form id="text-prompt-form" onsubmit="submitForm('text-prompt-form', '/generate/tprompt'); return false;">
+                    <form id="text-prompt-form">
                         <label for="user_input">Input:</label>
                         <div class="input">
                             <input type="text" name="user_input" id="user_input_text" placeholder="write a python code" required>
@@ -111,7 +111,7 @@
 
                 <!-- random -->
                 <div class="right-section">
-                    <form id="random-text-prompt-form" onsubmit="submitForm('random-text-prompt-form', '/generate/trandom'); return false;">
+                    <form id="random-text-prompt-form">
                         <input type="submit" value="random">
                     </form>
                 </div>
