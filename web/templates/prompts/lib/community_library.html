@@ -17,6 +17,11 @@
     <script defer src="{{ url_for('static', filename='script/library_copy.js') }}"></script>
     <script defer src="{{ url_for('static', filename='script/edit_prompt.js') }}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.8/clipboard.min.js"></script>
+    <script>
+        particlesJS.load('particles-js', '{{ url_for('static', filename='script/particles.json') }}', function() {
+            console.log('particles.js loaded - callback');
+        });
+    </script>
     <!-- js end -->
 
     <!-- seo -->
@@ -38,6 +43,8 @@
 </head>
 
 <body>
+    <div id="particles-js"></div>
+
     <!-- Side Panel -->
     <div class="side-panel" id="sidePanel">
         <!-- logo -->

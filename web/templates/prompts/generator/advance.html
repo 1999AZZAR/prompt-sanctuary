@@ -13,6 +13,11 @@
     <script defer src="{{ url_for('static', filename='script/generator.js') }}"></script>
     <script defer src="{{ url_for('static', filename='script/side_panel.js') }}"></script>
     <script defer src="{{ url_for('static', filename='script/save.js') }}"></script>
+    <script>
+        particlesJS.load('particles-js', '{{ url_for('static', filename='script/particles.json') }}', function() {
+            console.log('particles.js loaded - callback');
+        });
+    </script>
     <!-- js end -->
 
     <!-- seo -->
@@ -37,6 +42,8 @@
     <!-- seo end -->
 </head>
 <body>
+    <div id="particles-js"></div>
+
     <!-- Side Panel -->
     <div class="side-panel" id="sidePanel">
         <!-- logo -->
