@@ -32,7 +32,7 @@ class GenerativeModel:
 
         # Model settings
         self.model = genai.GenerativeModel(
-            model_name="gemini-1.5-pro-latest",
+            model_name="gemini-1.5-pro",
             generation_config=self.generation_config,
             safety_settings=self.safety_settings,
         )

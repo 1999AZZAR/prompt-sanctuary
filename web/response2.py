@@ -61,7 +61,7 @@ class GenerativeAI:
         # Model configuration
         genai.configure(api_key=self.get_current_api_key())
         self.model = genai.GenerativeModel(
-            model_name="gemini-1.5-pro-latest",
+            model_name="gemini-1.5-pro",
             generation_config=self.generation_config,
             safety_settings=safety_settings,
         )
