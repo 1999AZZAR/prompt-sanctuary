@@ -288,6 +288,21 @@ select[name^="parameter"] {
   margin: 4px;
 }
 
+footer {
+    display: block;
+    unicode-bidi: isolate;
+}
+
+footer p {
+    background-color: transparent;
+    font-family: 'Rubik';
+    text-align: center;
+    font-size: 0.95rem;
+    border-radius: 10px;
+    padding: 10px;
+    margin: 10px 0px;
+}
+
 /* Tablet Styles */
 @media only screen and (min-width: 250px) and (max-width: 768px) {
   body {

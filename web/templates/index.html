@@ -7,17 +7,14 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Caveat&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
     <!-- css -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style/feedback.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='style/index.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='style/side.css') }}">
     <!-- css end -->
     <!-- js -->
+    <script defer src="{{ url_for('static', filename='script/feedback.js') }}"></script>
     <script defer src="{{ url_for('static', filename='script/card.js') }}"></script>
     <script defer src="{{ url_for('static', filename='script/side_panel.js') }}"></script>
-    <script>
-        particlesJS.load('particles-js', '{{ url_for('static', filename='script/particles.json') }}', function() {
-            console.log('particles.js loaded - callback');
-        });
-    </script>
     <!-- js end -->
 
     <!-- seo -->
@@ -72,15 +69,33 @@
         </div>
         <!-- secondary end -->
 
-        <!-- logout -->
+        <!-- logout and Feedback -->
         <div class="side-list" id="bottom-list">
             <ul id="side-bottom">
                 <li onclick="window.location.href='{{ url_for('logout') }}';"><strong>Logout</strong></li>
+                <li class="feedback-button" onclick="openFeedbackPopup()"><strong>Feedback</strong></li>
             </ul>
         </div>
-        <!-- logout end -->
+        <!-- logout and Feedback end -->
     </div>
     <!-- side panel ended -->
+
+    <!-- feedback panel -->
+    <div id="feedback-popup" class="popup hidden">
+        <div class="popup-content">
+            <button id="close-popup" class="close-button" aria-label="Close feedback popup">
+                ✖️
+            </button>
+            <h2 class="popup-title">Share your feedback</h2>
+            <form id="feedback-form">
+                <textarea class="feedback-textarea" name="feedback" placeholder="Enter your feedback here" required></textarea>
+                <div class="button-container">
+                    <button type="submit" class="submit-button">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- feedback panel ended -->
 
     <h1 id="toggleButton" onclick="toggleSidePanel()"><strong>Prompt Sanctuary</strong></h1>
     <p>Welcome to the Prompt Sanctuary, Explore the functionalities of our platform:</p>
@@ -119,6 +134,12 @@
         </div>
     </div>
     <!-- card ended -->
+
+    <!-- footer -->
+    <footer>
+        <p>prompt sanctuary by <a href="https://1999azzar.github.io/1999AZZAR/" target="_blank">azzar budiyanto</a></p>
+    </footer>
+    <!-- footer end -->
 
 </body>
 

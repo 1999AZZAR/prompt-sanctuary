@@ -6,18 +6,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="{{ url_for('static', filename='icon/favicon.ico') }}" type="image/x-icon">
     <!-- css -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style/feedback.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='style/generator.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='style/side.css') }}">
     <!-- css end -->
     <!-- js -->
+    <script defer src="{{ url_for('static', filename='script/feedback.js') }}"></script>
     <script defer src="{{ url_for('static', filename='script/generator.js') }}"></script>
     <script defer src="{{ url_for('static', filename='script/side_panel.js') }}"></script>
     <script defer src="{{ url_for('static', filename='script/save.js') }}"></script>
-    <script>
-        particlesJS.load('particles-js', '{{ url_for('static', filename='script/particles.json') }}', function() {
-            console.log('particles.js loaded - callback');
-        });
-    </script>
     <!-- js end -->
 
     <!-- seo -->
@@ -72,15 +69,33 @@
         </div>
         <!-- secondary end -->
 
-        <!-- logout -->
+        <!-- logout and Feedback -->
         <div class="side-list" id="bottom-list">
             <ul id="side-bottom">
                 <li onclick="window.location.href='{{ url_for('logout') }}';"><strong>Logout</strong></li>
+                <li class="feedback-button" onclick="openFeedbackPopup()"><strong>Feedback</strong></li>
             </ul>
         </div>
-        <!-- logout end -->
+        <!-- logout and Feedback end -->
     </div>
     <!-- side panel ended -->
+
+    <!-- feedback panel -->
+    <div id="feedback-popup" class="popup hidden">
+        <div class="popup-content">
+            <button id="close-popup" class="close-button" aria-label="Close feedback popup">
+                ✖️
+            </button>
+            <h2 class="popup-title">Share your feedback</h2>
+            <form id="feedback-form">
+                <textarea class="feedback-textarea" name="feedback" placeholder="Enter your feedback here" required></textarea>
+                <div class="button-container">
+                    <button type="submit" class="submit-button">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- feedback panel ended -->
 
     <h1 class="center" id="toggleButton" onclick="toggleSidePanel()"><strong>Prompt generator (advance)</strong></h1>
 
@@ -487,5 +502,11 @@
         <button onclick="promptForTitle()">Save</button>
     </div>
     <!-- result end -->
+
+    <!-- footer -->
+    <footer>
+        <p>prompt sanctuary by <a href="https://1999azzar.github.io/1999AZZAR/" target="_blank">azzar budiyanto</a></p>
+    </footer>
+    <!-- footer end -->
 </body>
 </html>

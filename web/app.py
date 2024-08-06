@@ -24,6 +24,7 @@ PROMPT_DATABASE = './database/prompt_data.db'
 IMAGE_LOG = './database/image_log.db'
 QUERY_DATABASE = './database/community/query.db'
 COMMUNITY_DATABASE = './database/community/shared.db'
+FEEDBACK_DATABASE = './database/feedback.db'
 chat_app = GeminiChat()
 image_generator = Image_gen() 
 ai = GenerativeAI()
@@ -45,8 +46,6 @@ def create_table():
 create_table()
 #secret for user account table
 app.secret_key = 'hahahaha' 
-# Initialize CSRF protection
-# csrf = CSRFProtect(app)
 
 # image log database
 def image_table():
@@ -79,9 +78,6 @@ def create_prompt_table(username):
     conn.commit()
     conn.close()
 
-# create_prompt_table()
-
-
 # shared user prompt database
 def create_community_table():
     conn = sqlite3.connect(COMMUNITY_DATABASE)
@@ -99,6 +95,23 @@ def create_community_table():
     conn.close()
 
 create_community_table()
+
+
+# feedback database
+def feedback_table():
+    conn = sqlite3.connect(FEEDBACK_DATABASE)
+    cursor = conn.cursor()
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS feedback (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT NOT NULL,
+            feedback TEXT NOT NULL
+        )
+    ''')
+    conn.commit()
+    conn.close()
+
+feedback_table()
 
 
 # login check
@@ -521,6 +534,22 @@ def save_prompt():
     except Exception as e:
         return f"Error: {str(e)}"
 
+@app.route('/submit_feedback', methods=['POST'])
+@required_login
+def submit_feedback():
+    # name = request.form['name']
+    username = session['username']
+    feedback = request.form['feedback']
+
+    conn = sqlite3.connect(FEEDBACK_DATABASE)
+    cursor = conn.cursor()
+
+    cursor.execute('INSERT INTO feedback (username, feedback) VALUES (?, ?)', (username, feedback))
+
+    conn.commit()
+    conn.close()
+
+    return jsonify({'status': 'success', 'message': 'Feedback submitted successfully!'})
 
 # run the app
 if __name__ == '__main__':
