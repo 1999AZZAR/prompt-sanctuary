@@ -57,7 +57,7 @@ class GeminiChat:
     def __init__(self):
         GeminiChatConfig.initialize_genai_api()
         self.history = []
-        self.model = None  # Initialize model as None
+        self.model = None  # Initialize model
 
     # generate chat
     def generate_chat(self, user_input: str) -> str:
@@ -72,7 +72,7 @@ class GeminiChat:
             safety_settings = GeminiChatConfig.gemini_safety_settings()
             instruction = GeminiChatConfig.chat_instruction()
         else:
-            instruction = ""  # If model is already initialized, no need for instruction
+            instruction = ""
 
         try:
             if self.model is None:

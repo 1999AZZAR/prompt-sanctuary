@@ -1,6 +1,3 @@
-# app.py
-
-# library and import
 import secrets
 import time
 import os
@@ -11,6 +8,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
 from sqlite3 import OperationalError
 import sqlite3
+
 # dedicated models
 from chat_area import GeminiChat #used on prompt trial
 from stability import Image_gen #used on prompt trial
@@ -96,7 +94,6 @@ def create_community_table():
 
 create_community_table()
 
-
 # feedback database
 def feedback_table():
     conn = sqlite3.connect(FEEDBACK_DATABASE)
@@ -113,7 +110,6 @@ def feedback_table():
 
 feedback_table()
 
-
 # login check
 def required_login(func):
     @wraps(func)
@@ -122,7 +118,6 @@ def required_login(func):
             return redirect(url_for('index'))
         return func(*args, **kwargs)
     return decorated_function
-
 
 # Function to delete old images from database and filesystem
 def delete_old_images():
@@ -144,12 +139,10 @@ def delete_old_images():
                     conn.commit()
     conn.close()
 
-
 # index
 @app.route('/')
 def index():
     return render_template('login.html', error_message=None)
-
 
 # signup
 @app.route('/signup', methods=['POST'])
@@ -177,7 +170,6 @@ def signup():
     conn.close()
     return redirect(url_for('index'))
 
-
 # login
 @app.route('/login', methods=['POST'])
 def login():
@@ -187,7 +179,6 @@ def login():
         error_message = 'Bot activity detected. Access denied.'
         return render_template('login.html', error_message=error_message)
 
-    
     # retrieve user database
     username = request.form['username']
     password = request.form['password']
@@ -206,20 +197,17 @@ def login():
         error_message = 'Invalid username or password. Please try again.'
         return render_template('login.html', error_message=error_message)
 
-
 # logout
 @app.route('/logout')
 def logout():
     session.clear()
     return redirect(url_for('index'))
 
-
 # home
 @app.route('/home')
 @required_login
 def home():
     return render_template('index.html')
-
 
 # user personal library
 @app.route('/mylib')
@@ -244,7 +232,6 @@ def mylib():
 
     except Exception as e:
         return f"Error: {str(e)}"
-
 
 # save new prompt that have been edited
 @app.route('/save_edit', methods=['POST'])
@@ -302,7 +289,6 @@ def share_prompt():
         print(e)
         return jsonify({'success': False, 'error': str(e)}), 500
 
-
 # delete prompt from user library
 @app.route('/delete_prompt', methods=['POST'])
 @required_login
@@ -322,7 +308,6 @@ def delete_prompt():
         return redirect(url_for('mylib'))
     except Exception as e:
         return f"Error: {str(e)}"
-
 
 # community prompt library
 @app.route('/library')
@@ -344,13 +329,11 @@ def library():
     except Exception as e:
         return f"Error: {str(e)}"
 
-
 # prompt trial / chat bot
 @app.route('/trying')
 @required_login
 def trying():
     return render_template('try.html')
-
 
 # chat bot form and reply
 @app.route('/user_input', methods=['POST'])
@@ -398,13 +381,11 @@ def handle_user_input():
         else:
             return jsonify({'bot_response': 'Error generating response'})
 
-
 # basic generator
 @app.route('/generate')
 @required_login
 def generate():
     return render_template('prompts/generator/basic.html')
-
 
 # basic generator / text prompt
 @app.route('/generate/tprompt', methods=['POST'])
@@ -414,14 +395,12 @@ def process():
     response_text = model.generate_response('./instruction/examples1.txt',user_input)
     return response_text
 
-
 # basic generator / random text prompt
 @app.route('/generate/trandom', methods=['POST'])
 @required_login
 def random_prompt():
     response_text = model.generate_random('./instruction/examples2.txt')
     return response_text
-
 
 # basic generator / image prompt
 @app.route('/generate/iprompt', methods=['POST'])
@@ -431,14 +410,12 @@ def vprocess():
     response_text = model.generate_imgdescription('./instruction/image_styles.txt', user_input)
     return response_text
 
-
 # basic generator / random image prompt
 @app.route('/generate/irandom', methods=['POST'])
 @required_login
 def vrandom_prompt():
     response_text = model.generate_vrandom('./instruction/image_styles.txt')
     return response_text
-
 
 # basic generator / image to prompt
 @app.route('/generate/image', methods=['POST'])
@@ -453,13 +430,11 @@ def reverse_image():
     except Exception as e:
         return f"Error: {str(e)}"
 
-
 # advance generator
 @app.route('/advance')
 @required_login
 def advance():
     return render_template('prompts/generator/advance.html')
-
 
 # advance generator / text prompt
 @app.route('/advance/generate', methods=['POST'])
@@ -476,7 +451,6 @@ def generate_advance_response():
     except BadRequestKeyError as e:
         return f"Bad Request: {e.description}"
 
-
 # advance generator / image prompt
 @app.route('/advance/igenerate', methods=['POST'])
 @required_login
@@ -492,7 +466,6 @@ def generate_advance_iresponse():
     except BadRequestKeyError as e:
         return f"Bad Request: {e.description}"
 
-
 # advance generator / image to prompt
 @app.route('/advance/image', methods=['POST'])
 @required_login
@@ -503,12 +476,10 @@ def advance_image():
         parameter1 = request.form['parameter1']
         parameter2 = request.form['parameter2']
         parameter3 = request.form['parameter3']
-
         response_text = model.generate_visual2(image_data, parameter1, parameter2, parameter3)
         return response_text
     except Exception as e:
         return f"Error: {str(e)}"
-
 
 # save prompt to user library
 @app.route('/save_prompt', methods=['POST'])

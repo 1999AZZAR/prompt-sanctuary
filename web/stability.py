@@ -1,4 +1,3 @@
-# import the necessary libraries
 import os
 import base64
 import requests
