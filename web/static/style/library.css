@@ -95,7 +95,7 @@ a:hover {
     line-height: 1.1;
     font-family: 'Rubik';
     height: 230px;
-    overflow-y: auto; /* Add overflow-y property */
+    overflow-y: auto;
 }
 
 button {
@@ -154,7 +154,7 @@ div.prompt-system {
 }
 
 div.prompt-box {
-    width: calc(50% - 20px); /* Adjust width for two items in one row */
+    width: calc(50% - 20px);
 }
 
 /* edit popup */
@@ -201,17 +201,17 @@ div.prompt-box {
 
 @media only screen and (min-width: 250px) and (max-width: 768px) {
     div.prompt-box {
-        width: 90%; /* Fill 90% of the width of the display */
-        max-width: none; /* Remove max-width */
+        width: 90%;
+        max-width: none;
     }
 
     div.prompt-container {
-        display: block; /* Change to block display */
+        display: block;
     }
 
 
     div.prompt-box {
-        width: calc(100% - 20px); /* Adjust width to fill screen */
+        width: calc(100% - 20px);
     }
 
 }
