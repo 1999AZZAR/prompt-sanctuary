@@ -1,3 +1,4 @@
+// copy function on persolan library
 document.addEventListener('DOMContentLoaded', function () {
     new ClipboardJS('.copy-button', {
         text: function (trigger) {
