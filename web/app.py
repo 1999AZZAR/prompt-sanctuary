@@ -392,14 +392,14 @@ def generate():
 @required_login
 def process():
     user_input = request.form['user_input']
-    response_text = model.generate_response('./instruction/examples1.txt',user_input)
+    response_text = model.generate_response('./instruction/basic1.txt',user_input)
     return response_text
 
 # basic generator / random text prompt
 @app.route('/generate/trandom', methods=['POST'])
 @required_login
 def random_prompt():
-    response_text = model.generate_random('./instruction/examples2.txt')
+    response_text = model.generate_random('./instruction/basic2.txt')
     return response_text
 
 # basic generator / image prompt
@@ -446,7 +446,7 @@ def generate_advance_response():
         parameter2 = request.form['parameter2']
         parameter3 = request.form['parameter3']
         
-        response_text = ai.response(parameter0, parameter1, parameter2, parameter3, './instruction/parameters.txt')
+        response_text = ai.response(parameter0, parameter1, parameter2, parameter3, './instruction/advance1.txt')
         return response_text
     except BadRequestKeyError as e:
         return f"Bad Request: {e.description}"
@@ -461,7 +461,7 @@ def generate_advance_iresponse():
         parameter2 = request.form['parameter2']
         parameter3 = request.form['parameter3']
         
-        response_text = ai.response(parameter0, parameter1, parameter2, parameter3, './instruction/parameters2.txt')
+        response_text = ai.response(parameter0, parameter1, parameter2, parameter3, './instruction/advance2.txt')
         return response_text
     except BadRequestKeyError as e:
         return f"Bad Request: {e.description}"

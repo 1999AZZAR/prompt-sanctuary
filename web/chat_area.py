@@ -8,7 +8,7 @@ class GeminiChatConfig:
 
     _current_key_index = 0
     _api_keys = []
-    INSTRUCTION_FILE = './instruction/freya.txt'
+    INSTRUCTION_FILE = './instruction/simulat.txt'
 
     # model initialization
     @staticmethod
@@ -78,7 +78,7 @@ class GeminiChat:
             if self.model is None:
                 # Initialize the GenerativeModel for Gemini Chat
                 self.model = genai.GenerativeModel(
-                    model_name="gemini-1.5-pro-latest",
+                    model_name="gemini-1.5-pro",
                     generation_config=generation_config,
                     safety_settings=safety_settings
                 )
@@ -100,7 +100,7 @@ class GeminiChat:
         generation_config = GeminiChatConfig.gemini_generation_config()
         safety_settings = GeminiChatConfig.gemini_safety_settings()
         model = genai.GenerativeModel(
-            model_name="gemini-1.5-pro-latest",
+            model_name="gemini-1.5-pro",
             generation_config=generation_config,
             safety_settings=safety_settings
         )
