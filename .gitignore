@@ -10,3 +10,4 @@ web/__pycache__/
 monospace.json
 .vscode/
 web/database/community/shared.db
+.venv/
