@@ -1,43 +1,55 @@
 import os
 from dotenv import load_dotenv
 import google.generativeai as genai
-from typing import List, Dict
+from typing import List, Dict, Optional
+import logging
 
-# class config for the gemini chat model
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+# Constants
+INSTRUCTION_FILE = './instruction/simulat.txt'
+
+# Class for Gemini Chat configuration
 class GeminiChatConfig:
-
     _current_key_index = 0
-    _api_keys = []
-    INSTRUCTION_FILE = './instruction/simulat.txt'
+    _api_keys: List[str] = []
 
-    # model initialization
     @staticmethod
     def initialize_genai_api():
+        """Initialize the GenAI API with the API keys from environment variables."""
         load_dotenv()
-        GeminiChatConfig._api_keys = os.getenv('GENAI_API_KEY').split(',')
+        api_keys = os.getenv('GENAI_API_KEY')
+        if api_keys:
+            GeminiChatConfig._api_keys = api_keys.split(',')
+        else:
+            raise ValueError("GENAI_API_KEY environment variable not set.")
 
-        def get_current_api_key():
-            key = GeminiChatConfig._api_keys[GeminiChatConfig._current_key_index]
-            GeminiChatConfig._current_key_index = (GeminiChatConfig._current_key_index + 1) % len(GeminiChatConfig._api_keys)
-            return key
-
-        genai.configure(api_key=get_current_api_key())
-
-    # model configuration
     @staticmethod
-    def gemini_generation_config():
+    def get_current_api_key() -> str:
+        """Get the current API key and rotate to the next key."""
+        if not GeminiChatConfig._api_keys:
+            raise ValueError("No API keys available.")
+        key = GeminiChatConfig._api_keys[GeminiChatConfig._current_key_index]
+        GeminiChatConfig._current_key_index = (GeminiChatConfig._current_key_index + 1) % len(GeminiChatConfig._api_keys)
+        return key
+
+    @staticmethod
+    def gemini_generation_config() -> Dict:
+        """Get the generation configuration for the Gemini model."""
         return {
-            'temperature': 0.90,        # Controls the randomness of generated responses
-            'candidate_count': 1,       # Number of candidate responses to generate
-            'top_k': 35,                # Top-k filtering parameter for token sampling
-            'top_p': 0.65,              # Top-p (nucleus) sampling parameter
-            'max_output_tokens': 2048,  # Maximum number of tokens in the generated response
-            'stop_sequences': [],       # Sequences to stop generation at
+            'temperature': 0.90,
+            'candidate_count': 1,
+            'top_k': 35,
+            'top_p': 0.65,
+            'max_output_tokens': 2048,
+            'stop_sequences': [],
         }
 
-    # safety settings
     @staticmethod
-    def gemini_safety_settings():
+    def gemini_safety_settings() -> List[Dict]:
+        """Get the safety settings for the Gemini model."""
         return [
             {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_NONE"},
             {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_NONE"},
@@ -45,29 +57,32 @@ class GeminiChatConfig:
             {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_NONE"}
         ]
 
-    # instruction for the model
     @staticmethod
-    def chat_instruction():
-        with open(GeminiChatConfig.INSTRUCTION_FILE, 'r') as file:
-            return file.read()
+    def chat_instruction() -> str:
+        """Read the instruction file for the chat model."""
+        try:
+            with open(INSTRUCTION_FILE, 'r') as file:
+                return file.read()
+        except Exception as e:
+            logger.error(f"Error reading instruction file: {e}")
+            return ""
 
-# gemini chat config
+# Gemini Chat class
 class GeminiChat:
-    # load the config and history
     def __init__(self):
+        """Initialize the GeminiChat with configuration and history."""
         GeminiChatConfig.initialize_genai_api()
-        self.history = []
-        self.model = None  # Initialize model
+        self.history: List[Dict] = []
+        self.model: Optional[genai.GenerativeModel] = None
 
-    # generate chat
     def generate_chat(self, user_input: str) -> str:
+        """Generate a chat response based on user input."""
         if user_input.strip().lower() == "reset":
-            self.history.clear()  # Clear history
-            self.model = None  # Reset model
+            self.history.clear()
+            self.model = None
             return "Reset success, and history has been cleared."
 
         if self.model is None:
-            # Get generation configuration and safety settings
             generation_config = GeminiChatConfig.gemini_generation_config()
             safety_settings = GeminiChatConfig.gemini_safety_settings()
             instruction = GeminiChatConfig.chat_instruction()
@@ -76,27 +91,25 @@ class GeminiChat:
 
         try:
             if self.model is None:
-                # Initialize the GenerativeModel for Gemini Chat
                 self.model = genai.GenerativeModel(
                     model_name="gemini-1.5-pro",
                     generation_config=generation_config,
                     safety_settings=safety_settings
                 )
 
-            # Prepare user input for AI model and generate response
             chat = self.model.start_chat(history=self.history)
             response = chat.send_message(instruction + user_input)
-            response = f"{response.text}"
-            # Update conversation history
+            response_text = f"{response.text}"
             self.history.append({"role": "user", "parts": [user_input]})
-            self.history.append({"role": "model", "parts": [response]})
-            return response
+            self.history.append({"role": "model", "parts": [response_text]})
+            return response_text
 
         except Exception as e:
+            logger.error(f"Error generating chat response: {e}")
             return f"An error occurred: {str(e)}"
 
-    # generate the tittle from user input
-    def generate_tittle(self, user_input):
+    def generate_tittle(self, user_input: str) -> str:
+        """Generate a title based on user input."""
         generation_config = GeminiChatConfig.gemini_generation_config()
         safety_settings = GeminiChatConfig.gemini_safety_settings()
         model = genai.GenerativeModel(
@@ -106,12 +119,11 @@ class GeminiChat:
         )
         chat = model.start_chat(history=[])
 
-        # process the input
         try:
-            input = f'give this a tittle, here the description : {user_input}. use only max to 5 word'
-            response = chat.send_message(input)
+            input_text = f'give this a title, here the description : {user_input}. use only max to 5 words'
+            response = chat.send_message(input_text)
             return response.text
 
-        # error exception
         except Exception as e:
+            logger.error(f"Error generating title: {e}")
             return f"An error occurred: {str(e)}"
