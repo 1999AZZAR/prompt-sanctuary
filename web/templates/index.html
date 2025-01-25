@@ -18,7 +18,7 @@
 
     <!-- JavaScript -->
     <script defer src="{{ url_for('static', filename='script/feedback.js') }}"></script>
-    <script defer src="{{ url_for('static', filename='script/card.js') }}"></script>
+    <!-- <script defer src="{{ url_for('static', filename='script/card.js') }}"></script> -->
     <script defer src="{{ url_for('static', filename='script/side_panel.js') }}"></script>
 
     <!-- SEO Meta Tags -->
@@ -51,9 +51,9 @@
         <!-- primary -->
         <div class="side-list" id="side-list">
             <ul id="side-top">
-                <li onclick="window.location.href='{{ url_for('home') }}';"><strong>Home</strong></li>
-                <li onclick="window.location.href='{{ url_for('mylib') }}';"><strong>Saved Prompts</strong></li>
-                <li onclick="window.location.href='{{ url_for('trying') }}';"><strong>Prompt Trial</strong></li>
+                <li onclick="window.location.href='{{ url_for('main.home') }}';"><strong>Home</strong></li>
+                <li onclick="window.location.href='{{ url_for('main.mylib') }}';"><strong>Saved Prompts</strong></li>
+                <li onclick="window.location.href='{{ url_for('main.trying') }}';"><strong>Prompt Trial</strong></li>
             </ul>
         </div>
         <!-- primary end -->
@@ -61,9 +61,9 @@
         <!-- secondary -->
         <div class="side-list" id="side-list">
             <ul id="side-middle">
-                <li onclick="window.location.href='{{ url_for('library') }}';"><strong>Community Prompt</strong></li>
-                <li onclick="window.location.href='{{ url_for('generate') }}';"><strong>Basic Prompt</strong></li>
-                <li onclick="window.location.href='{{ url_for('advance') }}';"><strong>Advance Prompt</strong></li>
+                <li onclick="window.location.href='{{ url_for('main.library') }}';"><strong>Community Prompt</strong></li>
+                <li onclick="window.location.href='{{ url_for('main.generate') }}';"><strong>Basic Prompt</strong></li>
+                <li onclick="window.location.href='{{ url_for('main.advance') }}';"><strong>Advance Prompt</strong></li>
             </ul>
         </div>
         <!-- secondary end -->
@@ -71,7 +71,7 @@
         <!-- logout and Feedback -->
         <div class="side-list" id="bottom-list">
             <ul id="side-bottom">
-                <li onclick="window.location.href='{{ url_for('logout') }}';"><strong>Logout</strong></li>
+                <li onclick="window.location.href='{{ url_for('main.logout') }}';"><strong>Logout</strong></li>
                 <li class="feedback-button" onclick="openFeedbackPopup()"><strong>Feedback</strong></li>
             </ul>
         </div>
@@ -112,7 +112,7 @@
                         <li>craft high-quality, engaging, and uniquely tailored prompts</li>
                         <li>random option for a fun and surprising prompt</li>
                     </ul>
-                    <a onclick="window.location.href='{{ url_for('generate') }}';" class="card__cta cta" tabindex="7">click to begin</a>
+                    <a onclick="window.location.href='{{ url_for('main.generate') }}';" class="card__cta cta" tabindex="7">click to begin</a>
                 </div>
                 <!-- left end -->
 
@@ -125,7 +125,7 @@
                         <li>craft high-quality prompt based on multiple parameters</li>
                         <li>Tweaking your prompt to make it more suited to your needs</li>
                     </ul>
-                    <a onclick="window.location.href='{{ url_for('advance') }}';" class="card__cta cta" tabindex="9">click to begin</a>
+                    <a onclick="window.location.href='{{ url_for('main.advance') }}';" class="card__cta cta" tabindex="9">click to begin</a>
                 </div>
                 <!-- right end -->
             </div>

@@ -53,9 +53,9 @@
         <!-- primary -->
         <div class="side-list" id="side-list">
             <ul id="side-top">
-                <li onclick="window.location.href='{{ url_for('home') }}';"><strong>Home</strong></li>
-                <li onclick="window.location.href='{{ url_for('mylib') }}';"><strong>Saved Prompts</strong></li>
-                <li onclick="window.location.href='{{ url_for('trying') }}';"><strong>Prompt Trial</strong></li>
+                <li onclick="window.location.href='{{ url_for('main.home') }}';"><strong>Home</strong></li>
+                <li onclick="window.location.href='{{ url_for('main.mylib') }}';"><strong>Saved Prompts</strong></li>
+                <li onclick="window.location.href='{{ url_for('main.trying') }}';"><strong>Prompt Trial</strong></li>
             </ul>
         </div>
         <!-- primary end -->
@@ -63,9 +63,9 @@
         <!-- secondary -->
         <div class="side-list" id="side-list">
             <ul id="side-middle">
-                <li onclick="window.location.href='{{ url_for('library') }}';"><strong>Community Prompt</strong></li>
-                <li onclick="window.location.href='{{ url_for('generate') }}';"><strong>Basic Prompt</strong></li>
-                <li onclick="window.location.href='{{ url_for('advance') }}';"><strong>Advance Prompt</strong></li>
+                <li onclick="window.location.href='{{ url_for('main.library') }}';"><strong>Community Prompt</strong></li>
+                <li onclick="window.location.href='{{ url_for('main.generate') }}';"><strong>Basic Prompt</strong></li>
+                <li onclick="window.location.href='{{ url_for('main.advance') }}';"><strong>Advance Prompt</strong></li>
             </ul>
         </div>
         <!-- secondary end -->
@@ -73,7 +73,7 @@
         <!-- logout and Feedback -->
         <div class="side-list" id="bottom-list">
             <ul id="side-bottom">
-                <li onclick="window.location.href='{{ url_for('logout') }}';"><strong>Logout</strong></li>
+                <li onclick="window.location.href='{{ url_for('main.logout') }}';"><strong>Logout</strong></li>
                 <li class="feedback-button" onclick="openFeedbackPopup()"><strong>Feedback</strong></li>
             </ul>
         </div>

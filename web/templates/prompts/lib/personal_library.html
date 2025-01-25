@@ -54,9 +54,9 @@
         <!-- primary -->
         <div class="side-list" id="side-list">
             <ul id="side-top">
-                <li onclick="window.location.href='{{ url_for('home') }}';"><strong>Home</strong></li>
-                <li onclick="window.location.href='{{ url_for('mylib') }}';"><strong>Saved Prompts</strong></li>
-                <li onclick="window.location.href='{{ url_for('trying') }}';"><strong>Prompt Trial</strong></li>
+                <li onclick="window.location.href='{{ url_for('main.home') }}';"><strong>Home</strong></li>
+                <li onclick="window.location.href='{{ url_for('main.mylib') }}';"><strong>Saved Prompts</strong></li>
+                <li onclick="window.location.href='{{ url_for('main.trying') }}';"><strong>Prompt Trial</strong></li>
             </ul>
         </div>
         <!-- primary end -->
@@ -64,9 +64,9 @@
         <!-- secondary -->
         <div class="side-list" id="side-list">
             <ul id="side-middle">
-                <li onclick="window.location.href='{{ url_for('library') }}';"><strong>Community Prompt</strong></li>
-                <li onclick="window.location.href='{{ url_for('generate') }}';"><strong>Basic Prompt</strong></li>
-                <li onclick="window.location.href='{{ url_for('advance') }}';"><strong>Advance Prompt</strong></li>
+                <li onclick="window.location.href='{{ url_for('main.library') }}';"><strong>Community Prompt</strong></li>
+                <li onclick="window.location.href='{{ url_for('main.generate') }}';"><strong>Basic Prompt</strong></li>
+                <li onclick="window.location.href='{{ url_for('main.advance') }}';"><strong>Advance Prompt</strong></li>
             </ul>
         </div>
         <!-- secondary end -->
@@ -74,7 +74,7 @@
         <!-- logout and Feedback -->
         <div class="side-list" id="bottom-list">
             <ul id="side-bottom">
-                <li onclick="window.location.href='{{ url_for('logout') }}';"><strong>Logout</strong></li>
+                <li onclick="window.location.href='{{ url_for('main.logout') }}';"><strong>Logout</strong></li>
                 <li class="feedback-button" onclick="openFeedbackPopup()"><strong>Feedback</strong></li>
             </ul>
         </div>
@@ -124,7 +124,7 @@
                     <button class="copy-button" data-clipboard-text="{{ prompt[2] }}">Copy</button>
                     <button class="edit-button" onclick="openEditPopup('{{ prompt[0] }}', '{{ prompt[1] }}', '{{ prompt[2] }}')">Edit</button>
                     <button class="share-button" data-prompt-id="{{ prompt[0] }}" data-title="{{ prompt[1] }}" data-prompt="{{ prompt[2] }}">Share</button>
-                    <form action="{{ url_for('delete_prompt') }}" method="post" style="display: inline;">
+                    <form action="{{ url_for('main.delete_prompt') }}" method="post" style="display: inline;">
                         <input type="hidden" name="prompt_id" value="{{ prompt[0] }}">
                         <button type="submit" class="delete-button">Delete</button>
                     </form>

@@ -1,5 +1,116 @@
-// window.onload handler
-window.onload = function () {
+// Function to show error popup
+function showErrorPopup(message) {
+    alert("Error: " + message);
+}
+
+// Function to handle form submission
+function handleFormSubmission(form, action) {
+    const formData = new FormData(form);
+
+    fetch(action, {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(data => {
+                showErrorPopup(data.error || "An error occurred.");
+            });
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.success) {
+            handleSuccess(data.redirect); // Redirect on success
+        } else {
+            showErrorPopup(data.error || "An error occurred.");
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showErrorPopup("An error occurred. Please try again.");
+    });
+}
+
+// Function to handle success
+function handleSuccess(redirectUrl) {
+    if (redirectUrl) {
+        window.location.href = redirectUrl; // Redirect to the provided URL
+    }
+}
+
+// Function to validate login form
+function validateLoginForm(username, password) {
+    if (username.includes(" ")) {
+        showErrorPopup("Username cannot contain spaces.");
+        return false;
+    }
+
+    if (username === password) {
+        showErrorPopup("Username cannot be equal to password.");
+        return false;
+    }
+
+    const restrictedUsernames = ["system", "admin", "consol", "sysadmin", "useradmin"];
+    if (restrictedUsernames.includes(username.toLowerCase())) {
+        showErrorPopup("Username cannot be one of: system, admin, consol, sysadmin, useradmin.");
+        return false;
+    }
+
+    return true;
+}
+
+// Function to validate signup form
+function validateSignupForm(username, password, confirmPassword) {
+    if (username.includes(" ")) {
+        showErrorPopup("Username cannot contain spaces.");
+        return false;
+    }
+
+    if (username === password) {
+        showErrorPopup("Username cannot be equal to password.");
+        return false;
+    }
+
+    const restrictedUsernames = ["system", "admin", "consol", "sysadmin", "useradmin"];
+    if (restrictedUsernames.includes(username.toLowerCase())) {
+        showErrorPopup("Username cannot be one of: system, admin, consol, sysadmin, useradmin.");
+        return false;
+    }
+
+    if (password !== confirmPassword) {
+        showErrorPopup("Passwords do not match.");
+        return false;
+    }
+
+    return true;
+}
+
+// Function to show loading animation
+function showLoadingAnimation(form) {
+    const loadingContainer = document.createElement("div");
+    loadingContainer.classList.add("loading-container");
+
+    const loadingAnimation = document.createElement("div");
+    loadingAnimation.classList.add("loading-animation");
+
+    for (let i = 0; i < 5; i++) {
+        const dot = document.createElement("div");
+        dot.classList.add("dot");
+        loadingAnimation.appendChild(dot);
+    }
+
+    const loadingText = document.createElement("div");
+    loadingText.textContent = "Loading...";
+    loadingContainer.appendChild(loadingAnimation);
+    loadingContainer.appendChild(loadingText);
+
+    form.parentNode.insertBefore(loadingContainer, form);
+    form.style.display = 'none';
+}
+
+// Event listeners for login and signup forms
+document.addEventListener("DOMContentLoaded", function () {
     const loginForm = document.getElementById("loginForm");
     const signupForm = document.getElementById("signupForm");
 
@@ -32,146 +143,34 @@ window.onload = function () {
         document.getElementById("confirmPassword").value = "";
     }
 
-    // Add event listener for form submission
-    loginForm.addEventListener("submit", function (event) {
-        const username = document.getElementById("usernameLogin").value;
-        const password = document.getElementById("passwordLogin").value;
-
-        if (username.includes(" ")) {
+    // Login form submission
+    if (loginForm) {
+        loginForm.addEventListener("submit", function (event) {
             event.preventDefault();
-            showErrorPopup("Username cannot contain spaces.");
-            return;
-        }
 
-        if (username === password) {
-            event.preventDefault();
-            showErrorPopup("Username cannot be equal to password.");
-            return;
-        }
+            const username = document.getElementById("usernameLogin").value;
+            const password = document.getElementById("passwordLogin").value;
 
-        if (username.toLowerCase() === "system" || username.toLowerCase() === "admin" || username.toLowerCase() === "consol" || username.toLowerCase() === "sysadmin" || username.toLowerCase() === "useradmin") {
-            event.preventDefault();
-            showErrorPopup("Username cannot be one of: system, admin, consol, sysadmin, useradmin.");
-            return;
-        }
-    });
-
-    // Add event listener for form submission
-    signupForm.addEventListener("submit", function (event) {
-        const username = document.getElementById("usernameSignup").value;
-        const password = document.getElementById("passwordSignup").value;
-        const confirmPassword = document.getElementById("confirmPassword").value;
-
-        if (username.includes(" ")) {
-            event.preventDefault();
-            showErrorPopup("Username cannot contain spaces.");
-            return;
-        }
-
-        if (username === password) {
-            event.preventDefault();
-            showErrorPopup("Username cannot be equal to password.");
-            return;
-        }
-
-        if (username.toLowerCase() === "system" || username.toLowerCase() === "admin" || username.toLowerCase() === "consol" || username.toLowerCase() === "sysadmin" || username.toLowerCase() === "useradmin") {
-            event.preventDefault();
-            showErrorPopup("Username cannot be one of: system, admin, consol, sysadmin, useradmin.");
-            return;
-        }
-
-        if (password !== confirmPassword) {
-            event.preventDefault();
-            showErrorPopup("Passwords do not match.");
-            return;
-        }
-    });
-
-    // Show error popup
-    function showErrorPopup(message) {
-        alert("Error: " + message);
-    }
-};
-
-// Function to handle form submission
-function handleFormSubmission(form, action) {
-    const formData = new FormData(form);
-    fetch(action, {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => {
-        if (!response.ok) {
-            return response.json().then(data => {
-                showErrorPopup(data.error);
-            });
-        }
-        return response.json();
-    })
-    .then(data => {
-        if (data.success) {
-            handleSuccess(); // Call function to handle success
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-    });
-}
-
-// Function to handle success
-function handleSuccess() {
-    // Redirect to a different page or perform other actions
-    window.location.href = '/home'; // Example: Redirect to a success page
-}
-
-// Show error popup
-function showErrorPopup(message) {
-    alert("Error: " + message);
-}
-
-// Function to show loading animation on button click
-function showLoadingAnimation(form) {
-    // Create the loading animation container
-    var loadingContainer = document.createElement("div");
-    loadingContainer.classList.add("loading-container");
-
-    // Create the loading animation circle
-    var loadingAnimation = document.createElement("div");
-    loadingAnimation.classList.add("loading-animation");
-
-    // Create the dots
-    for (var i = 0; i < 5; i++) {
-        var dot = document.createElement("div");
-        dot.classList.add("dot");
-        loadingAnimation.appendChild(dot);
+            if (validateLoginForm(username, password)) {
+                showLoadingAnimation(loginForm);
+                handleFormSubmission(loginForm, '/login');
+            }
+        });
     }
 
-    // Add the Loading
-    var loadingText = document.createElement("div");
-    loadingContainer.appendChild(loadingAnimation);
-    loadingContainer.appendChild(loadingText);
+    // Signup form submission
+    if (signupForm) {
+        signupForm.addEventListener("submit", function (event) {
+            event.preventDefault();
 
-    // Insert the loading animation container before the form
-    form.parentNode.insertBefore(loadingContainer, form);
+            const username = document.getElementById("usernameSignup").value;
+            const password = document.getElementById("passwordSignup").value;
+            const confirmPassword = document.getElementById("confirmPassword").value;
 
-    // Hide the form
-    form.style.display = 'none';
-
-    // Delay the form submission
-    setTimeout(function() {
-        form.submit();
-    }, 0); // Adjust the delay as needed
-}
-
-// Event listeners for login and signup buttons
-document.addEventListener("DOMContentLoaded", function() {
-    document.getElementById("loginForm").addEventListener("submit", function(event) {
-        event.preventDefault(); // Prevent default form submission
-        showLoadingAnimation(this); // Show loading animation on login form submit
-    });
-
-    document.getElementById("signupForm").addEventListener("submit", function(event) {
-        event.preventDefault(); // Prevent default form submission
-        showLoadingAnimation(this); // Show loading animation on signup form submit
-    });
+            if (validateSignupForm(username, password, confirmPassword)) {
+                showLoadingAnimation(signupForm);
+                handleFormSubmission(signupForm, '/signup');
+            }
+        });
+    }
 });
