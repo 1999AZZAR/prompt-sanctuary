@@ -39,6 +39,7 @@ document.addEventListener('DOMContentLoaded', function () {
         // Create an image element inside the modal content
         const modalImg = document.createElement('img');
         modalImg.src = imageElement.src;
+        modalImg.classList.add('modal-image'); // Add a class for styling
 
         // Append the image to the modal content
         modalContent.appendChild(modalImg);
@@ -68,12 +69,26 @@ document.addEventListener('DOMContentLoaded', function () {
                     if (response.image_path && response.image_path.endsWith('.png')) {
                         // Handle image response
                         const chatHistory = document.getElementById('chat-history');
+
+                        // Create a message container for the bot
+                        const messageElement = document.createElement('div');
+                        messageElement.classList.add('message', 'flex', 'items-start', 'space-x-4');
+
+                        // Create bot avatar
+                        const avatar = document.createElement('div');
+                        avatar.classList.add('flex', 'items-center', 'justify-center', 'w-10', 'h-10', 'rounded-full', 'bg-gray-700');
+                        avatar.innerHTML = '<i class="fas fa-robot text-white"></i>'; // Bot icon
+                        messageElement.appendChild(avatar);
+
+                        // Create image element
                         const imageElement = document.createElement('img');
                         imageElement.src = "../static/image/" + response.image_path;
-                        imageElement.classList.add('img-class');
-                        chatHistory.appendChild(imageElement);
+                        imageElement.classList.add('img-class', 'rounded-lg', 'cursor-pointer'); // Add border radius and cursor pointer
+                        messageElement.appendChild(imageElement);
+
+                        // Append the message element to the chat history
+                        chatHistory.appendChild(messageElement);
                         chatHistory.scrollTop = chatHistory.scrollHeight;
-                        // Post text response
                     } else {
                         if (userInput.trim().toLowerCase() === 'clear') {
                             clearChatHistory(); // Clear the chat history if user input is 'clear'
