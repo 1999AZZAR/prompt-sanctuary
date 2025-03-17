@@ -52,18 +52,6 @@
         <div class="w-full max-w-md">
             <h1 class="text-4xl font-bold text-center mt-10"><strong>Prompt Sanctuary</strong></h1>
 
-            <!-- Loading Indicator (Initially Hidden) -->
-            <div id="loadingIndicator" class="hidden">
-                <div class="sk-chase">
-                    <div class="sk-chase-dot"></div>
-                    <div class="sk-chase-dot"></div>
-                    <div class="sk-chase-dot"></div>
-                    <div class="sk-chase-dot"></div>
-                    <div class="sk-chase-dot"></div>
-                    <div class="sk-chase-dot"></div>
-                </div>
-            </div>
-
             <!-- main container -->
             <div class="main container mx-auto px-4 mt-10">
 
@@ -122,16 +110,5 @@
             </footer>
         </div>
     </div>
-
-    <!-- JavaScript to Show/Hide Loading Indicator -->
-    <script>
-        document.getElementById('loginForm').addEventListener('submit', function() {
-            document.getElementById('loadingIndicator').classList.remove('hidden');
-        });
-
-        document.getElementById('signupForm').addEventListener('submit', function() {
-            document.getElementById('loadingIndicator').classList.remove('hidden');
-        });
-    </script>
 </body>
 </html>

@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <!-- Hero Section -->
+    <div class="hero text-center mb-12 cursor-pointer" onclick="toggleSidePanel()">
+        <h1 class="text-5xl font-bold mb-4">Community Prompt(s)</h1>
+        <p class="text-lg text-gray-300">Explore prompts shared by the community.</p>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="bg-gray-800 p-8 rounded-xl shadow-2xl mb-8">
+        <h2 class="text-2xl font-bold mb-6">Search Prompts</h2>
+        <input type="text" id="searchInput" placeholder="Search prompts..." class="w-full p-3 bg-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+    </div>
+
+    <!-- Combined Prompts Section -->
+    <div class="bg-gray-800 p-8 rounded-xl shadow-2xl">
+        <h2 class="text-2xl font-bold mb-6">All Prompts</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="allPrompts">
+            {% for prompt in system_prompts %}
+            <div class="prompt-box bg-gray-700 p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
+                <div class="flex justify-between items-center mb-4">
+                    <h4 class="text-xl font-bold">{{ prompt[2] }}</h4>
+                    <span class="bg-blue-500 text-white text-sm px-2 py-1 rounded-full">Default</span>
+                </div>
+                <!-- Render the prompt content as unescaped HTML -->
+                <p class="text-gray-300 mb-6 overflow-y-auto max-h-40 scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-gray-700">{{ prompt[3] | safe }}</p>
+                <!-- Action Buttons -->
+                <div class="flex space-x-4">
+                    <button class="copy-button bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition duration-200" data-clipboard-text="{{ prompt[3] }}">Copy</button>
+                    <button class="save-button bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition duration-200" data-title="{{ prompt[2] }}" data-prompt="{{ prompt[3] }}">Save</button>
+                </div>
+            </div>
+            {% endfor %}
+            {% for prompt in shared_prompts %}
+            <div class="prompt-box bg-gray-700 p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
+                <div class="flex justify-between items-center mb-4">
+                    <h4 class="text-xl font-bold">{{ prompt[2] }}</h4>
+                    <span class="bg-green-500 text-white text-sm px-2 py-1 rounded-full">Shared</span>
+                </div>
+                <!-- Render the prompt content as unescaped HTML -->
+                <p class="text-gray-300 mb-6 overflow-y-auto max-h-40 scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-gray-700">{{ prompt[3] | safe }}</p>
+                <!-- Action Buttons -->
+                <div class="flex space-x-4">
+                    <button class="copy-button bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition duration-200" data-clipboard-text="{{ prompt[3] }}">Copy</button>
+                    <button class="save-button bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition duration-200" data-title="{{ prompt[2] }}" data-prompt="{{ prompt[3] }}">Save</button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- JavaScript for Sidebar Behavior -->
+    <script defer src="{{ url_for('static', filename='script/community.js') }}"></script>
+
+    <!-- JavaScript for Fuzzy Search -->
+    <script>
+        // Initialize Fuse.js for fuzzy search
+        const allPrompts = [
+            {% for prompt in system_prompts %}
+            { title: {{ prompt[2] | tojson }}, content: {{ prompt[3] | tojson }}, type: 'default' },
+            {% endfor %}
+            {% for prompt in shared_prompts %}
+            { title: {{ prompt[2] | tojson }}, content: {{ prompt[3] | tojson }}, type: 'shared' },
+            {% endfor %}
+        ];
+
+        const fuseOptions = {
+            keys: ['title', 'content'],
+            threshold: 0.3, // Adjust sensitivity of search
+        };
+
+        const fuse = new Fuse(allPrompts, fuseOptions);
+
+        // Function to render all prompts
+        function renderAllPrompts() {
+            const allContainer = document.getElementById('allPrompts');
+
+            // Render all prompts
+            allContainer.innerHTML = allPrompts.map(prompt => `
+                <div class="prompt-box bg-gray-700 p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
+                    <div class="flex justify-between items-center mb-4">
+                        <h4 class="text-xl font-bold">${prompt.title}</h4>
+                        <span class="${prompt.type === 'default' ? 'bg-blue-500' : 'bg-green-500'} text-white text-sm px-2 py-1 rounded-full">${prompt.type === 'default' ? 'Default' : 'Shared'}</span>
+                    </div>
+                    <p class="text-gray-300 mb-6 overflow-y-auto max-h-40 scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-gray-700">${prompt.content}</p>
+                    <div class="flex space-x-4">
+                        <button class="copy-button bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition duration-200" data-clipboard-text="${prompt.content}">Copy</button>
+                        <button class="save-button bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition duration-200" data-title="${prompt.title}" data-prompt="${prompt.content}">Save</button>
+                    </div>
+                </div>
+            `).join('');
+
+            // Re-attach event listeners after rendering
+            reattachEventListeners();
+        }
+
+        // Search function
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            const query = e.target.value.trim();
+
+            if (query === "") {
+                // If search input is empty, render all prompts
+                renderAllPrompts();
+            } else {
+                // Perform fuzzy search
+                const results = fuse.search(query);
+
+                // Update all prompts
+                const allContainer = document.getElementById('allPrompts');
+                allContainer.innerHTML = results.map(result => `
+                    <div class="prompt-box bg-gray-700 p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
+                        <div class="flex justify-between items-center mb-4">
+                            <h4 class="text-xl font-bold">${result.item.title}</h4>
+                            <span class="${result.item.type === 'default' ? 'bg-blue-500' : 'bg-green-500'} text-white text-sm px-2 py-1 rounded-full">${result.item.type === 'default' ? 'Default' : 'Shared'}</span>
+                        </div>
+                        <p class="text-gray-300 mb-6 overflow-y-auto max-h-40 scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-gray-700">${result.item.content}</p>
+                        <div class="flex space-x-4">
+                            <button class="copy-button bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition duration-200" data-clipboard-text="${result.item.content}">Copy</button>
+                            <button class="save-button bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition duration-200" data-title="${result.item.title}" data-prompt="${result.item.content}">Save</button>
+                        </div>
+                    </div>
+                `).join('');
+
+                // Re-attach event listeners after rendering search results
+                reattachEventListeners();
+            }
+        });
+
+        // Render all prompts on page load
+        renderAllPrompts();
+    </script>
+
+{% endblock %}

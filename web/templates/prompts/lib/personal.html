@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div id="backdrop" style="display: none;"></div>
+    <!-- Main Content -->
+    <main class="flex-grow p-8">
+        <!-- Hero Section -->
+        <div class="hero text-center mb-12 cursor-pointer" onclick="toggleSidePanel()">
+            <h1 class="text-5xl font-bold mb-4">Saved Prompt(s)</h1>
+            <p class="text-lg text-gray-300">Here are your saved prompts:</p>
+        </div>
+
+        <!-- Saved Prompts -->
+        <div class="main">
+            {% if saved_prompts %}
+            <div id="imageBoxContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {% for prompt in saved_prompts %}
+                <div class="prompt-box bg-gray-800 p-6 rounded-xl shadow-2xl hover:shadow-3xl transition-shadow duration-300 flex flex-col">
+                    <!-- Header with Title and Time -->
+                    <div class="prompt-header mb-4">
+                        <h4 class="text-xl font-bold text-white">{{ prompt[1] }}</h4>
+                        <small class="text-gray-400">{{ prompt[3] }}</small> <!-- Time -->
+                    </div>
+
+                    <!-- Prompt Body with Overflow Handling -->
+                    <div class="prompt-body flex-grow overflow-y-auto mb-6">
+                        <p class="text-gray-300">{{ prompt[2] }}</p> <!-- Prompt -->
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex space-x-4">
+                        <button class="copy-button bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition duration-200" data-clipboard-text="{{ prompt[2] }}">Copy</button>
+                        <button class="edit-button bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition duration-200" data-random-val="{{ prompt[0] }}" data-title="{{ prompt[1] }}" data-prompt="{{ prompt[2] }}">Edit</button>
+                        <button class="share-button bg-purple-500 text-white px-4 py-2 rounded-lg hover:bg-purple-600 transition duration-200" data-prompt-id="{{ prompt[0] }}" data-title="{{ prompt[1] }}" data-prompt="{{ prompt[2] }}">Share</button>
+                        <button class="delete-button bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition duration-200" data-random-val="{{ prompt[0] }}">Delete</button>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <h4 class="text-center text-gray-300">You have no saved prompts yet.</h4>
+            {% endif %}
+        </div>
+    </main>
+
+    <!-- JavaScript for personal library -->
+    <script defer src="{{ url_for('static', filename='script/personal.js') }}"></script>
+{% endblock %}

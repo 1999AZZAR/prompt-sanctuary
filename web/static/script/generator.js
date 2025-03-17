@@ -38,6 +38,7 @@ function submitForm(formId, url) {
         console.error('Error submitting form:', error);
         // Hide loading animation in case of error
         loading.classList.add('hidden');
+        showPopup("Error", "An error occurred while submitting the form.");
     });
 }
 
@@ -51,7 +52,7 @@ function parseResponse(response) {
         .replace(/```(.*?)```/gs, '<pre><code>$1</code></pre>'); // Code blocks
 }
 
-// image input preview
+// Image input preview
 function previewImage() {
     var input = document.querySelector('input[name="image"]');
     var preview = document.getElementById('preview-image');
@@ -60,7 +61,7 @@ function previewImage() {
         input.addEventListener('change', function () {
             var file = input.files[0];
 
-            // preview image
+            // Preview image
             if (file) {
                 var reader = new FileReader();
 
@@ -78,6 +79,62 @@ function previewImage() {
         });
     } else {
         console.error('Image input or preview element not found in the DOM');
+    }
+}
+
+// Function to show the custom popup
+function showPopup(title, message) {
+    // Create the popup container
+    const popup = document.createElement('div');
+    popup.id = 'custom-popup';
+    popup.className = 'fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50';
+
+    // Create the popup content
+    const popupContent = document.createElement('div');
+    popupContent.className = 'bg-gray-800 p-8 rounded-xl shadow-2xl w-11/12 md:w-1/2 lg:w-1/3';
+
+    // Create the popup title
+    const popupTitle = document.createElement('h2');
+    popupTitle.id = 'popup-title';
+    popupTitle.className = 'text-2xl font-bold mb-4';
+    popupTitle.textContent = title;
+
+    // Create the popup message
+    const popupMessage = document.createElement('p');
+    popupMessage.id = 'popup-message';
+    popupMessage.className = 'text-lg text-gray-300 mb-6';
+    popupMessage.textContent = message;
+
+    // Create the OK button
+    const okButton = document.createElement('button');
+    okButton.className = 'bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition duration-200';
+    okButton.textContent = 'OK';
+    okButton.onclick = closePopup;
+
+    // Create the button container
+    const buttonContainer = document.createElement('div');
+    buttonContainer.className = 'flex justify-end';
+    buttonContainer.appendChild(okButton);
+
+    // Assemble the popup content
+    popupContent.appendChild(popupTitle);
+    popupContent.appendChild(popupMessage);
+    popupContent.appendChild(buttonContainer);
+
+    // Assemble the popup
+    popup.appendChild(popupContent);
+
+    // Add the popup to the body
+    document.body.appendChild(popup);
+}
+
+// Function to close the custom popup
+function closePopup() {
+    const popup = document.getElementById('custom-popup');
+    if (popup) {
+        popup.remove(); // Remove the popup from the DOM
+    } else {
+        console.error('Popup element not found in the DOM');
     }
 }
 
@@ -181,7 +238,7 @@ function generatePrompt() {
     }
 }
 
-// copy the response to the clipboard
+// Copy the response to the clipboard
 function copyToClipboard() {
     var responseText = document.getElementById("response");
     if (responseText) {
@@ -191,13 +248,14 @@ function copyToClipboard() {
         textArea.select();
         document.execCommand('copy');
         document.body.removeChild(textArea);
-        alert("Response copied to clipboard!");
+        showPopup("Success", "Response copied to clipboard!"); // Use dynamic popup
     } else {
         console.error('Response text element not found in the DOM');
+        showPopup("Error", "Failed to copy response to clipboard."); // Use dynamic popup
     }
 }
 
-// loading animation
+// Loading animation
 function loadingAnimation() {
     var loading = document.getElementById("loading");
     if (loading) {
@@ -207,4 +265,92 @@ function loadingAnimation() {
         console.error('Loading element not found in the DOM');
         return false;
     }
+}
+
+function promptForTitle() {
+    // Create the popup container
+    const popup = document.createElement('div');
+    popup.id = 'custom-popup';
+    popup.className = 'fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50';
+
+    // Create the popup content
+    const popupContent = document.createElement('div');
+    popupContent.className = 'bg-gray-800 p-8 rounded-xl shadow-2xl w-11/12 md:w-1/2 lg:w-1/3';
+
+    // Create the popup title
+    const popupTitle = document.createElement('h2');
+    popupTitle.id = 'popup-title';
+    popupTitle.className = 'text-2xl font-bold mb-4';
+    popupTitle.textContent = "Save Prompt";
+
+    // Create the popup message (input field and buttons)
+    const popupMessage = document.createElement('div');
+    popupMessage.innerHTML = `
+        <label for="title-input" class="block mb-2">Enter a title for your prompt:</label>
+        <input type="text" id="title-input" class="w-full p-3 bg-gray-700 rounded-lg" placeholder="Enter title" required>
+        <div class="flex justify-end space-x-4 mt-6">
+            <button id="cancel-button" class="bg-gray-500 text-white px-6 py-3 rounded-lg hover:bg-gray-600 transition duration-200">Cancel</button>
+            <button id="ok-button" class="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition duration-200">OK</button>
+        </div>
+    `;
+
+    // Assemble the popup content
+    popupContent.appendChild(popupTitle);
+    popupContent.appendChild(popupMessage);
+    popup.appendChild(popupContent);
+
+    // Add the popup to the body
+    document.body.appendChild(popup);
+
+    // Add event listener for the OK button
+    const okButton = document.getElementById('ok-button');
+    const cancelButton = document.getElementById('cancel-button');
+    const titleInput = document.getElementById('title-input');
+
+    if (okButton && cancelButton && titleInput) {
+        // OK button click handler
+        okButton.onclick = function () {
+            if (titleInput.value.trim()) { // Check if title is not empty
+                const promptText = document.getElementById("response").innerText;
+                saveToLibrary(titleInput.value.trim(), promptText);
+            } else {
+                showPopup("Error", "Please enter a title."); // Use dynamic popup for error
+            }
+        };
+
+        // Cancel button click handler
+        cancelButton.onclick = function () {
+            closePopup(); // Close the popup
+        };
+    } else {
+        console.error('OK button, Cancel button, or title input not found in the DOM');
+    }
+}
+
+function saveToLibrary(title, prompt) {
+    console.log("Saving prompt with title:", title); // Debugging
+    fetch('/save_prompt', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: 'title=' + encodeURIComponent(title) + '&prompt=' + encodeURIComponent(prompt),
+    })
+        .then(response => {
+            console.log("Server response status:", response.status); // Debugging
+            if (!response.ok) {
+                throw new Error("Server returned an error");
+            }
+            return response.text();
+        })
+        .then(data => {
+            console.log("Server response data:", data); // Debugging
+            showPopup("Success", data); // Use dynamic popup for success
+            closePopup(); // Close the title input popup
+        })
+        .catch(error => {
+            console.error("Error saving prompt:", error); // Debugging
+            showPopup("Error", "Failed to save prompt."); // Use dynamic popup for error
+            closePopup(); // Close the title input popup
+        });
 }

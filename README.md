@@ -44,7 +44,6 @@ here some of the screenshot of the app looks like:
 ![home page](img/4.png)
 ![my library](img/5.png)
 ![prompt trial](img/6.png)
-![basic generator](img/8.png)
 ![advance generator](img/9.png)
 
 ## Thanks And Support

@@ -151,3 +151,15 @@ document.addEventListener('DOMContentLoaded', function () {
         chatHistory.scrollTop = chatHistory.scrollHeight;
     }
 });
+
+// Open Help Popup
+function openHelpPopup() {
+    const helpPopup = document.getElementById('help-popup');
+    helpPopup.classList.remove('hidden');
+}
+
+// Close Help Popup
+document.getElementById('close-help-popup').addEventListener('click', () => {
+    const helpPopup = document.getElementById('help-popup');
+    helpPopup.classList.add('hidden');
+});

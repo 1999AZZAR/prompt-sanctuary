@@ -147,9 +147,7 @@ def create_main_blueprint(
         except OperationalError:
             saved_prompts = None
 
-        return render_template(
-            "prompts/lib/personal_library.html", saved_prompts=saved_prompts
-        )
+        return render_template("prompts/lib/personal.html", saved_prompts=saved_prompts)
 
     @main_blueprint.route("/save_edit", methods=["POST"])
     @required_login
@@ -233,7 +231,7 @@ def create_main_blueprint(
             system_prompts, shared_prompts = [], []
 
         return render_template(
-            "prompts/lib/community_library.html",
+            "prompts/lib/community.html",
             system_prompts=system_prompts,
             shared_prompts=shared_prompts,
         )
