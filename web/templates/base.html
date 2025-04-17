@@ -25,49 +25,52 @@
     <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2/dist/fuse.min.js"></script>
 
     <!-- stylesheet -->
-<!--     <link rel="stylesheet" scr="{{ url_for('static', filename='styles/styles.css') }}"> -->
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/styles.css') }}">
+    <!-- MDC Web CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 
-<body class="bg-gray-900 text-white font-montserrat flex flex-col min-h-screen">
+<body class="flex flex-col min-h-screen">
     <!-- Sidebar -->
-    <div class="side-panel fixed left-0 top-0 h-full w-64 bg-gray-800 text-white transform -translate-x-full transition-transform duration-300 ease-in-out z-30" id="sidePanel">
+    <div class="side-panel fixed left-0 top-0 h-full w-72 glass transform -translate-x-full transition-transform duration-300 ease-in-out z-30" id="sidePanel">
         <!-- Logo -->
-        <div class="p-6 border-b border-gray-700 flex items-center justify-center cursor-pointer" onclick="toggleSidePanel()">
-            <img src="{{ url_for('static', filename='icon/sanctuary.png') }}" alt="Logo" class="w-16 h-16">
+        <div class="p-6 border-b flex items-center justify-center cursor-pointer" onclick="toggleSidePanel()">
+            <h1 class="text-3xl font-bold text-white">Prompt Sanctuary</h1>
         </div>
 
         <!-- Navigation Links -->
         <div class="p-4">
             <ul class="space-y-3">
-                <li onclick="window.location.href='{{ url_for('main.home') }}';" class="cursor-pointer hover:bg-gray-700 p-3 rounded-lg transition duration-200">
+                <li onclick="window.location.href='{{ url_for('main.home') }}';" class="cursor-pointer p-3 rounded-lg transition duration-200">
                     <i class="fas fa-home mr-2"></i><strong>Home</strong>
                 </li>
-                <li onclick="window.location.href='{{ url_for('main.mylib') }}';" class="cursor-pointer hover:bg-gray-700 p-3 rounded-lg transition duration-200">
+                <li onclick="window.location.href='{{ url_for('main.mylib') }}';" class="cursor-pointer p-3 rounded-lg transition duration-200">
                     <i class="fas fa-save mr-2"></i><strong>Saved Prompts</strong>
                 </li>
-                <li onclick="window.location.href='{{ url_for('main.trying') }}';" class="cursor-pointer hover:bg-gray-700 p-3 rounded-lg transition duration-200">
-                    <i class="fas fa-play mr-2"></i><strong>Prompt Trial</strong>
-                </li>
-                <li onclick="window.location.href='{{ url_for('main.library') }}';" class="cursor-pointer hover:bg-gray-700 p-3 rounded-lg transition duration-200">
+                <!-- Prompt Trial removed -->
+                <li onclick="window.location.href='{{ url_for('main.library') }}';" class="cursor-pointer p-3 rounded-lg transition duration-200">
                     <i class="fas fa-users mr-2"></i><strong>Community Prompt</strong>
                 </li>
-                <li onclick="window.location.href='{{ url_for('main.generate') }}';" class="cursor-pointer hover:bg-gray-700 p-3 rounded-lg transition duration-200">
+                <li onclick="window.location.href='{{ url_for('main.generate') }}';" class="cursor-pointer p-3 rounded-lg transition duration-200">
                     <i class="fas fa-cogs mr-2"></i><strong>Basic Prompt</strong>
                 </li>
-                <li onclick="window.location.href='{{ url_for('main.advance') }}';" class="cursor-pointer hover:bg-gray-700 p-3 rounded-lg transition duration-200">
+                <li onclick="window.location.href='{{ url_for('main.advance') }}';" class="cursor-pointer p-3 rounded-lg transition duration-200">
                     <i class="fas fa-tools mr-2"></i><strong>Advance Prompt</strong>
+                </li>
+                <li onclick="window.location.href='{{ url_for('main.profile') }}';" class="cursor-pointer p-3 rounded-lg transition duration-200">
+                    <i class="fas fa-user mr-2"></i><strong>Profile</strong>
                 </li>
             </ul>
         </div>
 
         <!-- Logout and Feedback -->
-        <div class="p-4 border-t border-gray-700">
+        <div class="p-4 border-t">
             <ul class="space-y-3">
-                <li onclick="window.location.href='{{ url_for('main.logout') }}';" class="cursor-pointer hover:bg-gray-700 p-3 rounded-lg transition duration-200">
+                <li onclick="window.location.href='{{ url_for('main.logout') }}';" class="cursor-pointer p-3 rounded-lg transition duration-200">
                     <i class="fas fa-sign-out-alt mr-2"></i><strong>Logout</strong>
                 </li>
-                <li onclick="openFeedbackPopup()" class="cursor-pointer hover:bg-gray-700 p-3 rounded-lg transition duration-200">
+                <li onclick="openFeedbackPopup()" class="cursor-pointer p-3 rounded-lg transition duration-200">
                     <i class="fas fa-comment-dots mr-2"></i><strong>Feedback</strong>
                 </li>
             </ul>
@@ -75,30 +78,33 @@
     </div>
 
     <!-- Main Content -->
-    <main class="flex-grow p-8">
+    <main class="flex-grow p-8 glass">
         {% block content %}{% endblock %}
     </main>
 
     <!-- Footer -->
     <footer class="text-center py-6 mt-12">
-        <p class="text-gray-300">Prompt Sanctuary by <a href="https://1999azzar.github.io/1999AZZAR/" target="_blank" class="text-blue-400 hover:text-blue-300 transition duration-200">Azzar Budiyanto</a></p>
+        <p>Prompt Sanctuary by <a href="https://1999azzar.github.io/1999AZZAR/" target="_blank" class="text-blue-400 hover:text-blue-300">Azzar Budiyanto</a></p>
     </footer>
 
     <!-- Feedback Popup -->
-    <div id="feedback-popup" class="popup hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-40">
-        <div class="bg-gray-800 p-8 rounded-lg w-11/12 max-w-md">
-            <button id="close-popup" class="float-right text-gray-400 hover:text-white">
+    <div id="feedback-popup" class="popup hidden fixed inset-0 glass flex items-center justify-center z-40">
+        <div class="glass p-8 rounded-lg w-11/12 max-w-md">
+            <button id="close-popup" class="float-right">
                 ✖️
             </button>
             <h2 class="text-2xl font-bold mb-6">Share your feedback</h2>
             <form id="feedback-form">
-                <textarea class="w-full h-40 p-4 bg-gray-700 rounded-lg mb-6 resize-none" name="feedback" placeholder="Enter your feedback here" required></textarea>
+                <textarea class="w-full h-40 p-4 glass rounded-lg mb-6 resize-none" name="feedback" placeholder="Enter your feedback here" required></textarea>
                 <button type="submit" class="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition duration-200">Submit</button>
             </form>
         </div>
     </div>
 
-
-
+    <!-- MDC Web JS -->
+    <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
+    <script>
+      mdc.autoInit();
+    </script>
 </body>
 </html>

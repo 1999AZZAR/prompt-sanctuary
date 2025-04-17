@@ -2,35 +2,36 @@
 
 {% block content %}
     <!-- Hero Section -->
-    <div class="hero text-center mb-12 cursor-pointer" onclick="toggleSidePanel()">
-        <h1 class="text-5xl font-bold mb-4">Prompt Generator <span class="text-blue-500">(Basic)</span></h1>
-        <p class="text-lg text-gray-300">Create custom prompts tailored to your needs or use the random feature for inspiration.</p>
+    <div class="hero bg-[var(--md-sys-color-primary)] text-[var(--md-sys-color-on-primary)] p-8 rounded-xl shadow-md mb-12 cursor-pointer text-center" onclick="toggleSidePanel()">
+        <div class="flex items-center justify-center mb-4 space-x-2">
+            <h1 class="text-5xl font-bold">Prompt Generator <span class="text-[var(--md-sys-color-on-primary)]">(Basic)</span></h1>
+            <button onclick="toggleHelp('welcome-help')" class="bg-[var(--md-sys-color-surface)] text-[var(--md-sys-color-on-surface)] px-3 py-1 rounded-lg hover:bg-[var(--md-sys-color-surface)] transition duration-200">?</button>
+        </div>
+        <p class="text-lg text-[var(--md-sys-color-on-primary)]">Create custom prompts tailored to your needs.</p>
     </div>
-
-    <!-- Welcome Section -->
-    <div class="welcome bg-gray-800 p-8 rounded-xl shadow-2xl mb-12">
-        <p class="text-lg text-gray-300">Here, you have the flexibility to <strong>create a customized prompt</strong> tailored to your specific requirements. Alternatively, you can opt to use the <strong>random feature</strong>, which will generate a prompt for you—ensuring not only variety but also an element of <strong>surprise and enjoyment</strong> in the process. Whether you have a <strong>specific idea</strong> in mind or are seeking <strong>inspiration</strong>, the Prompt Generator is designed to accommodate both your <strong>structured and spontaneous</strong> prompt needs.</p>
+    <div id="welcome-help" class="hidden bg-[var(--md-sys-color-surface)] p-8 rounded-lg mb-12 text-[var(--md-sys-color-on-surface)]">
+        <p class="text-[var(--md-sys-color-on-surface)]">Here, you have the flexibility to <strong>create a customized prompt</strong> tailored to your specific requirements. Alternatively, you can opt to use the <strong>random feature</strong>, which will generate a prompt for you—ensuring not only variety but also an element of <strong>surprise and enjoyment</strong> in the process. Whether you have a <strong>specific idea</strong> in mind or are seeking <strong>inspiration</strong>, the Prompt Generator is designed to accommodate both your <strong>structured and spontaneous</strong> prompt needs.</p>
     </div>
 
     <!-- Tools Section -->
     <div class="prompting grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
         <!-- Text Prompt -->
-        <div class="bg-gray-800 p-8 rounded-xl shadow-2xl flex flex-col">
+        <div class="bg-[var(--md-sys-color-surface)] p-8 rounded-lg shadow-md flex flex-col text-[var(--md-sys-color-on-surface)]">
             <div class="flex justify-between items-center mb-6">
                 <h2 class="text-2xl font-bold">Generate Text Prompt</h2>
-                <button onclick="toggleHelp('text-help')" class="bg-gray-700 text-white px-3 py-1 rounded-lg hover:bg-gray-600 transition duration-200">?</button>
+                <button onclick="toggleHelp('text-help')" class="bg-[var(--md-sys-color-surface)] text-[var(--md-sys-color-on-surface)] px-3 py-1 rounded-lg hover:bg-[var(--md-sys-color-surface)] transition duration-200">?</button>
             </div>
-            <div id="text-help" class="hidden bg-gray-700 p-4 rounded-lg mb-4">
-                <p class="text-gray-300">This section allows you to generate text prompts. Enter your input and click "Generate" to create a custom prompt, or click "Random" for a surprise prompt.</p>
+            <div id="text-help" class="hidden bg-[var(--md-sys-color-surface)] p-4 rounded-lg mb-4 text-[var(--md-sys-color-on-surface)]">
+                <p class="text-[var(--md-sys-color-on-surface)]">This section allows you to generate text prompts. Enter your input and click "Generate" to create a custom prompt, or click "Random" for a surprise prompt.</p>
             </div>
             <form id="text-prompt-form" class="space-y-4 flex-grow">
                 <div>
                     <label for="user_input_text" class="block mb-2">Input:</label>
-                    <input type="text" name="user_input" id="user_input_text" placeholder="Write a Python code" class="w-full p-3 bg-gray-700 rounded-lg" required>
+                    <input type="text" name="user_input" id="user_input_text" placeholder="Write a Python code" class="w-full p-3 bg-[var(--md-sys-color-surface)] rounded-lg text-[var(--md-sys-color-on-surface)]" required>
                 </div>
                 <div class="flex space-x-4">
-                    <input type="submit" value="Generate" class="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition duration-200 cursor-pointer">
-                    <input type="submit" value="Random" form="random-text-prompt-form" class="bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 transition duration-200 cursor-pointer">
+                    <input type="submit" value="Generate" class="bg-[var(--md-sys-color-primary)] text-[var(--md-sys-color-on-primary)] px-6 py-3 rounded-lg hover:bg-[var(--md-sys-color-secondary)] transition duration-200 cursor-pointer">
+                    <input type="submit" value="Random" form="random-text-prompt-form" class="bg-[var(--md-sys-color-secondary)] text-[var(--md-sys-color-on-secondary)] px-6 py-3 rounded-lg hover:opacity-90 transition duration-200 cursor-pointer">
                 </div>
             </form>
 
@@ -42,13 +43,13 @@
         </div>
 
         <!-- Image Prompt -->
-        <div class="bg-gray-800 p-8 rounded-xl shadow-2xl flex flex-col">
+        <div class="bg-[var(--md-sys-color-surface)] p-8 rounded-lg shadow-md flex flex-col text-[var(--md-sys-color-on-surface)]">
             <div class="flex justify-between items-center mb-6">
                 <h2 class="text-2xl font-bold">Generate Image Prompt</h2>
-                <button onclick="toggleHelp('image-help')" class="bg-gray-700 text-white px-3 py-1 rounded-lg hover:bg-gray-600 transition duration-200">?</button>
+                <button onclick="toggleHelp('image-help')" class="bg-[var(--md-sys-color-surface)] text-[var(--md-sys-color-on-surface)] px-3 py-1 rounded-lg hover:bg-[var(--md-sys-color-surface)] transition duration-200">?</button>
             </div>
-            <div id="image-help" class="hidden bg-gray-700 p-4 rounded-lg mb-4">
-                <p class="text-gray-300">This section allows you to generate image prompts. You can input text, upload an image, or choose a random prompt. Click "Generate" to create your prompt.</p>
+            <div id="image-help" class="hidden bg-[var(--md-sys-color-surface)] p-4 rounded-lg mb-4 text-[var(--md-sys-color-on-surface)]">
+                <p class="text-[var(--md-sys-color-on-surface)]">This section allows you to generate image prompts. You can input text, upload an image, or choose a random prompt. Click "Generate" to create your prompt.</p>
             </div>
             <div class="space-y-4 flex-grow">
                 <div class="input-radio flex space-x-4">
@@ -70,7 +71,7 @@
                 <form id="image-prompt-form" class="space-y-4">
                     <div>
                         <label for="user_input_image" class="block mb-2">Input:</label>
-                        <input type="text" name="user_input" id="user_input_image" placeholder="Whale on the desert" class="w-full p-3 bg-gray-700 rounded-lg" required>
+                        <input type="text" name="user_input" id="user_input_image" placeholder="Whale on the desert" class="w-full p-3 bg-[var(--md-sys-color-surface)] rounded-lg text-[var(--md-sys-color-on-surface)]" required>
                     </div>
                 </form>
 
@@ -78,34 +79,34 @@
                 <form id="image-upload-form" enctype="multipart/form-data" class="space-y-4" style="display: none;">
                     <div>
                         <label for="image" class="block mb-2">Upload Image:</label>
-                        <input type="file" name="image" accept="image/*" class="w-full p-3 bg-gray-700 rounded-lg" required>
+                        <input type="file" name="image" accept="image/*" class="w-full p-3 bg-[var(--md-sys-color-surface)] rounded-lg text-[var(--md-sys-color-on-surface)]" required>
                     </div>
                 </form>
 
                 <!-- Generate Button -->
-                <button id="generate-button" onclick="generatePrompt()" class="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition duration-200 w-full">Generate</button>
+                <button id="generate-button" onclick="generatePrompt()" class="bg-[var(--md-sys-color-primary)] text-[var(--md-sys-color-on-primary)] px-6 py-3 rounded-lg hover:bg-[var(--md-sys-color-secondary)] transition duration-200 w-full">Generate</button>
             </div>
         </div>
     </div>
 
     <!-- Preview Section -->
-    <div class="image-preview mt-12">
-        <img id="preview-image" alt="Image Preview" src="{{ url_for('static', filename='icon/favicon.ico') }}" class="w-64 h-64 mx-auto rounded-lg">
+    <div id="preview-container" class="image-preview mt-12 hidden">
+        <img id="preview-image" alt="Image Preview" class="w-64 h-auto mx-auto rounded-lg object-contain">
     </div>
 
     <!-- Loading Section -->
-    <div class="loading hidden" id="loading">
+    <div class="loading hidden fixed inset-0 bg-black bg-opacity-50 flex flex-col items-center justify-center z-50" id="loading">
         <div class="spinner"></div>
         <h1 class="text-center mt-4">Generating...</h1>
     </div>
 
     <!-- Result Section -->
-    <div class="result hidden bg-gray-800 p-8 rounded-xl shadow-2xl mt-8" id="resultSection">
+    <div class="result hidden bg-[var(--md-sys-color-surface)] p-8 rounded-lg shadow-md mt-8 text-[var(--md-sys-color-on-surface)]" id="resultSection">
         <h2 class="text-2xl font-bold mb-6">Generated Prompt:</h2>
-        <div id="response" class="text-lg text-gray-300 space-y-4"></div>
+        <div id="response" class="text-lg text-[var(--md-sys-color-on-surface)] space-y-4"></div>
         <div class="flex space-x-4 mt-6">
-            <button onclick="copyToClipboard()" class="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition duration-200">Copy</button>
-            <button onclick="promptForTitle()" class="bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 transition duration-200">Save</button>
+            <button onclick="copyToClipboard()" class="bg-[var(--md-sys-color-primary)] text-[var(--md-sys-color-on-primary)] px-6 py-3 rounded-lg hover:bg-[var(--md-sys-color-secondary)] transition duration-200">Copy</button>
+            <button onclick="promptForTitle()" class="bg-[var(--md-sys-color-secondary)] text-[var(--md-sys-color-on-secondary)] px-6 py-3 rounded-lg hover:opacity-90 transition duration-200">Save</button>
         </div>
     </div>
 

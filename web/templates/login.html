@@ -20,11 +20,15 @@
     <!-- SpinKit CSS (Loading Animation) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/spinkit/2.0.1/spinkit.min.css">
 
+    <!-- Material Components Web -->
+    <link rel="stylesheet" href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/styles.css') }}">
+
     <!-- JavaScript -->
     <script src="{{ url_for('static', filename='script/login.js') }}"></script>
     <script src="{{ url_for('static', filename='script/particles.min.js') }}"></script>
     <script>
-        particlesJS.load('particles-js', '{{ url_for('static', filename='script/particles.json') }}', function() {
+        particlesJS.load('particles-js', "{{ url_for('static', filename='script/particles.json') }}", function() {
             console.log('particles.js loaded - callback');
         });
     </script>
@@ -46,69 +50,74 @@
     <meta property="twitter:description" content="Explore the functionalities of Prompt Sanctuary - a platform for generating and refining prompts. Access a Community Prompt, generate custom prompts, and explore advanced prompting features.">
 </head>
 
-<body class="bg-gray-900 text-white font-montserrat">
+<body class="flex flex-col min-h-screen">
     <div id="particles-js" class="absolute inset-0 z-0"></div>
     <div class="relative mx-auto z-10 flex items-center justify-center min-h-screen">
         <div class="w-full max-w-md">
-            <h1 class="text-4xl font-bold text-center mt-10"><strong>Prompt Sanctuary</strong></h1>
+            <main class="w-full px-4">
+              <div class="hero text-center mb-12 cursor-pointer" onclick="toggleSidePanel()">
+                <h1 class="text-5xl font-bold text-white mb-4">Prompt Sanctuary</h1>
+                <p class="text-lg text-gray-400">Welcome to Prompt Sanctuary, please login to explore the functionalities of our platform.</p>
+              </div>
+              <div class="mdc-card glass prompt-card max-w-md mx-auto mb-8">
+                <div class="mdc-card__primary-action p-6" tabindex="0">
+                  <!-- login -->
+                  <form id="loginForm" action="/login" method="post">
+                      <h2 class="text-2xl font-bold mb-6">Login</h2>
+                      <input type="text" name="honeypot" class="hidden">
+                      <div class="mb-4">
+                          <label for="usernameLogin" class="block text-gray-300 mb-2">Username</label>
+                          <input type="text" id="usernameLogin" name="username" required class="w-full p-3 bg-gray-700 rounded focus:outline-none text-white" placeholder="Enter username">
+                      </div>
+                      <div class="mb-4">
+                          <label for="passwordLogin" class="block text-gray-300 mb-2">Password</label>
+                          <input type="password" id="passwordLogin" name="password" required class="w-full p-3 bg-gray-700 rounded focus:outline-none text-white" placeholder="Enter password">
+                      </div>
+                      <button class="mdc-button mdc-button--raised fullwidth" type="submit">
+                          <span class="mdc-button__ripple"></span>
+                          <span class="mdc-button__label">Login</span>
+                      </button>
+                      <p id="signupLink" class="mt-4 text-center">Don't have an account? <a href="#" onclick="toggleForms()" class="text-blue-400 hover:text-blue-300">Signup Now</a></p>
+                  </form>
+                  <!-- login end -->
 
-            <!-- main container -->
-            <div class="main container mx-auto px-4 mt-10">
-
-                <!-- welcome -->
-                <div class="welcome text-center mb-8">
-                    <p class="text-lg">Welcome to Prompt Sanctuary, Please Login to Explore the functionalities of our platform</p>
+                  <!-- signup -->
+                  <form id="signupForm" action="/signup" method="post" class="hidden">
+                      <h2 class="text-2xl font-bold mb-6">Signup</h2>
+                      <input type="text" name="honeypot" class="hidden">
+                      <div class="mb-4">
+                          <label for="usernameSignup" class="block text-gray-300 mb-2">Username</label>
+                          <input type="text" id="usernameSignup" name="username" required class="w-full p-3 bg-gray-700 rounded focus:outline-none text-white" placeholder="Choose a username">
+                      </div>
+                      <div class="mb-4">
+                          <label for="passwordSignup" class="block text-gray-300 mb-2">Password</label>
+                          <input type="password" id="passwordSignup" name="password" required class="w-full p-3 bg-gray-700 rounded focus:outline-none text-white" placeholder="Enter password">
+                      </div>
+                      <div class="mb-4">
+                          <label for="confirmPassword" class="block text-gray-300 mb-2">Confirm Password</label>
+                          <input type="password" id="confirmPassword" name="confirmPassword" required class="w-full p-3 bg-gray-700 rounded focus:outline-none text-white" placeholder="Confirm password">
+                      </div>
+                      <button class="mdc-button mdc-button--outlined fullwidth" type="submit">
+                          <span class="mdc-button__ripple"></span>
+                          <span class="mdc-button__label">Signup</span>
+                      </button>
+                      <p id="loginLink" class="mt-4 text-center">Already have an account? <a href="#" onclick="toggleForms()" class="text-blue-400 hover:text-blue-300">Login</a></p>
+                  </form>
+                  <!-- signup end -->
                 </div>
-                <!-- welcome end -->
-
-                <!-- forms -->
-                <div class="container max-w-md mx-auto bg-gray-800 p-8 rounded-lg shadow-lg">
-                    <!-- login -->
-                    <form id="loginForm" action="/login" method="post" class="mb-8">
-                        <h2 class="text-2xl font-bold mb-4">Login</h2>
-                        <input type="text" name="honeypot" class="hidden">
-                        <div class="mb-4">
-                            <label for="usernameLogin" class="block mb-2">Username:</label>
-                            <input type="text" id="usernameLogin" name="username" class="w-full px-3 py-2 bg-gray-700 rounded" required>
-                        </div>
-                        <div class="mb-4">
-                            <label for="passwordLogin" class="block mb-2">Password:</label>
-                            <input type="password" id="passwordLogin" name="password" class="w-full px-3 py-2 bg-gray-700 rounded" required>
-                        </div>
-                        <button type="submit" class="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600">Login</button>
-                        <p id="signupLink" class="mt-4 text-center">Don't have an account? <a href="#" onclick="toggleForms()" class="text-blue-400 hover:text-blue-300">Signup Now</a></p>
-                    </form>
-                    <!-- login end -->
-
-                    <!-- signup -->
-                    <form id="signupForm" action="/signup" method="post" class="hidden">
-                        <h2 class="text-2xl font-bold mb-4">Signup</h2>
-                        <input type="text" name="honeypot" class="hidden">
-                        <div class="mb-4">
-                            <label for="usernameSignup" class="block mb-2">Username:</label>
-                            <input type="text" id="usernameSignup" name="username" class="w-full px-3 py-2 bg-gray-700 rounded" required>
-                        </div>
-                        <div class="mb-4">
-                            <label for="passwordSignup" class="block mb-2">Password:</label>
-                            <input type="password" id="passwordSignup" name="password" class="w-full px-3 py-2 bg-gray-700 rounded" required>
-                        </div>
-                        <div class="mb-4">
-                            <label for="confirmPassword" class="block mb-2">Confirm Password:</label>
-                            <input type="password" id="confirmPassword" name="confirmPassword" class="w-full px-3 py-2 bg-gray-700 rounded" required>
-                        </div>
-                        <button type="submit" class="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600">Signup</button>
-                        <p id="loginLink" class="mt-4 text-center">Already have an account? <a href="#" onclick="toggleForms()" class="text-blue-400 hover:text-blue-300">Login</a></p>
-                    </form>
-                    <!-- signup end -->
-                </div>
-                <!-- forms ended -->
-            </div>
-            <!-- main container ended -->
+              </div>
+            </main>
             <!-- Footer -->
             <footer class="text-center py-6 mt-12">
                 <p class="text-gray-300">Prompt Sanctuary by <a href="https://1999azzar.github.io/1999AZZAR/" target="_blank" class="text-blue-400 hover:text-blue-300 transition duration-200">Azzar Budiyanto</a></p>
             </footer>
         </div>
     </div>
+    <!-- MDC Web JS -->
+    <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
+    <script>
+      mdc.autoInit();
+    </script>
+    <script defer src="{{ url_for('static', filename='script/sidebar.js') }}"></script>
 </body>
 </html>

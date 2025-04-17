@@ -14,39 +14,54 @@
     </div>
 
     <!-- Combined Prompts Section -->
-    <div class="bg-gray-800 p-8 rounded-xl shadow-2xl">
-        <h2 class="text-2xl font-bold mb-6">All Prompts</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="allPrompts">
-            {% for prompt in system_prompts %}
-            <div class="prompt-box bg-gray-700 p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
-                <div class="flex justify-between items-center mb-4">
-                    <h4 class="text-xl font-bold">{{ prompt[2] }}</h4>
-                    <span class="bg-blue-500 text-white text-sm px-2 py-1 rounded-full">Default</span>
+    <div class="glass p-8 mb-8">
+        <h2 class="mdc-typography--headline5 mb-6">All Prompts</h2>
+        <div class="mdc-layout-grid">
+            <div class="mdc-layout-grid__inner" id="allPrompts">
+                {% for prompt in system_prompts %}
+                <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12 mdc-layout-grid__cell--span-6-tablet mdc-layout-grid__cell--span-4-desktop">
+                    <div class="mdc-card glass prompt-card p-6 flex flex-col justify-between max-h-64 overflow-y-auto">
+                        <div class="mdc-card__primary-action" tabindex="0">
+                            <div class="flex justify-between items-center mb-4">
+                                <h4 class="mdc-typography--headline6">{{ prompt[2] }}</h4>
+                                <span class="mdc-chip mdc-chip--outlined"><span class="mdc-chip__text">Default</span></span>
+                            </div>
+                            <p class="mdc-typography--body2 mb-6 whitespace-pre-wrap break-words">{{ prompt[3] | safe }}</p>
+                        </div>
+                        <div class="mdc-card__actions">
+                            <div class="mdc-card__action-buttons">
+                                <button class="text-blue-400 hover:text-blue-300 mdc-button mdc-button--text copy-button" data-clipboard-text="{{ prompt[3] | e }}">Copy</button>
+                                <button class="text-green-400 hover:text-green-300 mdc-button mdc-button--text save-button" data-title="{{ prompt[2] | e }}" data-prompt="{{ prompt[3] | e }}">Save</button>
+                                <button class="text-indigo-400 hover:text-indigo-300 mdc-button mdc-button--text see-button" data-title="{{ prompt[2] | e }}" data-content="{{ prompt[3] | e }}">See</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <!-- Render the prompt content as unescaped HTML -->
-                <p class="text-gray-300 mb-6 overflow-y-auto max-h-40 scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-gray-700">{{ prompt[3] | safe }}</p>
-                <!-- Action Buttons -->
-                <div class="flex space-x-4">
-                    <button class="copy-button bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition duration-200" data-clipboard-text="{{ prompt[3] }}">Copy</button>
-                    <button class="save-button bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition duration-200" data-title="{{ prompt[2] }}" data-prompt="{{ prompt[3] }}">Save</button>
+                {% endfor %}
+                {% for prompt in shared_prompts %}
+                <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12 mdc-layout-grid__cell--span-6-tablet mdc-layout-grid__cell--span-4-desktop">
+                    <div class="mdc-card glass prompt-card p-6 flex flex-col justify-between max-h-64 overflow-y-auto">
+                        <div class="mdc-card__primary-action" tabindex="0">
+                            <div class="flex justify-between items-center mb-4">
+                                <h4 class="mdc-typography--headline6">{{ prompt[2] }}</h4>
+                                <span class="mdc-chip mdc-chip--outlined"><span class="mdc-chip__text">Shared</span></span>
+                            </div>
+                            <p class="mdc-typography--body2 mb-6 whitespace-pre-wrap break-words">{{ prompt[3] | safe }}</p>
+                        </div>
+                        <div class="mdc-card__actions">
+                            <div class="mdc-card__action-buttons">
+                                <button class="text-blue-400 hover:text-blue-300 mdc-button mdc-button--text copy-button" data-clipboard-text="{{ prompt[3] | e }}">Copy</button>
+                                <button class="text-green-400 hover:text-green-300 mdc-button mdc-button--text save-button" data-title="{{ prompt[2] | e }}" data-prompt="{{ prompt[3] | e }}">Save</button>
+                                {% if prompt[0] == session['username'] %}
+                                <button class="text-red-400 hover:text-red-300 mdc-button mdc-button--text unshare-button" data-prompt-id="{{ prompt[1] }}">Unshare</button>
+                                {% endif %}
+                                <button class="text-indigo-400 hover:text-indigo-300 mdc-button mdc-button--text see-button" data-title="{{ prompt[2] | e }}" data-content="{{ prompt[3] | e }}">See</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
+                {% endfor %}
             </div>
-            {% endfor %}
-            {% for prompt in shared_prompts %}
-            <div class="prompt-box bg-gray-700 p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
-                <div class="flex justify-between items-center mb-4">
-                    <h4 class="text-xl font-bold">{{ prompt[2] }}</h4>
-                    <span class="bg-green-500 text-white text-sm px-2 py-1 rounded-full">Shared</span>
-                </div>
-                <!-- Render the prompt content as unescaped HTML -->
-                <p class="text-gray-300 mb-6 overflow-y-auto max-h-40 scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-gray-700">{{ prompt[3] | safe }}</p>
-                <!-- Action Buttons -->
-                <div class="flex space-x-4">
-                    <button class="copy-button bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition duration-200" data-clipboard-text="{{ prompt[3] }}">Copy</button>
-                    <button class="save-button bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition duration-200" data-title="{{ prompt[2] }}" data-prompt="{{ prompt[3] }}">Save</button>
-                </div>
-            </div>
-            {% endfor %}
         </div>
     </div>
 
@@ -61,7 +76,7 @@
             { title: {{ prompt[2] | tojson }}, content: {{ prompt[3] | tojson }}, type: 'default' },
             {% endfor %}
             {% for prompt in shared_prompts %}
-            { title: {{ prompt[2] | tojson }}, content: {{ prompt[3] | tojson }}, type: 'shared' },
+            { title: {{ prompt[2] | tojson }}, content: {{ prompt[3] | tojson }}, type: 'shared', id: {{ prompt[1] | tojson }} },
             {% endfor %}
         ];
 
@@ -78,21 +93,38 @@
 
             // Render all prompts
             allContainer.innerHTML = allPrompts.map(prompt => `
-                <div class="prompt-box bg-gray-700 p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
-                    <div class="flex justify-between items-center mb-4">
-                        <h4 class="text-xl font-bold">${prompt.title}</h4>
-                        <span class="${prompt.type === 'default' ? 'bg-blue-500' : 'bg-green-500'} text-white text-sm px-2 py-1 rounded-full">${prompt.type === 'default' ? 'Default' : 'Shared'}</span>
-                    </div>
-                    <p class="text-gray-300 mb-6 overflow-y-auto max-h-40 scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-gray-700">${prompt.content}</p>
-                    <div class="flex space-x-4">
-                        <button class="copy-button bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition duration-200" data-clipboard-text="${prompt.content}">Copy</button>
-                        <button class="save-button bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition duration-200" data-title="${prompt.title}" data-prompt="${prompt.content}">Save</button>
+                <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12 mdc-layout-grid__cell--span-6-tablet mdc-layout-grid__cell--span-4-desktop">
+                    <div class="mdc-card glass prompt-card p-6 flex flex-col justify-between max-h-64 overflow-y-auto">
+                        <div class="mdc-card__primary-action" tabindex="0">
+                            <div class="flex justify-between items-center mb-4">
+                                <h4 class="mdc-typography--headline6">${prompt.title}</h4>
+                                <span class="mdc-chip mdc-chip--outlined"><span class="mdc-chip__text">${prompt.type === 'default' ? 'Default' : 'Shared'}</span></span>
+                            </div>
+                            <p class="mdc-typography--body2 mb-6 whitespace-pre-wrap break-words">${escapeHtml(prompt.content)}</p>
+                        </div>
+                        <div class="mdc-card__actions">
+                            <div class="mdc-card__action-buttons">
+                                <button class="text-blue-400 hover:text-blue-300 mdc-button mdc-button--text copy-button" data-clipboard-text="${escapeHtml(prompt.content)}">Copy</button>
+                                <button class="text-green-400 hover:text-green-300 mdc-button mdc-button--text save-button" data-title="${escapeHtml(prompt.title)}" data-prompt="${escapeHtml(prompt.content)}">Save</button>
+                                ${prompt.type === 'shared' ? `<button class="text-red-400 hover:text-red-300 mdc-button mdc-button--text unshare-button" data-prompt-id="${prompt.id}">Unshare</button>` : ''}
+                                <button class="text-indigo-400 hover:text-indigo-300 mdc-button mdc-button--text see-button" data-title="${escapeHtml(prompt.title)}" data-content="${escapeHtml(prompt.content)}">See</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             `).join('');
 
             // Re-attach event listeners after rendering
             reattachEventListeners();
+        }
+
+        // Escape HTML special chars for safe attribute values and content
+        function escapeHtml(str) {
+            return str.replace(/&/g, '&amp;')
+                      .replace(/</g, '&lt;')
+                      .replace(/>/g, '&gt;')
+                      .replace(/"/g, '&quot;')
+                      .replace(/'/g, '&#039;');
         }
 
         // Search function
@@ -109,15 +141,23 @@
                 // Update all prompts
                 const allContainer = document.getElementById('allPrompts');
                 allContainer.innerHTML = results.map(result => `
-                    <div class="prompt-box bg-gray-700 p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
-                        <div class="flex justify-between items-center mb-4">
-                            <h4 class="text-xl font-bold">${result.item.title}</h4>
-                            <span class="${result.item.type === 'default' ? 'bg-blue-500' : 'bg-green-500'} text-white text-sm px-2 py-1 rounded-full">${result.item.type === 'default' ? 'Default' : 'Shared'}</span>
-                        </div>
-                        <p class="text-gray-300 mb-6 overflow-y-auto max-h-40 scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-gray-700">${result.item.content}</p>
-                        <div class="flex space-x-4">
-                            <button class="copy-button bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition duration-200" data-clipboard-text="${result.item.content}">Copy</button>
-                            <button class="save-button bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition duration-200" data-title="${result.item.title}" data-prompt="${result.item.content}">Save</button>
+                    <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12 mdc-layout-grid__cell--span-6-tablet mdc-layout-grid__cell--span-4-desktop">
+                        <div class="mdc-card glass prompt-card p-6 flex flex-col justify-between max-h-64 overflow-y-auto">
+                            <div class="mdc-card__primary-action" tabindex="0">
+                                <div class="flex justify-between items-center mb-4">
+                                    <h4 class="mdc-typography--headline6">${result.item.title}</h4>
+                                    <span class="mdc-chip mdc-chip--outlined"><span class="mdc-chip__text">${result.item.type === 'default' ? 'Default' : 'Shared'}</span></span>
+                                </div>
+                                <p class="mdc-typography--body2 mb-6 whitespace-pre-wrap break-words">${escapeHtml(result.item.content)}</p>
+                            </div>
+                            <div class="mdc-card__actions">
+                                <div class="mdc-card__action-buttons">
+                                    <button class="text-blue-400 hover:text-blue-300 mdc-button mdc-button--text copy-button" data-clipboard-text="${escapeHtml(result.item.content)}">Copy</button>
+                                    <button class="text-green-400 hover:text-green-300 mdc-button mdc-button--text save-button" data-title="${escapeHtml(result.item.title)}" data-prompt="${escapeHtml(result.item.content)}">Save</button>
+                                    ${result.item.type === 'shared' ? `<button class="text-red-400 hover:text-red-300 mdc-button mdc-button--text unshare-button" data-prompt-id="${result.item.id}">Unshare</button>` : ''}
+                                    <button class="text-indigo-400 hover:text-indigo-300 mdc-button mdc-button--text see-button" data-title="${escapeHtml(result.item.title)}" data-content="${escapeHtml(result.item.content)}">See</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 `).join('');

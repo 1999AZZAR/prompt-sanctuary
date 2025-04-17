@@ -53,14 +53,40 @@ class GenerativeModel:
     def generate_response(self, prompt_file_path: str, user_input_text: str) -> str:
         """Generate a response based on a prompt file and user input."""
         prompt_part = self.read_prompt_part_from_file(prompt_file_path, user_input_text)
-        response = self.model.generate_content(prompt_part)
-        return response.text
+        last_error = None
+        for _ in range(len(self.api_keys)):
+            genai.configure(api_key=self.get_current_api_key())
+            self.model = genai.GenerativeModel(
+                model_name="gemini-1.5-pro",
+                generation_config=self.generation_config,
+                safety_settings=self.safety_settings,
+            )
+            try:
+                response = self.model.generate_content(prompt_part)
+                return response.text
+            except Exception as e:
+                last_error = e
+                continue
+        raise last_error
 
     def generate_random(self, prompt_file_path: str) -> str:
         """Generate a random response based on a prompt file."""
         prompt_part = self.read_prompt_part_from_file(prompt_file_path)
-        response = self.model.generate_content(prompt_part)
-        return response.text
+        last_error = None
+        for _ in range(len(self.api_keys)):
+            genai.configure(api_key=self.get_current_api_key())
+            self.model = genai.GenerativeModel(
+                model_name="gemini-1.5-pro",
+                generation_config=self.generation_config,
+                safety_settings=self.safety_settings,
+            )
+            try:
+                response = self.model.generate_content(prompt_part)
+                return response.text
+            except Exception as e:
+                last_error = e
+                continue
+        raise last_error
 
     def _generate_image_description_prompt(
         self, styles: List[str], user_input: str = None

@@ -1,13 +1,17 @@
 import os
 import secrets
 import time
+import re
 from datetime import datetime
-from sqlite3 import connect, OperationalError
+from sqlite3 import connect, OperationalError, Row
 
 
 def get_db_connection(db_path):
-    """Get a connection to the SQLite database."""
-    return connect(db_path)
+    """Get a connection to the SQLite database with integrity enforced."""
+    conn = connect(db_path)
+    conn.execute("PRAGMA foreign_keys = ON")
+    conn.row_factory = Row
+    return conn
 
 
 def execute_sql(conn, sql, params=None):
@@ -25,31 +29,35 @@ def create_tables(user_db, prompt_db, image_log, community_db, feedback_db):
     tables = {
         user_db: """
             CREATE TABLE IF NOT EXISTS users (
-                username TEXT NOT NULL,
+                username TEXT PRIMARY KEY,
                 password TEXT NOT NULL
-            )
+            );
         """,
         image_log: """
             CREATE TABLE IF NOT EXISTS images (
-                filename TEXT,
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                filename TEXT NOT NULL,
                 creation_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            )
+            );
         """,
         community_db: """
             CREATE TABLE IF NOT EXISTS shared (
-                owner TEXT,
-                random_val TEXT,
-                title TEXT,
-                prompt TEXT,
-                time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            )
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                owner TEXT NOT NULL,
+                random_val TEXT UNIQUE NOT NULL,
+                title TEXT NOT NULL,
+                prompt TEXT NOT NULL,
+                time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY(owner) REFERENCES users(username) ON DELETE CASCADE
+            );
         """,
         feedback_db: """
             CREATE TABLE IF NOT EXISTS feedback (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 username TEXT NOT NULL,
-                feedback TEXT NOT NULL
-            )
+                feedback TEXT NOT NULL,
+                FOREIGN KEY(username) REFERENCES users(username) ON DELETE CASCADE
+            );
         """,
     }
 
@@ -60,30 +68,35 @@ def create_tables(user_db, prompt_db, image_log, community_db, feedback_db):
 
 def create_user_table_if_not_exists(username, prompt_db):
     """Create a user-specific table for saved prompts if it doesn't exist."""
+    # Sanitize username for safe table naming
+    if not re.match(r'^[A-Za-z0-9_]+$', username):
+        raise ValueError(f'Invalid username for table: {username}')
     with get_db_connection(prompt_db) as conn:
         cursor = conn.cursor()
         cursor.execute(
-            f"SELECT name FROM sqlite_master WHERE type='table' AND name='{username}'"
+            "SELECT name FROM sqlite_master WHERE type='table' AND name=?", (username,)
         )
         table_exists = cursor.fetchone()
 
         if not table_exists:
-            sql = f"""
-                CREATE TABLE {username} (
+            sql = f'''
+                CREATE TABLE "{username}" (
                     random_val TEXT PRIMARY KEY,
                     title TEXT NOT NULL,
                     prompt TEXT NOT NULL,
                     time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-                )
-            """
+                )'''
             execute_sql(conn, sql)
 
 
 def save_prompt_to_db(username, title, prompt, prompt_db):
     """Save a prompt to the user's table in the database."""
+    # Sanitize username
+    if not re.match(r'^[A-Za-z0-9_]+$', username):
+        raise ValueError(f'Invalid username for table: {username}')
     random_value = secrets.token_urlsafe(8)
     with get_db_connection(prompt_db) as conn:
-        sql = f"INSERT INTO {username} (random_val, title, prompt) VALUES (?, ?, ?)"
+        sql = f'INSERT INTO "{username}" (random_val, title, prompt) VALUES (?, ?, ?)'
         execute_sql(conn, sql, (random_value, title, prompt))
     return random_value
 

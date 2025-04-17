@@ -2,39 +2,41 @@
 
 {% block content %}
     <!-- Hero Section -->
-    <div class="hero text-center mb-12 cursor-pointer" onclick="toggleSidePanel()">
-        <h1 class="text-5xl font-bold mb-4">Prompt Generator <span class="text-blue-500">(Advanced)</span></h1>
-        <p class="text-lg text-gray-300">Create custom and specialized prompts tailored to your needs.</p>
+    <div class="hero bg-[var(--md-sys-color-primary)] text-[var(--md-sys-color-on-primary)] p-8 rounded-xl shadow-md mb-12 cursor-pointer text-center" onclick="toggleSidePanel()">
+        <div class="flex items-center justify-center mb-4 space-x-2">
+            <h1 class="text-5xl font-bold">Prompt Generator <span class="text-[var(--md-sys-color-on-primary)]">(Advanced)</span></h1>
+            <button onclick="toggleHelp('welcome-help')" class="bg-[var(--md-sys-color-surface)] text-[var(--md-sys-color-on-surface)] px-3 py-1 rounded-lg hover:bg-[var(--md-sys-color-surface)] transition duration-200">?</button>
+        </div>
+        <p class="text-lg text-[var(--md-sys-color-on-primary)]">Create custom and specialized prompts tailored to your needs.</p>
     </div>
 
-    <!-- Welcome Section -->
-    <div class="welcome bg-gray-800 p-8 rounded-xl shadow-2xl mb-12">
-        <p class="text-lg text-gray-300">Here, you have the flexibility to <strong>create a custom but specialized prompt</strong> tailored to your specific requirements.</p>
+    <div id="welcome-help" class="hidden bg-[var(--md-sys-color-surface)] p-8 rounded-lg mb-12 text-[var(--md-sys-color-on-surface)]">
+        <p class="text-[var(--md-sys-color-on-surface)]">Here, you have the flexibility to <strong>create a custom but specialized prompt</strong> tailored to your specific requirements.</p>
     </div>
 
     <!-- Tools Section -->
     <div class="prompting grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-4">
         <!-- Text Prompt -->
-        <div class="bg-gray-800 p-6 rounded-xl shadow-2xl flex flex-col">
+        <div class="bg-[var(--md-sys-color-surface)] p-8 rounded-lg shadow-md flex flex-col text-[var(--md-sys-color-on-surface)]">
             <div class="flex justify-between items-center mb-6">
                 <h2 class="text-2xl font-bold">Generate Text Prompt</h2>
-                <button onclick="toggleHelp('text-help')" class="bg-gray-700 text-white px-3 py-1 rounded-lg hover:bg-gray-600 transition duration-200">?</button>
+                <button onclick="toggleHelp('text-help')" class="bg-[var(--md-sys-color-surface)] text-[var(--md-sys-color-on-surface)] px-3 py-1 rounded-lg hover:bg-[var(--md-sys-color-surface)] transition duration-200">?</button>
             </div>
-            <div id="text-help" class="hidden bg-gray-700 p-4 rounded-lg mb-4">
-                <p class="text-gray-300">This section allows you to generate text prompts. Enter your use case, select the prompt type, and configure other parameters to create a custom prompt.</p>
+            <div id="text-help" class="hidden bg-[var(--md-sys-color-surface)] p-4 rounded-lg mb-4 text-[var(--md-sys-color-on-surface)]">
+                <p class="text-[var(--md-sys-color-on-surface)]">This section allows you to generate text prompts. Enter your use case, select the prompt type, and configure other parameters to create a custom prompt.</p>
             </div>
             <form id="a-text-prompt-form" class="space-y-4 flex-grow" onsubmit="submitForm('a-text-prompt-form', '/advance/generate'); return false;">
                 <!-- parameter 0 -->
                 <div>
                     <label for="parameter0" class="block mb-2">Use case:</label>
-                    <input type="text" name="parameter0" id="parameter0" placeholder="Write a README file" class="w-full p-3 bg-gray-700 rounded-lg" required maxlength="300">
+                    <input type="text" name="parameter0" id="parameter0" placeholder="Write a README file" class="w-full p-3 bg-[var(--md-sys-color-surface)] rounded-lg text-[var(--md-sys-color-on-surface)]" required maxlength="300">
                 </div>
                 <!-- parameter 0 end -->
 
                 <!-- parameter 1 -->
                 <div>
                     <label for="parameter1" class="block mb-2">Prompt type:</label>
-                    <select name="parameter1" id="parameter1" class="w-full p-3 bg-gray-700 rounded-lg">
+                    <select name="parameter1" id="parameter1" class="w-full p-3 bg-[var(--md-sys-color-surface)] rounded-lg text-[var(--md-sys-color-on-surface)]">
                         <option value="simple">Simple</option>
                         <option value="standard">Standard</option>
                         <option value="detailed">Detailed</option>
@@ -46,7 +48,7 @@
                 <!-- parameter 2 -->
                 <div>
                     <label for="parameter2" class="block mb-2">Harm content:</label>
-                    <select name="parameter2" id="parameter2" class="w-full p-3 bg-gray-700 rounded-lg">
+                    <select name="parameter2" id="parameter2" class="w-full p-3 bg-[var(--md-sys-color-surface)] rounded-lg text-[var(--md-sys-color-on-surface)]">
                         <option value="unspecified">Unspecified</option>
                         <option value="none">Block none</option>
                         <option value="few">Block few</option>
@@ -59,35 +61,35 @@
                 <!-- parameter 3 -->
                 <div>
                     <label for="parameter3" class="block mb-2">Knowledge base:</label>
-                    <input type="text" name="parameter3" id="parameter3" placeholder="Enter the Knowledge base if any" class="w-full p-3 bg-gray-700 rounded-lg" maxlength="1000">
+                    <input type="text" name="parameter3" id="parameter3" placeholder="Enter the Knowledge base if any" class="w-full p-3 bg-[var(--md-sys-color-surface)] rounded-lg text-[var(--md-sys-color-on-surface)]" maxlength="1000">
                 </div>
                 <!-- parameter 3 end -->
 
-                <input type="submit" value="Generate" class="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition duration-200 cursor-pointer w-full">
+                <input type="submit" value="Generate" class="bg-[var(--md-sys-color-primary)] text-[var(--md-sys-color-on-primary)] px-6 py-3 rounded-lg hover:bg-[var(--md-sys-color-secondary)] transition duration-200 cursor-pointer w-full">
             </form>
         </div>
 
         <!-- Image Prompt -->
-        <div class="bg-gray-800 p-6 rounded-xl shadow-2xl flex flex-col">
+        <div class="bg-[var(--md-sys-color-surface)] p-8 rounded-lg shadow-md flex flex-col text-[var(--md-sys-color-on-surface)]">
             <div class="flex justify-between items-center mb-6">
                 <h2 class="text-2xl font-bold">Generate Image Prompt</h2>
-                <button onclick="toggleHelp('image-help')" class="bg-gray-700 text-white px-3 py-1 rounded-lg hover:bg-gray-600 transition duration-200">?</button>
+                <button onclick="toggleHelp('image-help')" class="bg-[var(--md-sys-color-surface)] text-[var(--md-sys-color-on-surface)] px-3 py-1 rounded-lg hover:bg-[var(--md-sys-color-surface)] transition duration-200">?</button>
             </div>
-            <div id="image-help" class="hidden bg-gray-700 p-4 rounded-lg mb-4">
-                <p class="text-gray-300">This section allows you to generate image prompts. Enter your input, select the mood, and choose the primary and secondary styles to create a custom image prompt.</p>
+            <div id="image-help" class="hidden bg-[var(--md-sys-color-surface)] p-4 rounded-lg mb-4 text-[var(--md-sys-color-on-surface)]">
+                <p class="text-[var(--md-sys-color-on-surface)]">This section allows you to generate image prompts. Enter your input, select the mood, and choose the primary and secondary styles to create a custom image prompt.</p>
             </div>
             <form id="a-image-prompt-form" class="space-y-4 flex-grow" enctype="multipart/form-data" onsubmit="submitForm('a-image-prompt-form', '/advance/igenerate'); return false;">
                 <!-- parameter 0 -->
                 <div>
                     <label for="parameter0" class="block mb-2">Input:</label>
-                    <input type="text" name="parameter0" id="parameter0" placeholder="Cat on the sky" class="w-full p-3 bg-gray-700 rounded-lg" required maxlength="300">
+                    <input type="text" name="parameter0" id="parameter0" placeholder="Cat on the sky" class="w-full p-3 bg-[var(--md-sys-color-surface)] rounded-lg text-[var(--md-sys-color-on-surface)]" required maxlength="300">
                 </div>
                 <!-- parameter 0 end -->
 
                 <!-- parameter 1 -->
                 <div>
                     <label for="parameter1" class="block mb-2">Primary mood:</label>
-                    <select name="parameter1" id="parameter1" class="w-full p-3 bg-gray-700 rounded-lg">
+                    <select name="parameter1" id="parameter1" class="w-full p-3 bg-[var(--md-sys-color-surface)] rounded-lg text-[var(--md-sys-color-on-surface)]">
                         <optgroup label="Positive Moods">
                             <option value="happy">Happy</option>
                             <option value="joyful">Joyful</option>
@@ -124,7 +126,7 @@
                 <!-- parameter 2 -->
                 <div>
                     <label for="parameter2" class="block mb-2">Primary style:</label>
-                    <select name="parameter2" id="parameter2" class="w-full p-3 bg-gray-700 rounded-lg">
+                    <select name="parameter2" id="parameter2" class="w-full p-3 bg-[var(--md-sys-color-surface)] rounded-lg text-[var(--md-sys-color-on-surface)]">
                         <optgroup label="Styles">
                             <option value="3d-model">3D Model</option>
                             <option value="abstract">Abstract</option>
@@ -174,7 +176,7 @@
                 <!-- parameter 3 -->
                 <div>
                     <label for="parameter3" class="block mb-2">Secondary style:</label>
-                    <select name="parameter3" id="parameter3" class="w-full p-3 bg-gray-700 rounded-lg">
+                    <select name="parameter3" id="parameter3" class="w-full p-3 bg-[var(--md-sys-color-surface)] rounded-lg text-[var(--md-sys-color-on-surface)]">
                         <optgroup label="Styles">
                             <option value="3d-model">3D Model</option>
                             <option value="abstract">Abstract</option>
@@ -221,31 +223,31 @@
                 </div>
                 <!-- parameter 3 end -->
 
-                <input type="submit" value="Generate" class="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition duration-200 cursor-pointer w-full">
+                <input type="submit" value="Generate" class="bg-[var(--md-sys-color-primary)] text-[var(--md-sys-color-on-primary)] px-6 py-3 rounded-lg hover:bg-[var(--md-sys-color-secondary)] transition duration-200 cursor-pointer w-full">
             </form>
         </div>
 
         <!-- Reverse Image Prompt -->
-        <div class="bg-gray-800 p-6 rounded-xl shadow-2xl flex flex-col">
+        <div class="bg-[var(--md-sys-color-surface)] p-8 rounded-lg shadow-md flex flex-col text-[var(--md-sys-color-on-surface)]">
             <div class="flex justify-between items-center mb-6">
                 <h2 class="text-2xl font-bold">Reverse Image Prompt</h2>
-                <button onclick="toggleHelp('reverse-image-help')" class="bg-gray-700 text-white px-3 py-1 rounded-lg hover:bg-gray-600 transition duration-200">?</button>
+                <button onclick="toggleHelp('reverse-image-help')" class="bg-[var(--md-sys-color-surface)] text-[var(--md-sys-color-on-surface)] px-3 py-1 rounded-lg hover:bg-[var(--md-sys-color-surface)] transition duration-200">?</button>
             </div>
-            <div id="reverse-image-help" class="hidden bg-gray-700 p-4 rounded-lg mb-4">
-                <p class="text-gray-300">This section allows you to upload an image and generate a prompt based on it. You can also select the mood and style to customize the output.</p>
+            <div id="reverse-image-help" class="hidden bg-[var(--md-sys-color-surface)] p-4 rounded-lg mb-4 text-[var(--md-sys-color-on-surface)]">
+                <p class="text-[var(--md-sys-color-on-surface)]">This section allows you to upload an image and generate a prompt based on it. You can also select the mood and style to customize the output.</p>
             </div>
             <form id="a-reverse-image-form" class="space-y-4 flex-grow" enctype="multipart/form-data" onsubmit="submitForm('a-reverse-image-form', '/advance/image'); return false;">
                 <!-- parameter 0 -->
                 <div>
                     <label for="image" class="block mb-2">Upload Image:</label>
-                    <input type="file" name="image" accept="image/*" class="w-full p-3 bg-gray-700 rounded-lg" required>
+                    <input type="file" name="image" accept="image/*" class="w-full p-3 bg-[var(--md-sys-color-surface)] rounded-lg text-[var(--md-sys-color-on-surface)]" required>
                 </div>
                 <!-- parameter 0 end -->
 
                 <!-- parameter 1 -->
                 <div>
                     <label for="parameter1" class="block mb-2">Primary mood:</label>
-                    <select name="parameter1" id="parameter1" class="w-full p-3 bg-gray-700 rounded-lg">
+                    <select name="parameter1" id="parameter1" class="w-full p-3 bg-[var(--md-sys-color-surface)] rounded-lg text-[var(--md-sys-color-on-surface)]">
                         <option value="original">Original</option>
                         <optgroup label="Positive Moods">
                             <option value="happy">Happy</option>
@@ -283,7 +285,7 @@
                 <!-- parameter 2 -->
                 <div>
                     <label for="parameter2" class="block mb-2">Primary style:</label>
-                    <select name="parameter2" id="parameter2" class="w-full p-3 bg-gray-700 rounded-lg">
+                    <select name="parameter2" id="parameter2" class="w-full p-3 bg-[var(--md-sys-color-surface)] rounded-lg text-[var(--md-sys-color-on-surface)]">
                         <option value="original">Original</option>
                         <optgroup label="Styles">
                             <option value="3d-model">3D Model</option>
@@ -334,7 +336,7 @@
                 <!-- parameter 3 -->
                 <div>
                     <label for="parameter3" class="block mb-2">Secondary style:</label>
-                    <select name="parameter3" id="parameter3" class="w-full p-3 bg-gray-700 rounded-lg">
+                    <select name="parameter3" id="parameter3" class="w-full p-3 bg-[var(--md-sys-color-surface)] rounded-lg text-[var(--md-sys-color-on-surface)]">
                         <option value="original">Original</option>
                         <optgroup label="Styles">
                             <option value="3d-model">3D Model</option>
@@ -382,30 +384,30 @@
                 </div>
                 <!-- parameter 3 end -->
 
-                <input type="submit" value="Generate" class="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition duration-200 cursor-pointer w-full">
+                <input type="submit" value="Generate" class="bg-[var(--md-sys-color-primary)] text-[var(--md-sys-color-on-primary)] px-6 py-3 rounded-lg hover:bg-[var(--md-sys-color-secondary)] transition duration-200 cursor-pointer w-full">
             </form>
         </div>
     </div>
     <!-- Tools Section End -->
 
     <!-- Preview Section -->
-    <div class="image-preview mt-12">
-        <img id="preview-image" alt="Image Preview" src="{{ url_for('static', filename='icon/favicon.ico') }}" class="w-64 h-64 mx-auto rounded-lg">
+    <div id="preview-container" class="image-preview mt-12 hidden">
+        <img id="preview-image" alt="Image Preview" class="w-64 h-64 mx-auto rounded-lg object-contain">
     </div>
 
     <!-- Loading Section -->
-    <div class="loading hidden" id="loading">
+    <div class="loading hidden fixed inset-0 bg-black bg-opacity-50 flex flex-col items-center justify-center z-50" id="loading">
         <div class="spinner"></div>
         <h1 class="text-center mt-4">Generating...</h1>
     </div>
 
     <!-- Result Section -->
-    <div class="result hidden bg-gray-800 p-8 rounded-xl shadow-2xl mt-8" id="resultSection">
+    <div class="result hidden bg-[var(--md-sys-color-surface)] p-8 rounded-lg shadow-md mt-8 text-[var(--md-sys-color-on-surface)]" id="resultSection">
         <h2 class="text-2xl font-bold mb-6">Generated Prompt:</h2>
-        <div id="response" class="text-lg text-gray-300 space-y-4"></div>
+        <div id="response" class="text-lg text-[var(--md-sys-color-on-surface)] space-y-4"></div>
         <div class="flex space-x-4 mt-6">
-            <button onclick="copyToClipboard()" class="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition duration-200">Copy</button>
-            <button onclick="promptForTitle()" class="bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 transition duration-200">Save</button>
+            <button onclick="copyToClipboard()" class="bg-[var(--md-sys-color-primary)] text-[var(--md-sys-color-on-primary)] px-6 py-3 rounded-lg hover:bg-[var(--md-sys-color-secondary)] transition duration-200">Copy</button>
+            <button onclick="promptForTitle()" class="bg-[var(--md-sys-color-secondary)] text-[var(--md-sys-color-on-secondary)] px-6 py-3 rounded-lg hover:bg-[var(--md-sys-color-secondary)] transition duration-200">Save</button>
         </div>
     </div>
 

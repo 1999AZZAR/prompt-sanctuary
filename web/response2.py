@@ -94,9 +94,19 @@ class GenerativeAI:
         file_path: str,
     ) -> str:
         """Generate a response based on the provided parameters and prompt file."""
-        self.setup_model(parameter2)
+        # Prepare prompt
         prompt_part = self.read_prompt_part_from_file(
             file_path, parameter0, parameter1, parameter3, parameter2
         )
-        response = self.model.generate_content(prompt_part)
-        return response.text
+        last_error = None
+        # Try each API key until success
+        for _ in range(len(self.api_keys)):
+            self.setup_model(parameter2)
+            try:
+                response = self.model.generate_content(prompt_part)
+                return response.text
+            except Exception as e:
+                last_error = e
+                continue
+        # All keys exhausted
+        raise last_error

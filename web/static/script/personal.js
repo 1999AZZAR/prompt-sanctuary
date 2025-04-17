@@ -2,10 +2,13 @@
 function showPopup(title, message) {
     const popup = document.createElement('div');
     popup.id = 'custom-popup';
-    popup.className = 'fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50';
+    popup.className = 'fixed inset-0 flex items-center justify-center bg-black bg-opacity-25 backdrop-blur-sm z-50';
 
     const popupContent = document.createElement('div');
-    popupContent.className = 'bg-gray-800 p-8 rounded-xl shadow-2xl w-11/12 md:w-1/2 lg:w-1/3';
+    popupContent.className = 'glass p-8 rounded-xl shadow-2xl w-11/12 md:w-1/2 lg:w-1/3 relative';
+    popupContent.style.maxHeight = '80vh';
+    popupContent.style.overflowY = 'auto';
+    popupContent.style.overflowX = 'hidden';
 
     const popupTitle = document.createElement('h2');
     popupTitle.id = 'popup-title';
@@ -14,18 +17,33 @@ function showPopup(title, message) {
 
     const popupMessage = document.createElement('p');
     popupMessage.id = 'popup-message';
-    popupMessage.className = 'text-lg text-gray-300 mb-6';
+    popupMessage.className = 'text-lg text-gray-300 mb-6 whitespace-pre-wrap break-words';
     popupMessage.textContent = message;
 
-    const okButton = document.createElement('button');
-    okButton.className = 'bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition duration-200';
-    okButton.textContent = 'OK';
-    okButton.onclick = () => closePopup('custom-popup');
-
     const buttonContainer = document.createElement('div');
-    buttonContainer.className = 'flex justify-end';
-    buttonContainer.appendChild(okButton);
+    buttonContainer.className = 'flex justify-end space-x-4';
+    // Copy and Close buttons for popups
+    const copyBtn = document.createElement('button');
+    copyBtn.className = 'bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition duration-200';
+    copyBtn.textContent = 'Copy';
+    copyBtn.onclick = () => {
+        navigator.clipboard.writeText(message)
+            .then(() => showPopup('Success', 'Prompt copied to clipboard!'))
+            .catch(err => showPopup('Error', 'Failed to copy prompt. Please try again.'));
+    };
+    const closeBtn2 = document.createElement('button');
+    closeBtn2.className = 'bg-gray-500 text-white px-6 py-3 rounded-lg hover:bg-gray-600 transition duration-200';
+    closeBtn2.textContent = 'Close';
+    closeBtn2.onclick = () => closePopup('custom-popup');
+    buttonContainer.appendChild(copyBtn);
+    buttonContainer.appendChild(closeBtn2);
 
+    const closeBtn = document.createElement('button');
+    closeBtn.className = 'absolute top-4 right-4 text-white text-xl';
+    closeBtn.innerHTML = '&times;';
+    closeBtn.onclick = () => closePopup('custom-popup');
+
+    popupContent.appendChild(closeBtn);
     popupContent.appendChild(popupTitle);
     popupContent.appendChild(popupMessage);
     popupContent.appendChild(buttonContainer);
@@ -75,10 +93,14 @@ document.addEventListener('DOMContentLoaded', function () {
 function openEditPopup(randomVal, title, prompt) {
     const popup = document.createElement('div');
     popup.id = 'edit-popup';
-    popup.className = 'fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50';
+    popup.className = 'fixed inset-0 flex items-center justify-center bg-black bg-opacity-25 backdrop-blur-sm z-50';
 
     const popupContent = document.createElement('div');
-    popupContent.className = 'bg-gray-800 p-8 rounded-xl shadow-2xl w-11/12 md:w-1/2 lg:w-1/3';
+    // Wider popup with scrollable content
+    popupContent.className = 'glass p-8 sm:p-10 rounded-xl shadow-2xl max-w-4xl w-full sm:w-11/12 md:w-4/5 lg:w-3/4 relative';
+    popupContent.style.maxHeight = '90vh';
+    popupContent.style.overflowY = 'auto';
+    popupContent.style.overflowX = 'hidden';
 
     popupContent.innerHTML = `
         <h2 class="text-2xl font-bold mb-4">Edit Prompt</h2>
@@ -147,10 +169,10 @@ function saveEditedPrompt(randomVal, title, prompt) {
 function confirmDelete(randomVal) {
     const popup = document.createElement('div');
     popup.id = 'delete-popup';
-    popup.className = 'fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50';
+    popup.className = 'fixed inset-0 flex items-center justify-center bg-black bg-opacity-25 backdrop-blur-sm z-50';
 
     const popupContent = document.createElement('div');
-    popupContent.className = 'bg-gray-800 p-8 rounded-xl shadow-2xl w-11/12 md:w-1/2 lg:w-1/3';
+    popupContent.className = 'glass p-8 rounded-xl shadow-2xl w-11/12 md:w-1/2 lg:w-1/3';
 
     popupContent.innerHTML = `
         <h2 class="text-2xl font-bold mb-4">Confirm Deletion</h2>
@@ -266,4 +288,27 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     });
+});
+
+// Attach See-button listeners
+function attachSeeButtonListeners() {
+    document.querySelectorAll('.see-button').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const title = btn.getAttribute('data-title');
+            const content = btn.getAttribute('data-content');
+            showPopup(title, content);
+        });
+    });
+}
+
+// Support re-binding after dynamic render
+function reattachEventListeners() {
+    attachSeeButtonListeners();
+}
+window.reattachEventListeners = reattachEventListeners;
+
+// Initial binding on page load
+document.addEventListener('DOMContentLoaded', function () {
+    attachSeeButtonListeners();
 });

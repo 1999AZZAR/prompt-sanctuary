@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="hero text-center mb-12 cursor-pointer" onclick="toggleSidePanel()">
+  <h1 class="text-5xl font-bold text-white">Profile</h1>
+  <p class="text-lg text-gray-300">Manage your account and prompts.</p>
+</div>
+<div class="mdc-layout-grid">
+  <div class="mdc-layout-grid__inner">
+    <!-- Settings Card -->
+    <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12 mdc-layout-grid__cell--span-4-desktop mb-6">
+      <div class="mdc-card glass prompt-card">
+        <div class="mdc-card__primary-action p-6" tabindex="0">
+          <h2 class="text-2xl font-semibold text-white mb-4">Settings</h2>
+          {% if error %}<div class="text-red-400 mb-4">{{ error }}</div>{% endif %}
+          {% if success %}<div class="text-green-400 mb-4">{{ success }}</div>{% endif %}
+          <form action="{{ url_for('main.profile') }}" method="post" class="space-y-4">
+            <div><label class="block text-gray-300">Old Password</label><input type="password" name="old_password" class="w-full p-3 bg-gray-700 rounded focus:outline-none text-white" required></div>
+            <div><label class="block text-gray-300">New Password</label><input type="password" name="new_password" class="w-full p-3 bg-gray-700 rounded focus:outline-none text-white" required></div>
+            <div><label class="block text-gray-300">Confirm Password</label><input type="password" name="confirm_password" class="w-full p-3 bg-gray-700 rounded focus:outline-none text-white" required></div>
+            <button class="mdc-button mdc-button--raised fullwidth" type="submit"><span class="mdc-button__label">Update Password</span></button>
+          </form>
+          <form action="{{ url_for('main.delete_account') }}" method="post" onsubmit="return confirm('Are you sure? This cannot be undone.');" class="mt-4">
+            <button class="mdc-button mdc-button--outlined text-red-400 fullwidth" type="submit"><span class="mdc-button__label">Delete Account</span></button>
+          </form>
+        </div>
+      </div>
+    </div>
+    <!-- Saved Prompts Card -->
+    <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12 mdc-layout-grid__cell--span-4-desktop mb-6">
+      <div class="mdc-card glass prompt-card">
+        <div class="mdc-card__primary-action p-6" tabindex="0">
+          <h2 class="text-2xl font-semibold text-white mb-4">Saved Prompts</h2>
+          {% if saved_prompts %}
+          <ul class="divide-y divide-gray-700 space-y-2">
+            {% for pr in saved_prompts %}
+            <li class="flex justify-between items-center py-2">
+              <div><p class="text-white">{{ pr['title'] }}</p><p class="text-gray-400 text-sm">{{ pr['time'] }}</p></div>
+              <div class="space-x-2">
+                <button class="mdc-button mdc-button--text see-button" data-title="{{ pr['title']|e }}" data-content="{{ pr['prompt']|e }}">View</button>
+                <button class="mdc-button mdc-button--text text-red-400 delete-button" data-prompt-id="{{ pr['prompt_id'] }}">Delete</button>
+              </div>
+            </li>
+            {% endfor %}
+          </ul>
+          {% else %}<p class="text-gray-400">No saved prompts yet.</p>{% endif %}
+        </div>
+      </div>
+    </div>
+    <!-- Shared Prompts Card -->
+    <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12 mdc-layout-grid__cell--span-4-desktop mb-6">
+      <div class="mdc-card glass prompt-card">
+        <div class="mdc-card__primary-action p-6" tabindex="0">
+          <h2 class="text-2xl font-semibold text-white mb-4">Shared Prompts</h2>
+          {% if shared_prompts %}
+          <ul class="divide-y divide-gray-700 space-y-2">
+            {% for pr in shared_prompts %}
+            <li class="flex justify-between items-center py-2">
+              <div><p class="text-white">{{ pr['title'] }}</p><p class="text-gray-400 text-sm">{{ pr['time'] }}</p></div>
+              <div class="space-x-2">
+                <button class="mdc-button mdc-button--text see-button" data-title="{{ pr['title']|e }}" data-content="{{ pr['prompt']|e }}">View</button>
+                <button class="mdc-button mdc-button--text text-red-400 unshare-button" data-prompt-id="{{ pr['prompt_id'] }}">Unshare</button>
+              </div>
+            </li>
+            {% endfor %}
+          </ul>
+          {% else %}<p class="text-gray-400">No shared prompts yet.</p>{% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script defer src="{{ url_for('static', filename='script/personal.js') }}"></script>
+<script defer src="{{ url_for('static', filename='script/community.js') }}"></script>
+{% endblock %}

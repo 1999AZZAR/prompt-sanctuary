@@ -99,3 +99,88 @@
 #custom-popup.flex {
     display: flex;
 }
+
+:root {
+    --md-sys-color-primary: #6750A4;
+    --md-sys-color-on-primary: #FFFFFF;
+    --md-sys-color-secondary: #625B71;
+    --md-sys-color-on-secondary: #FFFFFF;
+    --md-sys-color-background: #EADDFF;
+    --md-sys-color-on-background: #1A0025;
+    --md-sys-color-surface: #E9DDFF;
+    --md-sys-color-on-surface: #1A0025;
+}
+
+body {
+    background-color: var(--md-sys-color-background);
+    color: var(--md-sys-color-on-background);
+    font-family: 'Roboto', sans-serif;
+}
+
+.glass {
+    background-color: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 16px;
+}
+
+.dark-glass {
+    background-color: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 16px;
+}
+
+/* Material You Glass Card Overrides */
+.mdc-card {
+    background-color: rgba(255, 255, 255, 0.2) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15) !important;
+    border-radius: 16px !important;
+    color: var(--md-sys-color-on-surface) !important;
+}
+
+/* Hero Card Styling */
+.hero-card {
+    padding: 2rem !important;
+    text-align: center;
+}
+.hero-card .mdc-card__primary-action {
+    padding: 1.5rem !important;
+}
+
+/* Prompt Card Styling */
+.prompt-card {
+    padding: 1.5rem !important;
+}
+.prompt-card .mdc-card__primary-action {
+    padding-bottom: 1rem !important;
+}
+
+/* Button Color Overrides */
+.mdc-button--raised {
+    background-color: var(--md-sys-color-primary) !important;
+    color: var(--md-sys-color-on-primary) !important;
+}
+.mdc-button--outlined {
+    border: 1px solid var(--md-sys-color-primary) !important;
+    color: var(--md-sys-color-primary) !important;
+}
+
+/* Layout Grid Spacing */
+.mdc-layout-grid__inner {
+    gap: 2rem;
+}
+
+/* Global overrides for glass design */
+.bg-gray-700 { background-color: rgba(255,255,255,0.15) !important; }
+.shadow-2xl, .shadow-xl, .shadow-lg { box-shadow: none !important; }
+.text-white { color: var(--md-sys-color-on-surface) !important; }
+
+/* Simplify to single color scheme: override Tailwind dark utilities */
+.border-gray-700 { border-color: rgba(255,255,255,0.3) !important; }
+.hover\:bg-gray-700:hover { background-color: rgba(255,255,255,0.1) !important; }
+.bg-gray-800 { background-color: rgba(255,255,255,0.2) !important; }
+.bg-black.bg-opacity-50 { background-color: rgba(255,255,255,0.05) !important; }
+.text-gray-300 { color: var(--md-sys-color-on-surface) !important; }

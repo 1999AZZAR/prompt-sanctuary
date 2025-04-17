@@ -44,18 +44,26 @@ function submitForm(formId, url) {
 
 // Function to parse the server response
 function parseResponse(response) {
-    // Parse the response into HTML
-    return response
+    // Escape HTML characters to safely render text
+    let escaped = response
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    // Convert markdown-style formatting to HTML
+    return escaped
+        .replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>') // Code blocks
         .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // Bold text
         .replace(/\*(.*?)\*/g, '<em>$1</em>') // Italic text
-        .replace(/\n/g, '<br>') // Line breaks
-        .replace(/```(.*?)```/gs, '<pre><code>$1</code></pre>'); // Code blocks
+        .replace(/\n/g, '<br>'); // Line breaks
 }
 
 // Image input preview
 function previewImage() {
     var input = document.querySelector('input[name="image"]');
     var preview = document.getElementById('preview-image');
+    var container = document.getElementById('preview-container');
 
     if (input && preview) {
         input.addEventListener('change', function () {
@@ -67,11 +75,13 @@ function previewImage() {
 
                 reader.onload = function (e) {
                     preview.src = e.target.result;
+                    container.classList.remove('hidden');
                     document.body.setAttribute('data-image-selected', 'true');
                 };
 
                 reader.readAsDataURL(file);
             } else {
+                container.classList.add('hidden');
                 // Set the default image source using Flask's url_for function
                 preview.src = "{{ url_for('static', filename='icon/favicon.ico') }}";
                 document.body.setAttribute('data-image-selected', 'false');

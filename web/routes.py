@@ -16,21 +16,18 @@ from models import (
     save_prompt_to_db,
     delete_old_images,
 )
-from chat_area import GeminiChat
-from stability import ImageGen
 from response2 import GenerativeAI
 from response import GenerativeModel
 import logging
 import secrets
 from datetime import datetime
+import re
 
 # Initialize logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # Initialize AI models
-chat_app = GeminiChat()
-image_generator = ImageGen()
 ai = GenerativeAI()
 model = GenerativeModel()
 
@@ -59,6 +56,14 @@ def create_main_blueprint(
 
         return decorated_function
 
+    @main_blueprint.errorhandler(BadRequestKeyError)
+    def handle_bad_request(e):
+        logger.error(f"Missing parameter: {e}")
+        return jsonify({"success": False, "error": f"Missing parameter: {e}"}), 400
+
+    def is_valid_username(name):
+        return bool(re.match(r'^[A-Za-z0-9_]+$', name))
+
     @main_blueprint.route("/")
     def index():
         return render_template("login.html", error_message=None)
@@ -71,26 +76,27 @@ def create_main_blueprint(
                 {"success": False, "error": "Bot activity detected. Access denied."}
             )
 
-        username = request.form["username"]
-        password = request.form["password"]
+        username = request.form.get("username", "").strip()
+        password = request.form.get("password", "")
+        if not username or not password:
+            return jsonify({"success": False, "error": "Username and password are required."}), 400
+        if not is_valid_username(username):
+            return jsonify({"success": False, "error": "Invalid username format."}), 400
 
-        with get_db_connection(main_blueprint.user_db) as conn:
-            cursor = conn.cursor()
-            cursor.execute("SELECT * FROM users WHERE username = ?", (username,))
-            if cursor.fetchone():
-                return jsonify(
-                    {
-                        "success": False,
-                        "error": "Username already exists. Please choose another.",
-                    }
-                )
+        try:
+            with get_db_connection(main_blueprint.user_db) as conn:
+                cursor = conn.cursor()
+                cursor.execute("SELECT * FROM users WHERE username = ?", (username,))
+                if cursor.fetchone():
+                    return jsonify({"success": False, "error": "Username already exists. Please choose another."}), 409
 
-            hashed_password = generate_password_hash(password)
-            cursor.execute(
-                "INSERT INTO users (username, password) VALUES (?, ?)",
-                (username, hashed_password),
-            )
-            conn.commit()
+                hashed_password = generate_password_hash(password)
+                cursor.execute("INSERT INTO users (username, password) VALUES (?, ?)", (username, hashed_password))
+                conn.commit()
+                create_user_table_if_not_exists(username, main_blueprint.prompt_db)
+        except Exception as e:
+            logger.exception("Signup error")
+            return jsonify({"success": False, "error": "Internal server error."}), 500
 
         return jsonify({"success": True, "redirect": url_for("main.home")})
 
@@ -102,24 +108,27 @@ def create_main_blueprint(
                 {"success": False, "error": "Bot activity detected. Access denied."}
             )
 
-        username = request.form["username"]
-        password = request.form["password"]
+        username = request.form.get("username", "").strip()
+        password = request.form.get("password", "")
+        if not username or not password:
+            return jsonify({"success": False, "error": "Username and password are required."}), 400
+        if not is_valid_username(username):
+            return jsonify({"success": False, "error": "Invalid username format."}), 400
 
-        with get_db_connection(main_blueprint.user_db) as conn:
-            cursor = conn.cursor()
-            cursor.execute("SELECT * FROM users WHERE username = ?", (username,))
-            user = cursor.fetchone()
+        try:
+            with get_db_connection(main_blueprint.user_db) as conn:
+                cursor = conn.cursor()
+                cursor.execute("SELECT username, password FROM users WHERE username = ?", (username,))
+                user = cursor.fetchone()
+        except Exception as e:
+            logger.exception("Login error")
+            return jsonify({"success": False, "error": "Internal server error."}), 500
 
         if user and check_password_hash(user[1], password):
             session["username"] = username
             return jsonify({"success": True, "redirect": url_for("main.home")})
 
-        return jsonify(
-            {
-                "success": False,
-                "error": "Invalid username or password. Please try again.",
-            }
-        )
+        return jsonify({"success": False, "error": "Invalid username or password. Please try again."}), 401
 
     @main_blueprint.route("/logout")
     def logout():
@@ -144,7 +153,8 @@ def create_main_blueprint(
                     f"SELECT random_val, title, prompt, time FROM {table_name}"
                 )
                 saved_prompts = cursor.fetchall()
-        except OperationalError:
+        except Exception as e:
+            logger.error(f"Error fetching prompts: {e}")
             saved_prompts = None
 
         return render_template("prompts/lib/personal.html", saved_prompts=saved_prompts)
@@ -172,27 +182,49 @@ def create_main_blueprint(
     @main_blueprint.route("/share_prompt", methods=["POST"])
     @required_login
     def share_prompt():
-        data = request.json
+        data = request.get_json(silent=True)
+        if not data:
+            return jsonify({"success": False, "error": "Invalid JSON payload."}), 400
         owner = session["username"]
-
         if not owner:
             return jsonify({"success": False, "error": "User not logged in"}), 401
-
         random_val = data.get("prompt_id")
         title = data.get("title")
-        prompt = data.get("prompt")
+        prompt_text = data.get("prompt")
+        if not random_val or not title or not prompt_text:
+            return jsonify({"success": False, "error": "Missing required data."}), 400
+        try:
+            with get_db_connection(main_blueprint.community_db) as conn:
+                cursor = conn.cursor()
+                cursor.execute(
+                    "INSERT INTO shared (owner, random_val, title, prompt) VALUES (?, ?, ?, ?)",
+                    (owner, random_val, title, prompt_text),
+                )
+                conn.commit()
+        except Exception as e:
+            logger.exception("Error sharing prompt")
+            return jsonify({"success": False, "error": "Internal server error."}), 500
+        return jsonify({"success": True})
 
-        if not random_val or not title or not prompt:
-            return jsonify({"success": False, "error": "Missing data"}), 400
-
-        with get_db_connection(main_blueprint.community_db) as conn:
-            cursor = conn.cursor()
-            cursor.execute(
-                "INSERT INTO shared (owner, random_val, title, prompt) VALUES (?, ?, ?, ?)",
-                (owner, random_val, title, prompt),
-            )
-            conn.commit()
-
+    @main_blueprint.route("/unshare_prompt", methods=["POST"])
+    @required_login
+    def unshare_prompt():
+        data = request.get_json(silent=True)
+        if not data or "prompt_id" not in data:
+            return jsonify({"success": False, "error": "Missing prompt_id"}), 400
+        owner = session.get("username")
+        prompt_id = data.get("prompt_id")
+        try:
+            with get_db_connection(main_blueprint.community_db) as conn:
+                cursor = conn.cursor()
+                cursor.execute(
+                    "DELETE FROM shared WHERE owner=? AND random_val=?",
+                    (owner, prompt_id),
+                )
+                conn.commit()
+        except Exception as e:
+            logger.exception("Error unsharing prompt")
+            return jsonify({"success": False, "error": "Internal server error."}), 500
         return jsonify({"success": True})
 
     @main_blueprint.route("/delete_prompt", methods=["POST"])
@@ -236,68 +268,80 @@ def create_main_blueprint(
             shared_prompts=shared_prompts,
         )
 
-    @main_blueprint.route("/trying")
+    @main_blueprint.route("/profile", methods=["GET", "POST"])
     @required_login
-    def trying():
-        return render_template("try.html")
-
-    @main_blueprint.route("/user_input", methods=["POST"])
-    @required_login
-    def handle_user_input():
-        honeypot_value = request.form.get("honeypot", "")
-        if honeypot_value:
-            return jsonify(
-                {"success": False, "error": "Bot activity detected. Access denied."}
-            )
-
-        user_input = request.get_json().get("user_input", "").lower()
-
-        if user_input.startswith("imagine"):
-            prompt = user_input[len("imagine") :].strip()
-            prompt_text = prompt if prompt else "Your prompt here"
-
-            # Generate the image
-            image_path = image_generator.generate_image(prompt_text)
-
-            if image_path:
-                # Delete old images
-                delete_old_images(
-                    main_blueprint.image_log
-                )  # Pass the image_log argument
-
-                # Log the image to the database
-                with get_db_connection(main_blueprint.image_log) as conn:
+    def profile():
+        error = None
+        success = None
+        if request.method == "POST":
+            old_password = request.form["old_password"]
+            new_password = request.form["new_password"]
+            confirm_password = request.form["confirm_password"]
+            with get_db_connection(main_blueprint.user_db) as conn:
+                cursor = conn.cursor()
+                cursor.execute(
+                    "SELECT password FROM users WHERE username = ?", (session["username"],)
+                )
+                user = cursor.fetchone()
+            if not user or not check_password_hash(user[0], old_password):
+                error = "Old password is incorrect."
+            elif new_password != confirm_password:
+                error = "New passwords do not match."
+            else:
+                hashed = generate_password_hash(new_password)
+                with get_db_connection(main_blueprint.user_db) as conn:
                     cursor = conn.cursor()
-                    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                     cursor.execute(
-                        "INSERT INTO images (filename, creation_time) VALUES (?, ?)",
-                        (image_path, current_time),
+                        "UPDATE users SET password = ? WHERE username = ?",
+                        (hashed, session["username"]),
                     )
                     conn.commit()
-
-                # Return the image path to the frontend
-                return jsonify({"success": True, "image_path": image_path})
-
-            # If image generation fails
-            return jsonify({"success": False, "error": "Error generating image"})
-
-        elif user_input.startswith("tittle"):
-            prompt = user_input[len("tittle") :].strip()
-            prompt_text = prompt if prompt else "Your prompt here"
-            response = chat_app.generate_tittle(user_input)
-            return (
-                jsonify({"success": True, "bot_response": response})
-                if response
-                else jsonify({"success": False, "error": "Error generating tittle"})
+                success = "Password updated successfully."
+        # Fetch recent user activity
+        username = session["username"]
+        with get_db_connection(main_blueprint.prompt_db) as conn:
+            cursor = conn.cursor()
+            # Fetch prompt ID, title, content, and timestamp for saved prompts
+            cursor.execute(
+                f'SELECT random_val AS prompt_id, title, prompt, time FROM "{username}" '
+                'ORDER BY time DESC LIMIT 5'
             )
-
-        else:
-            response = chat_app.generate_chat(user_input)
-            return (
-                jsonify({"success": True, "bot_response": response})
-                if response
-                else jsonify({"success": False, "error": "Error generating response"})
+            saved_prompts = cursor.fetchall()
+        with get_db_connection(main_blueprint.community_db) as conn:
+            cursor = conn.cursor()
+            # Fetch shared prompt ID, title, content, and timestamp
+            cursor.execute(
+                "SELECT random_val AS prompt_id, title, prompt, time FROM shared "
+                "WHERE owner = ? ORDER BY time DESC LIMIT 5",
+                (username,)
             )
+            shared_prompts = cursor.fetchall()
+        return render_template(
+            "account/profile.html",
+            error=error,
+            success=success,
+            saved_prompts=saved_prompts,
+            shared_prompts=shared_prompts,
+        )
+
+    @main_blueprint.route("/delete_account", methods=["POST"])
+    @required_login
+    def delete_account():
+        username = session["username"]
+        # delete user credentials
+        with get_db_connection(main_blueprint.user_db) as conn:
+            cursor = conn.cursor()
+            cursor.execute(
+                "DELETE FROM users WHERE username = ?", (username,)
+            )
+            conn.commit()
+        # drop user's prompt table
+        with get_db_connection(main_blueprint.prompt_db) as conn:
+            cursor = conn.cursor()
+            cursor.execute(f"DROP TABLE IF EXISTS {username}")
+            conn.commit()
+        session.clear()
+        return redirect(url_for("main.index"))
 
     @main_blueprint.route("/generate")
     @required_login
