@@ -8,60 +8,55 @@
     </div>
 
     <!-- Search Bar -->
-    <div class="bg-gray-800 p-8 rounded-xl shadow-2xl mb-8">
-        <h2 class="text-2xl font-bold mb-6">Search Prompts</h2>
-        <input type="text" id="searchInput" placeholder="Search prompts..." class="w-full p-3 bg-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
-    </div>
+    <h2 class="text-2xl font-bold mb-6">Search Prompts</h2>
+    <input type="text" id="searchInput" placeholder="Search prompts..." class="w-full p-3 bg-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
 
     <!-- Combined Prompts Section -->
-    <div class="glass p-8 mb-8">
-        <h2 class="mdc-typography--headline5 mb-6">All Prompts</h2>
-        <div class="mdc-layout-grid">
-            <div class="mdc-layout-grid__inner" id="allPrompts">
-                {% for prompt in system_prompts %}
-                <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12 mdc-layout-grid__cell--span-6-tablet mdc-layout-grid__cell--span-4-desktop">
-                    <div class="mdc-card glass prompt-card p-6 flex flex-col justify-between max-h-64 overflow-y-auto">
-                        <div class="mdc-card__primary-action" tabindex="0">
-                            <div class="flex justify-between items-center mb-4">
-                                <h4 class="mdc-typography--headline6">{{ prompt[2] }}</h4>
-                                <span class="mdc-chip mdc-chip--outlined"><span class="mdc-chip__text">Default</span></span>
-                            </div>
-                            <p class="mdc-typography--body2 mb-6 whitespace-pre-wrap break-words">{{ prompt[3] | safe }}</p>
+    <div class="mdc-layout-grid">
+        <div class="mdc-layout-grid__inner" id="allPrompts">
+            {% for prompt in system_prompts %}
+            <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12 mdc-layout-grid__cell--span-6-tablet mdc-layout-grid__cell--span-4-desktop">
+                <div class="mdc-card glass prompt-card p-6 flex flex-col justify-between max-h-64 overflow-y-auto">
+                    <div class="mdc-card__primary-action" tabindex="0">
+                        <div class="flex justify-between items-center mb-4">
+                            <h4 class="mdc-typography--headline6">{{ prompt[2] }}</h4>
+                            <span class="mdc-chip mdc-chip--outlined"><span class="mdc-chip__text">Default</span></span>
                         </div>
-                        <div class="mdc-card__actions">
-                            <div class="mdc-card__action-buttons">
-                                <button class="text-blue-400 hover:text-blue-300 mdc-button mdc-button--text copy-button" data-clipboard-text="{{ prompt[3] | e }}">Copy</button>
-                                <button class="text-green-400 hover:text-green-300 mdc-button mdc-button--text save-button" data-title="{{ prompt[2] | e }}" data-prompt="{{ prompt[3] | e }}">Save</button>
-                                <button class="text-indigo-400 hover:text-indigo-300 mdc-button mdc-button--text see-button" data-title="{{ prompt[2] | e }}" data-content="{{ prompt[3] | e }}">See</button>
-                            </div>
+                        <p class="mdc-typography--body2 mb-6 whitespace-pre-wrap break-words">{{ prompt[3] | safe }}</p>
+                    </div>
+                    <div class="mdc-card__actions">
+                        <div class="mdc-card__action-buttons">
+                            <button class="text-blue-400 hover:text-blue-300 mdc-button mdc-button--text copy-button" data-clipboard-text="{{ prompt[3] | e }}">Copy</button>
+                            <button class="text-green-400 hover:text-green-300 mdc-button mdc-button--text save-button" data-title="{{ prompt[2] | e }}" data-prompt="{{ prompt[3] | e }}">Save</button>
+                            <button class="text-indigo-400 hover:text-indigo-300 mdc-button mdc-button--text see-button" data-title="{{ prompt[2] | e }}" data-content="{{ prompt[3] | e }}">See</button>
                         </div>
                     </div>
                 </div>
-                {% endfor %}
-                {% for prompt in shared_prompts %}
-                <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12 mdc-layout-grid__cell--span-6-tablet mdc-layout-grid__cell--span-4-desktop">
-                    <div class="mdc-card glass prompt-card p-6 flex flex-col justify-between max-h-64 overflow-y-auto">
-                        <div class="mdc-card__primary-action" tabindex="0">
-                            <div class="flex justify-between items-center mb-4">
-                                <h4 class="mdc-typography--headline6">{{ prompt[2] }}</h4>
-                                <span class="mdc-chip mdc-chip--outlined"><span class="mdc-chip__text">Shared</span></span>
-                            </div>
-                            <p class="mdc-typography--body2 mb-6 whitespace-pre-wrap break-words">{{ prompt[3] | safe }}</p>
-                        </div>
-                        <div class="mdc-card__actions">
-                            <div class="mdc-card__action-buttons">
-                                <button class="text-blue-400 hover:text-blue-300 mdc-button mdc-button--text copy-button" data-clipboard-text="{{ prompt[3] | e }}">Copy</button>
-                                <button class="text-green-400 hover:text-green-300 mdc-button mdc-button--text save-button" data-title="{{ prompt[2] | e }}" data-prompt="{{ prompt[3] | e }}">Save</button>
-                                {% if prompt[0] == session['username'] %}
-                                <button class="text-red-400 hover:text-red-300 mdc-button mdc-button--text unshare-button" data-prompt-id="{{ prompt[1] }}">Unshare</button>
-                                {% endif %}
-                                <button class="text-indigo-400 hover:text-indigo-300 mdc-button mdc-button--text see-button" data-title="{{ prompt[2] | e }}" data-content="{{ prompt[3] | e }}">See</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                {% endfor %}
             </div>
+            {% endfor %}
+            {% for prompt in shared_prompts %}
+            <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12 mdc-layout-grid__cell--span-6-tablet mdc-layout-grid__cell--span-4-desktop">
+                <div class="mdc-card glass prompt-card p-6 flex flex-col justify-between max-h-64 overflow-y-auto">
+                    <div class="mdc-card__primary-action" tabindex="0">
+                        <div class="flex justify-between items-center mb-4">
+                            <h4 class="mdc-typography--headline6">{{ prompt[2] }}</h4>
+                            <span class="mdc-chip mdc-chip--outlined"><span class="mdc-chip__text">Shared</span></span>
+                        </div>
+                        <p class="mdc-typography--body2 mb-6 whitespace-pre-wrap break-words">{{ prompt[3] | safe }}</p>
+                    </div>
+                    <div class="mdc-card__actions">
+                        <div class="mdc-card__action-buttons">
+                            <button class="text-blue-400 hover:text-blue-300 mdc-button mdc-button--text copy-button" data-clipboard-text="{{ prompt[3] | e }}">Copy</button>
+                            <button class="text-green-400 hover:text-green-300 mdc-button mdc-button--text save-button" data-title="{{ prompt[2] | e }}" data-prompt="{{ prompt[3] | e }}">Save</button>
+                            {% if prompt[0] == session['username'] %}
+                            <button class="text-red-400 hover:text-red-300 mdc-button mdc-button--text unshare-button" data-prompt-id="{{ prompt[1] }}">Unshare</button>
+                            {% endif %}
+                            <button class="text-indigo-400 hover:text-indigo-300 mdc-button mdc-button--text see-button" data-title="{{ prompt[2] | e }}" data-content="{{ prompt[3] | e }}">See</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
         </div>
     </div>
 

@@ -25,7 +25,7 @@ function submitForm(formId, url) {
         var resultSection = document.getElementById('resultSection');
         var responseParagraph = document.getElementById('response');
         if (resultSection && responseParagraph) {
-            resultSection.classList.remove('hidden'); // Display the result section
+            resultSection.style.display = 'block'; // Display the result section
             responseParagraph.innerHTML = parseResponse(result); // Parse and update the response content
         } else {
             console.error('Result section or response paragraph not found in the DOM');
@@ -75,13 +75,13 @@ function previewImage() {
 
                 reader.onload = function (e) {
                     preview.src = e.target.result;
-                    container.classList.remove('hidden');
+                    container.style.display = 'block'; // Show image preview
                     document.body.setAttribute('data-image-selected', 'true');
                 };
 
                 reader.readAsDataURL(file);
             } else {
-                container.classList.add('hidden');
+                container.style.display = 'none'; // Hide preview when no image
                 // Set the default image source using Flask's url_for function
                 preview.src = "{{ url_for('static', filename='icon/favicon.ico') }}";
                 document.body.setAttribute('data-image-selected', 'false');

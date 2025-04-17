@@ -2,22 +2,17 @@
 
 {% block content %}
     <!-- Hero Section -->
-    <div class="hero bg-[var(--md-sys-color-primary)] text-[var(--md-sys-color-on-primary)] p-8 rounded-xl shadow-md mb-12 cursor-pointer text-center" onclick="toggleSidePanel()">
+    <div class="hero text-center mb-12 cursor-pointer" onclick="toggleSidePanel()">
         <div class="flex items-center justify-center mb-4 space-x-2">
-            <h1 class="text-5xl font-bold">Prompt Generator <span class="text-[var(--md-sys-color-on-primary)]">(Advanced)</span></h1>
-            <button onclick="toggleHelp('welcome-help')" class="bg-[var(--md-sys-color-surface)] text-[var(--md-sys-color-on-surface)] px-3 py-1 rounded-lg hover:bg-[var(--md-sys-color-surface)] transition duration-200">?</button>
+            <h1 class="text-5xl font-bold">Prompt Generator (Advanced)</h1>
         </div>
-        <p class="text-lg text-[var(--md-sys-color-on-primary)]">Create custom and specialized prompts tailored to your needs.</p>
-    </div>
-
-    <div id="welcome-help" class="hidden bg-[var(--md-sys-color-surface)] p-8 rounded-lg mb-12 text-[var(--md-sys-color-on-surface)]">
-        <p class="text-[var(--md-sys-color-on-surface)]">Here, you have the flexibility to <strong>create a custom but specialized prompt</strong> tailored to your specific requirements.</p>
+        <p class="text-lg text-gray-300">Create custom and specialized prompts tailored to your needs.</p>
     </div>
 
     <!-- Tools Section -->
     <div class="prompting grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-4">
         <!-- Text Prompt -->
-        <div class="bg-[var(--md-sys-color-surface)] p-8 rounded-lg shadow-md flex flex-col text-[var(--md-sys-color-on-surface)]">
+        <div class="mdc-card glass prompt-card p-6 flex flex-col text-[var(--md-sys-color-on-surface)]">
             <div class="flex justify-between items-center mb-6">
                 <h2 class="text-2xl font-bold">Generate Text Prompt</h2>
                 <button onclick="toggleHelp('text-help')" class="bg-[var(--md-sys-color-surface)] text-[var(--md-sys-color-on-surface)] px-3 py-1 rounded-lg hover:bg-[var(--md-sys-color-surface)] transition duration-200">?</button>
@@ -70,7 +65,7 @@
         </div>
 
         <!-- Image Prompt -->
-        <div class="bg-[var(--md-sys-color-surface)] p-8 rounded-lg shadow-md flex flex-col text-[var(--md-sys-color-on-surface)]">
+        <div class="mdc-card glass prompt-card p-6 flex flex-col text-[var(--md-sys-color-on-surface)]">
             <div class="flex justify-between items-center mb-6">
                 <h2 class="text-2xl font-bold">Generate Image Prompt</h2>
                 <button onclick="toggleHelp('image-help')" class="bg-[var(--md-sys-color-surface)] text-[var(--md-sys-color-on-surface)] px-3 py-1 rounded-lg hover:bg-[var(--md-sys-color-surface)] transition duration-200">?</button>
@@ -228,7 +223,7 @@
         </div>
 
         <!-- Reverse Image Prompt -->
-        <div class="bg-[var(--md-sys-color-surface)] p-8 rounded-lg shadow-md flex flex-col text-[var(--md-sys-color-on-surface)]">
+        <div class="mdc-card glass prompt-card p-6 flex flex-col text-[var(--md-sys-color-on-surface)]">
             <div class="flex justify-between items-center mb-6">
                 <h2 class="text-2xl font-bold">Reverse Image Prompt</h2>
                 <button onclick="toggleHelp('reverse-image-help')" class="bg-[var(--md-sys-color-surface)] text-[var(--md-sys-color-on-surface)] px-3 py-1 rounded-lg hover:bg-[var(--md-sys-color-surface)] transition duration-200">?</button>
@@ -391,7 +386,7 @@
     <!-- Tools Section End -->
 
     <!-- Preview Section -->
-    <div id="preview-container" class="image-preview mt-12 hidden">
+    <div id="preview-container" class="image-preview mdc-card glass prompt-card p-6 mt-12" hidden>
         <img id="preview-image" alt="Image Preview" class="w-64 h-64 mx-auto rounded-lg object-contain">
     </div>
 
@@ -402,7 +397,7 @@
     </div>
 
     <!-- Result Section -->
-    <div class="result hidden bg-[var(--md-sys-color-surface)] p-8 rounded-lg shadow-md mt-8 text-[var(--md-sys-color-on-surface)]" id="resultSection">
+    <div id="resultSection" class="result mdc-card glass prompt-card p-6 mt-8" hidden>
         <h2 class="text-2xl font-bold mb-6">Generated Prompt:</h2>
         <div id="response" class="text-lg text-[var(--md-sys-color-on-surface)] space-y-4"></div>
         <div class="flex space-x-4 mt-6">
