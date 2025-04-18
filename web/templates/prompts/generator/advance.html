@@ -10,12 +10,12 @@
     </div>
 
     <!-- Tools Section -->
-    <div class="prompting grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-4">
+    <div class="prompting grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 p-4">
         <!-- Text Prompt -->
         <div class="mdc-card glass prompt-card p-6 flex flex-col text-[var(--md-sys-color-on-surface)]">
             <div class="flex justify-between items-center mb-6">
                 <h2 class="text-2xl font-bold">Generate Text Prompt</h2>
-                <button onclick="toggleHelp('text-help')" class="bg-[var(--md-sys-color-surface)] text-[var(--md-sys-color-on-surface)] px-3 py-1 rounded-lg hover:bg-[var(--md-sys-color-surface)] transition duration-200">?</button>
+                <button onclick="toggleTextHelp()" class="bg-[var(--md-sys-color-surface)] text-[var(--md-sys-color-on-surface)] px-3 py-1 rounded-lg hover:bg-[var(--md-sys-color-surface)] transition duration-200">?</button>
             </div>
             <div id="text-help" class="hidden bg-[var(--md-sys-color-surface)] p-4 rounded-lg mb-4 text-[var(--md-sys-color-on-surface)]">
                 <p class="text-[var(--md-sys-color-on-surface)]">This section allows you to generate text prompts. Enter your use case, select the prompt type, and configure other parameters to create a custom prompt.</p>
@@ -66,12 +66,23 @@
 
         <!-- Image Prompt -->
         <div class="mdc-card glass prompt-card p-6 flex flex-col text-[var(--md-sys-color-on-surface)]">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-bold">Generate Image Prompt</h2>
-                <button onclick="toggleHelp('image-help')" class="bg-[var(--md-sys-color-surface)] text-[var(--md-sys-color-on-surface)] px-3 py-1 rounded-lg hover:bg-[var(--md-sys-color-surface)] transition duration-200">?</button>
+            <div class="flex items-center space-x-6 mb-6">
+                <label class="flex items-center space-x-2">
+                    <input type="radio" name="imageMode" value="generate" checked onchange="toggleImageForms()" />
+                    <span>Generate from Text</span>
+                </label>
+                <label class="flex items-center space-x-2">
+                    <input type="radio" name="imageMode" value="reverse" onchange="toggleImageForms()" />
+                    <span>Reverse from Image</span>
+                </label>
+                <button onclick="toggleImageHelp()" class="bg-[var(--md-sys-color-surface)] text-[var(--md-sys-color-on-surface)] px-3 py-1 rounded-lg hover:bg-[var(--md-sys-color-surface)] transition duration-200">?</button>
             </div>
-            <div id="image-help" class="hidden bg-[var(--md-sys-color-surface)] p-4 rounded-lg mb-4 text-[var(--md-sys-color-on-surface)]">
+            <h2 id="imageSectionTitle" class="text-2xl font-bold mb-6">Generate Image Prompt</h2>
+            <div id="image-generate-help" class="hidden bg-[var(--md-sys-color-surface)] p-4 rounded-lg mb-4 text-[var(--md-sys-color-on-surface)]">
                 <p class="text-[var(--md-sys-color-on-surface)]">This section allows you to generate image prompts. Enter your input, select the mood, and choose the primary and secondary styles to create a custom image prompt.</p>
+            </div>
+            <div id="image-reverse-help" class="hidden bg-[var(--md-sys-color-surface)] p-4 rounded-lg mb-4 text-[var(--md-sys-color-on-surface)]">
+                <p class="text-[var(--md-sys-color-on-surface)]">This section allows you to upload an image and generate a prompt based on it. You can also select the mood and style to customize the output.</p>
             </div>
             <form id="a-image-prompt-form" class="space-y-4 flex-grow" enctype="multipart/form-data" onsubmit="submitForm('a-image-prompt-form', '/advance/igenerate'); return false;">
                 <!-- parameter 0 -->
@@ -220,167 +231,160 @@
 
                 <input type="submit" value="Generate" class="bg-[var(--md-sys-color-primary)] text-[var(--md-sys-color-on-primary)] px-6 py-3 rounded-lg hover:bg-[var(--md-sys-color-secondary)] transition duration-200 cursor-pointer w-full">
             </form>
-        </div>
 
-        <!-- Reverse Image Prompt -->
-        <div class="mdc-card glass prompt-card p-6 flex flex-col text-[var(--md-sys-color-on-surface)]">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-bold">Reverse Image Prompt</h2>
-                <button onclick="toggleHelp('reverse-image-help')" class="bg-[var(--md-sys-color-surface)] text-[var(--md-sys-color-on-surface)] px-3 py-1 rounded-lg hover:bg-[var(--md-sys-color-surface)] transition duration-200">?</button>
+            <!-- Reverse Image Prompt (merged into same card) -->
+            <div id="reverseSection" class="hidden mt-8 pt-6 border-t border-[var(--md-sys-color-on-surface)] space-y-4">
+                <form id="a-reverse-image-form" class="space-y-4 flex-grow" enctype="multipart/form-data" onsubmit="submitForm('a-reverse-image-form', '/advance/image'); return false;">
+                    <!-- parameter 0 -->
+                    <div>
+                        <label for="image" class="block mb-2">Upload Image:</label>
+                        <input type="file" name="image" accept="image/*" class="w-full p-3 bg-[var(--md-sys-color-surface)] rounded-lg text-[var(--md-sys-color-on-surface)]" required>
+                    </div>
+                    <!-- parameter 0 end -->
+
+                    <!-- parameter 1 -->
+                    <div>
+                        <label for="parameter1" class="block mb-2">Primary mood:</label>
+                        <select name="parameter1" id="parameter1" class="w-full p-3 bg-[var(--md-sys-color-surface)] rounded-lg text-[var(--md-sys-color-on-surface)]">
+                            <option value="original">Original</option>
+                            <optgroup label="Positive Moods">
+                                <option value="happy">Happy</option>
+                                <option value="joyful">Joyful</option>
+                                <option value="excited">Excited</option>
+                                <option value="cheerful">Cheerful</option>
+                                <option value="content">Content</option>
+                            </optgroup>
+                            <optgroup label="Negative Moods">
+                                <option value="angry">Angry</option>
+                                <option value="disgust">Disgust</option>
+                                <option value="fear">Fear</option>
+                                <option value="sad">Sad</option>
+                                <option value="depressed">Depressed</option>
+                            </optgroup>
+                            <optgroup label="Neutral Moods">
+                                <option value="neutral">Neutral</option>
+                                <option value="calm">Calm</option>
+                                <option value="relaxed">Relaxed</option>
+                                <option value="serene">Serene</option>
+                                <option value="tranquil">Tranquil</option>
+                            </optgroup>
+                            <optgroup label="Other Moods">
+                                <option value="surprised">Surprised</option>
+                                <option value="curious">Curious</option>
+                                <option value="mysterious">Mysterious</option>
+                                <option value="surreal">Surreal</option>
+                                <option value="eerie">Eerie</option>
+                                <option value="random">Random</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                    <!-- parameter 1 end -->
+
+                    <!-- parameter 2 -->
+                    <div>
+                        <label for="parameter2" class="block mb-2">Primary style:</label>
+                        <select name="parameter2" id="parameter2" class="w-full p-3 bg-[var(--md-sys-color-surface)] rounded-lg text-[var(--md-sys-color-on-surface)]">
+                            <option value="original">Original</option>
+                            <optgroup label="Styles">
+                                <option value="3d-model">3D Model</option>
+                                <option value="abstract">Abstract</option>
+                                <option value="analog-film">Analog Film</option>
+                                <option value="anime">Anime</option>
+                                <option value="cartoon">Cartoon</option>
+                                <option value="chalk-art">Chalk Art</option>
+                                <option value="comic-book">Comic Book</option>
+                                <option value="digital-art">Digital Art</option>
+                                <option value="disney-style">Disney</option>
+                                <option value="fantasy-art">Fantasy Art</option>
+                                <option value="glitch-art">Glitch Art</option>
+                                <option value="graffiti">Graffiti</option>
+                            </optgroup>
+                            <optgroup label="Genres">
+                                <option value="cinematic">Cinematic</option>
+                                <option value="cyberpunk">Cyberpunk</option>
+                                <option value="surreal">Surreal</option>
+                                <option value="pop-art">Pop Art</option>
+                                <option value="steampunk">Steampunk</option>
+                            </optgroup>
+                            <optgroup label="Techniques">
+                                <option value="cubism">Cubism</option>
+                                <option value="decoupage">Decoupage</option>
+                                <option value="enhance">Enhance</option>
+                                <option value="expressionistic">Expressionistic</option>
+                                <option value="hyperrealistic">Hyperrealistic</option>
+                                <option value="impressionistic">Impressionistic</option>
+                                <option value="isometric">Isometric</option>
+                                <option value="line-art">Line Art</option>
+                                <option value="low-poly">Low Poly</option>
+                                <option value="minimalist">Minimalist</option>
+                                <option value="modeling-compound">Modeling Compound</option>
+                                <option value="origami">Origami</option>
+                                <option value="paper-cut">Paper Cut</option>
+                                <option value="photographic">Photographic</option>
+                                <option value="pixel-art">Pixel Art</option>
+                                <option value="surreal">Surreal</option>
+                                <option value="tile-texture">Tile Texture</option>
+                                <option value="vaporwave">Vaporwave</option>
+                                <option value="watercolor">Watercolor</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                    <!-- parameter 2 end -->
+
+                    <!-- parameter 3 -->
+                    <div>
+                        <label for="parameter3" class="block mb-2">Secondary style:</label>
+                        <select name="parameter3" id="parameter3" class="w-full p-3 bg-[var(--md-sys-color-surface)] rounded-lg text-[var(--md-sys-color-on-surface)]">
+                            <option value="original">Original</option>
+                            <optgroup label="Styles">
+                                <option value="3d-model">3D Model</option>
+                                <option value="abstract">Abstract</option>
+                                <option value="analog-film">Analog Film</option>
+                                <option value="anime">Anime</option>
+                                <option value="cartoon">Cartoon</option>
+                                <option value="chalk-art">Chalk Art</option>
+                                <option value="comic-book">Comic Book</option>
+                                <option value="digital-art">Digital Art</option>
+                                <option value="disney-style">Disney</option>
+                                <option value="fantasy-art">Fantasy Art</option>
+                                <option value="glitch-art">Glitch Art</option>
+                                <option value="graffiti">Graffiti</option>
+                            </optgroup>
+                            <optgroup label="Genres">
+                                <option value="cinematic">Cinematic</option>
+                                <option value="cyberpunk">Cyberpunk</option>
+                                <option value="surreal">Surreal</option>
+                                <option value="pop-art">Pop Art</option>
+                                <option value="steampunk">Steampunk</option>
+                            </optgroup>
+                            <optgroup label="Techniques">
+                                <option value="cubism">Cubism</option>
+                                <option value="decoupage">Decoupage</option>
+                                <option value="enhance">Enhance</option>
+                                <option value="expressionistic">Expressionistic</option>
+                                <option value="hyperrealistic">Hyperrealistic</option>
+                                <option value="impressionistic">Impressionistic</option>
+                                <option value="isometric">Isometric</option>
+                                <option value="line-art">Line Art</option>
+                                <option value="low-poly">Low Poly</option>
+                                <option value="minimalist">Minimalist</option>
+                                <option value="modeling-compound">Modeling Compound</option>
+                                <option value="origami">Origami</option>
+                                <option value="paper-cut">Paper Cut</option>
+                                <option value="photographic">Photographic</option>
+                                <option value="pixel-art">Pixel Art</option>
+                                <option value="surreal">Surreal</option>
+                                <option value="tile-texture">Tile Texture</option>
+                                <option value="vaporwave">Vaporwave</option>
+                                <option value="watercolor">Watercolor</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                    <!-- parameter 3 end -->
+
+                    <input type="submit" value="Generate" class="bg-[var(--md-sys-color-primary)] text-[var(--md-sys-color-on-primary)] px-6 py-3 rounded-lg hover:bg-[var(--md-sys-color-secondary)] transition duration-200 cursor-pointer w-full">
+                </form>
             </div>
-            <div id="reverse-image-help" class="hidden bg-[var(--md-sys-color-surface)] p-4 rounded-lg mb-4 text-[var(--md-sys-color-on-surface)]">
-                <p class="text-[var(--md-sys-color-on-surface)]">This section allows you to upload an image and generate a prompt based on it. You can also select the mood and style to customize the output.</p>
-            </div>
-            <form id="a-reverse-image-form" class="space-y-4 flex-grow" enctype="multipart/form-data" onsubmit="submitForm('a-reverse-image-form', '/advance/image'); return false;">
-                <!-- parameter 0 -->
-                <div>
-                    <label for="image" class="block mb-2">Upload Image:</label>
-                    <input type="file" name="image" accept="image/*" class="w-full p-3 bg-[var(--md-sys-color-surface)] rounded-lg text-[var(--md-sys-color-on-surface)]" required>
-                </div>
-                <!-- parameter 0 end -->
-
-                <!-- parameter 1 -->
-                <div>
-                    <label for="parameter1" class="block mb-2">Primary mood:</label>
-                    <select name="parameter1" id="parameter1" class="w-full p-3 bg-[var(--md-sys-color-surface)] rounded-lg text-[var(--md-sys-color-on-surface)]">
-                        <option value="original">Original</option>
-                        <optgroup label="Positive Moods">
-                            <option value="happy">Happy</option>
-                            <option value="joyful">Joyful</option>
-                            <option value="excited">Excited</option>
-                            <option value="cheerful">Cheerful</option>
-                            <option value="content">Content</option>
-                        </optgroup>
-                        <optgroup label="Negative Moods">
-                            <option value="angry">Angry</option>
-                            <option value="disgust">Disgust</option>
-                            <option value="fear">Fear</option>
-                            <option value="sad">Sad</option>
-                            <option value="depressed">Depressed</option>
-                        </optgroup>
-                        <optgroup label="Neutral Moods">
-                            <option value="neutral">Neutral</option>
-                            <option value="calm">Calm</option>
-                            <option value="relaxed">Relaxed</option>
-                            <option value="serene">Serene</option>
-                            <option value="tranquil">Tranquil</option>
-                        </optgroup>
-                        <optgroup label="Other Moods">
-                            <option value="surprised">Surprised</option>
-                            <option value="curious">Curious</option>
-                            <option value="mysterious">Mysterious</option>
-                            <option value="surreal">Surreal</option>
-                            <option value="eerie">Eerie</option>
-                            <option value="random">Random</option>
-                        </optgroup>
-                    </select>
-                </div>
-                <!-- parameter 1 end -->
-
-                <!-- parameter 2 -->
-                <div>
-                    <label for="parameter2" class="block mb-2">Primary style:</label>
-                    <select name="parameter2" id="parameter2" class="w-full p-3 bg-[var(--md-sys-color-surface)] rounded-lg text-[var(--md-sys-color-on-surface)]">
-                        <option value="original">Original</option>
-                        <optgroup label="Styles">
-                            <option value="3d-model">3D Model</option>
-                            <option value="abstract">Abstract</option>
-                            <option value="analog-film">Analog Film</option>
-                            <option value="anime">Anime</option>
-                            <option value="cartoon">Cartoon</option>
-                            <option value="chalk-art">Chalk Art</option>
-                            <option value="comic-book">Comic Book</option>
-                            <option value="digital-art">Digital Art</option>
-                            <option value="disney-style">Disney</option>
-                            <option value="fantasy-art">Fantasy Art</option>
-                            <option value="glitch-art">Glitch Art</option>
-                            <option value="graffiti">Graffiti</option>
-                        </optgroup>
-                        <optgroup label="Genres">
-                            <option value="cinematic">Cinematic</option>
-                            <option value="cyberpunk">Cyberpunk</option>
-                            <option value="surreal">Surreal</option>
-                            <option value="pop-art">Pop Art</option>
-                            <option value="steampunk">Steampunk</option>
-                        </optgroup>
-                        <optgroup label="Techniques">
-                            <option value="cubism">Cubism</option>
-                            <option value="decoupage">Decoupage</option>
-                            <option value="enhance">Enhance</option>
-                            <option value="expressionistic">Expressionistic</option>
-                            <option value="hyperrealistic">Hyperrealistic</option>
-                            <option value="impressionistic">Impressionistic</option>
-                            <option value="isometric">Isometric</option>
-                            <option value="line-art">Line Art</option>
-                            <option value="low-poly">Low Poly</option>
-                            <option value="minimalist">Minimalist</option>
-                            <option value="modeling-compound">Modeling Compound</option>
-                            <option value="origami">Origami</option>
-                            <option value="paper-cut">Paper Cut</option>
-                            <option value="photographic">Photographic</option>
-                            <option value="pixel-art">Pixel Art</option>
-                            <option value="surreal">Surreal</option>
-                            <option value="tile-texture">Tile Texture</option>
-                            <option value="vaporwave">Vaporwave</option>
-                            <option value="watercolor">Watercolor</option>
-                        </optgroup>
-                    </select>
-                </div>
-                <!-- parameter 2 end -->
-
-                <!-- parameter 3 -->
-                <div>
-                    <label for="parameter3" class="block mb-2">Secondary style:</label>
-                    <select name="parameter3" id="parameter3" class="w-full p-3 bg-[var(--md-sys-color-surface)] rounded-lg text-[var(--md-sys-color-on-surface)]">
-                        <option value="original">Original</option>
-                        <optgroup label="Styles">
-                            <option value="3d-model">3D Model</option>
-                            <option value="abstract">Abstract</option>
-                            <option value="analog-film">Analog Film</option>
-                            <option value="anime">Anime</option>
-                            <option value="cartoon">Cartoon</option>
-                            <option value="chalk-art">Chalk Art</option>
-                            <option value="comic-book">Comic Book</option>
-                            <option value="digital-art">Digital Art</option>
-                            <option value="disney-style">Disney</option>
-                            <option value="fantasy-art">Fantasy Art</option>
-                            <option value="glitch-art">Glitch Art</option>
-                            <option value="graffiti">Graffiti</option>
-                        </optgroup>
-                        <optgroup label="Genres">
-                            <option value="cinematic">Cinematic</option>
-                            <option value="cyberpunk">Cyberpunk</option>
-                            <option value="surreal">Surreal</option>
-                            <option value="pop-art">Pop Art</option>
-                            <option value="steampunk">Steampunk</option>
-                        </optgroup>
-                        <optgroup label="Techniques">
-                            <option value="cubism">Cubism</option>
-                            <option value="decoupage">Decoupage</option>
-                            <option value="enhance">Enhance</option>
-                            <option value="expressionistic">Expressionistic</option>
-                            <option value="hyperrealistic">Hyperrealistic</option>
-                            <option value="impressionistic">Impressionistic</option>
-                            <option value="isometric">Isometric</option>
-                            <option value="line-art">Line Art</option>
-                            <option value="low-poly">Low Poly</option>
-                            <option value="minimalist">Minimalist</option>
-                            <option value="modeling-compound">Modeling Compound</option>
-                            <option value="origami">Origami</option>
-                            <option value="paper-cut">Paper Cut</option>
-                            <option value="photographic">Photographic</option>
-                            <option value="pixel-art">Pixel Art</option>
-                            <option value="surreal">Surreal</option>
-                            <option value="tile-texture">Tile Texture</option>
-                            <option value="vaporwave">Vaporwave</option>
-                            <option value="watercolor">Watercolor</option>
-                        </optgroup>
-                    </select>
-                </div>
-                <!-- parameter 3 end -->
-
-                <input type="submit" value="Generate" class="bg-[var(--md-sys-color-primary)] text-[var(--md-sys-color-on-primary)] px-6 py-3 rounded-lg hover:bg-[var(--md-sys-color-secondary)] transition duration-200 cursor-pointer w-full">
-            </form>
         </div>
     </div>
     <!-- Tools Section End -->
@@ -391,11 +395,11 @@
     </div>
 
     <!-- Loading Section -->
-    <div class="loading hidden fixed inset-0 bg-black bg-opacity-50 flex flex-col items-center justify-center z-50" id="loading">
-        <div class="loading-blur-bg"></div>
-        <div class="loading-content">
+    <div id="loading" class="loading hidden fixed inset-0 flex items-center justify-center z-50">
+        <div class="glass absolute inset-0 z-0"></div>
+        <div class="relative z-10 flex flex-col items-center justify-center p-8">
           <div class="loader-modern"><div class="ring"></div><div class="ring ring2"></div><div class="pulse"></div></div>
-          <h1 class="text-center mt-4">Generating...</h1>
+          <h1 class="text-center mt-4 text-[var(--md-sys-color-on-surface)]">Generating...</h1>
         </div>
     </div>
 
@@ -410,9 +414,21 @@
     </div>
 
     <script>
-        function toggleHelp(helpId) {
-            const helpDiv = document.getElementById(helpId);
-            helpDiv.classList.toggle('hidden');
+        function toggleTextHelp() {
+            document.getElementById('text-help').classList.toggle('hidden');
+        }
+        function toggleImageHelp() {
+            const mode = document.querySelector('input[name="imageMode"]:checked').value;
+            const helpId = mode === 'generate' ? 'image-generate-help' : 'image-reverse-help';
+            document.getElementById(helpId).classList.toggle('hidden');
+        }
+        function toggleImageForms() {
+            const mode = document.querySelector('input[name="imageMode"]:checked').value;
+            document.getElementById('a-image-prompt-form').classList.toggle('hidden', mode !== 'generate');
+            document.getElementById('reverseSection').classList.toggle('hidden', mode !== 'reverse');
+            document.getElementById('image-generate-help').classList.add('hidden');
+            document.getElementById('image-reverse-help').classList.add('hidden');
+            document.getElementById('imageSectionTitle').textContent = mode === 'generate' ? 'Generate Image Prompt' : 'Reverse Image Prompt';
         }
     </script>
 {% endblock %}

@@ -2,10 +2,10 @@
 function showPopup(title, message, isConfirmation = false, onConfirm = null, onCancel = null) {
     const popup = document.createElement('div');
     popup.id = 'custom-popup';
-    popup.className = 'fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50';
+    popup.className = 'fixed inset-0 flex items-center justify-center glass z-50';
 
     const popupContent = document.createElement('div');
-    popupContent.className = 'bg-gray-800 p-8 rounded-xl shadow-2xl w-11/12 md:w-1/2 lg:w-1/3';
+    popupContent.className = 'glass p-8 rounded-lg w-11/12 max-w-md';
 
     const popupTitle = document.createElement('h2');
     popupTitle.id = 'popup-title';

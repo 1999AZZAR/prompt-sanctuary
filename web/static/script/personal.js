@@ -2,10 +2,10 @@
 function showPopup(title, message) {
     const popup = document.createElement('div');
     popup.id = 'custom-popup';
-    popup.className = 'fixed inset-0 flex items-center justify-center bg-black bg-opacity-25 backdrop-blur-sm z-50';
+    popup.className = 'fixed inset-0 flex items-center justify-center glass z-50';
 
     const popupContent = document.createElement('div');
-    popupContent.className = 'glass p-8 rounded-xl shadow-2xl w-11/12 md:w-1/2 lg:w-1/3 relative';
+    popupContent.className = 'glass p-8 rounded-lg w-11/12 max-w-md text-white relative';
     popupContent.style.maxHeight = '80vh';
     popupContent.style.overflowY = 'auto';
     popupContent.style.overflowX = 'hidden';
@@ -93,11 +93,11 @@ document.addEventListener('DOMContentLoaded', function () {
 function openEditPopup(randomVal, title, prompt) {
     const popup = document.createElement('div');
     popup.id = 'edit-popup';
-    popup.className = 'fixed inset-0 flex items-center justify-center bg-black bg-opacity-25 backdrop-blur-sm z-50';
+    popup.className = 'fixed inset-0 flex items-center justify-center glass z-50';
 
     const popupContent = document.createElement('div');
     // Wider popup with scrollable content
-    popupContent.className = 'glass p-8 sm:p-10 rounded-xl shadow-2xl max-w-4xl w-full sm:w-11/12 md:w-4/5 lg:w-3/4 relative';
+    popupContent.className = 'glass p-8 sm:p-10 rounded-lg max-w-4xl w-full sm:w-11/12 md:w-4/5 lg:w-3/4 text-white relative';
     popupContent.style.maxHeight = '90vh';
     popupContent.style.overflowY = 'auto';
     popupContent.style.overflowX = 'hidden';
@@ -111,7 +111,7 @@ function openEditPopup(randomVal, title, prompt) {
         </div>
         <div class="mb-6">
             <label for="editPrompt" class="block mb-2">Prompt:</label>
-            <textarea id="editPrompt" class="w-full p-3 bg-gray-700 rounded-lg">${prompt}</textarea>
+            <textarea id="editPrompt" class="w-full p-3 bg-gray-700 rounded-lg h-80">${prompt}</textarea>
         </div>
         <div class="flex justify-end space-x-4">
             <button id="cancelEdit" class="bg-gray-500 text-white px-6 py-3 rounded-lg hover:bg-gray-600 transition duration-200">Cancel</button>
@@ -169,11 +169,10 @@ function saveEditedPrompt(randomVal, title, prompt) {
 function confirmDelete(randomVal) {
     const popup = document.createElement('div');
     popup.id = 'delete-popup';
-    popup.className = 'fixed inset-0 flex items-center justify-center bg-black bg-opacity-25 backdrop-blur-sm z-50';
+    popup.className = 'fixed inset-0 flex items-center justify-center glass z-50';
 
     const popupContent = document.createElement('div');
-    popupContent.className = 'glass p-8 rounded-xl shadow-2xl w-11/12 md:w-1/2 lg:w-1/3';
-
+    popupContent.className = 'glass p-8 rounded-lg w-11/12 max-w-md text-white relative';
     popupContent.innerHTML = `
         <h2 class="text-2xl font-bold mb-4">Confirm Deletion</h2>
         <p class="text-lg text-gray-300 mb-6">Are you sure you want to delete this prompt?</p>

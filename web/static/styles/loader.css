@@ -8,16 +8,7 @@
   align-items: center;
   justify-content: center;
 }
-.loading-blur-bg {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  background: rgba(0,0,0,0.5);
-  z-index: 0;
-}
+
 .loading-content {
   position: relative;
   z-index: 1;

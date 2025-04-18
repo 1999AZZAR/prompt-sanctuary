@@ -107,7 +107,7 @@
 
 /* Blur everything except popup when popup is open */
 .blurred {
-    filter: blur(8px) !important;
+    filter: blur(12px) !important;
     pointer-events: none;
     user-select: none;
 }
@@ -132,8 +132,8 @@ body {
 
 .glass {
     background-color: rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     border-radius: 16px;
 }
 
@@ -197,3 +197,18 @@ body {
 .bg-gray-800 { background-color: rgba(255,255,255,0.2) !important; }
 .bg-black.bg-opacity-50 { background-color: rgba(255,255,255,0.05) !important; }
 .text-gray-300 { color: var(--md-sys-color-on-surface) !important; }
+
+.max-w-md {
+    width: fit-content;
+    max-width: 80vw;
+}
+
+/* Hide scrollbars globally */
+html, body {
+    overflow: auto;
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+}
+*::-webkit-scrollbar {
+    display: none !important; /* Chrome, Safari, Opera */
+}
