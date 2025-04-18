@@ -11,6 +11,7 @@ function submitForm(formId, url) {
     // Display loading animation
     var loading = document.getElementById("loading");
     loading.classList.remove('hidden');
+    blurBackground(true);
 
     fetch(url, {
         method: 'POST',
@@ -25,19 +26,36 @@ function submitForm(formId, url) {
         var resultSection = document.getElementById('resultSection');
         var responseParagraph = document.getElementById('response');
         if (resultSection && responseParagraph) {
-            resultSection.style.display = 'block'; // Display the result section
-            responseParagraph.innerHTML = parseResponse(result); // Parse and update the response content
+            if (result && result.trim() !== '') {
+                resultSection.classList.remove('hidden'); // Show result section
+                responseParagraph.innerHTML = parseResponse(result); // Parse and update the response content
+            } else {
+                resultSection.classList.add('hidden'); // Hide if no prompt
+                responseParagraph.innerHTML = '';
+            }
         } else {
             console.error('Result section or response paragraph not found in the DOM');
         }
 
         // Hide loading animation
         loading.classList.add('hidden');
+    blurBackground(false);
+        // Hide preview if no image
+        var previewContainer = document.getElementById('preview-container');
+        var previewImage = document.getElementById('preview-image');
+        if (previewContainer && previewImage) {
+            if (!previewImage.src || previewImage.src.endsWith('favicon.ico')) {
+                previewContainer.classList.add('hidden');
+            }
+        }
+        // Result section is handled above
+
     })
     .catch(error => {
         console.error('Error submitting form:', error);
         // Hide loading animation in case of error
         loading.classList.add('hidden');
+    blurBackground(false);
         showPopup("Error", "An error occurred while submitting the form.");
     });
 }
@@ -75,13 +93,13 @@ function previewImage() {
 
                 reader.onload = function (e) {
                     preview.src = e.target.result;
-                    container.style.display = 'block'; // Show image preview
+                    container.classList.remove('hidden'); // Show image preview
                     document.body.setAttribute('data-image-selected', 'true');
                 };
 
                 reader.readAsDataURL(file);
             } else {
-                container.style.display = 'none'; // Hide preview when no image
+                container.classList.add('hidden'); // Hide preview when no image
                 // Set the default image source using Flask's url_for function
                 preview.src = "{{ url_for('static', filename='icon/favicon.ico') }}";
                 document.body.setAttribute('data-image-selected', 'false');
@@ -94,6 +112,7 @@ function previewImage() {
 
 // Function to show the custom popup
 function showPopup(title, message) {
+    blurBackground(true);
     // Create the popup container
     const popup = document.createElement('div');
     popup.id = 'custom-popup';
@@ -143,13 +162,43 @@ function closePopup() {
     const popup = document.getElementById('custom-popup');
     if (popup) {
         popup.remove(); // Remove the popup from the DOM
+        blurBackground(false);
+        blurBackground(false);
     } else {
         console.error('Popup element not found in the DOM');
     }
 }
 
+// Blur/unblur main content when popup is open/closed
+function blurBackground(blur) {
+    // Blur main, header, footer, sidebar
+    var main = document.querySelector('main');
+    var footer = document.querySelector('footer');
+    var sidebar = document.getElementById('sidePanel');
+    if (main) blur ? main.classList.add('blurred') : main.classList.remove('blurred');
+    if (footer) blur ? footer.classList.add('blurred') : footer.classList.remove('blurred');
+    if (sidebar) blur ? sidebar.classList.add('blurred') : sidebar.classList.remove('blurred');
+}
+
+// Blur/unblur main content when popup is open/closed
+function blurBackground(blur) {
+    // Blur main, footer, sidebar
+    var main = document.querySelector('main');
+    var footer = document.querySelector('footer');
+    var sidebar = document.getElementById('sidePanel');
+    if (main) blur ? main.classList.add('blurred') : main.classList.remove('blurred');
+    if (footer) blur ? footer.classList.add('blurred') : footer.classList.remove('blurred');
+    if (sidebar) blur ? sidebar.classList.add('blurred') : sidebar.classList.remove('blurred');
+}
+
 // Initialize the image preview function when the DOM content is loaded
 document.addEventListener("DOMContentLoaded", function () {
+    // Always hide preview and result on load
+    var previewContainer = document.getElementById('preview-container');
+    if (previewContainer) previewContainer.classList.add('hidden');
+    var resultSection = document.getElementById('resultSection');
+    if (resultSection) resultSection.classList.add('hidden');
+
     previewImage();
 
     // Handle form submission for text prompt

@@ -96,9 +96,22 @@
     display: none;
 }
 
+/* Force hidden utility for all elements */
+.hidden {
+    display: none !important;
+}
+
 #custom-popup.flex {
     display: flex;
 }
+
+/* Blur everything except popup when popup is open */
+.blurred {
+    filter: blur(8px) !important;
+    pointer-events: none;
+    user-select: none;
+}
+
 
 :root {
     --md-sys-color-primary: #6750A4;

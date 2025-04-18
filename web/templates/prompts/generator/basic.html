@@ -85,19 +85,22 @@
         </div>
     </div>
 
-    <!-- Preview Section -->
-    <div id="preview-container" class="image-preview mdc-card glass prompt-card p-6 mt-12" hidden>
+    <!-- Preview Section (hidden by default, shown only when image is uploaded) -->
+    <div id="preview-container" class="image-preview mdc-card glass prompt-card p-6 mt-12 hidden">
         <img id="preview-image" alt="Image Preview" class="w-64 h-auto mx-auto rounded-lg object-contain">
     </div>
 
     <!-- Loading Section -->
     <div class="loading hidden fixed inset-0 bg-black bg-opacity-50 flex flex-col items-center justify-center z-50" id="loading">
-        <div class="spinner"></div>
-        <h1 class="text-center mt-4">Generating...</h1>
+        <div class="loading-blur-bg"></div>
+        <div class="loading-content">
+          <div class="loader-modern"><div class="ring"></div><div class="ring ring2"></div><div class="pulse"></div></div>
+          <h1 class="text-center mt-4">Generating...</h1>
+        </div>
     </div>
 
-    <!-- Result Section -->
-    <div class="result mdc-card glass prompt-card p-6 mt-8" id="resultSection" hidden>
+    <!-- Result Section (hidden by default, shown only when a prompt is generated) -->
+    <div id="resultSection" class="result mdc-card glass prompt-card p-6 mt-8 hidden">
         <h2 class="text-2xl font-bold mb-6">Generated Prompt:</h2>
         <div id="response" class="text-lg text-[var(--md-sys-color-on-surface)] space-y-4"></div>
         <div class="flex space-x-4 mt-6">

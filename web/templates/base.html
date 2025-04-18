@@ -26,6 +26,7 @@
 
     <!-- stylesheet -->
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/loader.css') }}">
     <!-- MDC Web CSS -->
     <link rel="stylesheet" href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -75,17 +76,16 @@
                 </li>
             </ul>
         </div>
+    <!-- Sidebar Footer -->
+        <footer class="text-center py-6 mt-12">
+            <p>by <a href="https://1999azzar.github.io/1999AZZAR/" target="_blank" class="text-blue-400 hover:text-blue-300">Azzar</a></p>
+        </footer>
     </div>
 
     <!-- Main Content -->
     <main class="flex-grow p-8 glass">
         {% block content %}{% endblock %}
     </main>
-
-    <!-- Footer -->
-    <footer class="text-center py-6 mt-12">
-        <p>Prompt Sanctuary by <a href="https://1999azzar.github.io/1999AZZAR/" target="_blank" class="text-blue-400 hover:text-blue-300">Azzar Budiyanto</a></p>
-    </footer>
 
     <!-- Feedback Popup -->
     <div id="feedback-popup" class="popup hidden fixed inset-0 glass flex items-center justify-center z-40">

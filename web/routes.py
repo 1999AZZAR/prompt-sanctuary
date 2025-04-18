@@ -196,6 +196,10 @@ def create_main_blueprint(
         try:
             with get_db_connection(main_blueprint.community_db) as conn:
                 cursor = conn.cursor()
+                # Prevent duplicate share (same user, same prompt)
+                cursor.execute("SELECT 1 FROM shared WHERE owner=? AND random_val=?", (owner, random_val))
+                if cursor.fetchone():
+                    return jsonify({"success": False, "error": "Prompt already shared."}), 409
                 cursor.execute(
                     "INSERT INTO shared (owner, random_val, title, prompt) VALUES (?, ?, ?, ?)",
                     (owner, random_val, title, prompt_text),

@@ -262,6 +262,8 @@ function sharePrompt(promptId, title, promptContent) {
     .then(data => {
         if (data.success) {
             showPopup("Success", "Prompt shared successfully!");
+        } else if (data.error && data.error.includes("already shared")) {
+            showPopup("Error", "This prompt has already been shared.");
         } else {
             showPopup("Error", "Failed to share prompt: " + (data.error || "Unknown error"));
         }
