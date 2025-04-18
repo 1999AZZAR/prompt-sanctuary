@@ -6,46 +6,55 @@
     <!-- Hero Card -->
     <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12">
       <div class="hero text-center mb-12 cursor-pointer" onclick="toggleSidePanel()">
-        <h1 class="text-5xl font-bold mb-4">Welcome to Prompt Sanctuary</h1>
+        <h1 class="text-5xl font-bold mb-4"><i class="fas fa-home mr-2"></i>Prompt Sanctuary</h1>
         <p class="text-lg text-gray-300">Your AI-powered prompt creation studio.</p>
       </div>
     </div>
 
     <!-- Feature Cards -->
     <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-4">
-      <div class="mdc-card glass prompt-card">
+      <div class="mdc-card glass prompt-card hover:shadow-xl hover:scale-105 transform transition duration-200 p-6">
+        <div class="text-center mb-4">
+          <i class="fas fa-keyboard fa-3x text-purple-500"></i>
+        </div>
         <div class="mdc-card__primary-action" tabindex="0">
           <h2 class="mdc-typography--headline6 mb-4">Basic Prompt</h2>
           <p class="mdc-typography--body2 mb-6">Generate tailored prompts to spark your creativity with ease.</p>
         </div>
         <div class="mdc-card__actions">
-          <button class="mdc-button mdc-button--raised" onclick="window.location.href='{{ url_for('main.generate') }}'">
+          <button class="mdc-button mdc-button--raised hover:scale-105 transform transition duration-200" onclick="window.location.href='{{ url_for('main.generate') }}'">
             <span class="mdc-button__label">Get Started</span>
           </button>
         </div>
       </div>
     </div>
     <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-4">
-      <div class="mdc-card glass prompt-card">
+      <div class="mdc-card glass prompt-card hover:shadow-xl hover:scale-105 transform transition duration-200 p-6">
+        <div class="text-center mb-4">
+          <i class="fas fa-sliders-h fa-3x text-green-500"></i>
+        </div>
         <div class="mdc-card__primary-action" tabindex="0">
           <h2 class="mdc-typography--headline6 mb-4">Advanced Prompt</h2>
           <p class="mdc-typography--body2 mb-6">Customize multiple parameters and regenerate prompts on demand.</p>
         </div>
         <div class="mdc-card__actions">
-          <button class="mdc-button mdc-button--raised" onclick="window.location.href='{{ url_for('main.advance') }}'">
+          <button class="mdc-button mdc-button--raised hover:scale-105 transform transition duration-200" onclick="window.location.href='{{ url_for('main.advance') }}'">
             <span class="mdc-button__label">Get Started</span>
           </button>
         </div>
       </div>
     </div>
     <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-4">
-      <div class="mdc-card glass prompt-card">
+      <div class="mdc-card glass prompt-card hover:shadow-xl hover:scale-105 transform transition duration-200 p-6">
+        <div class="text-center mb-4">
+          <i class="fas fa-users fa-3x text-yellow-500"></i>
+        </div>
         <div class="mdc-card__primary-action" tabindex="0">
           <h2 class="mdc-typography--headline6 mb-4">Community Prompts</h2>
           <p class="mdc-typography--body2 mb-6">Browse and share prompts created by our vibrant community.</p>
         </div>
         <div class="mdc-card__actions">
-          <button class="mdc-button mdc-button--raised" onclick="window.location.href='{{ url_for('main.library') }}'">
+          <button class="mdc-button mdc-button--raised hover:scale-105 transform transition duration-200" onclick="window.location.href='{{ url_for('main.library') }}'">
             <span class="mdc-button__label">Explore</span>
           </button>
         </div>

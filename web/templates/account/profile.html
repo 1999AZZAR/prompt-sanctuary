@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="hero text-center mb-12 cursor-pointer" onclick="toggleSidePanel()">
-  <h1 class="text-5xl font-bold text-white">Profile</h1>
+  <h1 class="text-5xl font-bold text-white"><i class="fas fa-user mr-2"></i>Profile</h1>
   <p class="text-lg text-gray-300">Manage your account and prompts.</p>
 </div>
 <div class="mdc-layout-grid">
@@ -11,7 +11,10 @@
     <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12 mdc-layout-grid__cell--span-4-desktop mb-6">
       <div class="mdc-card glass prompt-card">
         <div class="mdc-card__primary-action p-6" tabindex="0">
-          <h2 class="text-2xl font-semibold text-white mb-4">Settings</h2>
+          <h2 class="text-2xl font-semibold text-white mb-4 flex items-center space-x-2">
+            <i class="fas fa-cog fa-lg text-blue-400"></i>
+            <span>Settings</span>
+          </h2>
           {% if error %}<div class="text-red-400 mb-4">{{ error }}</div>{% endif %}
           {% if success %}<div class="text-green-400 mb-4">{{ success }}</div>{% endif %}
           <form action="{{ url_for('main.profile') }}" method="post" class="space-y-4">
@@ -30,7 +33,10 @@
     <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12 mdc-layout-grid__cell--span-4-desktop mb-6">
       <div class="mdc-card glass prompt-card">
         <div class="mdc-card__primary-action p-6" tabindex="0">
-          <h2 class="text-2xl font-semibold text-white mb-4">Saved Prompts</h2>
+          <h2 class="text-2xl font-semibold text-white mb-4 flex items-center space-x-2">
+            <i class="fas fa-bookmark fa-lg text-green-400"></i>
+            <span>Saved Prompts</span>
+          </h2>
           {% if saved_prompts %}
           <ul class="divide-y divide-gray-700 space-y-2">
             {% for pr in saved_prompts %}
@@ -51,7 +57,10 @@
     <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12 mdc-layout-grid__cell--span-4-desktop mb-6">
       <div class="mdc-card glass prompt-card">
         <div class="mdc-card__primary-action p-6" tabindex="0">
-          <h2 class="text-2xl font-semibold text-white mb-4">Shared Prompts</h2>
+          <h2 class="text-2xl font-semibold text-white mb-4 flex items-center space-x-2">
+            <i class="fas fa-share-alt fa-lg text-yellow-400"></i>
+            <span>Shared Prompts</span>
+          </h2>
           {% if shared_prompts %}
           <ul class="divide-y divide-gray-700 space-y-2">
             {% for pr in shared_prompts %}

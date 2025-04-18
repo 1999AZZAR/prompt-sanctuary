@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="hero text-center mb-12 cursor-pointer" onclick="toggleSidePanel()">
+  <h1 class="text-5xl font-bold text-white"><i class="fas fa-comments mr-2"></i>Feedback</h1>
+  <p class="text-lg text-gray-300">Browse all feedback messages.</p>
+</div>
+<div class="mdc-layout-grid">
+  <div class="mdc-layout-grid__inner justify-center">
+    <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-8-desktop mdc-layout-grid__cell--span-12">
+      <div class="mdc-card glass prompt-card p-6">
+        <h2 class="text-2xl font-semibold text-white mb-4">All Feedback</h2>
+        {% if feedbacks %}
+        <ul class="divide-y divide-gray-700">
+          {% for fb in feedbacks %}
+          <li class="py-3 flex justify-between items-center">
+            <div class="flex-1">
+              <p class="text-white font-medium">{{ fb.id }}. {{ fb.username }}</p>
+              <p class="text-gray-400 text-sm truncate">{{ fb.feedback }}</p>
+            </div>
+            <button data-id="{{ fb.id }}" class="mdc-button mdc-button--text text-blue-400 hover:text-blue-300 view-button">View</button>
+          </li>
+          {% endfor %}
+        </ul>
+        {% else %}
+        <p class="text-gray-400">No feedback available.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.view-button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.dataset.id;
+        fetch(`/feedback/${id}/json`)
+          .then(res => { if (!res.ok) throw new Error(); return res.json(); })
+          .then(data => {
+            if (data.success === false) {
+              showPopup('Error', data.error || 'Failed to load feedback.');
+            } else {
+              showPopup(`Feedback by ${data.username}`, data.feedback);
+            }
+          })
+          .catch(() => showPopup('Error', 'Failed to load feedback.'));
+      });
+    });
+  });
+</script>
+{% endblock %}

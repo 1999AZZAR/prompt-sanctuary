@@ -476,21 +476,12 @@ def create_main_blueprint(
     # Additional CRUD endpoints for feedback
     @main_blueprint.route("/feedback", methods=["GET"])
     @required_login
-    def get_feedback():
+    def feedback_list():
         with get_db_connection(main_blueprint.feedback_db) as conn:
             cursor = conn.cursor()
-            cursor.execute("SELECT * FROM feedback")
+            cursor.execute("SELECT id, username, feedback FROM feedback ORDER BY id DESC")
             feedbacks = cursor.fetchall()
-        return jsonify(feedbacks)
-
-    @main_blueprint.route("/feedback/<int:feedback_id>", methods=["GET"])
-    @required_login
-    def get_single_feedback(feedback_id):
-        with get_db_connection(main_blueprint.feedback_db) as conn:
-            cursor = conn.cursor()
-            cursor.execute("SELECT * FROM feedback WHERE id = ?", (feedback_id,))
-            feedback = cursor.fetchone()
-        return jsonify(feedback)
+        return render_template("feedback_list.html", feedbacks=feedbacks)
 
     @main_blueprint.route("/feedback/<int:feedback_id>", methods=["PUT"])
     @required_login
@@ -516,5 +507,16 @@ def create_main_blueprint(
         return jsonify(
             {"status": "success", "message": "Feedback deleted successfully!"}
         )
+
+    @main_blueprint.route("/feedback/<int:feedback_id>/json", methods=["GET"])
+    @required_login
+    def get_feedback_json(feedback_id):
+        with get_db_connection(main_blueprint.feedback_db) as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT username, feedback FROM feedback WHERE id = ?", (feedback_id,))
+            row = cursor.fetchone()
+        if not row:
+            return jsonify({"success": False, "error": "Feedback not found"}), 404
+        return jsonify({"id": feedback_id, "username": row[0], "feedback": row[1]})
 
     return main_blueprint
