@@ -14,7 +14,6 @@ from models import (
     get_db_connection,
     create_user_table_if_not_exists,
     save_prompt_to_db,
-    delete_old_images,
 )
 from response2 import GenerativeAI
 from response import GenerativeModel
@@ -33,7 +32,7 @@ model = GenerativeModel()
 
 
 def create_main_blueprint(
-    user_db, prompt_db, image_log, query_db, community_db, feedback_db
+    user_db, prompt_db, query_db, community_db, feedback_db
 ):
     """Create and return the main Blueprint with database paths."""
     main_blueprint = Blueprint("main", __name__)
@@ -41,7 +40,6 @@ def create_main_blueprint(
     # Store database paths in the Blueprint's context
     main_blueprint.user_db = user_db
     main_blueprint.prompt_db = prompt_db
-    main_blueprint.image_log = image_log
     main_blueprint.query_db = query_db
     main_blueprint.community_db = community_db
     main_blueprint.feedback_db = feedback_db

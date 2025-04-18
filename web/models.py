@@ -24,20 +24,13 @@ def execute_sql(conn, sql, params=None):
     conn.commit()
 
 
-def create_tables(user_db, prompt_db, image_log, community_db, feedback_db):
+def create_tables(user_db, prompt_db, community_db, feedback_db):
     """Create necessary tables in the databases."""
     tables = {
         user_db: """
             CREATE TABLE IF NOT EXISTS users (
                 username TEXT PRIMARY KEY,
                 password TEXT NOT NULL
-            );
-        """,
-        image_log: """
-            CREATE TABLE IF NOT EXISTS images (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                filename TEXT NOT NULL,
-                creation_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             );
         """,
         community_db: """
@@ -99,23 +92,3 @@ def save_prompt_to_db(username, title, prompt, prompt_db):
         sql = f'INSERT INTO "{username}" (random_val, title, prompt) VALUES (?, ?, ?)'
         execute_sql(conn, sql, (random_value, title, prompt))
     return random_value
-
-
-def delete_old_images(image_log):
-    """Delete old images from the database and filesystem."""
-    with get_db_connection(image_log) as conn:
-        cursor = conn.cursor()
-        image_dir = "./static/image"
-        if os.path.exists(image_dir):
-            now = time.time()
-            for row in cursor.execute("SELECT filename, creation_time FROM images"):
-                filename, creation_time = row
-                creation_time = time.mktime(
-                    time.strptime(creation_time, "%Y-%m-%d %H:%M:%S")
-                )
-                file_path = os.path.join(image_dir, filename)
-                if os.path.isfile(file_path) and now - creation_time > 1800:
-                    os.remove(file_path)
-                    execute_sql(
-                        conn, "DELETE FROM images WHERE filename=?", (filename,)
-                    )
