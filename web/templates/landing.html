@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="flex flex-col items-center justify-center min-h-screen px-6">
+  <div class="hero text-center mb-12">
+    <h1 class="text-6xl font-extrabold text-white mb-4">Prompt Sanctuary</h1>
+    <p class="text-xl text-gray-300 max-w-2xl mb-8">Your one-stop platform to browse, generate, and refine AI prompts for creative storytelling, coding, and more.</p>
+    <div class="space-x-4">
+      <a href="{{ url_for('main.login') }}" class="mdc-button mdc-button--raised bg-blue-600 text-white px-6 py-3 hover:bg-blue-700 transition">Login</a>
+      <a href="{{ url_for('main.signup') }}" class="mdc-button mdc-button--outlined text-blue-600 border border-blue-600 px-6 py-3 hover:bg-blue-600 hover:text-white transition">Sign Up</a>
+    </div>
+  </div>
+  <div class="mdc-layout-grid">
+    <div class="mdc-layout-grid__inner">
+      <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-4">
+        <div class="mdc-card glass p-6 text-center transform transition duration-200 hover:scale-105">
+          <i class="fas fa-users fa-3x text-indigo-500 mb-4"></i>
+          <h2 class="text-2xl font-semibold mb-2">Community Prompts</h2>
+          <p class="text-gray-300">Explore prompts shared by our vibrant community.</p>
+        </div>
+      </div>
+      <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-4">
+        <div class="mdc-card glass p-6 text-center transform transition duration-200 hover:scale-105">
+          <i class="fas fa-pencil-alt fa-3x text-green-500 mb-4"></i>
+          <h2 class="text-2xl font-semibold mb-2">Custom Prompt</h2>
+          <p class="text-gray-300">Generate tailored prompts with our basic tool.</p>
+        </div>
+      </div>
+      <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-4">
+        <div class="mdc-card glass p-6 text-center transform transition duration-200 hover:scale-105">
+          <i class="fas fa-tools fa-3x text-yellow-500 mb-4"></i>
+          <h2 class="text-2xl font-semibold mb-2">Advanced Prompt</h2>
+          <p class="text-gray-300">Fine-tune parameters for advanced prompt creation.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

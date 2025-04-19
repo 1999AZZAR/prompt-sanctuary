@@ -64,10 +64,12 @@ def create_main_blueprint(
 
     @main_blueprint.route("/")
     def index():
-        return render_template("login.html", error_message=None)
+        return render_template("landing.html")
 
-    @main_blueprint.route("/signup", methods=["POST"])
+    @main_blueprint.route("/signup", methods=["GET", "POST"])
     def signup():
+        if request.method == "GET":
+            return render_template("login.html", show_signup=True)
         honeypot_value = request.form.get("honeypot", "")
         if honeypot_value:
             return jsonify(
@@ -98,8 +100,10 @@ def create_main_blueprint(
 
         return jsonify({"success": True, "redirect": url_for("main.home")})
 
-    @main_blueprint.route("/login", methods=["POST"])
+    @main_blueprint.route("/login", methods=["GET", "POST"])
     def login():
+        if request.method == "GET":
+            return render_template("login.html", show_signup=False)
         honeypot_value = request.form.get("honeypot", "")
         if honeypot_value:
             return jsonify(

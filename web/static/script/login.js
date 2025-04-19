@@ -86,6 +86,14 @@ function validateSignupForm(username, password, confirmPassword) {
     return true;
 }
 
+// Function to toggle between login and signup forms
+function toggleForms() {
+    const loginForm = document.getElementById("loginForm");
+    const signupForm = document.getElementById("signupForm");
+    loginForm.classList.toggle("hidden");
+    signupForm.classList.toggle("hidden");
+}
+
 // Function to show loading animation
 function showLoadingAnimation(form) {
     const loadingContainer = document.createElement("div");
@@ -106,7 +114,7 @@ function showLoadingAnimation(form) {
     loadingContainer.appendChild(loadingText);
 
     form.parentNode.insertBefore(loadingContainer, form);
-    form.style.display = 'none';
+    form.classList.add("hidden");
 }
 
 // Event listeners for login and signup forms
@@ -117,16 +125,14 @@ document.addEventListener("DOMContentLoaded", function () {
     // Toggle signup form
     document.getElementById("signupLink").addEventListener("click", function (event) {
         event.preventDefault();
-        loginForm.style.display = "none";
-        signupForm.style.display = "block";
+        toggleForms();
         resetLoginForm();
     });
 
     // Toggle login form
     document.getElementById("loginLink").addEventListener("click", function (event) {
         event.preventDefault();
-        loginForm.style.display = "block";
-        signupForm.style.display = "none";
+        toggleForms();
         resetSignupForm();
     });
 
