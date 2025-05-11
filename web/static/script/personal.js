@@ -81,15 +81,18 @@ function attachEditButtonListeners() {
 
 // Function to open the edit popup - MODIFIED TO USE showAppPopup
 function openEditModal(randomVal, title, prompt, tags) {
+    // Wrapped existing content in a single parent div
     const contentHtml = `
-        <input type="hidden" id="editRandomValModal" value="${randomVal}">
-        <div class="mb-4">
-            <label for="editTitleModal" class="block mb-2 text-sm font-medium text-gray-200">Title:</label>
-            <input type="text" id="editTitleModal" value="${escapeHTML(title)}" class="w-full p-2.5 bg-gray-700 border border-gray-600 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 placeholder-gray-400">
-        </div>
-        <div class="mb-6">
-            <label for="editPromptModal" class="block mb-2 text-sm font-medium text-gray-200">Prompt:</label>
-            <textarea id="editPromptModal" rows="8" class="w-full p-2.5 bg-gray-700 border border-gray-600 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 placeholder-gray-400">${escapeHTML(prompt)}</textarea>
+        <div> 
+            <input type="hidden" id="editRandomValModal" value="${randomVal}">
+            <div class="mb-4">
+                <label for="editTitleModal" class="block mb-2 text-sm font-medium text-gray-200">Title:</label>
+                <input type="text" id="editTitleModal" value="${escapeHTML(title)}" class="w-full p-2 bg-gray-700 border border-gray-600 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 placeholder-gray-400">
+            </div>
+            <div class="mb-6">
+                <label for="editPromptModal" class="block mb-2 text-sm font-medium text-gray-200">Prompt:</label>
+                <textarea id="editPromptModal" rows="12" class="w-full p-2 bg-gray-700 border border-gray-600 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 placeholder-gray-400">${escapeHTML(prompt)}</textarea>
+            </div>
         </div>
     `;
 
@@ -120,7 +123,7 @@ function openEditModal(randomVal, title, prompt, tags) {
     showAppPopup("Edit Prompt", contentHtml, { 
         type: 'custom', 
         buttons: editButtons,
-        size: 'md'
+        size: '85vw'
     });
 }
 

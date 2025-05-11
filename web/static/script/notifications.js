@@ -73,7 +73,7 @@ function showAppPopup(title, contentOrMessage, options = {}) {
         onConfirm = null,
         onCancel = null,
         copyTargetText = null,
-        size = 'md' // NEW: Add size option, default to 'md'
+        size = 'md' // Default size
     } = options;
 
     const popup = document.createElement('div');
@@ -81,46 +81,52 @@ function showAppPopup(title, contentOrMessage, options = {}) {
     popup.className = 'fixed inset-0 flex items-center justify-center glass z-50 p-4';
 
     const popupContent = document.createElement('div');
-    // Dynamically set max-width based on size option
-    let maxWidthClass = 'max-w-md'; // Default
-    if (size === 'sm') maxWidthClass = 'max-w-sm'; // Smallest
-    if (size === 'lg') maxWidthClass = 'max-w-lg';   // Larger
-    if (size === 'xl') maxWidthClass = 'max-w-xl'; // Even larger
-    if (size === '2xl') maxWidthClass = 'max-w-2xl'; // Largest standard
+    
+    // Base classes for popupContent
+    let popupClasses = 'glass p-6 md:p-8 rounded-lg text-gray-900 relative shadow-xl';
 
-    popupContent.className = `glass p-6 md:p-8 rounded-lg w-full ${maxWidthClass} text-white relative shadow-xl`;
+    // Handle size option: Tailwind max-width class or direct CSS width
+    const predefinedSizes = ['sm', 'md', 'lg', 'xl', '2xl'];
+    if (typeof size === 'string' && predefinedSizes.includes(size)) {
+        popupClasses += ` w-full max-w-${size}`;
+    } else if (typeof size === 'string' && (size.includes('vw') || size.includes('%') || size.includes('px') || size.includes('rem') || size.includes('em'))) {
+        // Apply as direct style, ensure it doesn't exceed viewport with padding
+        popupContent.style.width = size;
+        // max-w-full might be useful here if not for the p-4 on the parent
+        popupClasses += ' max-w-[calc(100vw-2rem)]'; // Ensure it fits with backdrop padding
+    } else {
+        // Default if size is not recognized or not a valid custom unit string
+        popupClasses += ' w-full max-w-md'; 
+    }
+
+    popupContent.className = popupClasses;
     popupContent.style.maxHeight = '90vh';
     popupContent.style.overflowY = 'auto';
     popupContent.style.overflowX = 'hidden';
-    // Add custom scrollbar styling if desired (can be a global CSS rule too)
     popupContent.classList.add('custom-scrollbar');
 
-
     const closeIcon = document.createElement('button');
-    closeIcon.className = 'absolute top-3 right-3 md:top-4 md:right-4 text-white text-2xl leading-none hover:text-gray-300 z-10';
+    closeIcon.className = 'absolute top-3 right-3 md:top-4 md:right-4 text-gray-600 hover:text-gray-800 text-2xl leading-none z-10';
     closeIcon.innerHTML = '&times;';
     closeIcon.onclick = () => closeAppPopup();
     popupContent.appendChild(closeIcon);
 
     const popupTitle = document.createElement('h2');
-    popupTitle.className = 'text-xl md:text-2xl font-bold mb-4 pr-8'; // Added padding-right for close icon
+    popupTitle.className = 'text-xl md:text-2xl font-bold mb-4 pr-8';
     popupTitle.textContent = title;
     popupContent.appendChild(popupTitle);
 
     const messageArea = document.createElement('div');
-    messageArea.className = 'text-base md:text-lg text-gray-200 mb-6 break-words'; // Default
+    messageArea.className = 'text-base md:text-lg text-gray-700 mb-6 break-words';
 
     if (type === 'details') {
-        messageArea.classList.remove('text-gray-200');
-        messageArea.classList.add('text-white'); // Brighter text for details view on glass
-        messageArea.style.whiteSpace = 'pre-wrap'; // Ensure pre-wrap for prompt text in details
+        messageArea.style.whiteSpace = 'pre-wrap';
     }
 
-     if (type === 'custom' || type === 'message' && contentOrMessage.includes('<')) { // if custom or message might be html
+     if (type === 'custom' || type === 'message' && contentOrMessage.includes('<')) {
         messageArea.innerHTML = contentOrMessage;
     } else {
         messageArea.textContent = contentOrMessage;
-        // pre-wrap for 'details' is now handled above, ensure others that need it get it
         if (type !== 'details' && type !== 'custom') { 
             messageArea.style.whiteSpace = 'pre-wrap';
         }
@@ -128,7 +134,7 @@ function showAppPopup(title, contentOrMessage, options = {}) {
     popupContent.appendChild(messageArea);
 
     const buttonContainer = document.createElement('div');
-    buttonContainer.className = 'flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-3'; // Responsive buttons
+    buttonContainer.className = 'flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-3';
 
     // Default button styling
     const baseButtonClass = 'px-5 py-2.5 rounded-lg transition duration-200 text-sm font-medium w-full sm:w-auto';
@@ -158,7 +164,7 @@ function showAppPopup(title, contentOrMessage, options = {}) {
             if (onCancel) onCancel();
             closeAppPopup();
         };
-        buttonContainer.appendChild(noButton); // No typically first on right
+        buttonContainer.appendChild(noButton);
         buttonContainer.appendChild(yesButton);
     } else if (type === 'details') {
         const copyBtn = document.createElement('button');
@@ -182,9 +188,8 @@ function showAppPopup(title, contentOrMessage, options = {}) {
     } else if (type === 'custom' && Array.isArray(buttons)) {
         buttons.forEach(btnConfig => {
             const button = document.createElement('button');
-            button.className = btnConfig.class || primaryButtonClass; // Default to primary if no class
-            // Ensure base classes are there if a custom class is provided, or make btnConfig.class additive
-            if (!btnConfig.class?.includes('px-5')) { // basic check
+            button.className = btnConfig.class || primaryButtonClass;
+            if (!btnConfig.class?.includes('px-5')) {
                  button.className = `${baseButtonClass} ${btnConfig.class || primaryButtonClass}`;
             } else {
                  button.className = btnConfig.class;
@@ -192,7 +197,6 @@ function showAppPopup(title, contentOrMessage, options = {}) {
 
             button.textContent = btnConfig.text;
             button.onclick = () => {
-                // Allow action to prevent close by returning false
                 if (btnConfig.action() !== false) {
                     closeAppPopup();
                 }
@@ -207,7 +211,7 @@ function showAppPopup(title, contentOrMessage, options = {}) {
 
     popup.appendChild(popupContent);
     document.body.appendChild(popup);
-    popupContent.focus(); // For accessibility, focus the popup content
+    popupContent.focus();
 }
 
 function closeAppPopup() {
