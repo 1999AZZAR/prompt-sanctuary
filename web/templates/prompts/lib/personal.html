@@ -14,7 +14,10 @@
         <!-- Search Section -->
         <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12">
           <h2 class="text-2xl font-bold mb-6">Search Saved Prompts</h2>
+          <div class="search-container mb-6">
           <input type="text" id="searchPersonalInput" placeholder="Search prompts..." class="w-full p-3 bg-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <button id="clearPersonalSearchBtn" class="clear-search-btn hidden" aria-label="Clear search">&times;</button>
+          </div>
         </div>
         {% if saved_prompts %}
         <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12">
@@ -25,17 +28,17 @@
                       <div class="mdc-card glass prompt-card p-6 flex flex-col justify-between max-h-64 overflow-y-auto">
                           <div class="mdc-card__primary-action" tabindex="0">
                               <div class="flex justify-between items-center mb-4">
-                                  <h4 class="mdc-typography--headline6 mb-0">{{ prompt[1] }}</h4>
+                                  <h4 class="mdc-typography--headline6 mb-0">{{ prompt.title }}</h4>
                               </div>
-                              <p class="mdc-typography--body2 mb-6 whitespace-pre-wrap break-words">{{ prompt[2] }}</p>
+                              <p class="mdc-typography--body2 mb-2 whitespace-pre-wrap break-words">{{ prompt.prompt }}</p>
                           </div>
                           <div class="mdc-card__actions">
                               <div class="mdc-card__action-buttons space-x-4">
-                                  <button class="text-blue-400 hover:text-blue-300 mdc-button mdc-button--text copy-button" data-clipboard-text="{{ prompt[2] }}">Copy</button>
-                                  <button class="text-green-400 hover:text-green-300 mdc-button mdc-button--text edit-button" data-random-val="{{ prompt[0] }}" data-title="{{ prompt[1] }}" data-prompt="{{ prompt[2] }}">Edit</button>
-                                  <button class="text-red-400 hover:text-red-300 mdc-button mdc-button--text delete-button" data-random-val="{{ prompt[0] }}">Delete</button>
-                                  <button class="text-purple-400 hover:text-purple-300 mdc-button mdc-button--text share-button" data-prompt-id="{{ prompt[0] }}" data-title="{{ prompt[1]|e }}" data-prompt="{{ prompt[2]|e }}">Share</button>
-                                  <button class="text-indigo-400 hover:text-indigo-300 mdc-button mdc-button--text see-button" data-title="{{ prompt[1] }}" data-content="{{ prompt[2] }}">See</button>
+                                  <button class="text-blue-400 hover:text-blue-300 mdc-button mdc-button--text copy-button" data-clipboard-text="{{ prompt.prompt }}">Copy</button>
+                                  <button class="text-green-400 hover:text-green-300 mdc-button mdc-button--text edit-button" data-random-val="{{ prompt.random_val }}" data-title="{{ prompt.title }}" data-prompt="{{ prompt.prompt }}">Edit</button>
+                                  <button class="text-red-400 hover:text-red-300 mdc-button mdc-button--text delete-button" data-random-val="{{ prompt.random_val }}">Delete</button>
+                                  <button class="text-purple-400 hover:text-purple-300 mdc-button mdc-button--text share-button" data-prompt-id="{{ prompt.random_val }}" data-title="{{ prompt.title|e }}" data-prompt="{{ prompt.prompt|e }}">Share</button>
+                                  <button class="text-indigo-400 hover:text-indigo-300 mdc-button mdc-button--text see-button" data-title="{{ prompt.title }}" data-content="{{ prompt.prompt }}">See</button>
                               </div>
                           </div>
                       </div>
@@ -58,6 +61,7 @@
     <script>
       // Escape HTML special chars for dynamic rendering
       function escapeHtml(str) {
+        if (typeof str !== 'string') return ''; // Added safety for non-string
         return str.replace(/&/g,'&amp;')
                   .replace(/</g,'&lt;')
                   .replace(/>/g,'&gt;')
@@ -66,28 +70,31 @@
       }
 
       const personalPrompts = [
-        {% for prompt in saved_prompts %}
-        { id: "{{ prompt[0] }}", title: {{ prompt[1] | tojson }}, content: {{ prompt[2] | tojson }} },
+        {% for prompt_item in saved_prompts %}
+        { id: "{{ prompt_item.random_val }}", title: {{ prompt_item.title | tojson }}, content: {{ prompt_item.prompt | tojson }} },
         {% endfor %}
       ];
       const fuseOptions = { keys: ['title','content'], threshold: 0.3 };
       const fuse = new Fuse(personalPrompts, fuseOptions);
 
-      function renderSavedPrompts(prompts) {
-        const container = document.getElementById('savedPromptsContainer');
-        container.innerHTML = prompts.map(p => `
+      const searchInput = document.getElementById('searchPersonalInput');
+      const clearSearchBtn = document.getElementById('clearPersonalSearchBtn');
+      const savedPromptsContainer = document.getElementById('savedPromptsContainer');
+
+      function renderSavedPrompts(promptsToRender) {
+        savedPromptsContainer.innerHTML = promptsToRender.map(p => `
           <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12 mdc-layout-grid__cell--span-6-tablet mdc-layout-grid__cell--span-4-desktop">
             <div class="mdc-card glass prompt-card p-6 flex flex-col justify-between max-h-64 overflow-y-auto">
               <div class="mdc-card__primary-action" tabindex="0">
                 <div class="flex justify-between items-center mb-4">
                   <h4 class="mdc-typography--headline6 mb-0">${escapeHtml(p.title)}</h4>
                 </div>
-                <p class="mdc-typography--body2 mb-6 whitespace-pre-wrap break-words">${escapeHtml(p.content)}</p>
+                <p class="mdc-typography--body2 mb-2 whitespace-pre-wrap break-words">${escapeHtml(p.content)}</p>
               </div>
               <div class="mdc-card__actions">
                 <div class="mdc-card__action-buttons space-x-4">
                   <button class="text-blue-400 hover:text-blue-300 mdc-button mdc-button--text copy-button" data-clipboard-text="${escapeHtml(p.content)}">Copy</button>
-                  <button class="text-green-400 hover:text-green-300 mdc-button mdc-button--text edit-button" data-random-val="${p.id}" data-title="${escapeHtml(p.title)}" data-prompt="${escapeHtml(p.content)}">Edit</button>
+                  <button class="text-green-400 hover:text-green-300 mdc-button mdc-button--text edit-button" data-random-val="${p.id}" data-title="${escapeHtml(p.title)}" data-prompt="${escapeHtml(p.content)}" data-tags="">Edit</button>
                   <button class="text-red-400 hover:text-red-300 mdc-button mdc-button--text delete-button" data-random-val="${p.id}">Delete</button>
                   <button class="text-purple-400 hover:text-purple-300 mdc-button mdc-button--text share-button" data-prompt-id="${p.id}" data-title="${escapeHtml(p.title)}" data-prompt="${escapeHtml(p.content)}">Share</button>
                   <button class="text-indigo-400 hover:text-indigo-300 mdc-button mdc-button--text see-button" data-title="${escapeHtml(p.title)}" data-content="${escapeHtml(p.content)}">See</button>
@@ -96,15 +103,42 @@
             </div>
           </div>
         `).join('');
-        reattachEventListeners();
+        if (typeof reattachEventListeners === 'function') {
+            reattachEventListeners();
+        }
       }
 
-      document.getElementById('searchPersonalInput').addEventListener('input', e => {
+      // Debounce function
+      function debounce(func, delay) {
+          let timeoutId;
+          return function(...args) {
+              clearTimeout(timeoutId);
+              timeoutId = setTimeout(() => {
+                  func.apply(this, args);
+              }, delay);
+          };
+      }
+
+      searchInput.addEventListener('input', debounce(e => {
         const q = e.target.value.trim();
-        renderSavedPrompts(q ? fuse.search(q).map(r => r.item) : personalPrompts);
+        clearSearchBtn.classList.toggle('hidden', q === "");
+        const results = q ? fuse.search(q).map(r => r.item) : personalPrompts;
+        renderSavedPrompts(results);
+      }, 300));
+
+      clearSearchBtn.addEventListener('click', () => {
+        searchInput.value = "";
+        renderSavedPrompts(personalPrompts);
+        clearSearchBtn.classList.add('hidden');
+        searchInput.focus();
       });
 
+      // Initial state for clear button
+      clearSearchBtn.classList.toggle('hidden', searchInput.value.trim() === "");
+
       // Initial render
-      renderSavedPrompts(personalPrompts);
+      if (savedPromptsContainer) {
+        renderSavedPrompts(personalPrompts);
+      }
     </script>
 {% endblock %}

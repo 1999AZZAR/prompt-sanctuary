@@ -1,71 +1,87 @@
 // Function to show the custom popup
-function showPopup(title, message, isConfirmation = false, onConfirm = null, onCancel = null) {
+function showPopup(title, contentHtml, buttons = [], addCloseX = true) {
+    if (typeof blurBackground === 'function') blurBackground(true);
+
+    // Remove existing popup if any
+    closePopup();
+
     const popup = document.createElement('div');
-    popup.id = 'custom-popup';
-    popup.className = 'fixed inset-0 flex items-center justify-center glass z-50';
+    popup.id = 'custom-popup-modal'; // New ID to avoid conflicts
+    popup.className = 'fixed inset-0 flex items-center justify-center z-[5000] p-4'; // High z-index
+    popup.style.backgroundColor = 'rgba(0, 0, 0, 0.6)'; // Dimmed background
 
     const popupContent = document.createElement('div');
-    popupContent.className = 'glass p-8 rounded-lg w-11/12 max-w-md';
+    popupContent.className = 'bg-gray-800 p-6 rounded-lg shadow-xl w-full max-w-md text-white relative glass-effect'; // Apply glass if desired
+    popupContent.style.maxHeight = '90vh';
+    popupContent.style.overflowY = 'auto';
 
-    const popupTitle = document.createElement('h2');
-    popupTitle.id = 'popup-title';
-    popupTitle.className = 'text-2xl font-bold mb-4';
-    popupTitle.textContent = title;
-
-    const popupMessage = document.createElement('p');
-    popupMessage.id = 'popup-message';
-    popupMessage.className = 'text-lg text-gray-300 mb-6';
-    popupMessage.textContent = message;
-
-    const buttonContainer = document.createElement('div');
-    buttonContainer.className = 'flex justify-end space-x-4';
-
-    if (isConfirmation) {
-        // Yes Button (for confirmation popups)
-        const yesButton = document.createElement('button');
-        yesButton.className = 'bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition duration-200';
-        yesButton.textContent = 'Yes';
-        yesButton.onclick = () => {
-            if (onConfirm) onConfirm();
-            closePopup('custom-popup');
-        };
-
-        // No Button (for confirmation popups)
-        const noButton = document.createElement('button');
-        noButton.className = 'bg-gray-500 text-white px-6 py-3 rounded-lg hover:bg-gray-600 transition duration-200';
-        noButton.textContent = 'No';
-        noButton.onclick = () => {
-            if (onCancel) onCancel();
-            closePopup('custom-popup');
-        };
-
-        buttonContainer.appendChild(yesButton);
-        buttonContainer.appendChild(noButton);
-    } else {
-        // OK Button (for non-confirmation popups)
-        const okButton = document.createElement('button');
-        okButton.className = 'bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition duration-200';
-        okButton.textContent = 'OK';
-        okButton.onclick = () => closePopup('custom-popup');
-
-        buttonContainer.appendChild(okButton);
+    if (addCloseX) {
+        const closeXButton = document.createElement('button');
+        closeXButton.innerHTML = '&times;';
+        closeXButton.className = 'absolute top-3 right-3 text-gray-400 hover:text-white text-2xl leading-none';
+        closeXButton.onclick = closePopup;
+        popupContent.appendChild(closeXButton);
     }
 
+    const popupTitle = document.createElement('h2');
+    popupTitle.className = 'text-xl font-semibold mb-4';
+    popupTitle.textContent = title;
     popupContent.appendChild(popupTitle);
-    popupContent.appendChild(popupMessage);
-    popupContent.appendChild(buttonContainer);
 
+    const messageDiv = document.createElement('div');
+    messageDiv.className = 'mb-6 popup-message-content'; // Class for styling content area
+    messageDiv.innerHTML = contentHtml; // Directly set HTML content
+    popupContent.appendChild(messageDiv);
+
+    const buttonContainer = document.createElement('div');
+    buttonContainer.className = 'flex justify-end space-x-3';
+
+    if (!buttons || buttons.length === 0) {
+        // Add a default close button if no buttons are specified
+        buttons = [{
+            text: 'Close',
+            class: 'bg-gray-500 hover:bg-gray-600',
+            action: closePopup
+        }];
+    }
+
+    buttons.forEach(btnConfig => {
+        const button = document.createElement('button');
+        button.textContent = btnConfig.text;
+        button.className = `px-4 py-2 rounded-md text-white transition duration-150 ${btnConfig.class || 'bg-blue-500 hover:bg-blue-600'}`;
+        button.onclick = function(event) {
+            if (btnConfig.action) {
+                btnConfig.action(event); // Pass event to action
+            }
+            // By default, popups might not close on action, depends on the action's responsibility
+            // if (btnConfig.closesPopup !== false) closePopup(); // Optional: close unless specified not to
+        };
+        buttonContainer.appendChild(button);
+    });
+
+    popupContent.appendChild(buttonContainer);
     popup.appendChild(popupContent);
     document.body.appendChild(popup);
+
+    // Focus on the first button or input if available
+    const firstFocusable = popupContent.querySelector('button, input, textarea, select');
+    if (firstFocusable) {
+        firstFocusable.focus();
+    }
+     // Trap focus within the modal
+    popup.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+            closePopup();
+        }
+    });
 }
 
 // Function to close the custom popup
-function closePopup(popupId = 'custom-popup') {
-    const popup = document.getElementById(popupId);
+function closePopup() {
+    const popup = document.getElementById('custom-popup-modal');
     if (popup) {
         popup.remove();
-    } else {
-        console.error('Popup element not found in the DOM');
+        if (typeof blurBackground === 'function') blurBackground(false);
     }
 }
 
@@ -111,25 +127,61 @@ document.getElementById('feedback-form').addEventListener('submit', function (ev
     })
         .then(response => {
             if (!response.ok) {
-                throw new Error('Network response was not ok');
+            // Try to parse error JSON, else throw generic error
+            return response.json().then(errData => {
+                throw { serverError: true, data: errData }; 
+            }).catch(() => { // Catch if response.json() fails (not valid JSON)
+                throw { networkError: true, status: response.status }; 
+            });
             }
             return response.json();
         })
         .then(data => {
             if (data.status === 'success') {
-                showPopup("Success", data.message);
+            showToast(data.message, 'success');
                 document.getElementById('feedback-form').reset(); // Reset the form
                 const popup = document.getElementById('feedback-popup');
+            if (popup) {
                 popup.classList.remove('show');
                 setTimeout(() => {
                     popup.classList.add('hidden');
                 }, 300);
+            }
             } else {
-                showPopup("Error", "An error occurred. Please try again.");
+            // This case might not be hit if server returns non-2xx for errors
+            showToast(data.message || "An error occurred. Please try again.", 'error');
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            showPopup("Error", "An error occurred. Please try again.");
+        if (error.serverError && error.data && error.data.message) {
+            showToast(error.data.message, 'error');
+        } else if (error.networkError) {
+            showToast(`Network error (status ${error.status}). Please try again.`, 'error');
+        } else {
+            showToast("An unexpected error occurred. Please try again.", 'error');
+        }
         });
 });
+
+// Ensure blurBackground is available (it might be defined elsewhere like generator.js)
+// If not, define it here or ensure it's loaded globally before this script.
+// For this example, let's assume blurBackground is globally available.
+function blurBackground(blur) {
+    // Blur main, header, footer, sidebar
+    // Ensure these selectors are general enough or adjust as needed.
+    const main = document.querySelector('main');
+    const footer = document.querySelector('footer');
+    const header = document.querySelector('header'); // Assuming you might have a header
+    const sidebar = document.getElementById('sidePanel');
+
+    const elementsToBlur = [main, footer, header, sidebar].filter(el => el);
+
+    elementsToBlur.forEach(el => {
+        if (blur) {
+            el.classList.add('blurred'); // Define .blurred in your CSS (e.g., filter: blur(4px); pointer-events: none;)
+        } else {
+            el.classList.remove('blurred');
+        }
+    });
+}

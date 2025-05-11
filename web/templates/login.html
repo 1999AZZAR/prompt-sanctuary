@@ -10,6 +10,7 @@
       <input type="text" name="honeypot" class="hidden">
       <input type="text" id="usernameLogin" name="username" required class="w-full p-3 bg-gray-700 rounded text-white" placeholder="Username">
       <input type="password" id="passwordLogin" name="password" required class="w-full p-3 bg-gray-700 rounded text-white" placeholder="Password">
+      <div id="loginErrorMessage" class="text-red-500 text-sm my-2 text-center"></div>
       <button type="submit" class="mdc-button mdc-button--raised fullwidth">Login</button>
       <p class="text-center">Don't have an account? <a id="signupLink" href="#" class="text-blue-400">Sign Up</a></p>
     </form>
@@ -18,6 +19,7 @@
       <input type="text" id="usernameSignup" name="username" required class="w-full p-3 bg-gray-700 rounded text-white" placeholder="Choose username">
       <input type="password" id="passwordSignup" name="password" required class="w-full p-3 bg-gray-700 rounded text-white" placeholder="Password">
       <input type="password" id="confirmPassword" name="confirmPassword" required class="w-full p-3 bg-gray-700 rounded text-white" placeholder="Confirm Password">
+      <div id="signupErrorMessage" class="text-red-500 text-sm my-2 text-center"></div>
       <button type="submit" class="mdc-button mdc-button--outlined fullwidth">Sign Up</button>
       <p class="text-center">Already have an account? <a id="loginLink" href="#" class="text-blue-400">Login</a></p>
     </form>

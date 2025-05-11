@@ -5,6 +5,8 @@ import re
 from datetime import datetime
 from sqlite3 import connect, OperationalError, Row
 
+DATABASE_NAME = 'database/prompts.db'
+SHARED_PROMPTS_TABLE = 'shared_prompts'
 
 def get_db_connection(db_path):
     """Get a connection to the SQLite database with integrity enforced."""
@@ -73,7 +75,7 @@ def create_user_table_if_not_exists(username, prompt_db):
 
         if not table_exists:
             sql = f'''
-                CREATE TABLE "{username}" (
+                CREATE TABLE IF NOT EXISTS "{username}" (
                     random_val TEXT PRIMARY KEY,
                     title TEXT NOT NULL,
                     prompt TEXT NOT NULL,
@@ -82,13 +84,12 @@ def create_user_table_if_not_exists(username, prompt_db):
             execute_sql(conn, sql)
 
 
-def save_prompt_to_db(username, title, prompt, prompt_db):
+def save_prompt_to_db(username, random_val, title, prompt_text, prompt_db):
     """Save a prompt to the user's table in the database."""
     # Sanitize username
     if not re.match(r'^[A-Za-z0-9_]+$', username):
         raise ValueError(f'Invalid username for table: {username}')
-    random_value = secrets.token_urlsafe(8)
     with get_db_connection(prompt_db) as conn:
         sql = f'INSERT INTO "{username}" (random_val, title, prompt) VALUES (?, ?, ?)'
-        execute_sql(conn, sql, (random_value, title, prompt))
-    return random_value
+        execute_sql(conn, sql, (random_val, title, prompt_text))
+    return random_val

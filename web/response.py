@@ -29,7 +29,7 @@ class GenerativeModel:
         ]
 
         self.model = genai.GenerativeModel(
-            model_name="gemini-1.5-pro",
+            model_name="gemini-2.5-flash-preview-04-17",
             generation_config=self.generation_config,
             safety_settings=self.safety_settings,
         )
@@ -57,7 +57,7 @@ class GenerativeModel:
         for _ in range(len(self.api_keys)):
             genai.configure(api_key=self.get_current_api_key())
             self.model = genai.GenerativeModel(
-                model_name="gemini-1.5-pro",
+                model_name="gemini-2.5-flash-preview-04-17",
                 generation_config=self.generation_config,
                 safety_settings=self.safety_settings,
             )
@@ -76,7 +76,7 @@ class GenerativeModel:
         for _ in range(len(self.api_keys)):
             genai.configure(api_key=self.get_current_api_key())
             self.model = genai.GenerativeModel(
-                model_name="gemini-1.5-pro",
+                model_name="gemini-2.5-flash-preview-04-17",
                 generation_config=self.generation_config,
                 safety_settings=self.safety_settings,
             )

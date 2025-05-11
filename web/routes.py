@@ -146,40 +146,46 @@ def create_main_blueprint(
     @required_login
     def mylib():
         username = session["username"]
-        table_name = username
+        conn = get_db_connection(main_blueprint.prompt_db)
+        cursor = conn.cursor()
 
+        create_user_table_if_not_exists(username, main_blueprint.prompt_db)
+
+        table_name = f'"{username}"'
         try:
-            with get_db_connection(main_blueprint.prompt_db) as conn:
-                cursor = conn.cursor()
-                cursor.execute(
-                    f"SELECT random_val, title, prompt, time FROM {table_name}"
-                )
-                saved_prompts = cursor.fetchall()
+            cursor.execute(f"SELECT random_val, title, prompt, time FROM {table_name} ORDER BY time DESC")
+            saved_prompts = cursor.fetchall()
         except Exception as e:
             logger.error(f"Error fetching prompts: {e}")
-            saved_prompts = None
+            saved_prompts = []
 
-        return render_template("prompts/lib/personal.html", saved_prompts=saved_prompts)
+        conn.close()
+        return render_template("prompts/lib/personal.html", saved_prompts=saved_prompts, title="My Library")
 
     @main_blueprint.route("/save_edit", methods=["POST"])
     @required_login
     def save_edit():
-        username = session["username"]
-        table_name = username
+        if request.method == "POST":
+            prompt_id = request.form.get("random_val")
+            edited_title = request.form.get("edited_title")
+            edited_prompt = request.form.get("edited_prompt")
+            username = session["username"]
+            table_name = f'"{username}"'
 
-        random_val = request.form["random_val"]
-        edited_title = request.form["edited_title"]
-        edited_prompt = request.form["edited_prompt"]
+            if not all([prompt_id, edited_title, edited_prompt]):
+                return jsonify(success=False, message="Missing data for editing."), 400
 
-        with get_db_connection(main_blueprint.prompt_db) as conn:
-            cursor = conn.cursor()
-            cursor.execute(
-                f"UPDATE {table_name} SET title=?, prompt=? WHERE random_val=?",
-                (edited_title, edited_prompt, random_val),
-            )
-            conn.commit()
-
-        return redirect(url_for("main.mylib"))
+            try:
+                with get_db_connection(main_blueprint.prompt_db) as conn:
+                    # Update query without tags
+                    conn.execute(f"UPDATE \"{table_name}\" SET title = ?, prompt = ? WHERE random_val = ?",
+                                 (edited_title, edited_prompt, prompt_id))
+                    conn.commit()
+                return jsonify(success=True, message="Prompt updated successfully!")
+            except Exception as e:
+                logger.error(f"Error updating prompt {prompt_id} for {username}: {e}")
+                return jsonify(success=False, message="Failed to update prompt."), 500
+        return jsonify(success=False, message="Invalid request method."), 405
 
     @main_blueprint.route("/share_prompt", methods=["POST"])
     @required_login
@@ -231,7 +237,7 @@ def create_main_blueprint(
         except Exception as e:
             logger.exception("Error unsharing prompt")
             return jsonify({"success": False, "error": "Internal server error."}), 500
-        return jsonify({"success": True})
+        return jsonify({"success": True, "message": "Prompt deleted successfully!"})
 
     @main_blueprint.route("/delete_prompt", methods=["POST"])
     @required_login
@@ -241,10 +247,10 @@ def create_main_blueprint(
 
         with get_db_connection(main_blueprint.prompt_db) as conn:
             cursor = conn.cursor()
-            cursor.execute(f"DELETE FROM {username} WHERE random_val = ?", (prompt_id,))
+            cursor.execute(f"DELETE FROM \"{username}\" WHERE random_val = ?", (prompt_id,))
             conn.commit()
 
-        return redirect(url_for("main.mylib"))
+        return jsonify({"success": True, "message": "Prompt deleted successfully!"})
 
     @main_blueprint.route("/library")
     @required_login
@@ -439,23 +445,28 @@ def create_main_blueprint(
     @main_blueprint.route("/save_prompt", methods=["POST"])
     @required_login
     def save_prompt():
-        try:
-            title = request.form["title"]
-            prompt = request.form["prompt"]
+        if request.method == "POST":
+            title = request.form.get("title")
+            prompt_text = request.form.get("prompt")
             username = session["username"]
 
-            # Create user table if it doesn't exist
-            create_user_table_if_not_exists(username, main_blueprint.prompt_db)
+            if not title or not prompt_text:
+                return jsonify(success=False, message="Title and prompt cannot be empty."), 400
 
-            # Save the prompt
-            random_value = save_prompt_to_db(
-                username, title, prompt, main_blueprint.prompt_db
-            )
+            try:
+                create_user_table_if_not_exists(username, main_blueprint.prompt_db)
 
-            return "Prompt saved successfully!"
-        except Exception as e:
-            logger.error(f"Error saving prompt: {e}")
-            return f"Error: {str(e)}"
+                random_val = secrets.token_urlsafe(8) 
+                if save_prompt_to_db(username, random_val, title, prompt_text, main_blueprint.prompt_db):
+                    return jsonify(success=True, message="Prompt saved successfully!")
+                else:
+                    return jsonify(success=False, message="Failed to save prompt."), 500
+            except ValueError as e: 
+                return jsonify(success=False, message=str(e)), 400
+            except Exception as e:
+                logger.error(f"Error saving prompt for {username}: {e}")
+                return jsonify(success=False, message="An internal error occurred."), 500
+        return jsonify(success=False, message="Invalid request method."), 405
 
     @main_blueprint.route("/submit_feedback", methods=["POST"])
     @required_login

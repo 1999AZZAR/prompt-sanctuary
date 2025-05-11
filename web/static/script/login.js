@@ -1,10 +1,33 @@
-// Function to show error popup
-function showErrorPopup(message) {
-    alert("Error: " + message);
+// Function to display error message inline
+function displayFormError(form, message) {
+    const errorElementId = form.id === "loginForm" ? "loginErrorMessage" : "signupErrorMessage";
+    const errorElement = document.getElementById(errorElementId);
+    if (errorElement) {
+        errorElement.textContent = message;
+    }
+}
+
+// Function to clear previous error messages
+function clearFormError(form) {
+    const errorElementId = form.id === "loginForm" ? "loginErrorMessage" : "signupErrorMessage";
+    const errorElement = document.getElementById(errorElementId);
+    if (errorElement) {
+        errorElement.textContent = "";
+    }
+}
+
+// Function to hide loading animation and show form
+function hideLoadingAnimation(form) {
+    const loadingContainer = form.parentNode.querySelector(".loading-container");
+    if (loadingContainer) {
+        loadingContainer.remove();
+    }
+    form.classList.remove("hidden");
 }
 
 // Function to handle form submission
 function handleFormSubmission(form, action) {
+    clearFormError(form); // Clear previous errors
     const formData = new FormData(form);
 
     fetch(action, {
@@ -14,46 +37,73 @@ function handleFormSubmission(form, action) {
     .then(response => {
         if (!response.ok) {
             return response.json().then(data => {
-                showErrorPopup(data.error || "An error occurred.");
+                hideLoadingAnimation(form);
+                displayFormError(form, data.error || "An error occurred.");
+                if (form.id === "loginForm") {
+                    document.getElementById("passwordLogin").value = "";
+                } else if (form.id === "signupForm") {
+                    document.getElementById("passwordSignup").value = "";
+                    document.getElementById("confirmPassword").value = "";
+                }
+                return Promise.reject(data); // Propagate error
             });
         }
         return response.json();
     })
     .then(data => {
         if (data.success) {
-            handleSuccess(data.redirect); // Redirect on success
+            handleSuccess(data.redirect);
         } else {
-            showErrorPopup(data.error || "An error occurred.");
+            hideLoadingAnimation(form);
+            displayFormError(form, data.error || "An error occurred.");
+            if (form.id === "loginForm") {
+                document.getElementById("passwordLogin").value = "";
+            } else if (form.id === "signupForm") {
+                document.getElementById("passwordSignup").value = "";
+                document.getElementById("confirmPassword").value = "";
+            }
         }
     })
     .catch(error => {
-        console.error('Error:', error);
-        showErrorPopup("An error occurred. Please try again.");
+        if (!form.classList.contains("hidden")) {
+            hideLoadingAnimation(form);
+            // Use toast for general network errors, keep inline for form-specific issues if preferred
+            showToast("A network error occurred. Please try again.", 'error');
+            // displayFormError(form, "An error occurred. Please try again.");
+            if (form.id === "loginForm") {
+                document.getElementById("passwordLogin").value = "";
+            } else if (form.id === "signupForm") {
+                document.getElementById("passwordSignup").value = "";
+                document.getElementById("confirmPassword").value = "";
+            }
+        }
+        console.error('Error in handleFormSubmission:', error);
     });
 }
 
 // Function to handle success
 function handleSuccess(redirectUrl) {
     if (redirectUrl) {
-        window.location.href = redirectUrl; // Redirect to the provided URL
+        window.location.href = redirectUrl;
     }
 }
 
 // Function to validate login form
-function validateLoginForm(username, password) {
+function validateLoginForm(form, username, password) {
+    clearFormError(form);
     if (username.includes(" ")) {
-        showErrorPopup("Username cannot contain spaces.");
+        displayFormError(form, "Username cannot contain spaces.");
         return false;
     }
 
     if (username === password) {
-        showErrorPopup("Username cannot be equal to password.");
+        displayFormError(form, "Username cannot be equal to password.");
         return false;
     }
 
     const restrictedUsernames = ["system", "admin", "consol", "sysadmin", "useradmin"];
     if (restrictedUsernames.includes(username.toLowerCase())) {
-        showErrorPopup("Username cannot be one of: system, admin, consol, sysadmin, useradmin.");
+        displayFormError(form, "Username cannot be one of: system, admin, consol, sysadmin, useradmin.");
         return false;
     }
 
@@ -61,25 +111,26 @@ function validateLoginForm(username, password) {
 }
 
 // Function to validate signup form
-function validateSignupForm(username, password, confirmPassword) {
+function validateSignupForm(form, username, password, confirmPassword) {
+    clearFormError(form);
     if (username.includes(" ")) {
-        showErrorPopup("Username cannot contain spaces.");
+        displayFormError(form, "Username cannot contain spaces.");
         return false;
     }
 
     if (username === password) {
-        showErrorPopup("Username cannot be equal to password.");
+        displayFormError(form, "Username cannot be equal to password.");
         return false;
     }
 
     const restrictedUsernames = ["system", "admin", "consol", "sysadmin", "useradmin"];
     if (restrictedUsernames.includes(username.toLowerCase())) {
-        showErrorPopup("Username cannot be one of: system, admin, consol, sysadmin, useradmin.");
+        displayFormError(form, "Username cannot be one of: system, admin, consol, sysadmin, useradmin.");
         return false;
     }
 
     if (password !== confirmPassword) {
-        showErrorPopup("Passwords do not match.");
+        displayFormError(form, "Passwords do not match.");
         return false;
     }
 
@@ -92,27 +143,28 @@ function toggleForms() {
     const signupForm = document.getElementById("signupForm");
     loginForm.classList.toggle("hidden");
     signupForm.classList.toggle("hidden");
+    clearFormError(loginForm);
+    clearFormError(signupForm);
 }
 
 // Function to show loading animation
 function showLoadingAnimation(form) {
+    clearFormError(form);
     const loadingContainer = document.createElement("div");
     loadingContainer.classList.add("loading-container");
+    loadingContainer.style.textAlign = 'center';
 
     const loadingAnimation = document.createElement("div");
     loadingAnimation.classList.add("loading-animation");
-
-    for (let i = 0; i < 5; i++) {
-        const dot = document.createElement("div");
-        dot.classList.add("dot");
-        loadingAnimation.appendChild(dot);
-    }
+    loadingAnimation.textContent = 'Loading...';
+    loadingAnimation.style.padding = '10px';
 
     const loadingText = document.createElement("div");
-    loadingText.textContent = "Loading...";
-    loadingContainer.appendChild(loadingAnimation);
-    loadingContainer.appendChild(loadingText);
+    loadingText.textContent = "Please wait...";
+    loadingText.style.fontSize = '0.9em';
+    loadingText.style.color = '#888';
 
+    loadingContainer.appendChild(loadingAnimation);
     form.parentNode.insertBefore(loadingContainer, form);
     form.classList.add("hidden");
 }
@@ -140,6 +192,7 @@ document.addEventListener("DOMContentLoaded", function () {
     function resetLoginForm() {
         document.getElementById("usernameLogin").value = "";
         document.getElementById("passwordLogin").value = "";
+        clearFormError(loginForm);
     }
 
     // Reset signup form
@@ -147,17 +200,19 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("usernameSignup").value = "";
         document.getElementById("passwordSignup").value = "";
         document.getElementById("confirmPassword").value = "";
+        clearFormError(signupForm);
     }
 
     // Login form submission
     if (loginForm) {
         loginForm.addEventListener("submit", function (event) {
             event.preventDefault();
+            clearFormError(loginForm);
 
             const username = document.getElementById("usernameLogin").value;
             const password = document.getElementById("passwordLogin").value;
 
-            if (validateLoginForm(username, password)) {
+            if (validateLoginForm(loginForm, username, password)) {
                 showLoadingAnimation(loginForm);
                 handleFormSubmission(loginForm, '/login');
             }
@@ -168,12 +223,13 @@ document.addEventListener("DOMContentLoaded", function () {
     if (signupForm) {
         signupForm.addEventListener("submit", function (event) {
             event.preventDefault();
+            clearFormError(signupForm);
 
             const username = document.getElementById("usernameSignup").value;
             const password = document.getElementById("passwordSignup").value;
             const confirmPassword = document.getElementById("confirmPassword").value;
 
-            if (validateSignupForm(username, password, confirmPassword)) {
+            if (validateSignupForm(signupForm, username, password, confirmPassword)) {
                 showLoadingAnimation(signupForm);
                 handleFormSubmission(signupForm, '/signup');
             }

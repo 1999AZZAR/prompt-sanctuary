@@ -9,7 +9,10 @@
 
     <!-- Search Bar -->
     <h2 class="text-2xl font-bold mb-6">Search Prompts</h2>
+    <div class="search-container mb-6">
     <input type="text" id="searchInput" placeholder="Search prompts..." class="w-full p-3 bg-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <button id="clearSearchBtn" class="clear-search-btn hidden" aria-label="Clear search">&times;</button>
+    </div>
 
     <!-- Combined Prompts Section -->
     <div class="mdc-layout-grid">
@@ -82,6 +85,10 @@
 
         const fuse = new Fuse(allPrompts, fuseOptions);
 
+        const searchInput = document.getElementById('searchInput');
+        const clearSearchBtn = document.getElementById('clearSearchBtn');
+        const allPromptsContainer = document.getElementById('allPrompts');
+
         // Function to render all prompts
         function renderAllPrompts() {
             const allContainer = document.getElementById('allPrompts');
@@ -122,20 +129,27 @@
                       .replace(/'/g, '&#039;');
         }
 
-        // Search function
-        document.getElementById('searchInput').addEventListener('input', (e) => {
+        // Debounce function
+        function debounce(func, delay) {
+            let timeoutId;
+            return function(...args) {
+                clearTimeout(timeoutId);
+                timeoutId = setTimeout(() => {
+                    func.apply(this, args);
+                }, delay);
+            };
+        }
+
+        // Search function (debounced)
+        searchInput.addEventListener('input', debounce((e) => {
             const query = e.target.value.trim();
+            clearSearchBtn.classList.toggle('hidden', query === "");
 
             if (query === "") {
-                // If search input is empty, render all prompts
                 renderAllPrompts();
             } else {
-                // Perform fuzzy search
                 const results = fuse.search(query);
-
-                // Update all prompts
-                const allContainer = document.getElementById('allPrompts');
-                allContainer.innerHTML = results.map(result => `
+                allPromptsContainer.innerHTML = results.map(result => `
                     <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12 mdc-layout-grid__cell--span-6-tablet mdc-layout-grid__cell--span-4-desktop">
                         <div class="mdc-card glass prompt-card p-6 flex flex-col justify-between max-h-64 overflow-y-auto">
                             <div class="mdc-card__primary-action" tabindex="0">
@@ -160,7 +174,17 @@
                 // Re-attach event listeners after rendering search results
                 reattachEventListeners();
             }
+        }, 300)); // Adjusted debounce to 300ms
+
+        clearSearchBtn.addEventListener('click', () => {
+            searchInput.value = "";
+            renderAllPrompts();
+            clearSearchBtn.classList.add('hidden');
+            searchInput.focus(); // Optional: refocus the input
         });
+
+        // Initial state for clear button
+        clearSearchBtn.classList.toggle('hidden', searchInput.value.trim() === "");
 
         // Render all prompts on page load
         renderAllPrompts();

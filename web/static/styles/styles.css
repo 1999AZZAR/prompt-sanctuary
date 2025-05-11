@@ -146,10 +146,10 @@ body {
 
 /* Material You Glass Card Overrides */
 .mdc-card {
-    background-color: rgba(255, 255, 255, 0.2) !important;
-    backdrop-filter: blur(12px) !important;
-    -webkit-backdrop-filter: blur(12px) !important;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15) !important;
+    background-color: rgba(255, 255, 255, 0.4) !important;
+    backdrop-filter: blur(10px) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
     border-radius: 16px !important;
     color: var(--md-sys-color-on-surface) !important;
 }
@@ -211,4 +211,83 @@ html, body {
 }
 *::-webkit-scrollbar {
     display: none !important; /* Chrome, Safari, Opera */
+}
+
+/* Toast Notifications */
+#toast-container {
+    position: fixed;
+    top: 1.25rem; /* 20px */
+    right: 1.25rem; /* 20px */
+    z-index: 5000; /* High z-index to appear on top */
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem; /* Space between toasts */
+}
+
+.toast {
+    padding: 1rem; /* 16px */
+    border-radius: 0.5rem; /* 8px */
+    color: white;
+    font-size: 0.875rem; /* 14px */
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    opacity: 0;
+    transform: translateX(100%);
+    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+    min-width: 250px; /* Minimum width for toasts */
+    max-width: 350px; /* Maximum width for toasts */
+}
+
+.toast.show {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.toast.toast-success {
+    background-color: #28a745; /* Green */
+}
+
+.toast.toast-error {
+    background-color: #dc3545; /* Red */
+}
+
+.toast.toast-info {
+    background-color: #17a2b8; /* Blue */
+}
+
+.toast.toast-warning {
+    background-color: #ffc107; /* Yellow */
+    color: #212529; /* Dark text for yellow background */
+}
+
+/* Search Clear Button */
+.search-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.search-container input[type="text"] {
+    padding-right: 2.5rem; /* Make space for the button */
+}
+
+.clear-search-btn {
+    position: absolute;
+    right: 0.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    color: #9ca3af; /* gray-400 */
+    cursor: pointer;
+    font-size: 1.5rem; /* Adjust size of '×' */
+    line-height: 1;
+    padding: 0.25rem;
+}
+
+.clear-search-btn:hover {
+    color: #e5e7eb; /* gray-200 */
+}
+
+.clear-search-btn.hidden {
+    display: none;
 }

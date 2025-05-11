@@ -1,139 +1,140 @@
-// Function to show the custom popup
-function showPopup(title, message) {
-    const popup = document.createElement('div');
-    popup.id = 'custom-popup';
-    popup.className = 'fixed inset-0 flex items-center justify-center glass z-50';
-
-    const popupContent = document.createElement('div');
-    popupContent.className = 'glass p-8 rounded-lg w-11/12 max-w-md text-white relative';
-    popupContent.style.maxHeight = '80vh';
-    popupContent.style.overflowY = 'auto';
-    popupContent.style.overflowX = 'hidden';
-
-    const popupTitle = document.createElement('h2');
-    popupTitle.id = 'popup-title';
-    popupTitle.className = 'text-2xl font-bold mb-4';
-    popupTitle.textContent = title;
-
-    const popupMessage = document.createElement('p');
-    popupMessage.id = 'popup-message';
-    popupMessage.className = 'text-lg text-gray-300 mb-6 whitespace-pre-wrap break-words';
-    popupMessage.textContent = message;
-
-    const buttonContainer = document.createElement('div');
-    buttonContainer.className = 'flex justify-end space-x-4';
-    // Copy and Close buttons for popups
-    const copyBtn = document.createElement('button');
-    copyBtn.className = 'bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition duration-200';
-    copyBtn.textContent = 'Copy';
-    copyBtn.onclick = () => {
-        navigator.clipboard.writeText(message)
-            .then(() => showPopup('Success', 'Prompt copied to clipboard!'))
-            .catch(err => showPopup('Error', 'Failed to copy prompt. Please try again.'));
-    };
-    const closeBtn2 = document.createElement('button');
-    closeBtn2.className = 'bg-gray-500 text-white px-6 py-3 rounded-lg hover:bg-gray-600 transition duration-200';
-    closeBtn2.textContent = 'Close';
-    closeBtn2.onclick = () => closePopup('custom-popup');
-    buttonContainer.appendChild(copyBtn);
-    buttonContainer.appendChild(closeBtn2);
-
-    const closeBtn = document.createElement('button');
-    closeBtn.className = 'absolute top-4 right-4 text-white text-xl';
-    closeBtn.innerHTML = '&times;';
-    closeBtn.onclick = () => closePopup('custom-popup');
-
-    popupContent.appendChild(closeBtn);
-    popupContent.appendChild(popupTitle);
-    popupContent.appendChild(popupMessage);
-    popupContent.appendChild(buttonContainer);
-
-    popup.appendChild(popupContent);
-    document.body.appendChild(popup);
-}
-
-// Function to close the custom popup
-function closePopup(popupId = 'custom-popup') {
-    const popup = document.getElementById(popupId);
-    if (popup) {
-        popup.remove();
-    } else {
-        console.error('Popup element not found in the DOM');
-    }
-}
-
 // Copy function on personal library
 document.addEventListener('DOMContentLoaded', function () {
-    new ClipboardJS('.copy-button', {
+    // Initialize ClipboardJS for copy buttons
+    // This targets buttons with class 'copy-button' which are typically on each prompt card
+    var clipboard = new ClipboardJS('.copy-button', {
         text: function (trigger) {
-            return trigger.getAttribute('data-clipboard-text');
+            // Assuming the prompt content is in an attribute like 'data-clipboard-text'
+            // or find it relative to the trigger if it's in a specific element.
+            // For this example, let's assume it's directly on the button or a nearby element.
+            // This might need adjustment based on your HTML structure.
+            const promptCard = trigger.closest('.prompt-card'); // Or however you identify the card
+            if (promptCard) {
+                const promptTextElement = promptCard.querySelector('.prompt-text-content'); // Adjust selector
+                if (promptTextElement) {
+                    return promptTextElement.innerText;
+                }
+            }
+            // Fallback if specific content not found, use data-clipboard-text if available
+            return trigger.getAttribute('data-clipboard-text') || "No text to copy";
         }
-    }).on('success', function (e) {
-        e.clearSelection();
-        showPopup("Success", "Prompt copied to clipboard!");
-    }).on('error', function (e) {
-        showPopup("Error", "Failed to copy prompt to clipboard.");
     });
+
+    clipboard.on('success', function (e) {
+        e.clearSelection();
+        showToast("Prompt copied to clipboard!", "success"); // Use global toast
+    });
+
+    clipboard.on('error', function (e) {
+        showToast("Failed to copy prompt.", "error"); // Use global toast
+    });
+
+
+    // Re-attach event listeners for dynamically added elements or after search/filter
+    const personalPromptsContainer = document.getElementById('personalPromptsContainer');
+    if (personalPromptsContainer) {
+        const observer = new MutationObserver(mutations => {
+            mutations.forEach(mutation => {
+                if (mutation.addedNodes.length) {
+                    reattachEventListeners(); // Re-attach to new nodes
+                }
+            });
+        });
+        observer.observe(personalPromptsContainer, { childList: true, subtree: true });
+    }
+    attachInitialEventListeners(); // Attach to initially loaded elements
 });
 
+
+function attachInitialEventListeners() {
+    // Attach to existing buttons on load
+    attachEditButtonListeners();
+    attachDeleteButtonListeners();
+    attachShareButtonListeners();
+    attachSeeButtonListeners();
+    // Note: ClipboardJS is initialized once and handles elements matching '.copy-button'
+}
+
+function reattachEventListeners() {
+    // This function is called when DOM changes, e.g., after search results are rendered.
+    // It re-attaches listeners to any new buttons.
+    attachEditButtonListeners();
+    attachDeleteButtonListeners();
+    attachShareButtonListeners();
+    attachSeeButtonListeners();
+}
+
+
 // Edit function
-document.addEventListener('DOMContentLoaded', function () {
-    const editButtons = document.querySelectorAll('.edit-button');
-    editButtons.forEach(button => {
+function attachEditButtonListeners() {
+    document.querySelectorAll('.edit-button:not(.listener-attached)').forEach(button => {
         button.addEventListener('click', function () {
             const randomVal = button.getAttribute('data-random-val');
             const title = button.getAttribute('data-title');
             const prompt = button.getAttribute('data-prompt');
-            openEditPopup(randomVal, title, prompt);
+            const tags = button.getAttribute('data-tags') || ""; // Get tags
+            openEditModal(randomVal, title, prompt, tags);
         });
+        button.classList.add('listener-attached');
     });
-});
+}
 
-// Function to open the edit popup
-function openEditPopup(randomVal, title, prompt) {
-    const popup = document.createElement('div');
-    popup.id = 'edit-popup';
-    popup.className = 'fixed inset-0 flex items-center justify-center glass z-50';
-
-    const popupContent = document.createElement('div');
-    // Wider popup with scrollable content
-    popupContent.className = 'glass p-8 sm:p-10 rounded-lg max-w-4xl w-full sm:w-11/12 md:w-4/5 lg:w-3/4 text-white relative';
-    popupContent.style.maxHeight = '90vh';
-    popupContent.style.overflowY = 'auto';
-    popupContent.style.overflowX = 'hidden';
-
-    popupContent.innerHTML = `
-        <h2 class="text-2xl font-bold mb-4">Edit Prompt</h2>
-        <input type="hidden" id="editRandomVal" value="${randomVal}">
+// Function to open the edit popup - MODIFIED TO USE showAppPopup
+function openEditModal(randomVal, title, prompt, tags) {
+    const contentHtml = `
+        <input type="hidden" id="editRandomValModal" value="${randomVal}">
         <div class="mb-4">
-            <label for="editTitle" class="block mb-2">Title:</label>
-            <input type="text" id="editTitle" value="${title}" class="w-full p-3 bg-gray-700 rounded-lg">
+            <label for="editTitleModal" class="block mb-2 text-sm font-medium text-gray-200">Title:</label>
+            <input type="text" id="editTitleModal" value="${escapeHTML(title)}" class="w-full p-2.5 bg-gray-700 border border-gray-600 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 placeholder-gray-400">
         </div>
         <div class="mb-6">
-            <label for="editPrompt" class="block mb-2">Prompt:</label>
-            <textarea id="editPrompt" class="w-full p-3 bg-gray-700 rounded-lg h-80">${prompt}</textarea>
-        </div>
-        <div class="flex justify-end space-x-4">
-            <button id="cancelEdit" class="bg-gray-500 text-white px-6 py-3 rounded-lg hover:bg-gray-600 transition duration-200">Cancel</button>
-            <button id="saveEdit" class="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition duration-200">Save</button>
+            <label for="editPromptModal" class="block mb-2 text-sm font-medium text-gray-200">Prompt:</label>
+            <textarea id="editPromptModal" rows="8" class="w-full p-2.5 bg-gray-700 border border-gray-600 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 placeholder-gray-400">${escapeHTML(prompt)}</textarea>
         </div>
     `;
 
-    popup.appendChild(popupContent);
-    document.body.appendChild(popup);
+    const editButtons = [
+        {
+            text: "Save Changes",
+            action: function() {
+                const newRandomVal = document.getElementById('editRandomValModal').value;
+                const newTitle = document.getElementById('editTitleModal').value;
+                const newPrompt = document.getElementById('editPromptModal').value;
+                if (!newTitle.trim()) {
+                    showToast("Title cannot be empty.", "error");
+                    const titleInput = document.getElementById('editTitleModal');
+                    if (titleInput) titleInput.focus();
+                    return false; 
+                }
+                saveEditedPrompt(newRandomVal, newTitle, newPrompt);
+            }
+        },
+        {
+            text: "Cancel",
+            action: function() {
+                closeAppPopup(); 
+            }
+        }
+    ];
 
-    // Cancel button functionality
-    document.getElementById('cancelEdit').onclick = function () {
-        closePopup('edit-popup');
-    };
+    showAppPopup("Edit Prompt", contentHtml, { 
+        type: 'custom', 
+        buttons: editButtons,
+        size: 'md'
+    });
+}
 
-    // Save button functionality
-    document.getElementById('saveEdit').onclick = function () {
-        const newRandomVal = document.getElementById('editRandomVal').value;
-        const newTitle = document.getElementById('editTitle').value;
-        const newPrompt = document.getElementById('editPrompt').value;
-        saveEditedPrompt(newRandomVal, newTitle, newPrompt);
-    };
+function escapeHTML(str) {
+    if (typeof str !== 'string') return '';
+    return str.replace(/[&<>\\"']/g, function (match) { // Added backslash for double quote
+        return {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#039;'
+        }[match];
+    });
 }
 
 // Function to save the edited prompt
@@ -147,54 +148,66 @@ function saveEditedPrompt(randomVal, title, prompt) {
         method: 'POST',
         body: formData,
     })
-    .then(response => {
-        if (response.redirected) {
-            window.location.href = response.url;
-        } else if (!response.ok) {
-            throw new Error('Failed to update prompt.');
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showToast(data.message || "Prompt updated successfully!", "success");
+            closeAppPopup(); // Ensure popup is closed on success
+            setTimeout(() => window.location.reload(), 1000); 
+        } else {
+            showToast(data.message || "Failed to update prompt.", "error");
+            // Keep the edit modal open on failure so the user can correct and retry.
         }
-        return response.text();
-    })
-    .then(() => {
-        showPopup("Success", "Prompt updated successfully!");
-        closePopup('edit-popup');
     })
     .catch((error) => {
         console.error('Error:', error);
-        showPopup("Error", "Failed to update prompt: " + error.message);
+        showToast("Error updating prompt: " + error.message, "error");
+        // Keep the edit modal open on failure.
     });
 }
 
-// Function to confirm deletion
-function confirmDelete(randomVal) {
-    const popup = document.createElement('div');
-    popup.id = 'delete-popup';
-    popup.className = 'fixed inset-0 flex items-center justify-center glass z-50';
+// Delete function
+function attachDeleteButtonListeners() {
+    document.querySelectorAll('.delete-button:not(.listener-attached)').forEach(button => {
+        button.addEventListener('click', function (e) {
+            e.preventDefault(); 
+            const randomVal = button.getAttribute('data-random-val');
+            openDeleteConfirmationModal(randomVal);
+        });
+        button.classList.add('listener-attached');
+    });
+}
 
-    const popupContent = document.createElement('div');
-    popupContent.className = 'glass p-8 rounded-lg w-11/12 max-w-md text-white relative';
-    popupContent.innerHTML = `
-        <h2 class="text-2xl font-bold mb-4">Confirm Deletion</h2>
-        <p class="text-lg text-gray-300 mb-6">Are you sure you want to delete this prompt?</p>
-        <div class="flex justify-end space-x-4">
-            <button id="cancelDelete" class="bg-gray-500 text-white px-6 py-3 rounded-lg hover:bg-gray-600 transition duration-200">Cancel</button>
-            <button id="confirmDelete" class="bg-red-500 text-white px-6 py-3 rounded-lg hover:bg-red-600 transition duration-200">Delete</button>
-        </div>
-    `;
+// Function to confirm deletion - MODIFIED TO USE showAppPopup
+function openDeleteConfirmationModal(randomVal) {
+    const contentHtml = "<p class='text-gray-100'>Are you sure you want to delete this prompt? This action cannot be undone.</p>"; // text-gray-100 for better visibility
+    
+    // Base classes from showAppPopup for consistent look
+    const baseButtonClass = 'px-5 py-2.5 rounded-lg transition duration-200 text-sm font-medium w-full sm:w-auto';
+    const deleteButtonClass = `bg-red-600 hover:bg-red-700 text-white ${baseButtonClass}`;
+    const cancelButtonClass = `bg-gray-600 hover:bg-gray-700 text-white ${baseButtonClass}`;
 
-    popup.appendChild(popupContent);
-    document.body.appendChild(popup);
-
-    // Cancel button functionality
-    document.getElementById('cancelDelete').onclick = function () {
-        closePopup('delete-popup');
-    };
-
-    // Confirm delete button functionality
-    document.getElementById('confirmDelete').onclick = function () {
-        deletePrompt(randomVal);
-        closePopup('delete-popup');
-    };
+    const deleteButtons = [
+        {
+            text: "Delete",
+            class: deleteButtonClass,
+            action: function() {
+                deletePrompt(randomVal);
+                // closeAppPopup(); // showAppPopup handles close by default unless action returns false
+            }
+        },
+        {
+            text: "Cancel",
+            class: cancelButtonClass,
+            action: function() {
+                closeAppPopup(); // Explicitly close, or rely on default
+            }
+        }
+    ];
+    showAppPopup("Confirm Deletion", contentHtml, { 
+        type: 'custom', 
+        buttons: deleteButtons 
+    });
 }
 
 // Function to delete a prompt
@@ -204,43 +217,57 @@ function deletePrompt(randomVal) {
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
         },
-        body: 'prompt_id=' + encodeURIComponent(randomVal), // Change 'random_val' to 'prompt_id'
+        body: 'prompt_id=' + encodeURIComponent(randomVal),
     })
-    .then(response => {
-        if (response.redirected) {
-            window.location.href = response.url;
-        } else if (!response.ok) {
-            throw new Error('Failed to delete prompt.');
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showToast(data.message || "Prompt deleted successfully!", "success");
+            setTimeout(() => window.location.reload(), 1000); 
+        } else {
+            showToast(data.message || "Failed to delete prompt.", "error");
         }
-        return response.text();
-    })
-    .then(() => {
-        showPopup("Success", "Prompt deleted successfully!");
     })
     .catch((error) => {
         console.error('Error:', error);
-        showPopup("Error", "Failed to delete prompt: " + error.message);
+        showToast("Error deleting prompt: " + error.message, "error");
     });
 }
 
-// Add event listeners to all delete buttons
-document.addEventListener('DOMContentLoaded', function () {
-    const deleteButtons = document.querySelectorAll('.delete-button');
-    deleteButtons.forEach(button => {
-        button.addEventListener('click', function (e) {
-            e.preventDefault(); // Prevent the form from submitting immediately
-            const randomVal = button.getAttribute('data-random-val');
-            confirmDelete(randomVal);
-        });
-    });
-});
+// Share function
+function attachShareButtonListeners() {
+    document.querySelectorAll('.share-button:not(.listener-attached)').forEach(button => {
+        button.addEventListener('click', function () {
+            // CORRECTED: Read prompt ID from data-prompt-id attribute
+            const promptId = this.dataset.promptId; 
+            const title = this.dataset.title;
+            // Prompt content is correctly read from data-prompt based on HTML
+            const promptContent = this.dataset.prompt; 
+            const isShared = this.classList.contains('unshare-action');
 
-// Function to handle sharing a prompt
-function sharePrompt(promptId, title, promptContent) {
+            if (!promptId || !title || !promptContent) {
+                console.error('Share button is missing data attributes:', this.dataset);
+                showToast("Cannot share: critical data missing from button.", "error");
+                return;
+            }
+
+            if (isShared) {
+                unsharePrompt(promptId, this);
+            } else {
+                sharePrompt(promptId, title, promptContent, this);
+            }
+        });
+        button.classList.add('listener-attached');
+    });
+}
+
+
+function sharePrompt(promptId, title, promptContent, buttonElement) {
     const data = {
         prompt_id: promptId,
         title: title,
         prompt: promptContent
+        // Tags are not explicitly sent here, community prompts might not use them directly or derive them.
     };
 
     fetch('/share_prompt', {
@@ -248,68 +275,100 @@ function sharePrompt(promptId, title, promptContent) {
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify(data)
+        body: JSON.stringify(data),
     })
-    .then(response => {
-        if (!response.ok) {
-            return response.json().then(data => {
-                throw new Error(data.error || 'Failed to share prompt.');
+    .then(response => response.json())
+    .then(result => {
+        if (result.success) {
+            showToast("Prompt shared successfully!", "success");
+            if(buttonElement) {
+                buttonElement.textContent = 'Unshare';
+                buttonElement.classList.remove('share-action');
+                buttonElement.classList.add('unshare-action');
+                // Optionally update a visual indicator
+            }
+        } else {
+            showToast(result.error || "Failed to share prompt.", "error");
+        }
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+        showToast("Error sharing prompt: " + error.message, "error");
             });
         }
-        return response.json();
+
+function unsharePrompt(promptId, buttonElement) {
+    fetch('/unshare_prompt', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ prompt_id: promptId }),
     })
-    .then(data => {
-        if (data.success) {
-            showPopup("Success", "Prompt shared successfully!");
-        } else if (data.error && data.error.includes("already shared")) {
-            showPopup("Error", "This prompt has already been shared.");
+    .then(response => response.json())
+    .then(result => {
+        if (result.success) {
+            showToast("Prompt unshared successfully!", "success");
+             if(buttonElement) {
+                buttonElement.textContent = 'Share';
+                buttonElement.classList.remove('unshare-action');
+                buttonElement.classList.add('share-action');
+                 // Optionally update a visual indicator
+            }
         } else {
-            showPopup("Error", "Failed to share prompt: " + (data.error || "Unknown error"));
+            showToast(result.error || "Failed to unshare prompt.", "error");
         }
     })
-    .catch(error => {
+    .catch((error) => {
         console.error('Error:', error);
-        showPopup("Error", "Error sharing prompt: " + error.message);
+        showToast("Error unsharing prompt: " + error.message, "error");
     });
 }
 
-// Add event listeners to all share buttons
-document.addEventListener('DOMContentLoaded', function () {
-    const shareButtons = document.querySelectorAll('.share-button');
-    shareButtons.forEach(button => {
-        button.addEventListener('click', function () {
-            const promptId = button.getAttribute('data-prompt-id');
-            const title = button.getAttribute('data-title');
-            const promptContent = button.getAttribute('data-prompt');
-
-            if (promptId && title && promptContent) {
-                sharePrompt(promptId, title, promptContent);
-            } else {
-                showPopup("Error", "Error: Missing prompt data.");
-            }
-        });
-    });
-});
-
-// Attach See-button listeners
+// See Details function - MODIFIED TO USE showAppPopup
 function attachSeeButtonListeners() {
-    document.querySelectorAll('.see-button').forEach(btn => {
-        btn.addEventListener('click', function(e) {
-            e.preventDefault();
-            const title = btn.getAttribute('data-title');
-            const content = btn.getAttribute('data-content');
-            showPopup(title, content);
+    document.querySelectorAll('.see-button:not(.listener-attached)').forEach(button => {
+        button.addEventListener('click', function () {
+            const title = this.dataset.title;
+            const promptContent = this.dataset.content;
+            
+            // Modified detailHtml to remove max-h-60 and overflow-auto for consistency with community.js type: 'details' behavior
+            const detailHtml = `
+                <div>
+                    <strong class="block text-sm font-medium text-gray-100 mb-1">Prompt:</strong>
+                    <div class="mt-1 p-2 bg-gray-700/50 rounded-md text-gray-300 whitespace-pre-wrap break-words">
+                        ${escapeHTML(promptContent || '')}
+                    </div>
+                </div>
+            `;
+
+            const customButtons = [
+                {
+                    text: "Copy Prompt",
+                    action: () => {
+                        navigator.clipboard.writeText(promptContent || '')
+                            .then(() => showToast('Prompt copied to clipboard!', 'success'))
+                            .catch(err => {
+                                console.error('Failed to copy prompt:', err);
+                                showToast('Failed to copy prompt.', 'error');
+                            });
+                    }
+                },
+                {
+                    text: "Close",
+                    action: () => {
+                        closeAppPopup(); 
+                    }
+                }
+            ];
+            
+            showAppPopup(title, detailHtml, { 
+                type: 'custom', // Still custom because we are defining the full HTML and buttons
+                buttons: customButtons 
+                // No size option, defaults to 'md' like community.js type: 'details'
+            }); 
         });
+        button.classList.add('listener-attached');
     });
 }
 
-// Support re-binding after dynamic render
-function reattachEventListeners() {
-    attachSeeButtonListeners();
-}
-window.reattachEventListeners = reattachEventListeners;
-
-// Initial binding on page load
-document.addEventListener('DOMContentLoaded', function () {
-    attachSeeButtonListeners();
-});

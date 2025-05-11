@@ -8,16 +8,16 @@ function submitForm(formId, url) {
 
     var formData = new FormData(formElement); // Get form data
 
-    // Display loading animation
-    var loading = document.getElementById("loading");
-    loading.classList.remove('hidden');
-    blurBackground(true);
+    // showGlobalLoader(); // No longer using global loader for this specific function
+    var loading = document.getElementById("loading"); 
+    if (loading) loading.classList.remove('hidden');
+    blurBackground(true); // Restore blur for local loader's backdrop effect
 
     fetch(url, {
         method: 'POST',
         body: formData
     })
-    .then(response => response.text())
+    .then(response => response.text()) // Assuming text response for prompt generation
     .then(result => {
         // Log the response text
         console.log('Response from server:', result);
@@ -37,9 +37,6 @@ function submitForm(formId, url) {
             console.error('Result section or response paragraph not found in the DOM');
         }
 
-        // Hide loading animation
-        loading.classList.add('hidden');
-    blurBackground(false);
         // Hide preview if no image
         var previewContainer = document.getElementById('preview-container');
         var previewImage = document.getElementById('preview-image');
@@ -48,15 +45,15 @@ function submitForm(formId, url) {
                 previewContainer.classList.add('hidden');
             }
         }
-        // Result section is handled above
-
     })
     .catch(error => {
         console.error('Error submitting form:', error);
-        // Hide loading animation in case of error
-        loading.classList.add('hidden');
-    blurBackground(false);
-        showPopup("Error", "An error occurred while submitting the form.");
+        showToast("An error occurred while submitting the form.", 'error'); 
+    })
+    .finally(() => {
+        // hideGlobalLoader(); // No longer using global loader here
+        if (loading) loading.classList.add('hidden'); 
+        blurBackground(false); // Restore blur removal
     });
 }
 
@@ -111,85 +108,21 @@ function previewImage() {
 }
 
 // Function to show the custom popup
-function showPopup(title, message) {
-    blurBackground(true);
-    // Create the popup container
-    const popup = document.createElement('div');
-    popup.id = 'custom-popup';
-    popup.className = 'fixed inset-0 flex items-center justify-center glass z-50';
-
-    // Create the popup content
-    const popupContent = document.createElement('div');
-    popupContent.className = 'glass p-8 rounded-lg w-11/12 max-w-md';
-
-    // Create the popup title
-    const popupTitle = document.createElement('h2');
-    popupTitle.id = 'popup-title';
-    popupTitle.className = 'text-2xl font-bold mb-4';
-    popupTitle.textContent = title;
-
-    // Create the popup message
-    const popupMessage = document.createElement('p');
-    popupMessage.id = 'popup-message';
-    popupMessage.className = 'text-lg text-gray-300 mb-6';
-    popupMessage.textContent = message;
-
-    // Create the OK button
-    const okButton = document.createElement('button');
-    okButton.className = 'bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition duration-200';
-    okButton.textContent = 'OK';
-    okButton.onclick = closePopup;
-
-    // Create the button container
-    const buttonContainer = document.createElement('div');
-    buttonContainer.className = 'flex justify-end';
-    buttonContainer.appendChild(okButton);
-
-    // Assemble the popup content
-    popupContent.appendChild(popupTitle);
-    popupContent.appendChild(popupMessage);
-    popupContent.appendChild(buttonContainer);
-
-    // Assemble the popup
-    popup.appendChild(popupContent);
-
-    // Add the popup to the body
-    document.body.appendChild(popup);
-}
+// [ENTIRE showPopup FUNCTION from line 103 to 141 WILL BE REMOVED]
 
 // Function to close the custom popup
-function closePopup() {
-    const popup = document.getElementById('custom-popup');
-    if (popup) {
-        popup.remove(); // Remove the popup from the DOM
-        blurBackground(false);
-        blurBackground(false);
-    } else {
-        console.error('Popup element not found in the DOM');
-    }
-}
+// [ENTIRE closePopup FUNCTION from line 144 to 152 WILL BE REMOVED]
 
 // Blur/unblur main content when popup is open/closed
-function blurBackground(blur) {
-    // Blur main, header, footer, sidebar
-    var main = document.querySelector('main');
-    var footer = document.querySelector('footer');
-    var sidebar = document.getElementById('sidePanel');
-    if (main) blur ? main.classList.add('blurred') : main.classList.remove('blurred');
-    if (footer) blur ? footer.classList.add('blurred') : footer.classList.remove('blurred');
-    if (sidebar) blur ? sidebar.classList.add('blurred') : sidebar.classList.remove('blurred');
-}
-
-// Blur/unblur main content when popup is open/closed
-function blurBackground(blur) {
-    // Blur main, footer, sidebar
-    var main = document.querySelector('main');
-    var footer = document.querySelector('footer');
-    var sidebar = document.getElementById('sidePanel');
-    if (main) blur ? main.classList.add('blurred') : main.classList.remove('blurred');
-    if (footer) blur ? footer.classList.add('blurred') : footer.classList.remove('blurred');
-    if (sidebar) blur ? sidebar.classList.add('blurred') : sidebar.classList.remove('blurred');
-}
+// function blurBackground(blur) { // Moved to feedback.js or a global utility
+//     // Blur main, header, footer, sidebar
+//     var main = document.querySelector('main');
+//     var footer = document.querySelector('footer');
+//     var sidebar = document.getElementById('sidePanel');
+//     if (main) blur ? main.classList.add('blurred') : main.classList.remove('blurred');
+//     if (footer) blur ? footer.classList.add('blurred') : footer.classList.remove('blurred');
+//     if (sidebar) blur ? sidebar.classList.add('blurred') : sidebar.classList.remove('blurred');
+// }
 
 // Initialize the image preview function when the DOM content is loaded
 document.addEventListener("DOMContentLoaded", function () {
@@ -255,6 +188,28 @@ document.addEventListener("DOMContentLoaded", function () {
     } else {
         console.error('Advanced reverse image form not found in the DOM');
     }
+
+    // Handle form submission for image prompt
+    var imagePromptForm = document.getElementById('image-prompt-form');
+    if (imagePromptForm) {
+        imagePromptForm.addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent default form submission behavior
+            submitForm('image-prompt-form', '/generate/iprompt'); // Submit form asynchronously
+        });
+    }
+
+    // Save to library button
+    const saveButton = document.getElementById("save-to-library");
+    if (saveButton) {
+        saveButton.addEventListener("click", function () {
+            const promptText = document.getElementById("response").innerText;
+            if (promptText && promptText.trim() !== "") {
+                promptForTitleModal(promptText);
+            } else {
+                showToast("Nothing to save! Generate a prompt first.", "warning");
+            }
+        });
+    }
 });
 
 // Function to toggle prompt input based on user's selection
@@ -302,114 +257,101 @@ function copyToClipboard() {
     var responseText = document.getElementById("response");
     if (responseText) {
         var textArea = document.createElement("textarea");
-        textArea.value = responseText.innerText;
+        // Preserve formatting (especially newlines) by using innerText
+        textArea.value = responseText.innerText; 
         document.body.appendChild(textArea);
         textArea.select();
-        document.execCommand('copy');
+        try {
+            document.execCommand('copy');
+            showToast("Response copied to clipboard!", 'success');
+        } catch (err) {
+            showToast("Failed to copy response.", 'error');
+            console.error('Fallback: Oops, unable to copy', err);
+        }
         document.body.removeChild(textArea);
-        showPopup("Success", "Response copied to clipboard!"); // Use dynamic popup
     } else {
         console.error('Response text element not found in the DOM');
-        showPopup("Error", "Failed to copy response to clipboard."); // Use dynamic popup
+        showToast("Failed to copy response: content not found.", 'error'); 
     }
 }
 
 // Loading animation
 function loadingAnimation() {
-    var loading = document.getElementById("loading");
+    const loading = document.getElementById('loading');
     if (loading) {
-        loading.style.display = "flex";
-        return true;
-    } else {
-        console.error('Loading element not found in the DOM');
-        return false;
+        loading.classList.remove('hidden');
     }
 }
 
-function promptForTitle() {
-    // Create the popup container
-    const popup = document.createElement('div');
-    popup.id = 'custom-popup';
-    popup.className = 'fixed inset-0 flex items-center justify-center glass z-50';
-
-    // Create the popup content
-    const popupContent = document.createElement('div');
-    popupContent.className = 'glass p-8 rounded-lg w-11/12 max-w-md';
-
-    // Create the popup title
-    const popupTitle = document.createElement('h2');
-    popupTitle.id = 'popup-title';
-    popupTitle.className = 'text-2xl font-bold mb-4';
-    popupTitle.textContent = "Save Prompt";
-
-    // Create the popup message (input field and buttons)
-    const popupMessage = document.createElement('div');
-    popupMessage.innerHTML = `
-        <label for="title-input" class="block mb-2">Enter a title for your prompt:</label>
-        <input type="text" id="title-input" class="w-full p-3 bg-gray-700 rounded-lg" placeholder="Enter title" required>
-        <div class="flex justify-end space-x-4 mt-6">
-            <button id="cancel-button" class="bg-gray-500 text-white px-6 py-3 rounded-lg hover:bg-gray-600 transition duration-200">Cancel</button>
-            <button id="ok-button" class="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition duration-200">OK</button>
+// Prompts the user for a title using the global showAppPopup
+function promptForTitleModal(promptText) {
+    const contentHtml = `
+        <div>
+            <label for="promptTitle" class="block mb-2 text-sm font-medium text-gray-200">Enter a title for this prompt:</label>
+            <input type="text" id="promptTitle" class="w-full p-2.5 bg-gray-700 border border-gray-600 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 placeholder-gray-400" placeholder="Prompt Title" required>
         </div>
+        <!-- Removed Tags Input Field -->
     `;
 
-    // Assemble the popup content
-    popupContent.appendChild(popupTitle);
-    popupContent.appendChild(popupMessage);
-    popup.appendChild(popupContent);
-
-    // Add the popup to the body
-    document.body.appendChild(popup);
-
-    // Add event listener for the OK button
-    const okButton = document.getElementById('ok-button');
-    const cancelButton = document.getElementById('cancel-button');
-    const titleInput = document.getElementById('title-input');
-
-    if (okButton && cancelButton && titleInput) {
-        // OK button click handler
-        okButton.onclick = function () {
-            if (titleInput.value.trim()) { // Check if title is not empty
-                const promptText = document.getElementById("response").innerText;
-                saveToLibrary(titleInput.value.trim(), promptText);
-            } else {
-                showPopup("Error", "Please enter a title."); // Use dynamic popup for error
+    const buttons = [
+        {
+            text: "Save",
+            action: () => {
+                const title = document.getElementById('promptTitle').value;
+                // Removed: const tags = document.getElementById('promptTags').value;
+                if (!title.trim()) {
+                    showToast("Title cannot be empty.", "error");
+                    const titleInput = document.getElementById('promptTitle');
+                    if (titleInput) titleInput.focus();
+                    return false; // Keep popup open
+                }
+                // Removed 'tags' from the call to saveToLibrary
+                saveToLibrary(title, promptText);
+                // Popup will close automatically unless false is returned
             }
-        };
+        },
+        {
+            text: "Cancel",
+            action: () => {
+                closeAppPopup(); // Explicitly close, or rely on default
+            }
+        }
+    ];
 
-        // Cancel button click handler
-        cancelButton.onclick = function () {
-            closePopup(); // Close the popup
-        };
-    } else {
-        console.error('OK button, Cancel button, or title input not found in the DOM');
-    }
+    showAppPopup("Save Prompt to Library", contentHtml, { 
+        type: 'custom', 
+        buttons: buttons,
+        size: 'sm' // Keep this popup relatively small
+    });
 }
 
-function saveToLibrary(title, prompt) {
-    console.log("Saving prompt with title:", title); // Debugging
+// Saves the prompt to the user's library
+// Removed 'tags' parameter from function definition
+function saveToLibrary(title, promptContent) { 
+    const formData = new FormData();
+    formData.append('title', title);
+    formData.append('prompt', promptContent);
+    // Removed: formData.append('tags', tags);
+
+    showGlobalLoader(); // Show loader before fetch
+
     fetch('/save_prompt', {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: 'title=' + encodeURIComponent(title) + '&prompt=' + encodeURIComponent(prompt),
+        body: formData
     })
-        .then(response => {
-            console.log("Server response status:", response.status); // Debugging
-            if (!response.ok) {
-                throw new Error("Server returned an error");
-            }
-            return response.text();
-        })
-        .then(data => {
-            console.log("Server response data:", data); // Debugging
-            showPopup("Success", data); // Use dynamic popup for success
-            closePopup(); // Close the title input popup
-        })
-        .catch(error => {
-            console.error("Error saving prompt:", error); // Debugging
-            showPopup("Error", "Failed to save prompt."); // Use dynamic popup for error
-            closePopup(); // Close the title input popup
-        });
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showToast(data.message || "Prompt saved successfully!", "success");
+        } else {
+            showToast(data.message || "Failed to save prompt.", "error");
+        }
+    })
+    .catch(error => {
+        console.error('Error saving prompt:', error);
+        showToast("An error occurred while saving the prompt. Check console for details.", "error");
+    })
+    .finally(() => {
+        hideGlobalLoader(); // Hide loader after fetch
+    });
 }

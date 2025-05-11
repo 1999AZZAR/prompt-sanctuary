@@ -22,6 +22,7 @@
     <script defer src="{{ url_for('static', filename='script/generator.js') }}"></script>
     <script defer src="{{ url_for('static', filename='script/sidebar.js') }}"></script>
     <script defer src="{{ url_for('static', filename='script/login.js') }}"></script>
+    <script defer src="{{ url_for('static', filename='script/notifications.js') }}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.8/clipboard.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2/dist/fuse.min.js"></script>
 
@@ -34,6 +35,9 @@
 </head>
 
 <body class="flex flex-col min-h-screen">
+    <div id="global-loader-overlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[6000] hidden">
+        <div class="spinner"></div>
+    </div>
     <!-- Sidebar -->
     <div class="side-panel fixed left-0 top-0 h-full w-72 glass transform -translate-x-full transition-transform duration-300 ease-in-out z-30 flex flex-col" id="sidePanel">
         <!-- Logo -->
@@ -45,23 +49,23 @@
         <!-- Navigation Links -->
         <div class="p-4">
             <ul class="space-y-3">
-                <li onclick="window.location.href='{{ url_for('main.home') }}';" class="cursor-pointer p-3 rounded-lg transition duration-200">
+                <li onclick="showGlobalLoader(); window.location.href='{{ url_for('main.home') }}';" class="cursor-pointer p-3 rounded-lg transition duration-200">
                     <i class="fas fa-home mr-2"></i><strong>Home</strong>
                 </li>
-                <li onclick="window.location.href='{{ url_for('main.mylib') }}';" class="cursor-pointer p-3 rounded-lg transition duration-200">
+                <li onclick="showGlobalLoader(); window.location.href='{{ url_for('main.mylib') }}';" class="cursor-pointer p-3 rounded-lg transition duration-200">
                     <i class="fas fa-save mr-2"></i><strong>Saved Prompts</strong>
                 </li>
                 <!-- Prompt Trial removed -->
-                <li onclick="window.location.href='{{ url_for('main.library') }}';" class="cursor-pointer p-3 rounded-lg transition duration-200">
+                <li onclick="showGlobalLoader(); window.location.href='{{ url_for('main.library') }}';" class="cursor-pointer p-3 rounded-lg transition duration-200">
                     <i class="fas fa-users mr-2"></i><strong>Community Prompt</strong>
                 </li>
-                <li onclick="window.location.href='{{ url_for('main.generate') }}';" class="cursor-pointer p-3 rounded-lg transition duration-200">
+                <li onclick="showGlobalLoader(); window.location.href='{{ url_for('main.generate') }}';" class="cursor-pointer p-3 rounded-lg transition duration-200">
                     <i class="fas fa-cogs mr-2"></i><strong>Basic Prompt</strong>
                 </li>
-                <li onclick="window.location.href='{{ url_for('main.advance') }}';" class="cursor-pointer p-3 rounded-lg transition duration-200">
+                <li onclick="showGlobalLoader(); window.location.href='{{ url_for('main.advance') }}';" class="cursor-pointer p-3 rounded-lg transition duration-200">
                     <i class="fas fa-tools mr-2"></i><strong>Advance Prompt</strong>
                 </li>
-                <li onclick="window.location.href='{{ url_for('main.profile') }}';" class="cursor-pointer p-3 rounded-lg transition duration-200">
+                <li onclick="showGlobalLoader(); window.location.href='{{ url_for('main.profile') }}';" class="cursor-pointer p-3 rounded-lg transition duration-200">
                     <i class="fas fa-user mr-2"></i><strong>Profile</strong>
                 </li>
             </ul>
@@ -70,7 +74,7 @@
         <!-- Logout and Feedback -->
         <div class="p-4 border-t">
             <ul class="space-y-3">
-                <li onclick="window.location.href='{{ url_for('main.logout') }}';" class="cursor-pointer p-3 rounded-lg transition duration-200">
+                <li onclick="showGlobalLoader(); window.location.href='{{ url_for('main.logout') }}';" class="cursor-pointer p-3 rounded-lg transition duration-200">
                     <i class="fas fa-sign-out-alt mr-2"></i><strong>Logout</strong>
                 </li>
                 <li onclick="openFeedbackPopup()" class="cursor-pointer p-3 rounded-lg transition duration-200">
@@ -109,6 +113,7 @@
         </div>
     </div>
 
+    <div id="toast-container" class="fixed top-5 right-5 z-50 space-y-2"></div>
     <!-- MDC Web JS -->
     <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
     <script>

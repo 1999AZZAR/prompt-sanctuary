@@ -1,95 +1,5 @@
 // Function to show the custom popup
-function showPopup(title, message, isConfirmation = false, onConfirm = null, onCancel = null) {
-    const popup = document.createElement('div');
-    popup.id = 'custom-popup';
-    popup.className = 'fixed inset-0 flex items-center justify-center glass z-50';
-
-    const popupContent = document.createElement('div');
-    popupContent.className = 'glass p-8 rounded-lg w-11/12 max-w-md text-white relative';
-    // Inline overflow styling for scroll
-    popupContent.style.maxHeight = '80vh';
-    popupContent.style.overflowY = 'auto';
-    popupContent.style.overflowX = 'hidden';
-
-    // Close button
-    const closeBtn = document.createElement('button');
-    closeBtn.className = 'absolute top-4 right-4 text-white text-xl';
-    closeBtn.innerHTML = '&times;';
-    closeBtn.onclick = () => closePopup('custom-popup');
-    popupContent.appendChild(closeBtn);
-
-    const popupTitle = document.createElement('h2');
-    popupTitle.id = 'popup-title';
-    popupTitle.className = 'text-2xl font-bold mb-4';
-    popupTitle.textContent = title;
-
-    const popupMessage = document.createElement('p');
-    popupMessage.id = 'popup-message';
-    popupMessage.className = 'text-lg text-gray-300 mb-6 whitespace-pre-wrap break-words';
-    popupMessage.textContent = message;
-
-    const buttonContainer = document.createElement('div');
-    buttonContainer.className = 'flex justify-end space-x-4';
-
-    if (isConfirmation) {
-        // Yes Button (for confirmation popups)
-        const yesButton = document.createElement('button');
-        yesButton.className = 'bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition duration-200';
-        yesButton.textContent = 'Yes';
-        yesButton.onclick = () => {
-            if (onConfirm) onConfirm();
-            closePopup('custom-popup');
-        };
-
-        // No Button (for confirmation popups)
-        const noButton = document.createElement('button');
-        noButton.className = 'bg-gray-500 text-white px-6 py-3 rounded-lg hover:bg-gray-600 transition duration-200';
-        noButton.textContent = 'No';
-        noButton.onclick = () => {
-            if (onCancel) onCancel();
-            closePopup('custom-popup');
-        };
-
-        buttonContainer.appendChild(yesButton);
-        buttonContainer.appendChild(noButton);
-    } else {
-        // Non-confirmation popups (e.g., See): add Copy and Close
-        const copyBtn = document.createElement('button');
-        copyBtn.className = 'bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition duration-200';
-        copyBtn.textContent = 'Copy';
-        copyBtn.onclick = () => {
-            navigator.clipboard.writeText(message)
-                .then(() => showPopup('Success', 'Prompt copied to clipboard!'))
-                .catch(err => {
-                    console.error('Failed to copy prompt:', err);
-                    showPopup('Error', 'Failed to copy prompt. Please try again.');
-                });
-        };
-        const closeBtn2 = document.createElement('button');
-        closeBtn2.className = 'bg-gray-500 text-white px-6 py-3 rounded-lg hover:bg-gray-600 transition duration-200';
-        closeBtn2.textContent = 'Close';
-        closeBtn2.onclick = () => closePopup('custom-popup');
-        buttonContainer.appendChild(copyBtn);
-        buttonContainer.appendChild(closeBtn2);
-    }
-
-    popupContent.appendChild(popupTitle);
-    popupContent.appendChild(popupMessage);
-    popupContent.appendChild(buttonContainer);
-
-    popup.appendChild(popupContent);
-    document.body.appendChild(popup);
-}
-
-// Function to close the custom popup
-function closePopup(popupId = 'custom-popup') {
-    const popup = document.getElementById(popupId);
-    if (popup) {
-        popup.remove();
-    } else {
-        console.error('Popup element not found in the DOM');
-    }
-}
+// REMOVE LOCAL showPopup and closePopup
 
 // Function to attach event listeners to copy buttons
 function attachCopyButtonListeners() {
@@ -104,11 +14,13 @@ function attachCopyButtonListeners() {
             // Use the Clipboard API to copy the content
             navigator.clipboard.writeText(promptContent)
                 .then(() => {
-                    showPopup("Success", "Prompt copied to clipboard!");
+                    // Use global toast for copy confirmation
+                    showToast("Prompt copied to clipboard!", "success");
                 })
                 .catch((err) => {
                     console.error('Failed to copy prompt:', err);
-                    showPopup("Error", "Failed to copy prompt. Please try again.");
+                    // Use global toast for copy error
+                    showToast("Failed to copy prompt. Please try again.", "error");
                 });
         });
     });
@@ -126,17 +38,19 @@ function attachSaveButtonListeners() {
             const prompt = button.getAttribute('data-prompt');
 
             // Show custom confirmation popup with "Yes" and "No" buttons
-            showPopup(
+            showAppPopup(
                 "Confirm Save",
                 `Are you sure you want to save "${title}" to your personal library?`,
-                true, // This is a confirmation popup
-                () => {
-                    // If user clicks "Yes", save the prompt
-                    savePrompt(title, prompt);
-                },
-                () => {
-                    // If user clicks "No", do nothing
-                    console.log("Save canceled.");
+                {
+                    type: 'confirmation',
+                    onConfirm: () => {
+                        // If user clicks "Yes", save the prompt
+                        savePrompt(title, prompt);
+                    },
+                    onCancel: () => {
+                        // If user clicks "No", do nothing
+                        console.log("Save canceled.");
+                    }
                 }
             );
         });
@@ -149,7 +63,8 @@ function attachSaveButtonListeners() {
             const card = btn.closest('.prompt-card');
             const title = card.querySelector('.mdc-typography--headline6').innerText;
             const content = card.querySelector('.mdc-typography--body2').innerText;
-            showPopup(title, content);
+            // Use new global popup for details view
+            showAppPopup(title, content, { type: 'details' });
         });
     });
 }
@@ -167,15 +82,18 @@ function unsharePrompt(promptId) {
     })
     .then(data => {
         if (data.success) {
-            showPopup("Success", "Prompt unshared successfully!");
+            // Use global toast for success
+            showToast("Prompt unshared successfully!", "success");
             setTimeout(() => window.location.reload(), 1000);
         } else {
-            showPopup("Error", "Failed to unshare prompt: " + (data.error || "Unknown error"));
+            // Use global toast for error
+            showToast("Failed to unshare prompt: " + (data.error || "Unknown error"), "error");
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        showPopup("Error", "Error unsharing prompt: " + error.message);
+        // Use global toast for error
+        showToast("Error unsharing prompt: " + error.message, "error");
     });
 }
 
@@ -185,12 +103,14 @@ function attachUnshareButtonListeners() {
         button.addEventListener('click', function(e) {
             e.preventDefault();
             const promptId = button.getAttribute('data-prompt-id');
-            showPopup(
+            showAppPopup(
                 "Confirm Unshare",
                 "Are you sure you want to unshare this prompt?",
-                true,
-                () => unsharePrompt(promptId),
-                () => console.log("Unshare canceled.")
+                {
+                    type: 'confirmation',
+                    onConfirm: () => unsharePrompt(promptId),
+                    onCancel: () => console.log("Unshare canceled.")
+                }
             );
         });
     });
@@ -206,16 +126,20 @@ function savePrompt(title, prompt) {
         method: 'POST',
         body: formData,
     })
-    .then(response => {
-        if (response.ok) {
-            showPopup("Success", "Prompt saved successfully!");
+    .then(response => response.json()) // Assuming /save_prompt returns JSON now
+    .then(data => {
+        if (data.success) {
+            // Use global toast for success
+            showToast(data.message || "Prompt saved successfully!", "success");
         } else {
-            throw new Error('Failed to save prompt.');
+            // Use global toast for error
+            showToast(data.message || 'Failed to save prompt.', "error");
         }
     })
     .catch((error) => {
         console.error('Error:', error);
-        showPopup("Error", "Failed to save prompt: " + error.message);
+        // Use global toast for error
+        showToast("Failed to save prompt: " + error.message, "error");
     });
 }
 
