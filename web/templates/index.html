@@ -1,64 +1,70 @@
 {% extends "base.html" %}
 
 {% block content %}
-<section class="mdc-layout-grid">
-  <div class="mdc-layout-grid__inner">
-    <!-- Hero Card -->
-    <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12">
-      <div class="hero text-center mb-12 cursor-pointer" onclick="toggleSidePanel()">
-        <h1 class="text-5xl font-bold mb-4"><i class="fas fa-home mr-2"></i>Prompt Sanctuary</h1>
-        <p class="text-lg text-gray-300">Your AI-powered prompt creation studio.</p>
+<section class="flex flex-col items-center px-6 py-12" role="region" aria-labelledby="main-heading">
+  <!-- Hero Card -->
+  <div class="hero text-center mb-16 w-full max-w-5xl cursor-pointer" onclick="toggleSidePanel()">
+    <h1 class="text-5xl font-bold mb-4" id="main-heading"><i class="fas fa-home mr-2"></i>Prompt Sanctuary</h1>
+    <p class="text-lg text-gray-300">Your AI-powered prompt creation studio.</p>
+  </div>
+
+  <!-- Feature Cards -->
+  <div class="w-full max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+    <!-- Feature 1: Basic Prompt -->
+    <div class="glass p-8 rounded-xl shadow-xl transform transition duration-300 hover:scale-105 hover:shadow-2xl h-full flex flex-col" role="region" aria-labelledby="basic-prompt-heading">
+      <div class="flex flex-col items-center text-center md:items-start md:text-left flex-grow">
+        <i class="fas fa-keyboard fa-3x text-purple-400 mb-4 inline-block"></i>
+        <h2 class="text-3xl font-semibold text-white mb-3" id="basic-prompt-heading">Basic Prompt Generation</h2>
+        <div class="flex-grow">
+          <p class="text-gray-300 leading-relaxed mb-2">
+            Our basic generator helps you get started quickly. Key features include:
+          </p>
+          <ul class="list-disc list-inside text-gray-300 leading-relaxed mb-6 pl-4">
+            <li>Quickly generate creative prompts.</li>
+            <li>Ideal for sparking ideas in simple use cases.</li>
+            <li>Overcome writer's block with ease.</li>
+          </ul>
+        </div>
       </div>
+      <a href="{{ url_for('main.generate') }}" class="mdc-button mdc-button--raised bg-purple-500 text-white px-6 py-3 hover:bg-purple-600 transition mt-auto self-center md:self-start">Try Basic Generator</a>
     </div>
 
-    <!-- Feature Cards -->
-    <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-4">
-      <div class="mdc-card glass prompt-card hover:shadow-xl hover:scale-105 transform transition duration-200 p-6">
-        <div class="text-center mb-4">
-          <i class="fas fa-keyboard fa-3x text-purple-500"></i>
-        </div>
-        <div class="mdc-card__primary-action" tabindex="0">
-          <h2 class="mdc-typography--headline6 mb-4">Basic Prompt</h2>
-          <p class="mdc-typography--body2 mb-6">Generate tailored prompts to spark your creativity with ease.</p>
-        </div>
-        <div class="mdc-card__actions">
-          <button class="mdc-button mdc-button--raised hover:scale-105 transform transition duration-200" onclick="window.location.href='{{ url_for('main.generate') }}'">
-            <span class="mdc-button__label">Get Started</span>
-          </button>
+    <!-- Feature 2: Advanced Prompt -->
+    <div class="glass p-8 rounded-xl shadow-xl transform transition duration-300 hover:scale-105 hover:shadow-2xl h-full flex flex-col" role="region" aria-labelledby="advanced-prompt-heading">
+      <div class="flex flex-col items-center text-center md:items-start md:text-left flex-grow">
+        <i class="fas fa-sliders-h fa-3x text-green-400 mb-4 inline-block"></i>
+        <h2 class="text-3xl font-semibold text-white mb-3" id="advanced-prompt-heading">Advanced Prompt Engineering</h2>
+        <div class="flex-grow">
+          <p class="text-gray-300 leading-relaxed mb-2">
+            With advanced engineering, you gain more control. You can:
+          </p>
+          <ul class="list-disc list-inside text-gray-300 leading-relaxed mb-6 pl-4">
+            <li>Fine-tune multiple prompt parameters.</li>
+            <li>Regenerate and refine prompts on demand.</li>
+            <li>Craft complex and highly specific instructions.</li>
+          </ul>
         </div>
       </div>
+      <a href="{{ url_for('main.advance') }}" class="mdc-button mdc-button--raised bg-green-500 text-white px-6 py-3 hover:bg-green-600 transition mt-auto self-center md:self-start">Access Advanced Tools</a>
     </div>
-    <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-4">
-      <div class="mdc-card glass prompt-card hover:shadow-xl hover:scale-105 transform transition duration-200 p-6">
-        <div class="text-center mb-4">
-          <i class="fas fa-sliders-h fa-3x text-green-500"></i>
-        </div>
-        <div class="mdc-card__primary-action" tabindex="0">
-          <h2 class="mdc-typography--headline6 mb-4">Advanced Prompt</h2>
-          <p class="mdc-typography--body2 mb-6">Customize multiple parameters and regenerate prompts on demand.</p>
-        </div>
-        <div class="mdc-card__actions">
-          <button class="mdc-button mdc-button--raised hover:scale-105 transform transition duration-200" onclick="window.location.href='{{ url_for('main.advance') }}'">
-            <span class="mdc-button__label">Get Started</span>
-          </button>
-        </div>
-      </div>
-    </div>
-    <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-4">
-      <div class="mdc-card glass prompt-card hover:shadow-xl hover:scale-105 transform transition duration-200 p-6">
-        <div class="text-center mb-4">
-          <i class="fas fa-users fa-3x text-yellow-500"></i>
-        </div>
-        <div class="mdc-card__primary-action" tabindex="0">
-          <h2 class="mdc-typography--headline6 mb-4">Community Prompts</h2>
-          <p class="mdc-typography--body2 mb-6">Browse and share prompts created by our vibrant community.</p>
-        </div>
-        <div class="mdc-card__actions">
-          <button class="mdc-button mdc-button--raised hover:scale-105 transform transition duration-200" onclick="window.location.href='{{ url_for('main.library') }}'">
-            <span class="mdc-button__label">Explore</span>
-          </button>
+
+    <!-- Feature 3: Community Prompts -->
+    <div class="glass p-8 rounded-xl shadow-xl transform transition duration-300 hover:scale-105 hover:shadow-2xl h-full flex flex-col" role="region" aria-labelledby="community-prompts-heading">
+      <div class="flex flex-col items-center text-center md:items-start md:text-left flex-grow">
+        <i class="fas fa-users fa-3x text-yellow-400 mb-4 inline-block"></i>
+        <h2 class="text-3xl font-semibold text-white mb-3" id="community-prompts-heading">Explore Community Prompts</h2>
+        <div class="flex-grow">
+          <p class="text-gray-300 leading-relaxed mb-2">
+            In our community library, you will find inspiration. Key benefits are:
+          </p>
+          <ul class="list-disc list-inside text-gray-300 leading-relaxed mb-6 pl-4">
+            <li>Explore a diverse collection of prompts from users.</li>
+            <li>Share your own creative prompts with others.</li>
+            <li>Discover new ideas and techniques.</li>
+          </ul>
         </div>
       </div>
+      <a href="{{ url_for('main.library') }}" class="mdc-button mdc-button--raised bg-yellow-500 text-white px-6 py-3 hover:bg-yellow-600 transition mt-auto self-center md:self-start">Browse Community Library</a>
     </div>
   </div>
 </section>

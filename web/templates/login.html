@@ -2,24 +2,31 @@
 {% set show_signup = show_signup | default(false) %}
 
 {% block content %}
-<section class="flex items-center justify-center min-h-screen px-6">
+<section class="flex items-center justify-center min-h-screen px-6" role="region" aria-labelledby="page-heading">
   <div class="mdc-card glass p-8 w-full max-w-md space-y-6">
-    <h1 class="text-3xl font-bold text-center">Prompt Sanctuary</h1>
+    <h1 id="page-heading" class="text-3xl font-bold text-center">Prompt Sanctuary</h1>
     <p class="text-gray-300 text-center mb-4">{% if show_signup %}Create an account to join Prompt Sanctuary.{% else %}Log in to access Prompt Sanctuary features.{% endif %}</p>
-    <form id="loginForm" action="{{ url_for('main.login') }}" method="post" class="space-y-4 {% if show_signup %}hidden{% endif %}">
+    <form id="loginForm" action="{{ url_for('main.login') }}" method="post" class="space-y-4 {% if show_signup %}hidden{% endif %}" role="form" aria-labelledby="login-heading">
+      <h2 id="login-heading" class="sr-only">Login Form</h2>
       <input type="text" name="honeypot" class="hidden">
+      <label for="usernameLogin" class="sr-only">Username</label>
       <input type="text" id="usernameLogin" name="username" required class="w-full p-3 bg-gray-700 rounded text-white" placeholder="Username">
+      <label for="passwordLogin" class="sr-only">Password</label>
       <input type="password" id="passwordLogin" name="password" required class="w-full p-3 bg-gray-700 rounded text-white" placeholder="Password">
-      <div id="loginErrorMessage" class="text-red-500 text-sm my-2 text-center"></div>
+      <div id="loginErrorMessage" class="text-red-500 text-sm my-2 text-center" role="alert"></div>
       <button type="submit" class="mdc-button mdc-button--raised fullwidth">Login</button>
       <p class="text-center">Don't have an account? <a id="signupLink" href="#" class="text-blue-400">Sign Up</a></p>
     </form>
-    <form id="signupForm" action="{{ url_for('main.signup') }}" method="post" class="space-y-4 {% if not show_signup %}hidden{% endif %}">
+    <form id="signupForm" action="{{ url_for('main.signup') }}" method="post" class="space-y-4 {% if not show_signup %}hidden{% endif %}" role="form" aria-labelledby="signup-heading">
+      <h2 id="signup-heading" class="sr-only">Sign Up Form</h2>
       <input type="text" name="honeypot" class="hidden">
+      <label for="usernameSignup" class="sr-only">Choose username</label>
       <input type="text" id="usernameSignup" name="username" required class="w-full p-3 bg-gray-700 rounded text-white" placeholder="Choose username">
+      <label for="passwordSignup" class="sr-only">Password</label>
       <input type="password" id="passwordSignup" name="password" required class="w-full p-3 bg-gray-700 rounded text-white" placeholder="Password">
+      <label for="confirmPassword" class="sr-only">Confirm Password</label>
       <input type="password" id="confirmPassword" name="confirmPassword" required class="w-full p-3 bg-gray-700 rounded text-white" placeholder="Confirm Password">
-      <div id="signupErrorMessage" class="text-red-500 text-sm my-2 text-center"></div>
+      <div id="signupErrorMessage" class="text-red-500 text-sm my-2 text-center" role="alert"></div>
       <button type="submit" class="mdc-button mdc-button--outlined fullwidth">Sign Up</button>
       <p class="text-center">Already have an account? <a id="loginLink" href="#" class="text-blue-400">Login</a></p>
     </form>

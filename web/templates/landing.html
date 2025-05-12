@@ -1,38 +1,51 @@
 {% extends "base.html" %}
 
 {% block content %}
-<section class="flex flex-col items-center justify-center min-h-screen px-6">
-  <div class="hero text-center mb-12">
-    <h1 class="text-6xl font-extrabold text-white mb-4">Prompt Sanctuary</h1>
+<section class="flex flex-col items-center justify-center min-h-screen px-6 py-12" role="region" aria-labelledby="main-heading">
+  <div class="hero text-center mb-16">
+    <h1 class="text-6xl font-extrabold text-white mb-4" id="main-heading">Prompt Sanctuary</h1>
     <p class="text-xl text-gray-300 max-w-2xl mb-8">Your one-stop platform to browse, generate, and refine AI prompts for creative storytelling, coding, and more.</p>
     <div class="space-x-4">
       <a href="{{ url_for('main.login') }}" class="mdc-button mdc-button--raised bg-blue-600 text-white px-6 py-3 hover:bg-blue-700 transition">Login</a>
       <a href="{{ url_for('main.signup') }}" class="mdc-button mdc-button--outlined text-blue-600 border border-blue-600 px-6 py-3 hover:bg-blue-600 hover:text-white transition">Sign Up</a>
     </div>
   </div>
-  <div class="mdc-layout-grid">
-    <div class="mdc-layout-grid__inner">
-      <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-4">
-        <div class="mdc-card glass p-6 text-center transform transition duration-200 hover:scale-105">
-          <i class="fas fa-users fa-3x text-indigo-500 mb-4"></i>
-          <h2 class="text-2xl font-semibold mb-2">Community Prompts</h2>
-          <p class="text-gray-300">Explore prompts shared by our vibrant community.</p>
-        </div>
+
+  <div class="w-full max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+    <!-- Feature 1: Community Prompts -->
+    <div class="glass p-8 rounded-xl shadow-xl transform transition duration-300 hover:scale-105 hover:shadow-2xl h-full flex flex-col" role="region" aria-labelledby="community-prompts-heading">
+      <div class="flex flex-col items-center text-center md:items-start md:text-left flex-grow">
+        <i class="fas fa-users fa-3x text-indigo-400 mb-4 inline-block"></i>
+        <h2 class="text-3xl font-semibold text-white mb-3" id="community-prompts-heading">Explore Community Prompts</h2>
+        <p class="text-gray-300 leading-relaxed mb-6 flex-grow">
+          Dive into a diverse collection of prompts crafted by users like you. Share your own creations, discover new ideas, and get inspired by the collective creativity of the Prompt Sanctuary community.
+        </p>
       </div>
-      <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-4">
-        <div class="mdc-card glass p-6 text-center transform transition duration-200 hover:scale-105">
-          <i class="fas fa-pencil-alt fa-3x text-green-500 mb-4"></i>
-          <h2 class="text-2xl font-semibold mb-2">Custom Prompt</h2>
-          <p class="text-gray-300">Generate tailored prompts with our basic tool.</p>
-        </div>
+      <a href="{{ url_for('main.library') }}" class="mdc-button mdc-button--raised bg-indigo-500 text-white px-6 py-3 hover:bg-indigo-600 transition mt-auto self-center md:self-start">Browse Community Library</a>
+    </div>
+
+    <!-- Feature 2: Custom Prompt Generation -->
+    <div class="glass p-8 rounded-xl shadow-xl transform transition duration-300 hover:scale-105 hover:shadow-2xl h-full flex flex-col" role="region" aria-labelledby="custom-prompt-heading">
+      <div class="flex flex-col items-center text-center md:items-start md:text-left flex-grow">
+        <i class="fas fa-pencil-alt fa-3x text-green-400 mb-4 inline-block"></i>
+        <h2 class="text-3xl font-semibold text-white mb-3" id="custom-prompt-heading">Custom Prompt Generation</h2>
+        <p class="text-gray-300 leading-relaxed mb-6 flex-grow">
+          Unleash your creativity with our intuitive prompt generator. Whether you're brainstorming for a story, a coding project, or artistic inspiration, quickly generate tailored prompts with our basic tool to get you started.
+        </p>
       </div>
-      <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-4">
-        <div class="mdc-card glass p-6 text-center transform transition duration-200 hover:scale-105">
-          <i class="fas fa-tools fa-3x text-yellow-500 mb-4"></i>
-          <h2 class="text-2xl font-semibold mb-2">Advanced Prompt</h2>
-          <p class="text-gray-300">Fine-tune parameters for advanced prompt creation.</p>
-        </div>
+      <a href="{{ url_for('main.generate') }}" class="mdc-button mdc-button--raised bg-green-500 text-white px-6 py-3 hover:bg-green-600 transition mt-auto self-center md:self-start">Try Basic Generator</a>
+    </div>
+
+    <!-- Feature 3: Advanced Prompt Engineering -->
+    <div class="glass p-8 rounded-xl shadow-xl transform transition duration-300 hover:scale-105 hover:shadow-2xl h-full flex flex-col" role="region" aria-labelledby="advanced-prompt-engineering-heading">
+      <div class="flex flex-col items-center text-center md:items-start md:text-left flex-grow">
+        <i class="fas fa-tools fa-3x text-yellow-400 mb-4 inline-block"></i>
+        <h2 class="text-3xl font-semibold text-white mb-3" id="advanced-prompt-engineering-heading">Advanced Prompt Engineering</h2>
+        <p class="text-gray-300 leading-relaxed mb-6 flex-grow">
+          Take full control with our advanced tools. Fine-tune every parameter, experiment with complex structures, and craft highly specific prompts for sophisticated AI interactions and specialized tasks.
+        </p>
       </div>
+      <a href="{{ url_for('main.advance') }}" class="mdc-button mdc-button--raised bg-yellow-500 text-white px-6 py-3 hover:bg-yellow-600 transition mt-auto self-center md:self-start">Access Advanced Tools</a>
     </div>
   </div>
 </section>

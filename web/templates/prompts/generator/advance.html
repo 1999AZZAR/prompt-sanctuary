@@ -2,36 +2,37 @@
 
 {% block content %}
     <!-- Hero Section -->
-    <div class="hero text-center mb-12 cursor-pointer" onclick="toggleSidePanel()">
+    <div class="hero text-center mb-12 cursor-pointer" onclick="toggleSidePanel()" role="region" aria-labelledby="adv-gen-page-heading">
         <div class="flex items-center justify-center mb-4 space-x-2">
-            <h1 class="text-5xl font-bold"><i class="fas fa-tools mr-2"></i>Prompt Generator (Advanced)</h1>
+            <h1 id="adv-gen-page-heading" class="text-5xl font-bold"><i class="fas fa-tools mr-2"></i>Prompt Generator (Advanced)</h1>
         </div>
         <p class="text-lg text-gray-300">Create custom and specialized prompts tailored to your needs.</p>
     </div>
 
     <!-- Tools Section -->
-    <div class="prompting grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 p-4">
+    <div class="prompting grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 p-4" role="region" aria-labelledby="tools-section-heading">
+        <h2 id="tools-section-heading" class="sr-only">Prompt Generation Tools</h2>
         <!-- Text Prompt -->
-        <div class="mdc-card glass prompt-card p-6 flex flex-col text-[var(--md-sys-color-on-surface)]">
+        <div class="mdc-card glass prompt-card p-6 flex flex-col text-[var(--md-sys-color-on-surface)]" role="form" aria-labelledby="text-prompt-heading">
             <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-bold">Generate Text Prompt</h2>
-                <button onclick="toggleTextHelp()" class="bg-[var(--md-sys-color-surface)] text-[var(--md-sys-color-on-surface)] px-3 py-1 rounded-lg hover:bg-[var(--md-sys-color-surface)] transition duration-200">?</button>
+                <h2 id="text-prompt-heading" class="text-2xl font-bold">Generate Text Prompt</h2>
+                <button onclick="toggleTextHelp()" class="bg-[var(--md-sys-color-surface)] text-[var(--md-sys-color-on-surface)] px-3 py-1 rounded-lg hover:bg-[var(--md-sys-color-surface)] transition duration-200" aria-controls="text-help-region" aria-expanded="false" aria-label="Toggle help for text prompt generation">?</button>
             </div>
-            <div id="text-help" class="hidden bg-[var(--md-sys-color-surface)] p-4 rounded-lg mb-4 text-[var(--md-sys-color-on-surface)]">
+            <div id="text-help-region" class="hidden bg-[var(--md-sys-color-surface)] p-4 rounded-lg mb-4 text-[var(--md-sys-color-on-surface)]" role="region" aria-hidden="true">
                 <p class="text-[var(--md-sys-color-on-surface)]">This section allows you to generate text prompts. Enter your use case, select the prompt type, and configure other parameters to create a custom prompt.</p>
             </div>
             <form id="a-text-prompt-form" class="space-y-4 flex-grow" onsubmit="submitForm('a-text-prompt-form', '/advance/generate'); return false;">
                 <!-- parameter 0 -->
                 <div>
-                    <label for="parameter0" class="block mb-2">Use case:</label>
-                    <input type="text" name="parameter0" id="parameter0" placeholder="Write a README file" class="w-full p-3 bg-[var(--md-sys-color-surface)] rounded-lg text-[var(--md-sys-color-on-surface)]" required maxlength="300">
+                    <label for="text_parameter0" class="block mb-2">Use case:</label>
+                    <input type="text" name="parameter0" id="text_parameter0" placeholder="Write a README file" class="w-full p-3 bg-[var(--md-sys-color-surface)] rounded-lg text-[var(--md-sys-color-on-surface)]" required maxlength="300">
                 </div>
                 <!-- parameter 0 end -->
 
                 <!-- parameter 1 -->
                 <div>
-                    <label for="parameter1" class="block mb-2">Prompt type:</label>
-                    <select name="parameter1" id="parameter1" class="w-full p-3 bg-[var(--md-sys-color-surface)] rounded-lg text-[var(--md-sys-color-on-surface)]">
+                    <label for="text_parameter1" class="block mb-2">Prompt type:</label>
+                    <select name="parameter1" id="text_parameter1" class="w-full p-3 bg-[var(--md-sys-color-surface)] rounded-lg text-[var(--md-sys-color-on-surface)]">
                         <option value="simple">Simple</option>
                         <option value="standard">Standard</option>
                         <option value="detailed">Detailed</option>
@@ -42,8 +43,8 @@
 
                 <!-- parameter 2 -->
                 <div>
-                    <label for="parameter2" class="block mb-2">Harm content:</label>
-                    <select name="parameter2" id="parameter2" class="w-full p-3 bg-[var(--md-sys-color-surface)] rounded-lg text-[var(--md-sys-color-on-surface)]">
+                    <label for="text_parameter2" class="block mb-2">Harm content:</label>
+                    <select name="parameter2" id="text_parameter2" class="w-full p-3 bg-[var(--md-sys-color-surface)] rounded-lg text-[var(--md-sys-color-on-surface)]">
                         <option value="unspecified">Unspecified</option>
                         <option value="none">Block none</option>
                         <option value="few">Block few</option>
@@ -55,18 +56,19 @@
 
                 <!-- parameter 3 -->
                 <div>
-                    <label for="parameter3" class="block mb-2">Knowledge base:</label>
-                    <input type="text" name="parameter3" id="parameter3" placeholder="Enter the Knowledge base if any" class="w-full p-3 bg-[var(--md-sys-color-surface)] rounded-lg text-[var(--md-sys-color-on-surface)]" maxlength="1000">
+                    <label for="text_parameter3" class="block mb-2">Knowledge base:</label>
+                    <input type="text" name="parameter3" id="text_parameter3" placeholder="Enter the Knowledge base if any" class="w-full p-3 bg-[var(--md-sys-color-surface)] rounded-lg text-[var(--md-sys-color-on-surface)]" maxlength="1000">
                 </div>
                 <!-- parameter 3 end -->
 
-                <input type="submit" value="Generate" class="bg-[var(--md-sys-color-primary)] text-[var(--md-sys-color-on-primary)] px-6 py-3 rounded-lg hover:bg-[var(--md-sys-color-secondary)] transition duration-200 cursor-pointer w-full">
+                <input type="submit" value="Generate Text Prompt" class="bg-[var(--md-sys-color-primary)] text-[var(--md-sys-color-on-primary)] px-6 py-3 rounded-lg hover:bg-[var(--md-sys-color-secondary)] transition duration-200 cursor-pointer w-full">
             </form>
         </div>
 
         <!-- Image Prompt -->
-        <div class="mdc-card glass prompt-card p-6 flex flex-col text-[var(--md-sys-color-on-surface)]">
-            <div class="flex items-center space-x-6 mb-6">
+        <div class="mdc-card glass prompt-card p-6 flex flex-col text-[var(--md-sys-color-on-surface)]" role="region" aria-labelledby="imageSectionTitle">
+            <div role="radiogroup" aria-labelledby="image-mode-label" class="flex items-center space-x-6 mb-6">
+                <span id="image-mode-label" class="sr-only">Choose Image Prompt Mode</span>
                 <label class="flex items-center space-x-2">
                     <input type="radio" name="imageMode" value="generate" checked onchange="toggleImageForms()" />
                     <span>Generate from Text</span>
@@ -75,27 +77,28 @@
                     <input type="radio" name="imageMode" value="reverse" onchange="toggleImageForms()" />
                     <span>Reverse from Image</span>
                 </label>
-                <button onclick="toggleImageHelp()" class="bg-[var(--md-sys-color-surface)] text-[var(--md-sys-color-on-surface)] px-3 py-1 rounded-lg hover:bg-[var(--md-sys-color-surface)] transition duration-200">?</button>
+                <button onclick="toggleImageHelp()" class="bg-[var(--md-sys-color-surface)] text-[var(--md-sys-color-on-surface)] px-3 py-1 rounded-lg hover:bg-[var(--md-sys-color-surface)] transition duration-200" aria-controls="image-generate-help-region image-reverse-help-region" aria-expanded="false" aria-label="Toggle help for image prompt generation">?</button>
             </div>
             <h2 id="imageSectionTitle" class="text-2xl font-bold mb-6">Generate Image Prompt</h2>
-            <div id="image-generate-help" class="hidden bg-[var(--md-sys-color-surface)] p-4 rounded-lg mb-4 text-[var(--md-sys-color-on-surface)]">
+            <div id="image-generate-help-region" class="hidden bg-[var(--md-sys-color-surface)] p-4 rounded-lg mb-4 text-[var(--md-sys-color-on-surface)]" role="region" aria-hidden="true">
                 <p class="text-[var(--md-sys-color-on-surface)]">This section allows you to generate image prompts. Enter your input, select the mood, and choose the primary and secondary styles to create a custom image prompt.</p>
             </div>
-            <div id="image-reverse-help" class="hidden bg-[var(--md-sys-color-surface)] p-4 rounded-lg mb-4 text-[var(--md-sys-color-on-surface)]">
+            <div id="image-reverse-help-region" class="hidden bg-[var(--md-sys-color-surface)] p-4 rounded-lg mb-4 text-[var(--md-sys-color-on-surface)]" role="region" aria-hidden="true">
                 <p class="text-[var(--md-sys-color-on-surface)]">This section allows you to upload an image and generate a prompt based on it. You can also select the mood and style to customize the output.</p>
             </div>
-            <form id="a-image-prompt-form" class="space-y-4 flex-grow" enctype="multipart/form-data" onsubmit="submitForm('a-image-prompt-form', '/advance/igenerate'); return false;">
+            <form id="a-image-prompt-form" class="space-y-4 flex-grow" enctype="multipart/form-data" onsubmit="submitForm('a-image-prompt-form', '/advance/igenerate'); return false;" role="form" aria-labelledby="image-generate-form-heading">
+                <h3 id="image-generate-form-heading" class="sr-only">Image Generation from Text Form</h3>
                 <!-- parameter 0 -->
                 <div>
-                    <label for="parameter0" class="block mb-2">Input:</label>
-                    <input type="text" name="parameter0" id="parameter0" placeholder="Cat on the sky" class="w-full p-3 bg-[var(--md-sys-color-surface)] rounded-lg text-[var(--md-sys-color-on-surface)]" required maxlength="300">
+                    <label for="image_gen_parameter0" class="block mb-2">Input:</label>
+                    <input type="text" name="parameter0" id="image_gen_parameter0" placeholder="Cat on the sky" class="w-full p-3 bg-[var(--md-sys-color-surface)] rounded-lg text-[var(--md-sys-color-on-surface)]" required maxlength="300">
                 </div>
                 <!-- parameter 0 end -->
 
                 <!-- parameter 1 -->
                 <div>
-                    <label for="parameter1" class="block mb-2">Primary mood:</label>
-                    <select name="parameter1" id="parameter1" class="w-full p-3 bg-[var(--md-sys-color-surface)] rounded-lg text-[var(--md-sys-color-on-surface)]">
+                    <label for="image_gen_parameter1" class="block mb-2">Primary mood:</label>
+                    <select name="parameter1" id="image_gen_parameter1" class="w-full p-3 bg-[var(--md-sys-color-surface)] rounded-lg text-[var(--md-sys-color-on-surface)]">
                         <optgroup label="Positive Moods">
                             <option value="happy">Happy</option>
                             <option value="joyful">Joyful</option>
@@ -131,8 +134,8 @@
 
                 <!-- parameter 2 -->
                 <div>
-                    <label for="parameter2" class="block mb-2">Primary style:</label>
-                    <select name="parameter2" id="parameter2" class="w-full p-3 bg-[var(--md-sys-color-surface)] rounded-lg text-[var(--md-sys-color-on-surface)]">
+                    <label for="image_gen_parameter2" class="block mb-2">Primary style:</label>
+                    <select name="parameter2" id="image_gen_parameter2" class="w-full p-3 bg-[var(--md-sys-color-surface)] rounded-lg text-[var(--md-sys-color-on-surface)]">
                         <optgroup label="Styles">
                             <option value="3d-model">3D Model</option>
                             <option value="abstract">Abstract</option>
@@ -181,8 +184,8 @@
 
                 <!-- parameter 3 -->
                 <div>
-                    <label for="parameter3" class="block mb-2">Secondary style:</label>
-                    <select name="parameter3" id="parameter3" class="w-full p-3 bg-[var(--md-sys-color-surface)] rounded-lg text-[var(--md-sys-color-on-surface)]">
+                    <label for="image_gen_parameter3" class="block mb-2">Secondary style:</label>
+                    <select name="parameter3" id="image_gen_parameter3" class="w-full p-3 bg-[var(--md-sys-color-surface)] rounded-lg text-[var(--md-sys-color-on-surface)]">
                         <optgroup label="Styles">
                             <option value="3d-model">3D Model</option>
                             <option value="abstract">Abstract</option>
@@ -229,23 +232,24 @@
                 </div>
                 <!-- parameter 3 end -->
 
-                <input type="submit" value="Generate" class="bg-[var(--md-sys-color-primary)] text-[var(--md-sys-color-on-primary)] px-6 py-3 rounded-lg hover:bg-[var(--md-sys-color-secondary)] transition duration-200 cursor-pointer w-full">
+                <input type="submit" value="Generate Image from Text" class="bg-[var(--md-sys-color-primary)] text-[var(--md-sys-color-on-primary)] px-6 py-3 rounded-lg hover:bg-[var(--md-sys-color-secondary)] transition duration-200 cursor-pointer w-full">
             </form>
 
             <!-- Reverse Image Prompt (merged into same card) -->
             <div id="reverseSection" class="hidden mt-8 pt-6 border-t border-[var(--md-sys-color-on-surface)] space-y-4">
-                <form id="a-reverse-image-form" class="space-y-4 flex-grow" enctype="multipart/form-data" onsubmit="submitForm('a-reverse-image-form', '/advance/image'); return false;">
+                <form id="a-reverse-image-form" class="space-y-4 flex-grow" enctype="multipart/form-data" onsubmit="submitForm('a-reverse-image-form', '/advance/image'); return false;" role="form" aria-labelledby="image-reverse-form-heading">
+                    <h3 id="image-reverse-form-heading" class="sr-only">Image Generation from Uploaded Image Form</h3>
                     <!-- parameter 0 -->
                     <div>
-                        <label for="image" class="block mb-2">Upload Image:</label>
-                        <input type="file" name="image" accept="image/*" class="w-full p-3 bg-[var(--md-sys-color-surface)] rounded-lg text-[var(--md-sys-color-on-surface)]" required>
+                        <label for="image_upload_input" class="block mb-2">Upload Image:</label>
+                        <input type="file" name="image" id="image_upload_input" accept="image/*" class="w-full p-3 bg-[var(--md-sys-color-surface)] rounded-lg text-[var(--md-sys-color-on-surface)]" required>
                     </div>
                     <!-- parameter 0 end -->
 
                     <!-- parameter 1 -->
                     <div>
-                        <label for="parameter1" class="block mb-2">Primary mood:</label>
-                        <select name="parameter1" id="parameter1" class="w-full p-3 bg-[var(--md-sys-color-surface)] rounded-lg text-[var(--md-sys-color-on-surface)]">
+                        <label for="image_rev_parameter1" class="block mb-2">Primary mood:</label>
+                        <select name="parameter1" id="image_rev_parameter1" class="w-full p-3 bg-[var(--md-sys-color-surface)] rounded-lg text-[var(--md-sys-color-on-surface)]">
                             <option value="original">Original</option>
                             <optgroup label="Positive Moods">
                                 <option value="happy">Happy</option>
@@ -282,8 +286,8 @@
 
                     <!-- parameter 2 -->
                     <div>
-                        <label for="parameter2" class="block mb-2">Primary style:</label>
-                        <select name="parameter2" id="parameter2" class="w-full p-3 bg-[var(--md-sys-color-surface)] rounded-lg text-[var(--md-sys-color-on-surface)]">
+                        <label for="image_rev_parameter2" class="block mb-2">Primary style:</label>
+                        <select name="parameter2" id="image_rev_parameter2" class="w-full p-3 bg-[var(--md-sys-color-surface)] rounded-lg text-[var(--md-sys-color-on-surface)]">
                             <option value="original">Original</option>
                             <optgroup label="Styles">
                                 <option value="3d-model">3D Model</option>
@@ -333,8 +337,8 @@
 
                     <!-- parameter 3 -->
                     <div>
-                        <label for="parameter3" class="block mb-2">Secondary style:</label>
-                        <select name="parameter3" id="parameter3" class="w-full p-3 bg-[var(--md-sys-color-surface)] rounded-lg text-[var(--md-sys-color-on-surface)]">
+                        <label for="image_rev_parameter3" class="block mb-2">Secondary style:</label>
+                        <select name="parameter3" id="image_rev_parameter3" class="w-full p-3 bg-[var(--md-sys-color-surface)] rounded-lg text-[var(--md-sys-color-on-surface)]">
                             <option value="original">Original</option>
                             <optgroup label="Styles">
                                 <option value="3d-model">3D Model</option>
@@ -382,7 +386,7 @@
                     </div>
                     <!-- parameter 3 end -->
 
-                    <input type="submit" value="Generate" class="bg-[var(--md-sys-color-primary)] text-[var(--md-sys-color-on-primary)] px-6 py-3 rounded-lg hover:bg-[var(--md-sys-color-secondary)] transition duration-200 cursor-pointer w-full">
+                    <input type="submit" value="Generate Prompt from Image" class="bg-[var(--md-sys-color-primary)] text-[var(--md-sys-color-on-primary)] px-6 py-3 rounded-lg hover:bg-[var(--md-sys-color-secondary)] transition duration-200 cursor-pointer w-full">
                 </form>
             </div>
         </div>
@@ -390,12 +394,13 @@
     <!-- Tools Section End -->
 
     <!-- Preview Section (hidden by default, shown only when image is uploaded) -->
-    <div id="preview-container" class="image-preview mdc-card glass prompt-card p-6 mt-12 hidden">
+    <div id="preview-container" class="image-preview mdc-card glass prompt-card p-6 mt-12 hidden" role="region" aria-labelledby="image-preview-heading">
+        <h3 id="image-preview-heading" class="sr-only">Image Preview</h3>
         <img id="preview-image" alt="Image Preview" class="w-64 h-64 mx-auto rounded-lg object-contain">
     </div>
 
     <!-- Loading Section -->
-    <div id="loading" class="loading hidden fixed inset-0 flex items-center justify-center z-50">
+    <div id="loading" class="loading hidden fixed inset-0 flex items-center justify-center z-50" role="alert" aria-live="assertive">
         <div class="glass absolute inset-0 z-0"></div>
         <div class="relative z-10 flex flex-col items-center justify-center p-8">
           <div class="loader-modern"><div class="ring"></div><div class="ring ring2"></div><div class="pulse"></div></div>
@@ -404,31 +409,65 @@
     </div>
 
     <!-- Result Section (hidden by default, shown only when a prompt is generated) -->
-    <div id="resultSection" class="result mdc-card glass prompt-card p-6 mt-8 hidden">
-        <h2 class="text-2xl font-bold mb-6">Generated Prompt:</h2>
-        <div id="response" class="text-lg text-[var(--md-sys-color-on-surface)] space-y-4"></div>
+    <div id="resultSection" class="result mdc-card glass prompt-card p-6 mt-8 hidden" role="region" aria-labelledby="generated-prompt-heading">
+        <h2 id="generated-prompt-heading" class="text-2xl font-bold mb-6">Generated Prompt:</h2>
+        <div id="response" class="text-lg text-[var(--md-sys-color-on-surface)] space-y-4" aria-live="polite"></div>
         <div class="flex space-x-4 mt-6">
-            <button onclick="copyToClipboard()" class="bg-[var(--md-sys-color-primary)] text-[var(--md-sys-color-on-primary)] px-6 py-3 rounded-lg hover:bg-[var(--md-sys-color-secondary)] transition duration-200">Copy</button>
-            <button id="save-to-library" class="bg-[var(--md-sys-color-secondary)] text-[var(--md-sys-color-on-secondary)] px-6 py-3 rounded-lg hover:opacity-90 transition duration-200">Save</button>
+            <button onclick="copyToClipboard()" class="bg-[var(--md-sys-color-primary)] text-[var(--md-sys-color-on-primary)] px-6 py-3 rounded-lg hover:bg-[var(--md-sys-color-secondary)] transition duration-200" aria-label="Copy generated prompt to clipboard">Copy</button>
+            <button id="save-to-library" class="bg-[var(--md-sys-color-secondary)] text-[var(--md-sys-color-on-secondary)] px-6 py-3 rounded-lg hover:opacity-90 transition duration-200" aria-label="Save generated prompt to your library">Save</button>
         </div>
     </div>
 
     <script>
         function toggleTextHelp() {
-            document.getElementById('text-help').classList.toggle('hidden');
+            const helpRegion = document.getElementById('text-help-region');
+            const isHidden = helpRegion.classList.toggle('hidden');
+            helpRegion.setAttribute('aria-hidden', isHidden);
+            document.querySelector('[aria-controls="text-help-region"]').setAttribute('aria-expanded', !isHidden);
         }
         function toggleImageHelp() {
             const mode = document.querySelector('input[name="imageMode"]:checked').value;
-            const helpId = mode === 'generate' ? 'image-generate-help' : 'image-reverse-help';
-            document.getElementById(helpId).classList.toggle('hidden');
+            const generateHelpRegion = document.getElementById('image-generate-help-region');
+            const reverseHelpRegion = document.getElementById('image-reverse-help-region');
+            const helpButton = document.querySelector('[aria-controls="image-generate-help-region image-reverse-help-region"]');
+
+            if (mode === 'generate') {
+                const isHidden = generateHelpRegion.classList.toggle('hidden');
+                generateHelpRegion.setAttribute('aria-hidden', isHidden);
+                reverseHelpRegion.classList.add('hidden');
+                reverseHelpRegion.setAttribute('aria-hidden', 'true');
+                helpButton.setAttribute('aria-expanded', !isHidden);
+            } else {
+                const isHidden = reverseHelpRegion.classList.toggle('hidden');
+                reverseHelpRegion.setAttribute('aria-hidden', isHidden);
+                generateHelpRegion.classList.add('hidden');
+                generateHelpRegion.setAttribute('aria-hidden', 'true');
+                helpButton.setAttribute('aria-expanded', !isHidden);
+            }
         }
         function toggleImageForms() {
             const mode = document.querySelector('input[name="imageMode"]:checked').value;
             document.getElementById('a-image-prompt-form').classList.toggle('hidden', mode !== 'generate');
             document.getElementById('reverseSection').classList.toggle('hidden', mode !== 'reverse');
-            document.getElementById('image-generate-help').classList.add('hidden');
-            document.getElementById('image-reverse-help').classList.add('hidden');
+            
+            // Hide both help sections when toggling forms, let toggleImageHelp handle showing the correct one
+            const generateHelpRegion = document.getElementById('image-generate-help-region');
+            const reverseHelpRegion = document.getElementById('image-reverse-help-region');
+            const helpButton = document.querySelector('[aria-controls="image-generate-help-region image-reverse-help-region"]');
+
+            generateHelpRegion.classList.add('hidden');
+            generateHelpRegion.setAttribute('aria-hidden', 'true');
+            reverseHelpRegion.classList.add('hidden');
+            reverseHelpRegion.setAttribute('aria-hidden', 'true');
+            helpButton.setAttribute('aria-expanded', 'false');
+            
             document.getElementById('imageSectionTitle').textContent = mode === 'generate' ? 'Generate Image Prompt' : 'Reverse Image Prompt';
         }
+        // Ensure unique IDs for form controls by renaming based on form if necessary
+        // This is mostly handled by prefixing IDs in the HTML (e.g., text_parameter0, image_gen_parameter0, image_rev_parameter0)
+        // Initial call to set up the correct form visibility
+        document.addEventListener('DOMContentLoaded', () => {
+            toggleImageForms();
+        });
     </script>
 {% endblock %}

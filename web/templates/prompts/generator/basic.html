@@ -2,22 +2,23 @@
 
 {% block content %}
     <!-- Hero Section -->
-    <div class="hero text-center mb-12 cursor-pointer" onclick="toggleSidePanel()">
+    <div class="hero text-center mb-12 cursor-pointer" onclick="toggleSidePanel()" role="region" aria-labelledby="basic-gen-page-heading">
         <div class="flex items-center justify-center mb-4 space-x-2">
-            <h1 class="text-5xl font-bold"><i class="fas fa-cogs mr-2"></i>Prompt Generator (Basic)</h1>
+            <h1 id="basic-gen-page-heading" class="text-5xl font-bold"><i class="fas fa-cogs mr-2"></i>Prompt Generator (Basic)</h1>
         </div>
         <p class="text-lg text-gray-300">Create custom prompts tailored to your needs.</p>
     </div>
 
     <!-- Tools Section -->
-    <div class="prompting grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
+    <div class="prompting grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8" role="region" aria-labelledby="basic-tools-section-heading">
+        <h2 id="basic-tools-section-heading" class="sr-only">Basic Prompt Generation Tools</h2>
         <!-- Text Prompt -->
-        <div class="mdc-card glass prompt-card p-6 flex flex-col text-[var(--md-sys-color-on-surface)]">
+        <div class="mdc-card glass prompt-card p-6 flex flex-col text-[var(--md-sys-color-on-surface)]" role="form" aria-labelledby="basic-text-prompt-heading">
             <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-bold">Generate Text Prompt</h2>
-                <button onclick="toggleHelp('text-help')" class="bg-[var(--md-sys-color-surface)] text-[var(--md-sys-color-on-surface)] px-3 py-1 rounded-lg hover:bg-[var(--md-sys-color-surface)] transition duration-200">?</button>
+                <h2 id="basic-text-prompt-heading" class="text-2xl font-bold">Generate Text Prompt</h2>
+                <button onclick="toggleHelp('text-help-basic-region')" class="bg-[var(--md-sys-color-surface)] text-[var(--md-sys-color-on-surface)] px-3 py-1 rounded-lg hover:bg-[var(--md-sys-color-surface)] transition duration-200" aria-controls="text-help-basic-region" aria-expanded="false" aria-label="Toggle help for basic text prompt generation">?</button>
             </div>
-            <div id="text-help" class="hidden bg-[var(--md-sys-color-surface)] p-4 rounded-lg mb-4 text-[var(--md-sys-color-on-surface)]">
+            <div id="text-help-basic-region" class="hidden bg-[var(--md-sys-color-surface)] p-4 rounded-lg mb-4 text-[var(--md-sys-color-on-surface)]" role="region" aria-hidden="true">
                 <p class="text-[var(--md-sys-color-on-surface)]">This section allows you to generate text prompts. Enter your input and click "Generate" to create a custom prompt, or click "Random" for a surprise prompt.</p>
             </div>
             <form id="text-prompt-form" class="space-y-4 flex-grow">
@@ -26,8 +27,8 @@
                     <input type="text" name="user_input" id="user_input_text" placeholder="Write a Python code" class="w-full p-3 bg-[var(--md-sys-color-surface)] rounded-lg text-[var(--md-sys-color-on-surface)]" required>
                 </div>
                 <div class="flex space-x-4">
-                    <input type="submit" value="Generate" class="bg-[var(--md-sys-color-primary)] text-[var(--md-sys-color-on-primary)] px-6 py-3 rounded-lg hover:bg-[var(--md-sys-color-secondary)] transition duration-200 cursor-pointer">
-                    <button type="button" onclick="submitForm('random-text-prompt-form','/generate/trandom')" class="bg-[var(--md-sys-color-secondary)] text-[var(--md-sys-color-on-secondary)] px-6 py-3 rounded-lg hover:opacity-90 transition duration-200">Random</button>
+                    <input type="submit" value="Generate" aria-label="Generate text prompt based on input" class="bg-[var(--md-sys-color-primary)] text-[var(--md-sys-color-on-primary)] px-6 py-3 rounded-lg hover:bg-[var(--md-sys-color-secondary)] transition duration-200 cursor-pointer">
+                    <button type="button" onclick="submitForm('random-text-prompt-form','/generate/trandom')" aria-label="Generate random text prompt" class="bg-[var(--md-sys-color-secondary)] text-[var(--md-sys-color-on-secondary)] px-6 py-3 rounded-lg hover:opacity-90 transition duration-200">Random</button>
                 </div>
             </form>
 
@@ -36,16 +37,17 @@
         </div>
 
         <!-- Image Prompt -->
-        <div class="mdc-card glass prompt-card p-6 flex flex-col text-[var(--md-sys-color-on-surface)]">
+        <div class="mdc-card glass prompt-card p-6 flex flex-col text-[var(--md-sys-color-on-surface)]" role="region" aria-labelledby="basic-image-prompt-heading">
             <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-bold">Generate Image Prompt</h2>
-                <button onclick="toggleHelp('image-help')" class="bg-[var(--md-sys-color-surface)] text-[var(--md-sys-color-on-surface)] px-3 py-1 rounded-lg hover:bg-[var(--md-sys-color-surface)] transition duration-200">?</button>
+                <h2 id="basic-image-prompt-heading" class="text-2xl font-bold">Generate Image Prompt</h2>
+                <button onclick="toggleHelp('image-help-basic-region')" class="bg-[var(--md-sys-color-surface)] text-[var(--md-sys-color-on-surface)] px-3 py-1 rounded-lg hover:bg-[var(--md-sys-color-surface)] transition duration-200" aria-controls="image-help-basic-region" aria-expanded="false" aria-label="Toggle help for basic image prompt generation">?</button>
             </div>
-            <div id="image-help" class="hidden bg-[var(--md-sys-color-surface)] p-4 rounded-lg mb-4 text-[var(--md-sys-color-on-surface)]">
+            <div id="image-help-basic-region" class="hidden bg-[var(--md-sys-color-surface)] p-4 rounded-lg mb-4 text-[var(--md-sys-color-on-surface)]" role="region" aria-hidden="true">
                 <p class="text-[var(--md-sys-color-on-surface)]">This section allows you to generate image prompts. You can input text, upload an image, or choose a random prompt. Click "Generate" to create your prompt.</p>
             </div>
             <div class="space-y-4 flex-grow">
-                <div class="input-radio flex space-x-4">
+                <div class="input-radio flex space-x-4" role="radiogroup" aria-labelledby="image-input-type-label">
+                    <span id="image-input-type-label" class="sr-only">Choose image input type</span>
                     <label class="flex items-center space-x-2">
                         <input type="radio" id="text-input-option" name="prompt-option" value="text" checked onclick="togglePromptInput('text')">
                         <span>Text</span>
@@ -57,7 +59,8 @@
                 </div>
 
                 <!-- Text Input Section -->
-                <form id="image-prompt-form" class="space-y-4">
+                <form id="image-prompt-form" class="space-y-4" role="form" aria-labelledby="image-text-input-heading">
+                    <h3 id="image-text-input-heading" class="sr-only">Image prompt from text input</h3>
                     <div>
                         <label for="user_input_image" class="block mb-2">Input:</label>
                         <input type="text" name="user_input" id="user_input_image" placeholder="Whale on the desert" class="w-full p-3 bg-[var(--md-sys-color-surface)] rounded-lg text-[var(--md-sys-color-on-surface)]" required>
@@ -65,17 +68,18 @@
                 </form>
 
                 <!-- Image Upload Section -->
-                <form id="image-upload-form" enctype="multipart/form-data" class="space-y-4" style="display: none;">
+                <form id="image-upload-form" enctype="multipart/form-data" class="space-y-4" style="display: none;" role="form" aria-labelledby="image-file-input-heading">
+                    <h3 id="image-file-input-heading" class="sr-only">Image prompt from file upload</h3>
                     <div>
                         <label for="image" class="block mb-2">Upload Image:</label>
-                        <input type="file" name="image" accept="image/*" class="w-full p-3 bg-[var(--md-sys-color-surface)] rounded-lg text-[var(--md-sys-color-on-surface)]" required>
+                        <input type="file" name="image" id="image" accept="image/*" class="w-full p-3 bg-[var(--md-sys-color-surface)] rounded-lg text-[var(--md-sys-color-on-surface)]" required>
                     </div>
                 </form>
 
                 <!-- Buttons -->
                 <div class="flex space-x-4">
-                    <button id="generate-button" onclick="generatePrompt()" class="bg-[var(--md-sys-color-primary)] text-[var(--md-sys-color-on-primary)] px-6 py-3 rounded-lg hover:bg-[var(--md-sys-color-secondary)] transition duration-200">Generate</button>
-                    <button type="button" onclick="submitForm('random-image-prompt-form','/generate/irandom')" class="bg-[var(--md-sys-color-secondary)] text-[var(--md-sys-color-on-secondary)] px-6 py-3 rounded-lg hover:opacity-90 transition duration-200">Random</button>
+                    <button id="generate-button" onclick="generatePrompt()" aria-label="Generate image prompt" class="bg-[var(--md-sys-color-primary)] text-[var(--md-sys-color-on-primary)] px-6 py-3 rounded-lg hover:bg-[var(--md-sys-color-secondary)] transition duration-200">Generate</button>
+                    <button type="button" onclick="submitForm('random-image-prompt-form','/generate/irandom')" aria-label="Generate random image prompt" class="bg-[var(--md-sys-color-secondary)] text-[var(--md-sys-color-on-secondary)] px-6 py-3 rounded-lg hover:opacity-90 transition duration-200">Random</button>
                 </div>
                 <!-- Hidden Random Form -->
                 <form id="random-image-prompt-form" style="display: none;"></form>
@@ -84,12 +88,13 @@
     </div>
 
     <!-- Preview Section (hidden by default, shown only when image is uploaded) -->
-    <div id="preview-container" class="image-preview mdc-card glass prompt-card p-6 mt-12 hidden">
+    <div id="preview-container" class="image-preview mdc-card glass prompt-card p-6 mt-12 hidden" role="region" aria-labelledby="basic-image-preview-heading">
+        <h3 id="basic-image-preview-heading" class="sr-only">Image Preview</h3>
         <img id="preview-image" alt="Image Preview" class="w-64 h-auto mx-auto rounded-lg object-contain">
     </div>
 
     <!-- Loading Section -->
-    <div id="loading" class="loading hidden fixed inset-0 flex items-center justify-center z-50">
+    <div id="loading" class="loading hidden fixed inset-0 flex items-center justify-center z-50" role="alert" aria-live="assertive">
         <div class="glass absolute inset-0 z-0"></div>
         <div class="glass p-8 rounded-lg z-10 flex flex-col items-center justify-center">
             <div class="loader-modern"><div class="ring"></div><div class="ring ring2"></div><div class="pulse"></div></div>
@@ -98,19 +103,21 @@
     </div>
 
     <!-- Result Section (hidden by default, shown only when a prompt is generated) -->
-    <div id="resultSection" class="result mdc-card glass prompt-card p-6 mt-8 hidden">
-        <h2 class="text-2xl font-bold mb-6">Generated Prompt:</h2>
-        <div id="response" class="text-lg text-[var(--md-sys-color-on-surface)] space-y-4"></div>
+    <div id="resultSection" class="result mdc-card glass prompt-card p-6 mt-8 hidden" role="region" aria-labelledby="basic-generated-prompt-heading">
+        <h2 id="basic-generated-prompt-heading" class="text-2xl font-bold mb-6">Generated Prompt:</h2>
+        <div id="response" class="text-lg text-[var(--md-sys-color-on-surface)] space-y-4" aria-live="polite"></div>
         <div class="flex space-x-4 mt-6">
-            <button onclick="copyToClipboard()" class="bg-[var(--md-sys-color-primary)] text-[var(--md-sys-color-on-primary)] px-6 py-3 rounded-lg hover:bg-[var(--md-sys-color-secondary)] transition duration-200">Copy</button>
-            <button id="save-to-library" class="bg-[var(--md-sys-color-secondary)] text-[var(--md-sys-color-on-secondary)] px-6 py-3 rounded-lg hover:opacity-90 transition duration-200">Save</button>
+            <button onclick="copyToClipboard()" class="bg-[var(--md-sys-color-primary)] text-[var(--md-sys-color-on-primary)] px-6 py-3 rounded-lg hover:bg-[var(--md-sys-color-secondary)] transition duration-200" aria-label="Copy generated prompt to clipboard">Copy</button>
+            <button id="save-to-library" class="bg-[var(--md-sys-color-secondary)] text-[var(--md-sys-color-on-secondary)] px-6 py-3 rounded-lg hover:opacity-90 transition duration-200" aria-label="Save generated prompt to your library">Save</button>
         </div>
     </div>
 
     <script>
         function toggleHelp(helpId) {
             const helpDiv = document.getElementById(helpId);
-            helpDiv.classList.toggle('hidden');
+            const isHidden = helpDiv.classList.toggle('hidden');
+            helpDiv.setAttribute('aria-hidden', isHidden);
+            document.querySelector(`[aria-controls="${helpId}"]`).setAttribute('aria-expanded', !isHidden);
         }
     </script>
 {% endblock %}

@@ -38,12 +38,12 @@
           .then(res => { if (!res.ok) throw new Error(); return res.json(); })
           .then(data => {
             if (data.success === false) {
-              showPopup('Error', data.error || 'Failed to load feedback.');
+              showAppPopup('Error', data.error || 'Failed to load feedback.');
             } else {
-              showPopup(`Feedback by ${data.username}`, data.feedback);
+              showAppPopup(`Feedback by ${data.username}`, data.feedback, { type: 'details', copyTargetText: data.feedback });
             }
           })
-          .catch(() => showPopup('Error', 'Failed to load feedback.'));
+          .catch(() => showAppPopup('Error', 'Failed to load feedback.'));
       });
     });
   });

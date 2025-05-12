@@ -39,9 +39,9 @@
         <div class="spinner"></div>
     </div>
     <!-- Sidebar -->
-    <div class="side-panel fixed left-0 top-0 h-full w-72 glass transform -translate-x-full transition-transform duration-300 ease-in-out z-30 flex flex-col" id="sidePanel">
+    <div class="side-panel fixed left-0 top-0 h-full w-72 glass transform -translate-x-full transition-transform duration-300 ease-in-out z-30 flex flex-col" id="sidePanel" role="navigation" aria-label="Main Navigation">
         <!-- Logo -->
-        <div class="p-6 border-b flex flex-col items-center justify-center cursor-pointer" onclick="toggleSidePanel()">
+        <div class="p-6 border-b flex flex-col items-center justify-center cursor-pointer" onclick="toggleSidePanel()" role="banner">
             <h1 class="text-3xl font-bold text-white">Prompt Sanctuary</h1>
             <p class="text-sm italic text-gray-300 mt-1">Your AI-powered prompt creation studio.</p>
         </div>
@@ -75,7 +75,7 @@
         <div class="p-4 border-t">
             <ul class="space-y-3">
                 <li onclick="showGlobalLoader(); window.location.href='{{ url_for('main.logout') }}';" class="cursor-pointer p-3 rounded-lg transition duration-200">
-                    <i class="fas fa-sign-out-alt mr-2"></i><strong>Logout</strong>
+                    <i class="fas fa-sign-out-alt mr-2"></i><strong>Logout {% if session.username %}({{ session.username }}){% endif %}</strong>
                 </li>
                 <li onclick="openFeedbackPopup()" class="cursor-pointer p-3 rounded-lg transition duration-200">
                     <i class="fas fa-comment-dots mr-2"></i><strong>Feedback</strong>
@@ -83,7 +83,7 @@
             </ul>
         </div>
 
-        <div class="mt-auto p-4 border-t border-gray-700 text-center space-y-2">
+        <div class="mt-auto p-4 border-t border-gray-700 text-center space-y-2" role="contentinfo">
             <p class="text-xs text-gray-500">&copy; 2025 Prompt Sanctuary.</p>
             <p class="text-xs text-gray-500">Built with ❤️ by <a href="https://1999azzar.github.io/1999AZZAR/" target="_blank" class="underline">Azzar Budiyanto</a></p>
             <div class="flex justify-center space-x-3">
@@ -95,19 +95,19 @@
     </div>
 
     <!-- Main Content -->
-    <main class="flex-grow p-8 glass">
+    <main class="flex-grow p-8 glass" role="main">
         {% block content %}{% endblock %}
     </main>
 
     <!-- Feedback Popup -->
     <div id="feedback-popup" class="popup hidden fixed inset-0 glass flex items-center justify-center z-40">
         <div class="glass p-8 rounded-lg w-11/12 max-w-md">
-            <button id="close-popup" class="float-right">
+            <button id="close-popup" class="float-right" aria-label="Close feedback popup">
                 ✖️
             </button>
             <h2 class="text-2xl font-bold mb-6">Share your feedback</h2>
-            <form id="feedback-form">
-                <textarea class="w-full h-40 p-4 glass rounded-lg mb-6 resize-none" name="feedback" placeholder="Enter your feedback here" required></textarea>
+            <form id="feedback-form" role="form" aria-labelledby="feedback-heading">
+                <textarea class="w-full h-40 p-4 glass rounded-lg mb-6 resize-none" name="feedback" placeholder="Enter your feedback here" required aria-label="Feedback text area"></textarea>
                 <button type="submit" class="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition duration-200">Submit</button>
             </form>
         </div>
