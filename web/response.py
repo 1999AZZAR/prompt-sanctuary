@@ -101,23 +101,63 @@ class GenerativeModel:
         ]
         return prompt_part
 
+    def _parse_examples_from_file(self, file_path: str) -> list:
+        """Parse Q&A examples from a file with input/output pairs."""
+        examples = []
+        with open(file_path, "r") as f:
+            content = f.read()
+        # Split by double newlines between examples
+        pairs = [p.strip() for p in content.split("\n\n") if p.strip()]
+        for pair in pairs:
+            input_part = ""
+            output_part = ""
+            for line in pair.split("\n"):
+                if line.startswith("input:"):
+                    input_part = line[len("input:"):].strip()
+                elif line.startswith("output:"):
+                    output_part = line[len("output:"):].strip()
+            if input_part and output_part:
+                examples.append((input_part, output_part))
+        return examples
+
+    def _build_imgdesc_prompt_with_examples(self, styles: list, user_input: str = None, examples_file: str = None, num_examples: int = 3) -> list:
+        """Build a prompt for image description using styles, user input, and a few examples."""
+        prompt = []
+        if examples_file:
+            examples = self._parse_examples_from_file(examples_file)
+            # Randomly select a few examples
+            chosen_examples = random.sample(examples, k=min(num_examples, len(examples)))
+            for inp, out in chosen_examples:
+                prompt.append(f"input: {inp}")
+                prompt.append(f"output: {out}")
+        # Now add the actual user request
+        style_str = f"({', '.join(styles)})"
+        if user_input:
+            prompt.append(f"input: Start your description with the word 'imagine,' e.g., 'imagine a ...' now write me a detailed possible image description about {user_input}. Incorporate the following styles: {style_str}.")
+        else:
+            prompt.append(f"input: Start your description with the word 'imagine,' e.g., 'imagine a ...' now write me a detailed possible image description. Incorporate the following styles: {style_str}.")
+        prompt.append("output:")
+        return prompt
+
     def generate_imgdescription(
         self, image_styles_file_path: str, user_input_image: str
     ) -> str:
-        """Generate an image description based on styles and user input."""
+        """Generate an image description based on styles, user input, and examples."""
         styles = self._read_styles_from_file(image_styles_file_path)
         chosen_styles = random.sample(styles, k=3)
-        prompt_part = self._generate_image_description_prompt(
-            chosen_styles, user_input_image
+        prompt_part = self._build_imgdesc_prompt_with_examples(
+            chosen_styles, user_input_image, examples_file="./instruction/advance2.txt"
         )
         response = self.model.generate_content(prompt_part)
         return response.text
 
     def generate_vrandom(self, image_styles_file_path: str) -> str:
-        """Generate a random image description based on styles."""
+        """Generate a random image description based on styles and examples."""
         styles = self._read_styles_from_file(image_styles_file_path)
         chosen_styles = random.sample(styles, k=3)
-        prompt_part = self._generate_image_description_prompt(chosen_styles)
+        prompt_part = self._build_imgdesc_prompt_with_examples(
+            chosen_styles, user_input=None, examples_file="./instruction/advance2.txt"
+        )
         response = self.model.generate_content(prompt_part)
         return response.text
 

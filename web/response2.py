@@ -1,7 +1,7 @@
 import os
 import google.generativeai as genai
 from dotenv import load_dotenv
-from typing import List, Dict, Optional
+from typing import Optional
 
 
 class GenerativeAI:
@@ -12,25 +12,32 @@ class GenerativeAI:
     def setup(self):
         """Set up the GenerativeAI instance by loading environment variables and configuring the model."""
         load_dotenv()
-        self.api_keys = os.getenv("GENAI_API_KEY").split(",")
+        api_keys = os.getenv("GENAI_API_KEY", "").strip()
+        if not api_keys:
+            raise ValueError("No GENAI_API_KEY found in environment variables.")
+        self.api_keys = [k.strip() for k in api_keys.split(",") if k.strip()]
+        if not self.api_keys:
+            raise ValueError("GENAI_API_KEY is empty or improperly formatted.")
         self.current_key_index = 0
 
         self.generation_config = {
             "temperature": 0.75,  # Controls the randomness of generated responses
-            "top_p": 0.65,  # Top-p (nucleus) sampling parameter
-            "top_k": 35,  # Top-k filtering parameter for token sampling
+            "top_p": 0.65,        # Top-p (nucleus) sampling parameter
+            "top_k": 35,          # Top-k filtering parameter for token sampling
             "max_output_tokens": 2048,  # Maximum number of tokens in the generated response
-            "stop_sequences": [],  # Sequences to stop generation at
+            "stop_sequences": [],
         }
 
     def get_current_api_key(self) -> str:
         """Get the current API key and rotate to the next key."""
+        if not self.api_keys:
+            raise RuntimeError("No API keys available.")
         key = self.api_keys[self.current_key_index]
         self.current_key_index = (self.current_key_index + 1) % len(self.api_keys)
         return key
 
     def map_threshold(self, parameter_value: str) -> str:
-        """Map a parameter value to a safety threshold."""
+        """Map a parameter value to a safety threshold for the model."""
         threshold_mapping = {
             "none": "BLOCK_NONE",
             "few": "BLOCK_ONLY_HIGH",
@@ -43,41 +50,35 @@ class GenerativeAI:
     def read_prompt_part_from_file(
         self,
         file_path: str,
-        parameter0: str,
-        parameter1: str,
-        parameter3: str,
-        parameter2: Optional[str] = None,
+        parameter0: str = "",
+        parameter1: str = "",
+        parameter2: str = "",
+        parameter3: str = "ask me on the conversation",
     ) -> str:
-        """Read a prompt from a file and replace placeholders with provided parameters."""
+        """
+        Read a prompt from a file and replace placeholders with provided parameters.
+        Placeholders: {parameter0}, {parameter1}, {parameter2}, {parameter3}
+        """
         with open(file_path, "r") as file:
             prompt_part = file.read()
-
         prompt_part = prompt_part.replace("{parameter0}", parameter0 or "")
         prompt_part = prompt_part.replace("{parameter1}", parameter1 or "")
         prompt_part = prompt_part.replace("{parameter2}", parameter2 or "")
-        prompt_part = prompt_part.replace(
-            "{parameter3}", parameter3 or "ask me on the conversation"
-        )
-
+        prompt_part = prompt_part.replace("{parameter3}", parameter3 or "ask me on the conversation")
         return prompt_part
 
     def setup_model(self, parameter2: str):
-        """Set up the model with safety settings based on the provided parameter."""
+        """
+        Set up the model with safety settings based on the provided parameter.
+        parameter2: string indicating the safety threshold (e.g., 'none', 'few', etc.)
+        """
         threshold_value = self.map_threshold(parameter2)
-
         safety_settings = [
             {"category": "HARM_CATEGORY_HARASSMENT", "threshold": threshold_value},
             {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": threshold_value},
-            {
-                "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
-                "threshold": threshold_value,
-            },
-            {
-                "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
-                "threshold": threshold_value,
-            },
+            {"category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": threshold_value},
+            {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": threshold_value},
         ]
-
         genai.configure(api_key=self.get_current_api_key())
         self.model = genai.GenerativeModel(
             model_name="gemini-2.5-flash-preview-04-17",
@@ -93,13 +94,18 @@ class GenerativeAI:
         parameter3: str,
         file_path: str,
     ) -> str:
-        """Generate a response based on the provided parameters and prompt file."""
-        # Prepare prompt
+        """
+        Generate a response based on the provided parameters and prompt file.
+        Parameters are slotted into the prompt template file.
+        """
         prompt_part = self.read_prompt_part_from_file(
-            file_path, parameter0, parameter1, parameter3, parameter2
+            file_path=file_path,
+            parameter0=parameter0,
+            parameter1=parameter1,
+            parameter2=parameter2,
+            parameter3=parameter3,
         )
         last_error = None
-        # Try each API key until success
         for _ in range(len(self.api_keys)):
             self.setup_model(parameter2)
             try:
@@ -108,5 +114,4 @@ class GenerativeAI:
             except Exception as e:
                 last_error = e
                 continue
-        # All keys exhausted
-        raise last_error
+        raise RuntimeError(f"All API keys failed. Last error: {last_error}")

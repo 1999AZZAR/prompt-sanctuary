@@ -56,10 +56,24 @@ def create_main_blueprint(
 
     @main_blueprint.errorhandler(BadRequestKeyError)
     def handle_bad_request(e):
+        """Handle missing form or JSON parameters in requests."""
         logger.error(f"Missing parameter: {e}")
         return jsonify({"success": False, "error": f"Missing parameter: {e}"}), 400
 
+    @main_blueprint.errorhandler(404)
+    def handle_404(e):
+        """Handle 404 Not Found errors."""
+        logger.error(f"404 Not Found: {e}")
+        return jsonify({"success": False, "error": "Resource not found."}), 404
+
+    @main_blueprint.errorhandler(500)
+    def handle_500(e):
+        """Handle 500 Internal Server Error."""
+        logger.error(f"500 Internal Server Error: {e}")
+        return jsonify({"success": False, "error": "Internal server error."}), 500
+
     def is_valid_username(name):
+        """Check if the username contains only allowed characters (A-Za-z0-9_)."""
         return bool(re.match(r'^[A-Za-z0-9_]+$', name))
 
     @main_blueprint.route("/")
@@ -68,6 +82,7 @@ def create_main_blueprint(
 
     @main_blueprint.route("/signup", methods=["GET", "POST"])
     def signup():
+        """Handle user signup. Validates input and creates a new user if valid."""
         if request.method == "GET":
             return render_template("login.html", show_signup=True)
         honeypot_value = request.form.get("honeypot", "")
@@ -78,10 +93,15 @@ def create_main_blueprint(
 
         username = request.form.get("username", "").strip()
         password = request.form.get("password", "")
+        # Input validation
         if not username or not password:
             return jsonify({"success": False, "error": "Username and password are required."}), 400
+        if len(username) < 3 or len(username) > 32:
+            return jsonify({"success": False, "error": "Username must be between 3 and 32 characters."}), 400
+        if len(password) < 6:
+            return jsonify({"success": False, "error": "Password must be at least 6 characters."}), 400
         if not is_valid_username(username):
-            return jsonify({"success": False, "error": "Invalid username format."}), 400
+            return jsonify({"success": False, "error": "Invalid username format. Only letters, numbers, and underscores are allowed."}), 400
 
         try:
             with get_db_connection(main_blueprint.user_db) as conn:
@@ -102,6 +122,7 @@ def create_main_blueprint(
 
     @main_blueprint.route("/login", methods=["GET", "POST"])
     def login():
+        """Handle user login. Validates input and authenticates user."""
         if request.method == "GET":
             return render_template("login.html", show_signup=False)
         honeypot_value = request.form.get("honeypot", "")
@@ -112,10 +133,11 @@ def create_main_blueprint(
 
         username = request.form.get("username", "").strip()
         password = request.form.get("password", "")
+        # Input validation
         if not username or not password:
             return jsonify({"success": False, "error": "Username and password are required."}), 400
         if not is_valid_username(username):
-            return jsonify({"success": False, "error": "Invalid username format."}), 400
+            return jsonify({"success": False, "error": "Invalid username format. Only letters, numbers, and underscores are allowed."}), 400
 
         try:
             with get_db_connection(main_blueprint.user_db) as conn:
@@ -363,9 +385,18 @@ def create_main_blueprint(
     @main_blueprint.route("/generate/tprompt", methods=["POST"])
     @required_login
     def process():
-        user_input = request.form["user_input"]
-        response_text = model.generate_response("./instruction/basic1.txt", user_input)
-        return response_text
+        """Generate a text prompt using user input. Validates input and returns model response."""
+        user_input = request.form.get("user_input", "").strip()
+        if not user_input:
+            return jsonify({"success": False, "error": "Input cannot be empty."}), 400
+        if len(user_input) > 500:
+            return jsonify({"success": False, "error": "Input is too long (max 500 characters)."}), 400
+        try:
+            response_text = model.generate_response("./instruction/basic1.txt", user_input)
+            return jsonify({"success": True, "response": response_text})
+        except Exception as e:
+            logger.exception("Error generating prompt response")
+            return jsonify({"success": False, "error": "Failed to generate response."}), 500
 
     @main_blueprint.route("/generate/trandom", methods=["POST"])
     @required_login
