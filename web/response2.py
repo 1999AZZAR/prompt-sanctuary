@@ -20,6 +20,9 @@ class GenerativeAI:
             raise ValueError("GENAI_API_KEY is empty or improperly formatted.")
         self.current_key_index = 0
 
+        # Allow overriding model via env var; default to stable free-tier friendly model
+        self.model_name = os.getenv("GENAI_MODEL_NAME", "gemini-2.5-flash")
+
         self.generation_config = {
             "temperature": 0.75,  # Controls the randomness of generated responses
             "top_p": 0.65,        # Top-p (nucleus) sampling parameter
@@ -59,6 +62,11 @@ class GenerativeAI:
         Read a prompt from a file and replace placeholders with provided parameters.
         Placeholders: {parameter0}, {parameter1}, {parameter2}, {parameter3}
         """
+        # Resolve relative paths against this file's directory
+        if not os.path.isabs(file_path):
+            base_dir = os.path.dirname(__file__)
+            normalized = file_path[2:] if file_path.startswith("./") else file_path
+            file_path = os.path.join(base_dir, normalized)
         with open(file_path, "r") as file:
             prompt_part = file.read()
         prompt_part = prompt_part.replace("{parameter0}", parameter0 or "")
@@ -81,7 +89,7 @@ class GenerativeAI:
         ]
         genai.configure(api_key=self.get_current_api_key())
         self.model = genai.GenerativeModel(
-            model_name="gemini-2.5-flash-preview-04-17",
+            model_name=self.model_name,
             generation_config=self.generation_config,
             safety_settings=safety_settings,
         )

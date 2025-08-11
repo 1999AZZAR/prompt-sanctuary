@@ -78,12 +78,12 @@ function showAppPopup(title, contentOrMessage, options = {}) {
 
     const popup = document.createElement('div');
     popup.id = APP_POPUP_ID;
-    popup.className = 'fixed inset-0 flex items-center justify-center glass z-50 p-4';
+    popup.className = 'fixed inset-0 z-50 p-4 flex items-center justify-center bg-slate-900/20 backdrop-blur-sm';
 
     const popupContent = document.createElement('div');
     
     // Base classes for popupContent
-    let popupClasses = 'glass p-6 md:p-8 rounded-lg text-gray-900 relative shadow-xl';
+    let popupClasses = 'glass bg-white/70 border border-white/40 p-6 md:p-8 rounded-2xl text-slate-900 relative shadow-xl';
 
     // Handle size option: Tailwind max-width class or direct CSS width
     const predefinedSizes = ['sm', 'md', 'lg', 'xl', '2xl'];
@@ -106,7 +106,7 @@ function showAppPopup(title, contentOrMessage, options = {}) {
     popupContent.classList.add('custom-scrollbar');
 
     const closeIcon = document.createElement('button');
-    closeIcon.className = 'absolute top-3 right-3 md:top-4 md:right-4 text-gray-600 hover:text-gray-800 text-2xl leading-none z-10';
+    closeIcon.className = 'absolute top-3 right-3 md:top-4 md:right-4 text-slate-500 hover:text-slate-700 text-2xl leading-none z-10';
     closeIcon.innerHTML = '&times;';
     closeIcon.onclick = () => closeAppPopup();
     popupContent.appendChild(closeIcon);
@@ -117,13 +117,15 @@ function showAppPopup(title, contentOrMessage, options = {}) {
     popupContent.appendChild(popupTitle);
 
     const messageArea = document.createElement('div');
-    messageArea.className = 'text-base md:text-lg text-gray-700 mb-6 break-words';
+    messageArea.className = 'text-base md:text-lg text-slate-700 mb-6 break-words';
 
     if (type === 'details') {
         messageArea.style.whiteSpace = 'pre-wrap';
+        messageArea.className += ' bg-white/70 border border-white/40 rounded-xl p-4 font-mono text-sm leading-6 custom-scrollbar';
+        popupContent.className += ' max-w-2xl';
     }
 
-     if (type === 'custom' || type === 'message' && contentOrMessage.includes('<')) {
+     if (type === 'custom' || (type === 'message' && typeof contentOrMessage === 'string' && contentOrMessage.includes('<'))) {
         messageArea.innerHTML = contentOrMessage;
     } else {
         messageArea.textContent = contentOrMessage;
@@ -137,9 +139,9 @@ function showAppPopup(title, contentOrMessage, options = {}) {
     buttonContainer.className = 'flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-3';
 
     // Default button styling
-    const baseButtonClass = 'px-5 py-2.5 rounded-lg transition duration-200 text-sm font-medium w-full sm:w-auto';
-    const primaryButtonClass = `bg-blue-500 hover:bg-blue-600 text-white ${baseButtonClass}`;
-    const secondaryButtonClass = `bg-gray-600 hover:bg-gray-700 text-white ${baseButtonClass}`;
+    const baseButtonClass = 'px-5 py-2.5 rounded-xl transition duration-200 text-sm font-medium w-full sm:w-auto';
+    const primaryButtonClass = `bg-violet-400 hover:bg-violet-500 text-white ${baseButtonClass}`;
+    const secondaryButtonClass = `bg-slate-600 hover:bg-slate-700 text-white ${baseButtonClass}`;
 
 
     if (type === 'message') {
@@ -211,12 +213,48 @@ function showAppPopup(title, contentOrMessage, options = {}) {
 
     popup.appendChild(popupContent);
     document.body.appendChild(popup);
+
+    // Close on backdrop click
+    popup.addEventListener('click', (e) => {
+        if (e.target === popup) {
+            closeAppPopup();
+        }
+    });
+
+    // Trap focus inside modal and close on Escape
+    const focusableSelectors = 'a[href], button, textarea, input, select, [tabindex]:not([tabindex="-1"])';
+    const getFocusable = () => Array.from(popupContent.querySelectorAll(focusableSelectors)).filter(el => !el.hasAttribute('disabled'));
+    function handleKeyDown(e) {
+        if (e.key === 'Escape') {
+            e.preventDefault();
+            closeAppPopup();
+        } else if (e.key === 'Tab') {
+            const focusable = getFocusable();
+            if (focusable.length === 0) return;
+            const first = focusable[0];
+            const last = focusable[focusable.length - 1];
+            if (e.shiftKey && document.activeElement === first) {
+                e.preventDefault();
+                last.focus();
+            } else if (!e.shiftKey && document.activeElement === last) {
+                e.preventDefault();
+                first.focus();
+            }
+        }
+    }
+    document.addEventListener('keydown', handleKeyDown);
+    // Attach handler reference to popup so closeAppPopup can remove it
+    popup._keydownHandler = handleKeyDown;
     popupContent.focus();
 }
 
 function closeAppPopup() {
     const popup = document.getElementById(APP_POPUP_ID);
     if (popup) {
+        // Remove keydown handler if attached
+        if (popup._keydownHandler) {
+            document.removeEventListener('keydown', popup._keydownHandler);
+        }
         popup.remove();
     }
 } 

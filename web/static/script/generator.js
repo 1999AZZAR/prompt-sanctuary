@@ -19,27 +19,48 @@ function submitForm(formId, url) {
     })
     .then(response => response.text()) // Assuming text response for prompt generation
     .then(result => {
-        // Log the response text
         console.log('Response from server:', result);
 
-        // Update result section with the response
-        var resultSection = document.getElementById('resultSection');
-        var responseParagraph = document.getElementById('response');
-        if (resultSection && responseParagraph) {
+        // Update result section with safe rendered markdown and code highlight
+        const resultSection = document.getElementById('resultSection');
+        const responseContainer = document.getElementById('response');
+        if (resultSection && responseContainer) {
             if (result && result.trim() !== '') {
-                resultSection.classList.remove('hidden'); // Show result section
-                responseParagraph.innerHTML = parseResponse(result); // Parse and update the response content
+                resultSection.classList.remove('hidden');
+
+                // Normalize fenced code blocks for Prism
+                const normalized = normalizeFences(result);
+                // Render markdown
+                const rendered = marked.parse(normalized, { mangle: false, headerIds: false });
+                const safeHtml = DOMPurify.sanitize(rendered, { USE_PROFILES: { html: true } });
+                responseContainer.innerHTML = `<div class="rendered relative">${safeHtml}</div>`;
+
+                // Add copy buttons to code blocks and highlight
+                responseContainer.querySelectorAll('pre code').forEach((codeEl) => {
+                    const pre = codeEl.parentElement;
+                    pre.classList.add('relative');
+                    const btn = document.createElement('button');
+                    btn.textContent = 'Copy';
+                    btn.className = 'code-copy-btn';
+                    btn.addEventListener('click', () => {
+                        navigator.clipboard.writeText(codeEl.textContent)
+                            .then(() => showToast('Code copied!', 'success'))
+                            .catch(() => showToast('Copy failed.', 'error'));
+                    });
+                    pre.appendChild(btn);
+                });
+                if (window.Prism) Prism.highlightAllUnder(responseContainer);
             } else {
-                resultSection.classList.add('hidden'); // Hide if no prompt
-                responseParagraph.innerHTML = '';
+                resultSection.classList.add('hidden');
+                responseContainer.innerHTML = '';
             }
         } else {
             console.error('Result section or response paragraph not found in the DOM');
         }
 
         // Hide preview if no image
-        var previewContainer = document.getElementById('preview-container');
-        var previewImage = document.getElementById('preview-image');
+        const previewContainer = document.getElementById('preview-container');
+        const previewImage = document.getElementById('preview-image');
         if (previewContainer && previewImage) {
             if (!previewImage.src || previewImage.src.endsWith('favicon.ico')) {
                 previewContainer.classList.add('hidden');
@@ -58,20 +79,25 @@ function submitForm(formId, url) {
 }
 
 // Function to parse the server response
-function parseResponse(response) {
-    // Escape HTML characters to safely render text
-    let escaped = response
+function normalizeFences(text) {
+    // Ensure triple backticks are on their own lines and add language class if hinted
+    return text
+        .replace(/```\s*([a-zA-Z0-9_-]+)?\n/g, (m, lang) => `\n\n
+~~~${lang ? lang : ''}\n`)
+        .replace(/```/g, '\n~~~\n')
+        .replace(/~~~([a-zA-Z0-9_-]*)\n([\s\S]*?)\n~~~/g, (m, lang, code) => {
+            const langClass = lang && lang.trim() ? ` class="language-${lang.trim()}"` : '';
+            return `<pre><code${langClass}>${escapeHtml(code)}</code></pre>`;
+        });
+}
+
+function escapeHtml(str) {
+    return String(str)
         .replace(/&/g, '&amp;')
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;')
         .replace(/"/g, '&quot;')
         .replace(/'/g, '&#039;');
-    // Convert markdown-style formatting to HTML
-    return escaped
-        .replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>') // Code blocks
-        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // Bold text
-        .replace(/\*(.*?)\*/g, '<em>$1</em>') // Italic text
-        .replace(/\n/g, '<br>'); // Line breaks
 }
 
 // Image input preview

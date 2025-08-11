@@ -11,6 +11,8 @@ class GenerativeModel:
         load_dotenv()
         self.api_keys = os.getenv("GENAI_API_KEY").split(",")
         self.current_key_index = 0
+        # Allow overriding model via env var; default to stable free-tier friendly model
+        self.model_name = os.getenv("GENAI_MODEL_NAME", "gemini-2.5-flash")
         genai.configure(api_key=self.get_current_api_key())
 
         self.generation_config = {
@@ -29,7 +31,7 @@ class GenerativeModel:
         ]
 
         self.model = genai.GenerativeModel(
-            model_name="gemini-2.5-flash-preview-04-17",
+            model_name=self.model_name,
             generation_config=self.generation_config,
             safety_settings=self.safety_settings,
         )
@@ -40,11 +42,21 @@ class GenerativeModel:
         self.current_key_index = (self.current_key_index + 1) % len(self.api_keys)
         return key
 
+    def _resolve_path(self, path: str) -> str:
+        """Resolve relative paths against this file's directory."""
+        if os.path.isabs(path):
+            return path
+        base_dir = os.path.dirname(__file__)
+        # Strip leading "./" to avoid creating redundant segments
+        normalized = path[2:] if path.startswith("./") else path
+        return os.path.join(base_dir, normalized)
+
     def read_prompt_part_from_file(
         self, file_path: str, user_input_text: str = ""
     ) -> str:
         """Read a prompt from a file and optionally replace placeholders with user input."""
-        with open(file_path, "r") as file:
+        resolved_path = self._resolve_path(file_path)
+        with open(resolved_path, "r") as file:
             prompt_part = file.read()
         if user_input_text and "{user_input_text}" in prompt_part:
             prompt_part = prompt_part.replace("{user_input_text}", user_input_text)
@@ -57,7 +69,7 @@ class GenerativeModel:
         for _ in range(len(self.api_keys)):
             genai.configure(api_key=self.get_current_api_key())
             self.model = genai.GenerativeModel(
-                model_name="gemini-2.5-flash-preview-04-17",
+                model_name=self.model_name,
                 generation_config=self.generation_config,
                 safety_settings=self.safety_settings,
             )
@@ -76,7 +88,7 @@ class GenerativeModel:
         for _ in range(len(self.api_keys)):
             genai.configure(api_key=self.get_current_api_key())
             self.model = genai.GenerativeModel(
-                model_name="gemini-2.5-flash-preview-04-17",
+                model_name=self.model_name,
                 generation_config=self.generation_config,
                 safety_settings=self.safety_settings,
             )
@@ -104,7 +116,8 @@ class GenerativeModel:
     def _parse_examples_from_file(self, file_path: str) -> list:
         """Parse Q&A examples from a file with input/output pairs."""
         examples = []
-        with open(file_path, "r") as f:
+        resolved_path = self._resolve_path(file_path)
+        with open(resolved_path, "r") as f:
             content = f.read()
         # Split by double newlines between examples
         pairs = [p.strip() for p in content.split("\n\n") if p.strip()]
@@ -163,7 +176,8 @@ class GenerativeModel:
 
     def _read_styles_from_file(self, file_path: str) -> List[str]:
         """Read styles from a file and return them as a list."""
-        with open(file_path, "r") as file:
+        resolved_path = self._resolve_path(file_path)
+        with open(resolved_path, "r") as file:
             return [line.strip() for line in file.readlines()]
 
     def generate_visual(self, image_styles_file_path: str, image_data: bytes) -> str:

@@ -9,7 +9,10 @@ DATABASE_NAME = 'database/prompts.db'
 SHARED_PROMPTS_TABLE = 'shared_prompts'
 
 def get_db_connection(db_path):
-    """Get a connection to the SQLite database with integrity enforced."""
+    """Get a connection to the SQLite database with integrity enforced.
+    Ensures the directory for the database exists before connecting.
+    """
+    os.makedirs(os.path.dirname(db_path) or '.', exist_ok=True)
     conn = connect(db_path)
     conn.execute("PRAGMA foreign_keys = ON")
     conn.row_factory = Row
