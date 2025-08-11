@@ -62,6 +62,36 @@ class GenerativeModel:
             prompt_part = prompt_part.replace("{user_input_text}", user_input_text)
         return prompt_part
 
+    def _extract_text(self, response: any) -> str:
+        """Safely extract text from Gemini response, even if quick accessor fails."""
+        try:
+            # Preferred quick accessor
+            if hasattr(response, 'text'):
+                txt = response.text  # may raise ValueError
+                if txt:
+                    return txt
+        except Exception:
+            pass
+
+        # Fallback to candidates/parts
+        try:
+            candidates = getattr(response, 'candidates', None) or []
+            for cand in candidates:
+                content = getattr(cand, 'content', None)
+                parts = getattr(content, 'parts', None) if content else None
+                if parts:
+                    texts = []
+                    for p in parts:
+                        t = getattr(p, 'text', None)
+                        if t:
+                            texts.append(t)
+                    if texts:
+                        return "\n".join(texts)
+        except Exception:
+            pass
+
+        return ""
+
     def generate_response(self, prompt_file_path: str, user_input_text: str) -> str:
         """Generate a response based on a prompt file and user input."""
         prompt_part = self.read_prompt_part_from_file(prompt_file_path, user_input_text)
@@ -75,11 +105,17 @@ class GenerativeModel:
             )
             try:
                 response = self.model.generate_content(prompt_part)
-                return response.text
+                text = self._extract_text(response)
+                if text and text.strip():
+                    return text
+                else:
+                    last_error = ValueError("Empty response content")
+                    continue
             except Exception as e:
                 last_error = e
                 continue
-        raise last_error
+        # As a last resort, return a friendly message instead of raising
+        return "No content generated. Please try again."
 
     def generate_random(self, prompt_file_path: str) -> str:
         """Generate a random response based on a prompt file."""
@@ -94,11 +130,16 @@ class GenerativeModel:
             )
             try:
                 response = self.model.generate_content(prompt_part)
-                return response.text
+                text = self._extract_text(response)
+                if text and text.strip():
+                    return text
+                else:
+                    last_error = ValueError("Empty response content")
+                    continue
             except Exception as e:
                 last_error = e
                 continue
-        raise last_error
+        return "No content generated. Please try again."
 
     def _generate_image_description_prompt(
         self, styles: List[str], user_input: str = None

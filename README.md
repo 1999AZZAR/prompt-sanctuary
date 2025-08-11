@@ -34,6 +34,22 @@ With this new implementation, users can:
 - More robust filesystem handling for SQLite DBs (auto-create DB directories)
  - Prompt versioning: automatic snapshots on save/edit, history view, and rollback from personal library
 
+## Features
+
+| Area | Feature | Status |
+|---|---|---|
+| UI/UX | Tailwind v3 pastel theme with glassmorphism | Done |
+| UI/UX | Global popups (details/confirm/custom), wide modal for details/history | Done |
+| Results | Markdown rendering, sanitization (DOMPurify), Prism syntax highlighting, copy buttons | Done |
+| Prompts | Save, edit, delete, share/unshare (community) | Done |
+| Prompts | Versioning (snapshots on save/edit, history, rollback) | Done (diff+fork later) |
+| Security | CSRF protection on all POSTs | Done |
+| Backend | Absolute DB paths + auto-create directories | Done |
+| Backend | Latest stable free Gemini default (gemini-2.5-flash) | Done |
+| i18n | Language switch | Planned |
+| Perf/Infra | Containerization + Tailwind build | Planned |
+| Quality | Tests + CI + Alembic migrations | Planned |
+
 ## Usage
 
 Prompt-sanctuary's web interface is intuitive and user-friendly. Here's a quick guide on using its features:
@@ -45,6 +61,29 @@ Prompt-sanctuary's web interface is intuitive and user-friendly. Here's a quick 
 - **Community Library**: Access various content generation templates and tools from the library section. Navigate to `/library` and choose the desired option.
 - **Personal library**: contain per user prompt that they have saved before.
   - New: “History” button to view previous versions, preview, and restore.
+
+### Key routes
+
+| Path | Method | Description | Auth |
+|---|---|---|:--:|
+| `/` | GET | Landing page | - |
+| `/login`, `/signup` | GET/POST | Auth flows | - / - |
+| `/home` | GET | Home/dashboard | ✓ |
+| `/generate` | GET | Basic generator UI | ✓ |
+| `/generate/tprompt` | POST | Generate text from input | ✓ |
+| `/generate/trandom` | POST | Generate random text | ✓ |
+| `/advance` | GET | Advanced generator UI | ✓ |
+| `/advance/generate` | POST | Advanced text generation | ✓ |
+| `/advance/igenerate` | POST | Advanced image prompt from text | ✓ |
+| `/library` | GET | Community library | ✓ |
+| `/mylib` | GET | Personal library | ✓ |
+| `/save_prompt` | POST | Save current prompt | ✓ |
+| `/save_edit` | POST | Save edits to a prompt | ✓ |
+| `/delete_prompt` | POST | Delete a saved prompt | ✓ |
+| `/share_prompt` | POST | Share a saved prompt to community | ✓ |
+| `/unshare_prompt` | POST | Unshare a prompt | ✓ |
+| `/versions/<id>` | GET | List versions of a prompt | ✓ |
+| `/versions/rollback` | POST | Restore a specific version | ✓ |
 
 ## Quick start (local)
 
@@ -88,11 +127,24 @@ SQLite files are stored under `web/database/`. Paths are created automatically o
 
 To reset data locally, stop the app and remove the relevant `.db` files.
 
-## Environment variables
+## Configuration
 
-- `GENAI_API_KEY` (required): One or more Google AI Studio keys, comma-separated
-- `GENAI_MODEL_NAME` (optional): Defaults to `gemini-2.5-flash`
-- `SECRET_KEY` (optional): Flask session secret; a default is used if not set
+| Variable | Required | Default | Description |
+|---|:--:|---|---|
+| `GENAI_API_KEY` | ✓ | - | One or more Google AI Studio keys, comma-separated; keys rotate automatically |
+| `GENAI_MODEL_NAME` |  | `gemini-2.5-flash` | Override model, e.g., `gemini-2.5-pro` |
+| `SECRET_KEY` |  | generated fallback | Flask session secret |
+| `USER_DATABASE` |  | `web/database/user.db` | Path to user DB |
+| `PROMPT_DATABASE` |  | `web/database/prompt_data.db` | Path to personal prompts DB |
+| `QUERY_DATABASE` |  | `web/database/community/query.db` | Path to built-in system prompts DB |
+| `COMMUNITY_DATABASE` |  | `web/database/community/shared.db` | Path to shared prompts DB |
+| `FEEDBACK_DATABASE` |  | `web/database/feedback.db` | Path to feedback DB |
+
+## Security
+
+- CSRF: All POST endpoints require a CSRF token. The server sets a `csrf_token` cookie; the frontend sends it via `X-CSRFToken`.
+- Sanitization: Rendered results are sanitized with DOMPurify before display.
+- Sessions: Use a strong `SECRET_KEY` in production; prefer HTTPS with Secure cookies.
 
 ## Deployment notes
 

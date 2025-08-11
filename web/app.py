@@ -1,11 +1,13 @@
 import os
 from flask import Flask
+from flask_wtf.csrf import CSRFProtect, generate_csrf
 from models import create_tables
 from routes import create_main_blueprint
 
 # Initialize Flask app
 app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY", "default_secret_key")
+csrf = CSRFProtect(app)
 
 # Database paths (absolute, relative to this file)
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
@@ -38,6 +40,16 @@ main_blueprint = create_main_blueprint(
     FEEDBACK_DATABASE,
 )
 app.register_blueprint(main_blueprint)
+
+# Set CSRF cookie for frontend fetches
+@app.after_request
+def set_csrf_cookie(response):
+    try:
+        token = generate_csrf()
+        response.set_cookie('csrf_token', token, httponly=False, samesite='Lax')
+    except Exception:
+        pass
+    return response
 
 if __name__ == "__main__":
     # app.run(debug=True, port=int(os.environ.get('PORT', 80)))

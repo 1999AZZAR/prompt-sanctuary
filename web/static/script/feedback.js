@@ -123,6 +123,7 @@ document.getElementById('feedback-form').addEventListener('submit', function (ev
     // Send the feedback to the server
     fetch('/submit_feedback', {
         method: 'POST',
+        headers: { 'X-CSRFToken': getCsrfTokenFromCookie() || '' },
         body: formData, // Send as form data
     })
         .then(response => {

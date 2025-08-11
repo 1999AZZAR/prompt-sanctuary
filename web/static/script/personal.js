@@ -245,6 +245,7 @@ function saveEditedPrompt(randomVal, title, prompt) {
 
     fetch('/save_edit', {
         method: 'POST',
+        headers: { 'X-CSRFToken': getCsrfTokenFromCookie() || '' },
         body: formData,
     })
     .then(response => response.json())
@@ -315,6 +316,7 @@ function deletePrompt(randomVal) {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRFToken': getCsrfTokenFromCookie() || ''
         },
         body: 'prompt_id=' + encodeURIComponent(randomVal),
     })
@@ -373,6 +375,7 @@ function sharePrompt(promptId, title, promptContent, buttonElement) {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
+            'X-CSRFToken': getCsrfTokenFromCookie() || ''
         },
         body: JSON.stringify(data),
     })
@@ -401,6 +404,7 @@ function unsharePrompt(promptId, buttonElement) {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
+            'X-CSRFToken': getCsrfTokenFromCookie() || ''
         },
         body: JSON.stringify({ prompt_id: promptId }),
     })
