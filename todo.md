@@ -16,6 +16,8 @@
 - Remapped all the instructions into dedicated txt files.
 - Fixed the share mechanism.
 
+- Implemented prompt versioning (snapshots + history + rollback) in personal library UI.
+
 ---
 
 # Roadmap (detailed)
@@ -32,7 +34,7 @@
 | Security | CSRF protection on all POST | P0 | Not Started | Flask-WTF/CSRFProtect; include token on fetch |
 | Security | Secure cookies + CSP | P0 | Not Started | HttpOnly, Secure, SameSite; CSP to whitelist origins |
 | Security | Sanitize all popup HTML with DOMPurify | P1 | Planned | Apply DOMPurify in showAppPopup for custom HTML |
-| Data/Features | Prompt versioning with diff + rollback + fork | P1 | Planned | Table: versions; diff UI; “Fork prompt” flow |
+| Data/Features | Prompt versioning (snapshots + history + rollback) | P1 | In Progress | Implemented snapshots on save/edit, history popup and rollback; diff view and fork flow pending |
 | Data/Features | Categorize prompts + advanced facets | P1 | Not Started | Extend tags to facets; multi-filter UI; saved filters |
 | Data/Features | Shareable permalinks (public/private) | P1 | Planned | Slug/ID links; owner controls; optional expiry |
 | Data/Features | Export/Import library (Markdown/JSON) | P2 | Planned | Batch export; import with conflict rules |

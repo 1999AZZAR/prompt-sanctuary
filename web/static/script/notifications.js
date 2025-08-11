@@ -122,7 +122,10 @@ function showAppPopup(title, contentOrMessage, options = {}) {
     if (type === 'details') {
         messageArea.style.whiteSpace = 'pre-wrap';
         messageArea.className += ' bg-white/70 border border-white/40 rounded-xl p-4 font-mono text-sm leading-6 custom-scrollbar';
-        popupContent.className += ' max-w-2xl';
+        // Make details popup wider by default, unless an explicit size was requested
+        if (!size) {
+            popupContent.className += ' max-w-4xl';
+        }
     }
 
      if (type === 'custom' || (type === 'message' && typeof contentOrMessage === 'string' && contentOrMessage.includes('<'))) {

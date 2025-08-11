@@ -38,6 +38,7 @@
                               <button class="text-green-400 hover:text-green-300 mdc-button mdc-button--text edit-button" data-random-val="{{ prompt.random_val }}" data-title="{{ prompt.title | e }}" data-prompt="{{ prompt.prompt | e }}" aria-label="Edit prompt: {{ prompt.title | e }}">Edit</button>
                               <button class="text-red-400 hover:text-red-300 mdc-button mdc-button--text delete-button" data-random-val="{{ prompt.random_val }}" aria-label="Delete prompt: {{ prompt.title | e }}">Delete</button>
                               <button class="text-purple-400 hover:text-purple-300 mdc-button mdc-button--text share-button" data-prompt-id="{{ prompt.random_val }}" data-title="{{ prompt.title|e }}" data-prompt="{{ prompt.prompt|e }}" aria-label="Share prompt: {{ prompt.title | e }}">Share</button>
+                              <button class="text-amber-500 hover:text-amber-400 mdc-button mdc-button--text history-button" data-random-val="{{ prompt.random_val }}" data-title="{{ prompt.title | e }}" aria-label="View version history: {{ prompt.title | e }}">History</button>
                               <button class="text-indigo-400 hover:text-indigo-300 mdc-button mdc-button--text see-button" data-title="{{ prompt.title | e }}" data-content="{{ prompt.prompt | e }}" aria-label="See details for prompt: {{ prompt.title | e }}">See</button>
                           </div>
                       </div>
@@ -96,6 +97,7 @@
                   <button class="text-green-400 hover:text-green-300 mdc-button mdc-button--text edit-button" data-random-val="${p.id}" data-title="${escapeHtml(p.title)}" data-prompt="${escapeHtml(p.content)}" data-tags="" aria-label="Edit prompt: ${escapeHtml(p.title)}">Edit</button>
                   <button class="text-red-400 hover:text-red-300 mdc-button mdc-button--text delete-button" data-random-val="${p.id}" aria-label="Delete prompt: ${escapeHtml(p.title)}">Delete</button>
                   <button class="text-purple-400 hover:text-purple-300 mdc-button mdc-button--text share-button" data-prompt-id="${p.id}" data-title="${escapeHtml(p.title)}" data-prompt="${escapeHtml(p.content)}" aria-label="Share prompt: ${escapeHtml(p.title)}">Share</button>
+                  <button class="text-amber-500 hover:text-amber-400 mdc-button mdc-button--text history-button" data-random-val="${p.id}" data-title="${escapeHtml(p.title)}" aria-label="View version history: ${escapeHtml(p.title)}">History</button>
                   <button class="text-indigo-400 hover:text-indigo-300 mdc-button mdc-button--text see-button" data-title="${escapeHtml(p.title)}" data-content="${escapeHtml(p.content)}" aria-label="See details for prompt: ${escapeHtml(p.title)}">See</button>
                 </div>
               </div>

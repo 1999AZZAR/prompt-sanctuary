@@ -51,6 +51,7 @@ function attachInitialEventListeners() {
     attachEditButtonListeners();
     attachDeleteButtonListeners();
     attachShareButtonListeners();
+    attachHistoryButtonListeners();
     attachSeeButtonListeners();
     // Note: ClipboardJS is initialized once and handles elements matching '.copy-button'
 }
@@ -61,7 +62,102 @@ function reattachEventListeners() {
     attachEditButtonListeners();
     attachDeleteButtonListeners();
     attachShareButtonListeners();
+    attachHistoryButtonListeners();
     attachSeeButtonListeners();
+}
+// Version history: view and rollback
+function attachHistoryButtonListeners() {
+    document.querySelectorAll('.history-button:not(.listener-attached)').forEach(button => {
+        button.addEventListener('click', function () {
+            const promptId = this.getAttribute('data-random-val');
+            const title = this.getAttribute('data-title') || 'Prompt';
+            if (!promptId) {
+                showToast('Missing prompt id.', 'error');
+                return;
+            }
+            fetch(`/versions/${encodeURIComponent(promptId)}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (!data.success) throw new Error(data.error || 'Failed to load versions');
+                    const versions = data.versions || [];
+                    if (versions.length === 0) {
+                        showToast('No versions found for this prompt.', 'info');
+                        return;
+                    }
+                    const listHtml = versions.map(v => `
+                        <div class="mb-4 p-3 rounded-lg bg-white/60 border border-white/40">
+                            <div class="flex items-center justify-between mb-2">
+                                <div class="text-sm text-slate-700">v${v.version_number} • ${escapeHtml(String(v.created_at))}</div>
+                                <div class="space-x-2">
+                                    <button class="px-3 py-1 rounded-md bg-slate-700 text-white text-xs preview-btn" data-v="${v.version_number}">Preview</button>
+                                    <button class="px-3 py-1 rounded-md bg-amber-500 text-white text-xs rollback-btn" data-v="${v.version_number}">Restore</button>
+                                </div>
+                            </div>
+                            <div class="text-sm font-semibold mb-1">${escapeHtml(v.title)}</div>
+                            <div class="hidden text-sm whitespace-pre-wrap break-words version-content" data-v="${v.version_number}">${escapeHtml(v.prompt)}</div>
+                        </div>
+                    `).join('');
+
+                    const content = `
+                        <div>
+                            <div class="text-sm text-slate-600 mb-3">History for: <strong>${escapeHtml(title)}</strong></div>
+                            ${listHtml}
+                        </div>
+                    `;
+
+                    showAppPopup('Version History', content, {
+                        type: 'custom',
+                        buttons: [
+                            { text: 'Close', class: 'px-5 py-2.5 rounded-xl bg-slate-600 text-white', action: () => {} }
+                        ],
+                        size: 'xl'
+                    });
+
+                    // Attach preview and rollback handlers inside popup
+                    setTimeout(() => {
+                        document.querySelectorAll('.preview-btn').forEach(btn => {
+                            btn.addEventListener('click', () => {
+                                const v = btn.getAttribute('data-v');
+                                const area = document.querySelector(`.version-content[data-v="${v}"]`);
+                                if (area) {
+                                    const isHidden = area.classList.toggle('hidden');
+                                    if (!isHidden) {
+                                        // Optionally render markdown and highlight
+                                        try {
+                                            const rendered = marked.parse(area.textContent, { mangle: false, headerIds: false });
+                                            const safeHtml = DOMPurify.sanitize(rendered);
+                                            area.innerHTML = safeHtml;
+                                            if (window.Prism) Prism.highlightAllUnder(area);
+                                        } catch (_) {}
+                                    }
+                                }
+                            });
+                        });
+                        document.querySelectorAll('.rollback-btn').forEach(btn => {
+                            btn.addEventListener('click', () => {
+                                const v = btn.getAttribute('data-v');
+                                const fd = new FormData();
+                                fd.append('prompt_id', promptId);
+                                fd.append('version_number', v);
+                                fetch('/versions/rollback', { method: 'POST', body: fd })
+                                    .then(res => res.json())
+                                    .then(resp => {
+                                        if (!resp.success) throw new Error(resp.error || 'Rollback failed');
+                                        showToast('Restored this version.', 'success');
+                                        setTimeout(() => window.location.reload(), 800);
+                                    })
+                                    .catch(err => showToast(err.message || 'Rollback failed', 'error'));
+                            });
+                        });
+                    }, 0);
+                })
+                .catch(err => {
+                    console.error(err);
+                    showToast('Failed to load history.', 'error');
+                });
+        });
+        button.classList.add('listener-attached');
+    });
 }
 
 
@@ -328,48 +424,13 @@ function unsharePrompt(promptId, buttonElement) {
     });
 }
 
-// See Details function - MODIFIED TO USE showAppPopup
+// See Details function - use details popup with wider size and markdown rendering
 function attachSeeButtonListeners() {
     document.querySelectorAll('.see-button:not(.listener-attached)').forEach(button => {
         button.addEventListener('click', function () {
             const title = this.dataset.title;
-            const promptContent = this.dataset.content;
-            
-            // Modified detailHtml to remove max-h-60 and overflow-auto for consistency with community.js type: 'details' behavior
-            const detailHtml = `
-                <div>
-                    <strong class="block text-sm font-medium text-gray-100 mb-1">Prompt:</strong>
-                    <div class="mt-1 p-2 bg-gray-700/50 rounded-md text-gray-300 whitespace-pre-wrap break-words">
-                        ${escapeHTML(promptContent || '')}
-                    </div>
-                </div>
-            `;
-
-            const customButtons = [
-                {
-                    text: "Copy Prompt",
-                    action: () => {
-                        navigator.clipboard.writeText(promptContent || '')
-                            .then(() => showToast('Prompt copied to clipboard!', 'success'))
-                            .catch(err => {
-                                console.error('Failed to copy prompt:', err);
-                                showToast('Failed to copy prompt.', 'error');
-                            });
-                    }
-                },
-                {
-                    text: "Close",
-                    action: () => {
-                        closeAppPopup(); 
-                    }
-                }
-            ];
-            
-            showAppPopup(title, detailHtml, { 
-                type: 'custom', // Still custom because we are defining the full HTML and buttons
-                buttons: customButtons 
-                // No size option, defaults to 'md' like community.js type: 'details'
-            }); 
+            const promptContent = this.dataset.content || '';
+            showAppPopup(title, promptContent, { type: 'details', size: 'xl' });
         });
         button.classList.add('listener-attached');
     });

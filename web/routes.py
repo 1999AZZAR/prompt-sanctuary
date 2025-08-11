@@ -14,6 +14,8 @@ from models import (
     get_db_connection,
     create_user_table_if_not_exists,
     save_prompt_to_db,
+    get_next_version_number,
+    insert_prompt_version,
 )
 from response2 import GenerativeAI
 from response import GenerativeModel
@@ -199,15 +201,77 @@ def create_main_blueprint(
 
             try:
                 with get_db_connection(main_blueprint.prompt_db) as conn:
-                    # Update query without tags
-                    conn.execute(f"UPDATE \"{table_name}\" SET title = ?, prompt = ? WHERE random_val = ?",
-                                 (edited_title, edited_prompt, prompt_id))
+                    # Update the user's prompt table (table_name already quoted)
+                    conn.execute(
+                        f"UPDATE {table_name} SET title = ?, prompt = ? WHERE random_val = ?",
+                        (edited_title, edited_prompt, prompt_id),
+                    )
                     conn.commit()
+                # Insert new version after edit
+                version_number = get_next_version_number(username, prompt_id, main_blueprint.prompt_db)
+                insert_prompt_version(username, prompt_id, version_number, edited_title, edited_prompt, main_blueprint.prompt_db)
                 return jsonify(success=True, message="Prompt updated successfully!")
             except Exception as e:
                 logger.error(f"Error updating prompt {prompt_id} for {username}: {e}")
                 return jsonify(success=False, message="Failed to update prompt."), 500
         return jsonify(success=False, message="Invalid request method."), 405
+
+    @main_blueprint.route("/versions/<prompt_id>", methods=["GET"])
+    @required_login
+    def list_versions(prompt_id):
+        username = session["username"]
+        with get_db_connection(main_blueprint.prompt_db) as conn:
+            cursor = conn.cursor()
+            cursor.execute(
+                """
+                SELECT version_number, title, prompt, created_at
+                FROM prompt_versions
+                WHERE username = ? AND prompt_id = ?
+                ORDER BY version_number DESC
+                """,
+                (username, prompt_id),
+            )
+            rows = cursor.fetchall()
+        versions = [
+            {
+                "version_number": row[0],
+                "title": row[1],
+                "prompt": row[2],
+                "created_at": row[3],
+            }
+            for row in rows
+        ]
+        return jsonify({"success": True, "versions": versions})
+
+    @main_blueprint.route("/versions/rollback", methods=["POST"])
+    @required_login
+    def rollback_version():
+        username = session["username"]
+        prompt_id = request.form.get("prompt_id")
+        version_number = request.form.get("version_number", type=int)
+        if not prompt_id or version_number is None:
+            return jsonify({"success": False, "error": "Missing prompt_id or version_number"}), 400
+        try:
+            with get_db_connection(main_blueprint.prompt_db) as conn:
+                cursor = conn.cursor()
+                cursor.execute(
+                    "SELECT title, prompt FROM prompt_versions WHERE username = ? AND prompt_id = ? AND version_number = ?",
+                    (username, prompt_id, version_number),
+                )
+                row = cursor.fetchone()
+                if not row:
+                    return jsonify({"success": False, "error": "Version not found"}), 404
+                title, prompt_text = row[0], row[1]
+                # Update the current record in user's table to match selected version
+                cursor.execute(f'UPDATE "{username}" SET title = ?, prompt = ? WHERE random_val = ?', (title, prompt_text, prompt_id))
+                conn.commit()
+            # Record a new version snapshot for the rollback action
+            new_version = get_next_version_number(username, prompt_id, main_blueprint.prompt_db)
+            insert_prompt_version(username, prompt_id, new_version, title, prompt_text, main_blueprint.prompt_db)
+            return jsonify({"success": True, "message": "Rolled back to selected version."})
+        except Exception as e:
+            logger.exception("Rollback error")
+            return jsonify({"success": False, "error": "Internal server error."}), 500
 
     @main_blueprint.route("/share_prompt", methods=["POST"])
     @required_login
@@ -489,6 +553,8 @@ def create_main_blueprint(
 
                 random_val = secrets.token_urlsafe(8) 
                 if save_prompt_to_db(username, random_val, title, prompt_text, main_blueprint.prompt_db):
+                    # Initial version = 1
+                    insert_prompt_version(username, random_val, 1, title, prompt_text, main_blueprint.prompt_db)
                     return jsonify(success=True, message="Prompt saved successfully!")
                 else:
                     return jsonify(success=False, message="Failed to save prompt."), 500

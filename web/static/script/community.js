@@ -56,15 +56,15 @@ function attachSaveButtonListeners() {
         });
     });
 
-    // Attach See button listeners
+    // Attach See button listeners (use details popup styling and a wider size)
     document.querySelectorAll('.see-button').forEach(btn => {
         btn.addEventListener('click', function (e) {
             e.preventDefault();
             const card = btn.closest('.prompt-card');
             const title = card.querySelector('.mdc-typography--headline6').innerText;
             const content = card.querySelector('.mdc-typography--body2').innerText;
-            // Use new global popup for details view
-            showAppPopup(title, content, { type: 'details' });
+            // Use details type with larger size and markdown rendering
+            showAppPopup(title, content, { type: 'details', size: 'xl' });
         });
     });
 }

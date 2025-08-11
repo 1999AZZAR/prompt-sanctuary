@@ -32,6 +32,7 @@ With this new implementation, users can:
 - Safer, richer result rendering: Markdown + DOMPurify sanitization + Prism code highlighting with copy buttons
 - Default Gemini model updated to latest stable free-tier friendly model (`gemini-2.5-flash`) with easy override
 - More robust filesystem handling for SQLite DBs (auto-create DB directories)
+ - Prompt versioning: automatic snapshots on save/edit, history view, and rollback from personal library
 
 ## Usage
 
@@ -43,6 +44,7 @@ Prompt-sanctuary's web interface is intuitive and user-friendly. Here's a quick 
 - **Advanced Options**: For more advanced content generation, navigate to `/advance` and provide the required parameters.
 - **Community Library**: Access various content generation templates and tools from the library section. Navigate to `/library` and choose the desired option.
 - **Personal library**: contain per user prompt that they have saved before.
+  - New: “History” button to view previous versions, preview, and restore.
 
 ## Quick start (local)
 
