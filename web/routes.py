@@ -537,6 +537,15 @@ def create_main_blueprint(
             logger.error(f"Error processing advance image: {e}")
             return f"Error: {str(e)}"
 
+    @main_blueprint.route("/health/keys", methods=["GET"])
+    @required_login
+    def key_health():
+        try:
+            return jsonify({"success": True, **model.get_health()})
+        except Exception as e:
+            logger.exception("Health endpoint error")
+            return jsonify({"success": False, "error": "Internal server error."}), 500
+
     @main_blueprint.route("/save_prompt", methods=["POST"])
     @required_login
     def save_prompt():

@@ -1,4 +1,6 @@
 import os
+import time
+import logging
 import google.generativeai as genai
 from dotenv import load_dotenv
 import random
@@ -14,6 +16,16 @@ class GenerativeModel:
         # Allow overriding model via env var; default to stable free-tier friendly model
         self.model_name = os.getenv("GENAI_MODEL_NAME", "gemini-2.5-flash")
         genai.configure(api_key=self.get_current_api_key())
+
+        # Key health telemetry
+        self.key_health: Dict[str, Dict[str, Any]] = {}
+        for k in self.api_keys:
+            self.key_health[self._mask_key(k)] = {
+                "successes": 0,
+                "failures": 0,
+                "last_error": "",
+                "last_used": 0.0,
+            }
 
         self.generation_config = {
             "temperature": 0.75,
@@ -41,6 +53,29 @@ class GenerativeModel:
         key = self.api_keys[self.current_key_index]
         self.current_key_index = (self.current_key_index + 1) % len(self.api_keys)
         return key
+
+    def _mask_key(self, key: str) -> str:
+        return f"***{key[-4:]}" if key else "(none)"
+
+    def _record_success(self, key: str):
+        masked = self._mask_key(key)
+        if masked in self.key_health:
+            self.key_health[masked]["successes"] += 1
+            self.key_health[masked]["last_error"] = ""
+            self.key_health[masked]["last_used"] = time.time()
+
+    def _record_failure(self, key: str, error: Exception):
+        masked = self._mask_key(key)
+        if masked in self.key_health:
+            self.key_health[masked]["failures"] += 1
+            self.key_health[masked]["last_error"] = str(error)
+            self.key_health[masked]["last_used"] = time.time()
+
+    def get_health(self) -> Dict[str, Any]:
+        return {
+            "model": self.model_name,
+            "keys": self.key_health,
+        }
 
     def _resolve_path(self, path: str) -> str:
         """Resolve relative paths against this file's directory."""
@@ -104,13 +139,31 @@ class GenerativeModel:
                 safety_settings=self.safety_settings,
             )
             try:
-                response = self.model.generate_content(prompt_part)
-                text = self._extract_text(response)
-                if text and text.strip():
-                    return text
-                else:
-                    last_error = ValueError("Empty response content")
-                    continue
+                # Exponential backoff with key rotation
+                backoff = 0.5
+                for attempt in range(len(self.api_keys)):
+                    api_key = self.get_current_api_key()
+                    genai.configure(api_key=api_key)
+                    self.model = genai.GenerativeModel(
+                        model_name=self.model_name,
+                        generation_config=self.generation_config,
+                        safety_settings=self.safety_settings,
+                    )
+                    try:
+                        response = self.model.generate_content(prompt_part)
+                        text = self._extract_text(response)
+                        if text and text.strip():
+                            self._record_success(api_key)
+                            return text
+                        else:
+                            raise ValueError("Empty response content")
+                    except Exception as inner:
+                        self._record_failure(api_key, inner)
+                        time.sleep(backoff)
+                        backoff = min(backoff * 2, 4.0)
+                        last_error = inner
+                        continue
+                continue
             except Exception as e:
                 last_error = e
                 continue
@@ -129,13 +182,30 @@ class GenerativeModel:
                 safety_settings=self.safety_settings,
             )
             try:
-                response = self.model.generate_content(prompt_part)
-                text = self._extract_text(response)
-                if text and text.strip():
-                    return text
-                else:
-                    last_error = ValueError("Empty response content")
-                    continue
+                backoff = 0.5
+                for attempt in range(len(self.api_keys)):
+                    api_key = self.get_current_api_key()
+                    genai.configure(api_key=api_key)
+                    self.model = genai.GenerativeModel(
+                        model_name=self.model_name,
+                        generation_config=self.generation_config,
+                        safety_settings=self.safety_settings,
+                    )
+                    try:
+                        response = self.model.generate_content(prompt_part)
+                        text = self._extract_text(response)
+                        if text and text.strip():
+                            self._record_success(api_key)
+                            return text
+                        else:
+                            raise ValueError("Empty response content")
+                    except Exception as inner:
+                        self._record_failure(api_key, inner)
+                        time.sleep(backoff)
+                        backoff = min(backoff * 2, 4.0)
+                        last_error = inner
+                        continue
+                continue
             except Exception as e:
                 last_error = e
                 continue

@@ -51,6 +51,36 @@ def set_csrf_cookie(response):
         pass
     return response
 
+# Secure cookies and security headers (configurable)
+SECURE_COOKIES = os.getenv("SECURE_COOKIES", "false").lower() in {"1", "true", "yes"}
+app.config.update(
+    SESSION_COOKIE_HTTPONLY=True,
+    SESSION_COOKIE_SAMESITE="Lax",
+    SESSION_COOKIE_SECURE=SECURE_COOKIES,
+)
+
+@app.after_request
+def add_security_headers(resp):
+    # Content Security Policy – permissive for current CDNs; tighten as inline scripts are removed
+    csp = (
+        "default-src 'self'; "
+        "script-src 'self' 'unsafe-inline' https:; "
+        "style-src 'self' 'unsafe-inline' https:; "
+        "img-src 'self' data: https:; "
+        "font-src 'self' data: https:; "
+        "connect-src 'self' https:; "
+        "frame-src 'self' https:; "
+        "object-src 'none'; "
+        "base-uri 'self'; "
+        "form-action 'self'"
+    )
+    resp.headers.setdefault("Content-Security-Policy", csp)
+    resp.headers.setdefault("Referrer-Policy", "strict-origin-when-cross-origin")
+    resp.headers.setdefault("X-Content-Type-Options", "nosniff")
+    resp.headers.setdefault("X-Frame-Options", "SAMEORIGIN")
+    resp.headers.setdefault("Permissions-Policy", "camera=(), microphone=(), geolocation=()")
+    return resp
+
 if __name__ == "__main__":
     # app.run(debug=True, port=int(os.environ.get('PORT', 80)))
     app.run(host="0.0.0.0", port=5000, debug=True)

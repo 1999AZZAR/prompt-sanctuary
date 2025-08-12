@@ -29,7 +29,7 @@
 | Backend/AI | Streaming responses (SSE) for live typing | P1 | Planned | Use Flask SSE; client progressively renders Markdown |
 | Backend/AI | Structured outputs (JSON schema) for advanced prompts | P1 | Planned | Toggle JSON mode; validate; add Copy JSON/Use in app |
 | Backend/AI | Model selector + thinking budget | P2 | Planned | Switch gemini-2.5-flash/2.5-pro; expose budget knob |
-| Backend/AI | Auto rate-limit backoff/retry + key health telemetry | P1 | Planned | Exponential backoff; log per-key failures/rotation |
+| Backend/AI | Auto rate-limit backoff/retry + key health telemetry | P1 | In Progress | Implemented backoff + key rotation and /health/keys; tuning thresholds/alerts next |
 | Security | CSRF protection on all POST | P0 | Done | Flask-WTF enabled; CSRF cookie + X-CSRFToken on fetch |
 | Security | Secure cookies + CSP | P0 | Not Started | HttpOnly, Secure, SameSite; CSP to whitelist origins |
 | Security | Sanitize all popup HTML with DOMPurify | P1 | Planned | Apply DOMPurify in showAppPopup for custom HTML |
