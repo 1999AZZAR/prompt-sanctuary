@@ -53,6 +53,8 @@ function handleFormSubmission(form, action) {
                 } else if (form.id === "signupForm") {
                     document.getElementById("passwordSignup").value = "";
                     document.getElementById("confirmPassword").value = "";
+                    const emailEl = document.getElementById("emailSignup");
+                    if (emailEl) emailEl.value = "";
                 }
                 return Promise.reject(data); // Propagate error
             });
@@ -84,6 +86,8 @@ function handleFormSubmission(form, action) {
             } else if (form.id === "signupForm") {
                 document.getElementById("passwordSignup").value = "";
                 document.getElementById("confirmPassword").value = "";
+                const emailEl = document.getElementById("emailSignup");
+                if (emailEl) emailEl.value = "";
             }
         }
         console.error('Error in handleFormSubmission:', error);
@@ -209,6 +213,8 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("usernameSignup").value = "";
         document.getElementById("passwordSignup").value = "";
         document.getElementById("confirmPassword").value = "";
+        const emailEl = document.getElementById("emailSignup");
+        if (emailEl) emailEl.value = "";
         clearFormError(signupForm);
     }
 

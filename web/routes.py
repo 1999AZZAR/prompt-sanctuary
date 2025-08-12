@@ -16,6 +16,15 @@ from models import (
     save_prompt_to_db,
     get_next_version_number,
     insert_prompt_version,
+    create_session_record,
+    touch_session,
+    is_session_valid,
+    revoke_session,
+    list_sessions_for_user,
+    revoke_other_sessions,
+    update_user_email,
+    get_user_email,
+    change_username_everywhere,
 )
 from response2 import GenerativeAI
 from response import GenerativeModel
@@ -52,6 +61,16 @@ def create_main_blueprint(
         def decorated_function(*args, **kwargs):
             if "username" not in session:
                 return redirect(url_for("main.index"))
+            # Optional session token validation if present
+            token = session.get("session_token")
+            if token and not is_session_valid(main_blueprint.user_db, token, session["username"]):
+                session.clear()
+                return redirect(url_for("main.index"))
+            elif token:
+                try:
+                    touch_session(main_blueprint.user_db, token)
+                except Exception:
+                    logger.exception("Failed to touch session last_active")
             return func(*args, **kwargs)
 
         return decorated_function
@@ -95,6 +114,7 @@ def create_main_blueprint(
 
         username = request.form.get("username", "").strip()
         password = request.form.get("password", "")
+        email = request.form.get("email", "").strip() or None
         # Input validation
         if not username or not password:
             return jsonify({"success": False, "error": "Username and password are required."}), 400
@@ -104,6 +124,8 @@ def create_main_blueprint(
             return jsonify({"success": False, "error": "Password must be at least 6 characters."}), 400
         if not is_valid_username(username):
             return jsonify({"success": False, "error": "Invalid username format. Only letters, numbers, and underscores are allowed."}), 400
+        if email and (len(email) > 254 or "@" not in email):
+            return jsonify({"success": False, "error": "Invalid email address."}), 400
 
         try:
             with get_db_connection(main_blueprint.user_db) as conn:
@@ -111,9 +133,13 @@ def create_main_blueprint(
                 cursor.execute("SELECT * FROM users WHERE username = ?", (username,))
                 if cursor.fetchone():
                     return jsonify({"success": False, "error": "Username already exists. Please choose another."}), 409
+                if email:
+                    cursor.execute("SELECT 1 FROM users WHERE email = ?", (email,))
+                    if cursor.fetchone():
+                        return jsonify({"success": False, "error": "Email is already in use."}), 409
 
                 hashed_password = generate_password_hash(password)
-                cursor.execute("INSERT INTO users (username, password) VALUES (?, ?)", (username, hashed_password))
+                cursor.execute("INSERT INTO users (username, password, email) VALUES (?, ?, ?)", (username, hashed_password, email))
                 conn.commit()
                 create_user_table_if_not_exists(username, main_blueprint.prompt_db)
         except Exception as e:
@@ -152,12 +178,28 @@ def create_main_blueprint(
 
         if user and check_password_hash(user[1], password):
             session["username"] = username
+            # Create a session token for optional session management and revocation
+            token = secrets.token_urlsafe(24)
+            session["session_token"] = token
+            ua = request.headers.get("User-Agent")
+            ip = request.headers.get("X-Forwarded-For", request.remote_addr)
+            try:
+                create_session_record(main_blueprint.user_db, username, token, ua, ip)
+            except Exception:
+                logger.exception("Failed to create session record")
             return jsonify({"success": True, "redirect": url_for("main.home")})
 
         return jsonify({"success": False, "error": "Invalid username or password. Please try again."}), 401
 
     @main_blueprint.route("/logout")
     def logout():
+        username = session.get("username")
+        token = session.get("session_token")
+        if username and token:
+            try:
+                revoke_session(main_blueprint.user_db, token, username)
+            except Exception:
+                logger.exception("Failed to revoke session on logout")
         session.clear()
         return redirect(url_for("main.index"))
 
@@ -372,31 +414,79 @@ def create_main_blueprint(
         error = None
         success = None
         if request.method == "POST":
-            old_password = request.form["old_password"]
-            new_password = request.form["new_password"]
-            confirm_password = request.form["confirm_password"]
-            with get_db_connection(main_blueprint.user_db) as conn:
-                cursor = conn.cursor()
-                cursor.execute(
-                    "SELECT password FROM users WHERE username = ?", (session["username"],)
-                )
-                user = cursor.fetchone()
-            if not user or not check_password_hash(user[0], old_password):
-                error = "Old password is incorrect."
-            elif new_password != confirm_password:
-                error = "New passwords do not match."
-            else:
-                hashed = generate_password_hash(new_password)
+            action = request.form.get("action", "")
+            if action == "change_password":
+                old_password = request.form.get("old_password", "")
+                new_password = request.form.get("new_password", "")
+                confirm_password = request.form.get("confirm_password", "")
                 with get_db_connection(main_blueprint.user_db) as conn:
                     cursor = conn.cursor()
                     cursor.execute(
-                        "UPDATE users SET password = ? WHERE username = ?",
-                        (hashed, session["username"]),
+                        "SELECT password FROM users WHERE username = ?", (session["username"],)
                     )
-                    conn.commit()
-                success = "Password updated successfully."
+                    user = cursor.fetchone()
+                if not user or not check_password_hash(user[0], old_password):
+                    error = "Old password is incorrect."
+                elif new_password != confirm_password:
+                    error = "New passwords do not match."
+                elif len(new_password) < 6:
+                    error = "New password must be at least 6 characters."
+                else:
+                    hashed = generate_password_hash(new_password)
+                    with get_db_connection(main_blueprint.user_db) as conn:
+                        cursor = conn.cursor()
+                        cursor.execute(
+                            "UPDATE users SET password = ? WHERE username = ?",
+                            (hashed, session["username"]),
+                        )
+                        conn.commit()
+                    success = "Password updated successfully."
+            elif action == "update_email":
+                email = request.form.get("email", "").strip() or None
+                if email and (len(email) > 254 or "@" not in email):
+                    error = "Invalid email address."
+                else:
+                    try:
+                        update_user_email(main_blueprint.user_db, session["username"], email)
+                        success = "Email updated."
+                    except Exception as e:
+                        logger.exception("Email update error")
+                        error = "Email already in use."
+            elif action == "change_username":
+                new_username = request.form.get("new_username", "").strip()
+                if not new_username or not is_valid_username(new_username) or not (3 <= len(new_username) <= 32):
+                    error = "Invalid username format."
+                else:
+                    try:
+                        old_username = session["username"]
+                        change_username_everywhere(
+                            old_username,
+                            new_username,
+                            main_blueprint.user_db,
+                            main_blueprint.prompt_db,
+                            main_blueprint.community_db,
+                            main_blueprint.feedback_db,
+                        )
+                        # Update session name and optionally revoke other sessions
+                        session["username"] = new_username
+                        token = session.get("session_token")
+                        try:
+                            revoke_other_sessions(main_blueprint.user_db, new_username, except_token=token)
+                        except Exception:
+                            logger.exception("Failed to revoke other sessions after username change")
+                        success = "Username updated."
+                    except ValueError as ve:
+                        error = str(ve)
+                    except Exception:
+                        logger.exception("Username change error")
+                        error = "Failed to change username."
         # Fetch recent user activity
         username = session["username"]
+        # Ensure table exists to avoid 'no such table' after username change or first visit
+        try:
+            create_user_table_if_not_exists(username, main_blueprint.prompt_db)
+        except Exception:
+            logger.exception("Failed to ensure user table exists")
         with get_db_connection(main_blueprint.prompt_db) as conn:
             cursor = conn.cursor()
             # Fetch prompt ID, title, content, and timestamp for saved prompts
@@ -414,12 +504,27 @@ def create_main_blueprint(
                 (username,)
             )
             shared_prompts = cursor.fetchall()
+        # List sessions
+        try:
+            sessions_list = list_sessions_for_user(main_blueprint.user_db, username)
+        except Exception:
+            logger.exception("Failed to list sessions")
+            sessions_list = []
+        # Email
+        email_value = None
+        try:
+            email_value = get_user_email(main_blueprint.user_db, username)
+        except Exception:
+            logger.exception("Failed to get user email")
         return render_template(
             "account/profile.html",
             error=error,
             success=success,
             saved_prompts=saved_prompts,
             shared_prompts=shared_prompts,
+            sessions=sessions_list,
+            email=email_value,
+            current_token=session.get("session_token"),
         )
 
     @main_blueprint.route("/delete_account", methods=["POST"])
@@ -433,13 +538,42 @@ def create_main_blueprint(
                 "DELETE FROM users WHERE username = ?", (username,)
             )
             conn.commit()
+        # delete user sessions
+        with get_db_connection(main_blueprint.user_db) as conn:
+            cursor = conn.cursor()
+            cursor.execute("DELETE FROM sessions WHERE username = ?", (username,))
+            conn.commit()
         # drop user's prompt table
         with get_db_connection(main_blueprint.prompt_db) as conn:
             cursor = conn.cursor()
-            cursor.execute(f"DROP TABLE IF EXISTS {username}")
+            cursor.execute(f'DROP TABLE IF EXISTS "{username}"')
             conn.commit()
         session.clear()
         return redirect(url_for("main.index"))
+
+    @main_blueprint.route("/sessions/revoke", methods=["POST"])
+    @required_login
+    def revoke_a_session():
+        token = request.form.get("token", "")
+        if not token:
+            return jsonify({"success": False, "error": "Missing session token."}), 400
+        ok = False
+        try:
+            ok = revoke_session(main_blueprint.user_db, token, session["username"])
+        except Exception:
+            logger.exception("Failed to revoke session")
+        if not ok:
+            return jsonify({"success": False, "error": "Unable to revoke session."}), 400
+        return jsonify({"success": True})
+
+    @main_blueprint.route("/sessions/list", methods=["GET"])
+    @required_login
+    def list_my_sessions():
+        try:
+            return jsonify({"success": True, "sessions": list_sessions_for_user(main_blueprint.user_db, session["username"])})
+        except Exception:
+            logger.exception("Failed to list sessions")
+            return jsonify({"success": False}), 500
 
     @main_blueprint.route("/generate")
     @required_login

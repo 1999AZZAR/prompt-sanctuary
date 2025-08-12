@@ -59,7 +59,7 @@
 | Image Gen | Combine image generator input | P1 | In Progress | ~50%; unify text/file modes |
 | Accounts | Account settings page | P1 | In Progress | Password, delete (exists), future API creds |
 | Community | Remodel community page + share flow | P1 | Not Started | Better cards, filters, see/copy/save/share |
-| Accounts | Account management flows | P1 | Not Started | Email (opt), username change, sessions |
+| Accounts | Account management flows | P1 | Done | Implemented: Email (optional), username change, session list/revoke |
 | Community | User interactions (likes/comments) | P2 | Planned | Requires moderation basics |
 | Economy | Point system (earn/charge/transfer) | P3 | Planned | Rate-limit friendly; opt-in |
 
