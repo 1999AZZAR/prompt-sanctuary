@@ -25,24 +25,65 @@
           <div class="mdc-layout-grid__inner" id="savedPromptsContainer">
               {% for prompt in saved_prompts %}
               <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12 mdc-layout-grid__cell--span-4-tablet mdc-layout-grid__cell--span-6-desktop">
-                  <div class="mdc-card glass prompt-card p-6 flex flex-col justify-between max-h-64 overflow-y-auto" role="article" aria-labelledby="prompt-title-{{ prompt.random_val }}">
-                      <div class="mdc-card__primary-action" tabindex="0">
-                          <div class="flex justify-between items-center mb-4">
-                              <h4 id="prompt-title-{{ prompt.random_val }}" class="mdc-typography--headline6 mb-0">{{ prompt.title }}</h4>
+                  <article class="prompt-card-enhanced" role="article" aria-labelledby="prompt-title-{{ prompt.random_val }}">
+                      <div class="card-header">
+                          <div class="card-header-content">
+                              <h3 class="card-title" id="prompt-title-{{ prompt.random_val }}">{{ prompt.title }}</h3>
+                              <div class="card-badges">
+                                  <div class="card-type-indicator personal-type">
+                                      <i class="fas fa-bookmark" aria-hidden="true"></i>
+                                      <span>{{ _('Personal') }}</span>
+                                  </div>
+                              </div>
                           </div>
-                          <p class="mdc-typography--body2 mb-2 whitespace-pre-wrap break-words">{{ prompt.prompt }}</p>
-                      </div>
-                      <div class="mdc-card__actions">
-                          <div class="mdc-card__action-buttons space-x-4">
-                              <button class="text-blue-400 hover:text-blue-300 mdc-button mdc-button--text copy-button" data-clipboard-text="{{ prompt.prompt }}" aria-label="{{ _('Copy prompt:') }} {{ prompt.title | e }}">{{ _('Copy') }}</button>
-                              <button class="text-green-400 hover:text-green-300 mdc-button mdc-button--text edit-button" data-random-val="{{ prompt.random_val }}" data-title="{{ prompt.title | e }}" data-prompt="{{ prompt.prompt | e }}" aria-label="{{ _('Edit prompt:') }} {{ prompt.title | e }}">{{ _('Edit') }}</button>
-                              <button class="text-red-400 hover:text-red-300 mdc-button mdc-button--text delete-button" data-random-val="{{ prompt.random_val }}" aria-label="{{ _('Delete prompt:') }} {{ prompt.title | e }}">{{ _('Delete') }}</button>
-                              <button class="text-purple-400 hover:text-purple-300 mdc-button mdc-button--text share-button" data-prompt-id="{{ prompt.random_val }}" data-title="{{ prompt.title|e }}" data-prompt="{{ prompt.prompt|e }}" aria-label="{{ _('Share prompt:') }} {{ prompt.title | e }}">{{ _('Share') }}</button>
-                              <button class="text-amber-500 hover:text-amber-400 mdc-button mdc-button--text history-button" data-random-val="{{ prompt.random_val }}" data-title="{{ prompt.title | e }}" aria-label="{{ _('View version history:') }} {{ prompt.title | e }}">{{ _('History') }}</button>
-                              <button class="text-indigo-400 hover:text-indigo-300 mdc-button mdc-button--text see-button" data-title="{{ prompt.title | e }}" data-content="{{ prompt.prompt | e }}" aria-label="{{ _('See details for prompt:') }} {{ prompt.title | e }}">{{ _('See') }}</button>
+                          <div class="card-actions-header">
+                              <!-- Header actions for personal prompts -->
                           </div>
                       </div>
-                  </div>
+
+                      <div class="card-content">
+                          <div class="prompt-preview">
+                              <p class="prompt-text">{{ prompt.prompt | safe }}</p>
+                          </div>
+                          <div class="content-gradient"></div>
+                      </div>
+
+                      <div class="card-footer">
+                          <div class="card-action-buttons">
+                              <button class="primary-action-button copy-button" data-clipboard-text="{{ prompt.prompt | e }}" aria-label="{{ _('Copy prompt:') }} {{ prompt.title | e }}">
+                                  <i class="fas fa-copy" aria-hidden="true"></i>
+                                  <span>{{ _('Copy') }}</span>
+                              </button>
+                              <button class="primary-action-button edit-button" data-random-val="{{ prompt.random_val }}" data-title="{{ prompt.title | e }}" data-prompt="{{ prompt.prompt | e }}" aria-label="{{ _('Edit prompt:') }} {{ prompt.title | e }}">
+                                  <i class="fas fa-edit" aria-hidden="true"></i>
+                                  <span>{{ _('Edit') }}</span>
+                              </button>
+                              <button class="primary-action-button delete-button" data-random-val="{{ prompt.random_val }}" aria-label="{{ _('Delete prompt:') }} {{ prompt.title | e }}">
+                                  <i class="fas fa-trash" aria-hidden="true"></i>
+                                  <span>{{ _('Delete') }}</span>
+                              </button>
+                              {% if prompt.is_shared %}
+                              <button class="primary-action-button unshare-button" data-prompt-id="{{ prompt.random_val }}" aria-label="{{ _('Unshare prompt:') }} {{ prompt.title | e }}">
+                                  <i class="fas fa-share-alt" aria-hidden="true"></i>
+                                  <span>{{ _('Unshare') }}</span>
+                              </button>
+                              {% else %}
+                              <button class="primary-action-button share-button" data-prompt-id="{{ prompt.random_val }}" data-title="{{ prompt.title|e }}" data-prompt="{{ prompt.prompt|e }}" aria-label="{{ _('Share prompt:') }} {{ prompt.title | e }}">
+                                  <i class="fas fa-share-alt" aria-hidden="true"></i>
+                                  <span>{{ _('Share') }}</span>
+                              </button>
+                              {% endif %}
+                              <button class="secondary-action-button history-button" data-random-val="{{ prompt.random_val }}" data-title="{{ prompt.title | e }}" aria-label="{{ _('View version history:') }} {{ prompt.title | e }}">
+                                  <i class="fas fa-history" aria-hidden="true"></i>
+                                  <span>{{ _('History') }}</span>
+                              </button>
+                              <button class="secondary-action-button see-button" data-title="{{ prompt.title | e }}" data-content="{{ prompt.prompt | e }}" aria-label="{{ _('See details for prompt:') }} {{ prompt.title | e }}">
+                                  <i class="fas fa-eye" aria-hidden="true"></i>
+                                  <span>{{ _('Preview') }}</span>
+                              </button>
+                          </div>
+                      </div>
+                  </article>
               </div>
               {% endfor %}
           </div>
@@ -71,10 +112,10 @@
 
       const personalPrompts = [
         {% for prompt_item in saved_prompts %}
-        { id: "{{ prompt_item.random_val }}", title: {{ prompt_item.title | tojson }}, content: {{ prompt_item.prompt | tojson }} },
+        { id: "{{ prompt_item.random_val }}", title: {{ prompt_item.title | tojson }}, prompt: {{ prompt_item.prompt | tojson }}, is_shared: {{ prompt_item.is_shared | tojson }} },
         {% endfor %}
       ];
-      const fuseOptions = { keys: ['title','content'], threshold: 0.3 };
+      const fuseOptions = { keys: ['title','prompt'], threshold: 0.3 };
       const fuse = new Fuse(personalPrompts, fuseOptions);
 
       const searchInput = document.getElementById('searchPersonalInput');
@@ -84,24 +125,65 @@
       function renderSavedPrompts(promptsToRender) {
         savedPromptsContainer.innerHTML = promptsToRender.map(p => `
           <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12 mdc-layout-grid__cell--span-4-tablet mdc-layout-grid__cell--span-6-desktop">
-            <div class="mdc-card glass prompt-card p-6 flex flex-col justify-between max-h-64 overflow-y-auto" role="article" aria-labelledby="prompt-title-${p.id}">
-              <div class="mdc-card__primary-action" tabindex="0">
-                <div class="flex justify-between items-center mb-4">
-                  <h4 id="prompt-title-${p.id}" class="mdc-typography--headline6 mb-0">${escapeHtml(p.title)}</h4>
+            <article class="prompt-card-enhanced" role="article" aria-labelledby="prompt-title-${p.id}">
+              <div class="card-header">
+                <div class="card-header-content">
+                  <h3 class="card-title" id="prompt-title-${p.id}">${escapeHtml(p.title)}</h3>
+                  <div class="card-badges">
+                    <div class="card-type-indicator personal-type">
+                      <i class="fas fa-bookmark" aria-hidden="true"></i>
+                      <span>Personal</span>
+                    </div>
+                  </div>
                 </div>
-                <p class="mdc-typography--body2 mb-2 whitespace-pre-wrap break-words">${escapeHtml(p.content)}</p>
-              </div>
-              <div class="mdc-card__actions">
-                <div class="mdc-card__action-buttons space-x-4">
-                  <button class="text-blue-400 hover:text-blue-300 mdc-button mdc-button--text copy-button" data-clipboard-text="${escapeHtml(p.content)}" aria-label="Copy prompt: ${escapeHtml(p.title)}">Copy</button>
-                  <button class="text-green-400 hover:text-green-300 mdc-button mdc-button--text edit-button" data-random-val="${p.id}" data-title="${escapeHtml(p.title)}" data-prompt="${escapeHtml(p.content)}" data-tags="" aria-label="Edit prompt: ${escapeHtml(p.title)}">Edit</button>
-                  <button class="text-red-400 hover:text-red-300 mdc-button mdc-button--text delete-button" data-random-val="${p.id}" aria-label="Delete prompt: ${escapeHtml(p.title)}">Delete</button>
-                  <button class="text-purple-400 hover:text-purple-300 mdc-button mdc-button--text share-button" data-prompt-id="${p.id}" data-title="${escapeHtml(p.title)}" data-prompt="${escapeHtml(p.content)}" aria-label="Share prompt: ${escapeHtml(p.title)}">Share</button>
-                  <button class="text-amber-500 hover:text-amber-400 mdc-button mdc-button--text history-button" data-random-val="${p.id}" data-title="${escapeHtml(p.title)}" aria-label="View version history: ${escapeHtml(p.title)}">History</button>
-                  <button class="text-indigo-400 hover:text-indigo-300 mdc-button mdc-button--text see-button" data-title="${escapeHtml(p.title)}" data-content="${escapeHtml(p.content)}" aria-label="See details for prompt: ${escapeHtml(p.title)}">See</button>
+                <div class="card-actions-header">
+                  <!-- Header actions for personal prompts -->
                 </div>
               </div>
-            </div>
+
+              <div class="card-content">
+                <div class="prompt-preview">
+                  <p class="prompt-text">${escapeHtml(p.prompt)}</p>
+                </div>
+                <div class="content-gradient"></div>
+              </div>
+
+              <div class="card-footer">
+                <div class="card-action-buttons">
+                  <button class="primary-action-button copy-button" data-clipboard-text="${escapeHtml(p.prompt)}" aria-label="Copy prompt: ${escapeHtml(p.title)}">
+                    <i class="fas fa-copy" aria-hidden="true"></i>
+                    <span>Copy</span>
+                  </button>
+                  <button class="primary-action-button edit-button" data-random-val="${p.id}" data-title="${escapeHtml(p.title)}" data-prompt="${escapeHtml(p.prompt)}" data-tags="" aria-label="Edit prompt: ${escapeHtml(p.title)}">
+                    <i class="fas fa-edit" aria-hidden="true"></i>
+                    <span>Edit</span>
+                  </button>
+                  <button class="primary-action-button delete-button" data-random-val="${p.id}" aria-label="Delete prompt: ${escapeHtml(p.title)}">
+                    <i class="fas fa-trash" aria-hidden="true"></i>
+                    <span>Delete</span>
+                  </button>
+                  ${p.is_shared ? `
+                  <button class="primary-action-button unshare-button" data-prompt-id="${p.id}" aria-label="Unshare prompt: ${escapeHtml(p.title)}">
+                    <i class="fas fa-share-alt" aria-hidden="true"></i>
+                    <span>Unshare</span>
+                  </button>
+                  ` : `
+                  <button class="primary-action-button share-button" data-prompt-id="${p.id}" data-title="${escapeHtml(p.title)}" data-prompt="${escapeHtml(p.prompt)}" aria-label="Share prompt: ${escapeHtml(p.title)}">
+                    <i class="fas fa-share-alt" aria-hidden="true"></i>
+                    <span>Share</span>
+                  </button>
+                  `}
+                  <button class="secondary-action-button history-button" data-random-val="${p.id}" data-title="${escapeHtml(p.title)}" aria-label="View version history: ${escapeHtml(p.title)}">
+                    <i class="fas fa-history" aria-hidden="true"></i>
+                    <span>History</span>
+                  </button>
+                  <button class="secondary-action-button see-button" data-title="${escapeHtml(p.title)}" data-content="${escapeHtml(p.prompt)}" aria-label="See details for prompt: ${escapeHtml(p.title)}">
+                    <i class="fas fa-eye" aria-hidden="true"></i>
+                    <span>Preview</span>
+                  </button>
+                </div>
+              </div>
+            </article>
           </div>
         `).join('');
         if (typeof reattachEventListeners === 'function') {

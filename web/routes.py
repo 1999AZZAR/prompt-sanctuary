@@ -291,12 +291,36 @@ def create_main_blueprint(
         table_name = f'"{username}"'
         try:
             cursor.execute(f"SELECT random_val, title, prompt, time FROM {table_name} ORDER BY time DESC")
-            saved_prompts = cursor.fetchall()
+            raw_saved_prompts = cursor.fetchall()
         except Exception as e:
             logger.error(f"Error fetching prompts: {e}")
-            saved_prompts = []
+            raw_saved_prompts = []
 
         conn.close()
+
+        # Add sharing status to each saved prompt
+        saved_prompts = []
+        for prompt in raw_saved_prompts:
+            prompt_id = prompt[0]
+            title = prompt[1]
+            content = prompt[2]
+            time = prompt[3]
+
+            sharing_status = get_prompt_sharing_status(
+                username, prompt_id, title, content,
+                main_blueprint.prompt_db, main_blueprint.community_db
+            )
+
+            enhanced_prompt = {
+                'random_val': prompt_id,
+                'title': title,
+                'prompt': content,
+                'time': time,
+                'is_shared': sharing_status['is_shared'],
+                'needs_update': sharing_status['needs_update']
+            }
+            saved_prompts.append(enhanced_prompt)
+
         return render_template("prompts/lib/personal.html", saved_prompts=saved_prompts, title="My Library", current_user_points=current_points)
 
     @main_blueprint.route("/save_edit", methods=["POST"])
@@ -403,17 +427,33 @@ def create_main_blueprint(
         try:
             with get_db_connection(main_blueprint.community_db) as conn:
                 cursor = conn.cursor()
-                # Prevent duplicate share (same user, same prompt)
-                cursor.execute("SELECT 1 FROM shared WHERE owner=? AND random_val=?", (owner, random_val))
-                if cursor.fetchone():
-                    return jsonify({"success": False, "error": "Prompt already shared."}), 409
-                cursor.execute(
-                    "INSERT INTO shared (owner, random_val, title, prompt) VALUES (?, ?, ?, ?)",
-                    (owner, random_val, title, prompt_text),
-                )
-                conn.commit()
+                # Check if prompt is already shared
+                cursor.execute("SELECT title, prompt FROM shared WHERE owner=? AND random_val=?", (owner, random_val))
+                existing = cursor.fetchone()
 
-            # Reward user with 1 point for sharing
+                if existing:
+                    # Prompt is already shared, check if content changed
+                    existing_title, existing_prompt = existing
+                    if existing_title == title and existing_prompt == prompt_text:
+                        # Same content, no need to update
+                        return jsonify({"success": True, "message": "Prompt already shared."})
+                    else:
+                        # Content changed, update the shared prompt
+                        cursor.execute(
+                            "UPDATE shared SET title=?, prompt=? WHERE owner=? AND random_val=?",
+                            (title, prompt_text, owner, random_val)
+                        )
+                        conn.commit()
+                        return jsonify({"success": True, "message": "Shared prompt updated."})
+                else:
+                    # Prompt not shared yet, insert new record
+                    cursor.execute(
+                        "INSERT INTO shared (owner, random_val, title, prompt) VALUES (?, ?, ?, ?)",
+                        (owner, random_val, title, prompt_text),
+                    )
+                    conn.commit()
+
+            # Reward user with 1 point for sharing (only for new shares, not updates)
             add_user_points(main_blueprint.user_db, owner, 1.0)
         except Exception as e:
             logger.exception("Error sharing prompt")
@@ -472,18 +512,55 @@ def create_main_blueprint(
                 cursor.execute(
                     "SELECT random_val, username, tittle, prompt, tag, time FROM community"
                 )
-                system_prompts = cursor.fetchall()
+                raw_system_prompts = cursor.fetchall()
 
             with get_db_connection(main_blueprint.community_db) as conn:
                 cursor = conn.cursor()
                 cursor.execute(
                     "SELECT owner, random_val, title, prompt, time FROM shared"
                 )
-                shared_prompts = cursor.fetchall()
+                raw_shared_prompts = cursor.fetchall()
 
         except Exception as e:
             logger.error(f"Error fetching prompts: {e}")
-            system_prompts, shared_prompts = [], []
+            raw_system_prompts, raw_shared_prompts = [], []
+
+        # Convert system prompts to dictionary structure
+        system_prompts = []
+        for prompt in raw_system_prompts:
+            system_prompts.append({
+                'random_val': prompt[0],
+                'username': prompt[1],
+                'title': prompt[2],  # Note: 'tittle' in DB but using 'title' in template
+                'prompt': prompt[3],
+                'tag': prompt[4],
+                'time': prompt[5],
+                'is_shared': False,  # System prompts are not shared by users
+                'type': 'system'
+            })
+
+        # Convert shared prompts to dictionary structure
+        shared_prompts = []
+        for prompt in raw_shared_prompts:
+            owner = prompt[0]
+            prompt_id = prompt[1]
+            title = prompt[2]
+            content = prompt[3]
+            time = prompt[4]
+
+            # Check if current user owns this prompt
+            is_user_owned = (owner == username)
+
+            shared_prompts.append({
+                'owner': owner,
+                'random_val': prompt_id,
+                'title': title,
+                'prompt': content,
+                'time': time,
+                'is_shared': True,  # These are already shared
+                'type': 'shared',
+                'is_user_owned': is_user_owned
+            })
 
         return render_template(
             "prompts/lib/community.html",

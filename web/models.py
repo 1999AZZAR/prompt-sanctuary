@@ -698,6 +698,52 @@ def initialize_achievements(user_db):
         ("Weekly Warrior", "Login for 30 consecutive days", "fas fa-shield-alt", 75, "streak", "login_streak", 30, 0),
         ("Monthly Master", "Login for 100 consecutive days", "fas fa-star-shield", 150, "streak", "login_streak", 100, 0),
 
+        # Quality achievements
+        ("Feedback Guru", "Give feedback on 5 prompts", "fas fa-comments", 15, "quality", "feedback_given", 5, 0),
+        ("Quality Contributor", "Receive 10 positive ratings", "fas fa-thumbs-up", 20, "quality", "positive_ratings", 10, 0),
+        ("Critic", "Give detailed feedback on 25 prompts", "fas fa-search", 30, "quality", "detailed_feedback", 25, 0),
+        ("Quality Master", "Receive 50 positive ratings", "fas fa-star", 50, "quality", "positive_ratings", 50, 0),
+
+        # Diversity achievements
+        ("Style Explorer", "Try 5 different prompt styles", "fas fa-palette", 20, "diversity", "styles_tried", 5, 0),
+        ("Technique Master", "Use 10 different prompt techniques", "fas fa-tools", 25, "diversity", "techniques_used", 10, 0),
+        ("Category Collector", "Create prompts in 8 different categories", "fas fa-folder-open", 30, "diversity", "categories_used", 8, 0),
+        ("Format Specialist", "Use 6 different prompt formats", "fas fa-file-alt", 25, "diversity", "formats_used", 6, 0),
+
+        # Advanced features achievements
+        ("Version Controller", "Create 10 different versions of a prompt", "fas fa-code-branch", 20, "advanced", "versions_created", 10, 0),
+        ("Template Creator", "Create 5 custom prompt templates", "fas fa-file-code", 25, "advanced", "templates_created", 5, 0),
+        ("Batch Processor", "Generate prompts in batch mode", "fas fa-layer-group", 15, "advanced", "batch_processing_used", 1, 0),
+        ("Parameter Expert", "Use advanced parameters 25 times", "fas fa-sliders-h", 30, "advanced", "advanced_params_used", 25, 0),
+
+        # Community engagement achievements
+        ("Helpful Member", "Help 5 other users", "fas fa-hands-helping", 25, "community", "users_helped", 5, 0),
+        ("Mentor", "Provide guidance to 15 users", "fas fa-chalkboard-teacher", 40, "community", "users_helped", 15, 0),
+        ("Community Helper", "Participate in community discussions", "fas fa-users-cog", 20, "community", "community_participation", 1, 0),
+        ("Collaborator", "Work on shared projects with others", "fas fa-handshake", 35, "community", "collaborations", 3, 0),
+
+        # Consistency achievements
+        ("Steady Progress", "Login for 50 days total", "fas fa-route", 30, "consistency", "total_logins", 50, 0),
+        ("Reliable User", "Login for 100 days total", "fas fa-shield-check", 50, "consistency", "total_logins", 100, 0),
+        ("Dedicated Member", "Maintain a 30-day login streak", "fas fa-calendar-star", 75, "consistency", "login_streak", 30, 0),
+        ("Loyal User", "Login for 200 days total", "fas fa-heart", 100, "consistency", "total_logins", 200, 0),
+
+        # Exploration achievements
+        ("Feature Explorer", "Try all main features", "fas fa-binoculars", 25, "exploration", "features_used", 10, 0),
+        ("Settings Expert", "Customize all profile settings", "fas fa-cog", 15, "exploration", "settings_customized", 1, 0),
+        ("Tool Master", "Use all available tools", "fas fa-toolbox", 30, "exploration", "tools_used", 8, 0),
+        ("Discovery Seeker", "Find and use hidden features", "fas fa-lightbulb", 20, "exploration", "hidden_features_used", 5, 0),
+
+        # Additional achievements
+        ("Power User", "Generate 1000 prompts", "fas fa-bolt", 200, "generation", "prompts_generated", 1000, 0),
+        ("Library Master", "Save 250 prompts", "fas fa-book-reader", 75, "collection", "prompts_saved", 250, 0),
+        ("Community Legend", "Share 100 prompts", "fas fa-crown", 150, "social", "prompts_shared", 100, 0),
+        ("Year Round User", "Login for 365 consecutive days", "fas fa-calendar-alt", 200, "streak", "login_streak", 365, 0),
+        ("Perfectionist", "Create 50 prompt versions", "fas fa-check-double", 40, "advanced", "versions_created", 50, 0),
+        ("Innovation Leader", "Create 20 custom templates", "fas fa-lightbulb", 60, "advanced", "templates_created", 20, 0),
+        ("Community Champion", "Help 50 other users", "fas fa-trophy", 100, "community", "users_helped", 50, 0),
+        ("Feature Pioneer", "Try 20 different features", "fas fa-flag", 50, "exploration", "features_used", 20, 0),
+
         # Hidden achievements
         ("Early Adopter", "Be among the first 100 users", "fas fa-rocket", 100, "special", "user_rank", 100, 1),
         ("Reverse Engineer", "Use reverse image prompts", "fas fa-magic", 15, "special", "reverse_image_used", 1, 0),
@@ -790,7 +836,32 @@ def get_user_stats(username: str, prompt_db: str, community_db: str):
         'profile_completed': 0,
         'user_rank': 0,
         'reverse_image_used': 0,
-        'advanced_prompts_used': 0
+        'advanced_prompts_used': 0,
+        # Quality stats
+        'feedback_given': 0,
+        'positive_ratings': 0,
+        'detailed_feedback': 0,
+        # Diversity stats
+        'styles_tried': set(),
+        'techniques_used': set(),
+        'categories_used': set(),
+        'formats_used': set(),
+        # Advanced features stats
+        'versions_created': 0,
+        'templates_created': 0,
+        'batch_processing_used': 0,
+        'advanced_params_used': 0,
+        # Community stats
+        'users_helped': 0,
+        'community_participation': 0,
+        'collaborations': 0,
+        # Consistency stats
+        'total_logins': 0,
+        # Exploration stats
+        'features_used': set(),
+        'settings_customized': 0,
+        'tools_used': set(),
+        'hidden_features_used': set()
     }
 
     # Get prompts generated (from prompt_versions)
@@ -824,6 +895,21 @@ def get_user_stats(username: str, prompt_db: str, community_db: str):
         """, (username,))
         stats['user_rank'] = cursor.fetchone()[0]
 
+    # Get total logins
+    with get_db_connection(prompt_db) as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT COUNT(*) FROM user_logins WHERE username = ?", (username,))
+        stats['total_logins'] = cursor.fetchone()[0]
+
+    # Convert sets to lengths for achievement checking
+    stats['styles_tried'] = len(stats['styles_tried'])
+    stats['techniques_used'] = len(stats['techniques_used'])
+    stats['categories_used'] = len(stats['categories_used'])
+    stats['formats_used'] = len(stats['formats_used'])
+    stats['features_used'] = len(stats['features_used'])
+    stats['tools_used'] = len(stats['tools_used'])
+    stats['hidden_features_used'] = len(stats['hidden_features_used'])
+
     return stats
 
 
@@ -849,6 +935,50 @@ def check_achievement_condition(stats, condition_type: str, condition_value: int
         return stats['reverse_image_used'] >= condition_value
     elif condition_type == "advanced_prompts_used":
         return stats['advanced_prompts_used'] >= condition_value
+    # Quality conditions
+    elif condition_type == "feedback_given":
+        return stats['feedback_given'] >= condition_value
+    elif condition_type == "positive_ratings":
+        return stats['positive_ratings'] >= condition_value
+    elif condition_type == "detailed_feedback":
+        return stats['detailed_feedback'] >= condition_value
+    # Diversity conditions
+    elif condition_type == "styles_tried":
+        return stats['styles_tried'] >= condition_value
+    elif condition_type == "techniques_used":
+        return stats['techniques_used'] >= condition_value
+    elif condition_type == "categories_used":
+        return stats['categories_used'] >= condition_value
+    elif condition_type == "formats_used":
+        return stats['formats_used'] >= condition_value
+    # Advanced features conditions
+    elif condition_type == "versions_created":
+        return stats['versions_created'] >= condition_value
+    elif condition_type == "templates_created":
+        return stats['templates_created'] >= condition_value
+    elif condition_type == "batch_processing_used":
+        return stats['batch_processing_used'] >= condition_value
+    elif condition_type == "advanced_params_used":
+        return stats['advanced_params_used'] >= condition_value
+    # Community conditions
+    elif condition_type == "users_helped":
+        return stats['users_helped'] >= condition_value
+    elif condition_type == "community_participation":
+        return stats['community_participation'] >= condition_value
+    elif condition_type == "collaborations":
+        return stats['collaborations'] >= condition_value
+    # Consistency conditions
+    elif condition_type == "total_logins":
+        return stats['total_logins'] >= condition_value
+    # Exploration conditions
+    elif condition_type == "features_used":
+        return stats['features_used'] >= condition_value
+    elif condition_type == "settings_customized":
+        return stats['settings_customized'] >= condition_value
+    elif condition_type == "tools_used":
+        return stats['tools_used'] >= condition_value
+    elif condition_type == "hidden_features_used":
+        return stats['hidden_features_used'] >= condition_value
 
     return False
 

@@ -8,9 +8,9 @@ document.addEventListener('DOMContentLoaded', function () {
             // or find it relative to the trigger if it's in a specific element.
             // For this example, let's assume it's directly on the button or a nearby element.
             // This might need adjustment based on your HTML structure.
-            const promptCard = trigger.closest('.prompt-card'); // Or however you identify the card
+            const promptCard = trigger.closest('.prompt-card-enhanced'); // Updated to new card class
             if (promptCard) {
-                const promptTextElement = promptCard.querySelector('.prompt-text-content'); // Adjust selector
+                const promptTextElement = promptCard.querySelector('.prompt-text'); // Updated to new content selector
                 if (promptTextElement) {
                     return promptTextElement.innerText;
                 }
@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
     // Re-attach event listeners for dynamically added elements or after search/filter
-    const personalPromptsContainer = document.getElementById('personalPromptsContainer');
+    const personalPromptsContainer = document.getElementById('savedPromptsContainer');
     if (personalPromptsContainer) {
         const observer = new MutationObserver(mutations => {
             mutations.forEach(mutation => {
@@ -50,7 +50,7 @@ function attachInitialEventListeners() {
     // Attach to existing buttons on load
     attachEditButtonListeners();
     attachDeleteButtonListeners();
-    attachShareButtonListeners();
+    attachShareButtonListeners(); // This will attach to both share and unshare buttons
     attachHistoryButtonListeners();
     attachSeeButtonListeners();
     attachUpdateSharedButtonListeners();
@@ -62,7 +62,7 @@ function reattachEventListeners() {
     // It re-attaches listeners to any new buttons.
     attachEditButtonListeners();
     attachDeleteButtonListeners();
-    attachShareButtonListeners();
+    attachShareButtonListeners(); // This will attach to both share and unshare buttons
     attachHistoryButtonListeners();
     attachSeeButtonListeners();
     attachUpdateSharedButtonListeners();
@@ -339,12 +339,11 @@ function deletePrompt(randomVal) {
 
 // Share function
 function attachShareButtonListeners() {
+    // Handle share buttons (need title and prompt data)
     document.querySelectorAll('.share-button:not(.listener-attached)').forEach(button => {
         button.addEventListener('click', function () {
-            // CORRECTED: Read prompt ID from data-prompt-id attribute
             const promptId = this.dataset.promptId;
             const title = this.dataset.title;
-            // Prompt content is correctly read from data-prompt based on HTML
             const promptContent = this.dataset.prompt;
 
             if (!promptId || !title || !promptContent) {
@@ -353,14 +352,23 @@ function attachShareButtonListeners() {
                 return;
             }
 
-            // Check button type
-            if (this.classList.contains('update-shared-button')) {
-                updateSharedPrompt(promptId, title, promptContent, this);
-            } else if (this.classList.contains('unshare-button')) {
-                unsharePrompt(promptId, this);
-            } else {
-                sharePrompt(promptId, title, promptContent, this);
+            sharePrompt(promptId, title, promptContent, this);
+        });
+        button.classList.add('listener-attached');
+    });
+
+    // Handle unshare buttons (only need promptId)
+    document.querySelectorAll('.unshare-button:not(.listener-attached)').forEach(button => {
+        button.addEventListener('click', function () {
+            const promptId = this.dataset.promptId;
+
+            if (!promptId) {
+                console.error('Unshare button is missing promptId:', this.dataset);
+                showToast("Cannot unshare: missing prompt ID.", "error");
+                return;
             }
+
+            unsharePrompt(promptId, this);
         });
         button.classList.add('listener-attached');
     });
@@ -386,12 +394,37 @@ function sharePrompt(promptId, title, promptContent, buttonElement) {
     .then(response => response.json())
     .then(result => {
         if (result.success) {
-            showToast("Prompt shared successfully!", "success");
+            // Handle different success messages from backend
+            if (result.message) {
+                if (result.message.includes("already shared")) {
+                    showToast("Prompt is already shared!", "info");
+                } else if (result.message.includes("updated")) {
+                    showToast("Shared prompt updated!", "success");
+                } else {
+                    showToast("Prompt shared successfully!", "success");
+                }
+            } else {
+                showToast("Prompt shared successfully!", "success");
+            }
+
             if(buttonElement) {
                 buttonElement.textContent = 'Unshare';
-                buttonElement.classList.remove('share-action');
-                buttonElement.classList.add('unshare-action');
-                // Optionally update a visual indicator
+                buttonElement.classList.remove('share-button');
+                buttonElement.classList.add('unshare-button');
+                // Update the span text inside the button
+                const spanElement = buttonElement.querySelector('span');
+                if (spanElement) {
+                    spanElement.textContent = 'Unshare';
+                }
+                // Remove share-specific data attributes
+                delete buttonElement.dataset.title;
+                delete buttonElement.dataset.prompt;
+                // Update aria-label
+                buttonElement.setAttribute('aria-label', `Unshare prompt: ${title}`);
+                // Re-attach listeners since class changed
+                setTimeout(() => {
+                    attachShareButtonListeners();
+                }, 100);
             }
         } else {
             showToast(result.error || "Failed to share prompt.", "error");
@@ -416,11 +449,20 @@ function unsharePrompt(promptId, buttonElement) {
     .then(result => {
         if (result.success) {
             showToast("Prompt unshared successfully!", "success");
-             if(buttonElement) {
+            if(buttonElement) {
                 buttonElement.textContent = 'Share';
-                buttonElement.classList.remove('unshare-action');
-                buttonElement.classList.add('share-action');
-                 // Optionally update a visual indicator
+                buttonElement.classList.remove('unshare-button');
+                buttonElement.classList.add('share-button');
+                // Update the span text inside the button
+                const spanElement = buttonElement.querySelector('span');
+                if (spanElement) {
+                    spanElement.textContent = 'Share';
+                }
+                // Update data attributes for sharing
+                buttonElement.dataset.title = title;
+                buttonElement.dataset.prompt = promptContent;
+                // Update aria-label
+                buttonElement.setAttribute('aria-label', `Share prompt: ${title}`);
             }
         } else {
             showToast(result.error || "Failed to unshare prompt.", "error");

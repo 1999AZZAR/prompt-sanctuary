@@ -16,6 +16,11 @@
 - Remapped all the instructions into dedicated txt files.
 - Fixed the share mechanism.
 - Implemented prompt versioning (snapshots + history + rollback) in personal library UI.
+- **NEW:** Implemented comprehensive point system (80 default points, costs for prompt types, daily login bonuses 5-12 points)
+- **NEW:** Implemented achievement system with points rewards (Stack Overflow/Reddit-style achievements)
+- **NEW:** Fixed SQLite database lock issues with WAL mode and retry mechanisms
+- **NEW:** Fixed JSON formatting artifacts and implemented robust markdown cleaning
+- **NEW:** Fixed non-standard markdown patterns (square brackets, asterisks, indentation)
 
 ---
 
@@ -29,7 +34,7 @@
 | Backend/AI | Streaming responses (SSE) for live typing | P1 | Planned | Use Flask SSE; client progressively renders Markdown |
 | Backend/AI | Structured outputs (JSON schema) for advanced prompts | P1 | Planned | Toggle JSON mode; validate; add Copy JSON/Use in app |
 | Backend/AI | Model selector + thinking budget | P2 | Planned | Switch gemini-2.5-flash/2.5-pro; expose budget knob |
-| Backend/AI | Auto rate-limit backoff/retry + key health telemetry | P1 | In Progress | Implemented backoff + key rotation and /health/keys; tuning thresholds/alerts next |
+| Backend/AI | Auto rate-limit backoff/retry + key health telemetry | P1 | Done | Implemented comprehensive retry mechanisms with exponential backoff, key rotation, database lock handling with WAL mode, and key health telemetry |
 | Security | CSRF protection on all POST | P0 | Done | Flask-WTF enabled; CSRF cookie + X-CSRFToken on fetch |
 | Security | Secure cookies + CSP | P0 | Not Started | HttpOnly, Secure, SameSite; CSP to whitelist origins |
 | Security | Sanitize all popup HTML with DOMPurify | P1 | Planned | Apply DOMPurify in showAppPopup for custom HTML |
@@ -42,6 +47,7 @@
 | UX/UI | Skeleton loaders + reduced-motion support | P2 | Planned | Respect prefers-reduced-motion; skeletons |
 | UX/UI | Dark mode toggle | P2 | Planned | Tailwind dark variants; persist setting |
 | UX/UI | Fix mobile UI | P0 | Not Started | Audit responsive grid, spacing, popups, side panel |
+| UX/UI | Response formatting and markdown cleaning | P1 | Done | Fixed JSON artifacts, non-standard markdown patterns, proper formatting preservation |
 | Infra/Perf | Containerize (Dockerfile + compose) | P1 | Planned | Gunicorn + Nginx; healthcheck; .env |
 | Infra/Perf | Tailwind build (purged) | P1 | Planned | Move from CDN to built stylesheet; purge |
 | Infra/Perf | Serve static locally + cache headers | P1 | Planned | Cache-control for static; preconnect/prefetch |
@@ -61,7 +67,8 @@
 | Community | Remodel community page + share flow | P1 | Not Started | Better cards, filters, see/copy/save/share |
 | Accounts | Account management flows | P1 | Done | Implemented: Email (optional), username change, session list/revoke |
 | Community | User interactions (likes/comments) | P2 | Planned | Requires moderation basics |
-| Economy | Point system (earn/charge/transfer) | P3 | Planned | Rate-limit friendly; opt-in |
+| Economy | Point system (earn/charge/transfer) | P1 | Done | Comprehensive point system: 80 default points, costs for prompt types, daily login bonuses (5-12 random points) |
+| Economy | Achievement system with points rewards | P1 | Done | Stack Overflow/Reddit-style achievement system with automatic point rewards |
 
 ---
 
@@ -90,6 +97,19 @@
 - Testing/CI
   - Add pytest with temp sqlite dbs; GH Actions to lint/format/typecheck/test on PRs.
 
+- Economy System
+  - Comprehensive point system with 80 default points, costs for different prompt types (basic: 0.8-2.0, advanced: 1.9-2.5)
+  - Daily login bonuses (5-12 random points once per day)
+  - Achievement system with automatic point rewards (Stack Overflow/Reddit-style achievements)
+  - Database schema with user points tracking and login history
+
+- Response Formatting
+  - Multi-layer cleaning system: AI prompt prevention, backend cleaning, frontend cleaning
+  - Fixed JSON artifacts (`\n`, `\"`, `{ "response": "..." }`)
+  - Fixed non-standard markdown: `[Header]*` → `## Header`, `text*` → `- text`
+  - Proper markdown preservation and rendering with DOMPurify sanitization
+  - Smart pattern recognition for various AI formatting quirks
+
 ---
 
 ## Short checklist
@@ -101,4 +121,7 @@
 - [ ] Weekly backups (P1)
 - [ ] Containerize + Tailwind build (P1)
 - [x] Language switch + i18n base (P1)
+- [x] Economy system (points + achievements) (P1)
+- [x] Response formatting fixes (P1)
+- [x] Database lock handling with WAL mode (P1)
 - [ ] Tests + CI + Alembic (P1)

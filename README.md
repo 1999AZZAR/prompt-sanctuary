@@ -34,6 +34,10 @@ With this new implementation, users can:
 - More robust filesystem handling for SQLite DBs (auto-create DB directories)
 - Complete multilingual system: English + Indonesian with instant language switching
 - Prompt versioning: automatic snapshots on save/edit, history view, and rollback from personal library
+- **NEW:** Comprehensive economy system with points and achievements
+- **NEW:** Advanced response formatting with intelligent markdown cleaning
+- **NEW:** SQLite WAL mode for improved database concurrency and performance
+- **NEW:** Robust error handling and retry mechanisms for stable operation
 
 ## Multilingual Support
 
@@ -51,6 +55,48 @@ Prompt Sanctuary now supports **English** and **Indonesian** languages with comp
 - **Comprehensive Coverage**: All generator templates, forms, and navigation translated
 - **Production Ready**: Full Flask-Babel implementation with compiled translation files
 
+## Economy System
+
+Prompt Sanctuary now features a comprehensive economy system with points and achievements:
+
+### Point System
+- **🎯 Default Points**: Every user starts with 80 points
+- **💰 Prompt Costs**: Different costs based on complexity:
+  - Basic text prompts: 1.5 points
+  - Basic random prompts: 0.8 points
+  - Basic image prompts: 1.5 points
+  - Basic random image prompts: 0.8 points
+  - Basic reverse image prompts: 2.0 points
+  - Advanced text prompts: 1.9 points
+  - Advanced image prompts: 1.9 points
+  - Advanced reverse image prompts: 2.5 points
+- **🎁 Daily Login Bonus**: Earn 5-12 random points once per day
+- **🏆 Achievement Rewards**: Stack Overflow/Reddit-style achievements with point rewards
+
+### Achievement System
+- **📊 User Statistics Tracking**: Prompts generated, saved, shared, etc.
+- **🎖️ Automatic Achievement Unlocking**: Based on user activity patterns
+- **💎 Point Rewards**: Achievements grant additional points to users
+- **🏅 Achievement Categories**: Various categories like generation, sharing, consistency, etc.
+
+## Advanced Response Formatting
+
+The system now includes intelligent response processing to ensure perfect markdown rendering:
+
+### Formatting Features
+- **🧹 Multi-Layer Cleaning**: AI prompts, backend processing, and frontend cleaning
+- **🔧 Pattern Recognition**: Automatically detects and fixes non-standard markdown
+- **✨ Smart Conversion**: Converts AI formatting quirks to proper markdown
+- **🛡️ Security**: DOMPurify sanitization for all rendered content
+- **🎨 Rich Display**: Proper headers, lists, code blocks, and formatting
+
+### Fixed Patterns
+- Square brackets: `[Header]*` → `## Header`
+- Double hash brackets: `# # [Header]` → `## Header`
+- Standalone asterisks: `text*` → `- text` or `**text**`
+- JSON artifacts: Clean removal of formatting characters
+- Indentation: Proper markdown list indentation
+
 ## Features
 
 | Area | Feature | Status |
@@ -58,11 +104,15 @@ Prompt Sanctuary now supports **English** and **Indonesian** languages with comp
 | UI/UX | Tailwind v3 pastel theme with glassmorphism | Done |
 | UI/UX | Global popups (details/confirm/custom), wide modal for details/history | Done |
 | Results | Markdown rendering, sanitization (DOMPurify), Prism syntax highlighting, copy buttons | Done |
+| Results | Advanced response formatting with intelligent markdown cleaning | Done |
 | Prompts | Save, edit, delete, share/unshare (community) | Done |
 | Prompts | Versioning (snapshots on save/edit, history, rollback) | Done (diff+fork later) |
+| Economy | Point system (80 default, costs for prompt types, daily bonuses) | Done |
+| Economy | Achievement system with automatic point rewards | Done |
 | Security | CSRF protection on all POSTs | Done |
 | Backend | Absolute DB paths + auto-create directories | Done |
 | Backend | Latest stable free Gemini default (gemini-2.5-flash) | Done |
+| Backend | SQLite WAL mode for improved concurrency and retry mechanisms | Done |
 | i18n | Language switch | Done |
 | i18n | Complete multilingual system (English + Indonesian) | Done |
 | Perf/Infra | Containerization + Tailwind build | Planned |
@@ -79,6 +129,8 @@ Prompt-sanctuary's web interface is intuitive and user-friendly. Here's a quick 
 - **Community Library**: Access various content generation templates and tools from the library section. Navigate to `/library` and choose the desired option.
 - **Personal library**: contain per user prompt that they have saved before.
   - New: "History" button to view previous versions, preview, and restore.
+- **Economy System**: Check your points balance in the sidebar. Earn points by logging in daily (5-12 random points) and unlock achievements for various activities.
+- **Achievement System**: View your unlocked achievements in your profile. Achievements automatically grant points based on your activity patterns.
 - **Language Switching**: Click the EN/ID buttons in the sidebar to switch between English and Indonesian. Language preference is saved and persists across sessions.
 
 ### Key routes
@@ -104,6 +156,7 @@ Prompt-sanctuary's web interface is intuitive and user-friendly. Here's a quick 
 | `/versions/<id>` | GET | List versions of a prompt | ✓ |
 | `/versions/rollback` | POST | Restore a specific version | ✓ |
 | `/language/<lang>` | GET | Set user language preference | ✓ |
+| `/get_user_points` | GET | Get current user points balance | ✓ |
 
 ## Quick start (local)
 
