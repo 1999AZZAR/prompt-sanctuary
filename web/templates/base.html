@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prompt Sanctuary</title>
+    <title>{{ _('Prompt Sanctuary') }}</title>
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='icon/favicon.ico') }}">
 
     <!-- Tailwind CSS v3 CDN with inline config -->
@@ -155,8 +155,8 @@
     <!-- Feedback Popup -->
     <div id="feedback-popup" class="popup hidden fixed inset-0 flex items-center justify-center z-40">
         <div class="glass bg-white/60 backdrop-blur-xl border border-white/30 shadow-glass p-8 rounded-2xl w-11/12 max-w-md">
-            <button id="close-popup" class="float-right" aria-label="Close feedback popup">
-                ✖️
+            <button id="close-popup" class="float-right" aria-label="{{ _('Close feedback popup') }}">
+                {{ _('✖️') }}
             </button>
             <h2 class="text-2xl font-bold mb-6 text-slate-900">{{ _('Share your feedback') }}</h2>
             <form id="feedback-form" role="form" aria-labelledby="feedback-heading">

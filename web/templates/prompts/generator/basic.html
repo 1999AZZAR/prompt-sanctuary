@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <!-- Hero Section -->
+    <!-- {{ _('Hero Section') }} -->
     <div class="hero text-center mb-12 cursor-pointer" onclick="toggleSidePanel()" role="region" aria-labelledby="basic-gen-page-heading">
         <div class="flex items-center justify-center mb-4 space-x-2">
             <h1 id="basic-gen-page-heading" class="text-5xl font-bold text-slate-900"><i class="fas fa-cogs mr-2"></i>{{ _('Prompt Generator (Basic)') }}</h1>
@@ -9,10 +9,10 @@
         <p class="text-lg text-slate-600">{{ _('Create custom prompts tailored to your needs.') }}</p>
     </div>
 
-    <!-- Tools Section -->
+    <!-- {{ _('Tools Section') }} -->
     <div class="prompting grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8" role="region" aria-labelledby="basic-tools-section-heading">
         <h2 id="basic-tools-section-heading" class="sr-only">{{ _('Basic Prompt Generation Tools') }}</h2>
-        <!-- Text Prompt -->
+        <!-- {{ _('Text Prompt') }} -->
         <div class="mdc-card glass prompt-card p-6 flex flex-col text-[var(--md-sys-color-on-surface)]" role="form" aria-labelledby="basic-text-prompt-heading">
             <div class="flex justify-between items-center mb-6">
                 <h2 id="basic-text-prompt-heading" class="text-2xl font-bold">{{ _('Generate Text Prompt') }}</h2>
@@ -36,7 +36,7 @@
             <form id="random-text-prompt-form" style="display: none;"></form>
         </div>
 
-        <!-- Image Prompt -->
+        <!-- {{ _('Image Prompt') }} -->
         <div class="mdc-card glass prompt-card p-6 flex flex-col text-[var(--md-sys-color-on-surface)]" role="region" aria-labelledby="basic-image-prompt-heading">
             <div class="flex justify-between items-center mb-6">
                 <h2 id="basic-image-prompt-heading" class="text-2xl font-bold">{{ _('Generate Image Prompt') }}</h2>
@@ -87,13 +87,13 @@
         </div>
     </div>
 
-    <!-- Preview Section (hidden by default, shown only when image is uploaded) -->
+    <!-- {{ _('Preview Section (hidden by default, shown only when image is uploaded)') }} -->
     <div id="preview-container" class="image-preview mdc-card glass prompt-card p-6 mt-12 hidden" role="region" aria-labelledby="basic-image-preview-heading">
         <h3 id="basic-image-preview-heading" class="sr-only">Image Preview</h3>
         <img id="preview-image" alt="{{ _('Image Preview') }}" class="w-64 h-auto mx-auto rounded-lg object-contain">
     </div>
 
-    <!-- Loading Section -->
+    <!-- {{ _('Loading Section') }} -->
     <div id="loading" class="loading hidden fixed inset-0 flex items-center justify-center z-50" role="alert" aria-live="assertive">
         <div class="glass absolute inset-0 z-0"></div>
         <div class="glass p-8 rounded-lg z-10 flex flex-col items-center justify-center">
@@ -102,7 +102,7 @@
         </div>
     </div>
 
-    <!-- Result Section (hidden by default, shown only when a prompt is generated) -->
+    <!-- {{ _('Result Section (hidden by default, shown only when a prompt is generated)') }} -->
     <div id="resultSection" class="result mdc-card glass prompt-card p-6 mt-8 hidden" role="region" aria-labelledby="basic-generated-prompt-heading">
         <h2 id="basic-generated-prompt-heading" class="text-2xl font-bold mb-6">{{ _('Generated Prompt:') }}</h2>
         <div id="response" class="text-lg text-[var(--md-sys-color-on-surface)] space-y-4" aria-live="polite"></div>

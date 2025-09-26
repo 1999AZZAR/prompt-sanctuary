@@ -2,15 +2,15 @@
 
 {% block content %}
 <section class="flex flex-col items-center px-6 py-12" role="region" aria-labelledby="main-heading">
-  <!-- Hero Card -->
+  <!-- {{ _('Hero Card') }} -->
   <div class="hero text-center mb-16 w-full max-w-5xl cursor-pointer" onclick="toggleSidePanel()">
     <h1 class="text-5xl font-bold mb-4 text-slate-900" id="main-heading"><i class="fas fa-home mr-2"></i>{{ _('Prompt Sanctuary') }}</h1>
     <p class="text-lg text-slate-600">{{ _('Your AI-powered prompt creation studio.') }}</p>
   </div>
 
-  <!-- Feature Cards -->
+  <!-- {{ _('Feature Cards') }} -->
   <div class="w-full max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-    <!-- Feature 1: Basic Prompt -->
+    <!-- {{ _('Feature 1: Basic Prompt') }} -->
     <div class="glass p-8 rounded-xl shadow-glass transform transition duration-300 hover:scale-105 hover:shadow-xl h-full flex flex-col" role="region" aria-labelledby="basic-prompt-heading">
       <div class="flex flex-col items-center text-center md:items-start md:text-left flex-grow">
         <i class="fas fa-keyboard fa-3x text-purple-400 mb-4 inline-block"></i>
@@ -29,7 +29,7 @@
       <a href="{{ url_for('main.generate') }}" class="inline-flex items-center justify-center rounded-xl bg-violet-400 text-white px-5 py-3 hover:bg-violet-500 transition shadow mt-auto self-center md:self-start">{{ _('Try Basic Generator') }}</a>
     </div>
 
-    <!-- Feature 2: Advanced Prompt -->
+    <!-- {{ _('Feature 2: Advanced Prompt') }} -->
     <div class="glass p-8 rounded-xl shadow-glass transform transition duration-300 hover:scale-105 hover:shadow-xl h-full flex flex-col" role="region" aria-labelledby="advanced-prompt-heading">
       <div class="flex flex-col items-center text-center md:items-start md:text-left flex-grow">
         <i class="fas fa-sliders-h fa-3x text-green-400 mb-4 inline-block"></i>
@@ -48,7 +48,7 @@
       <a href="{{ url_for('main.advance') }}" class="inline-flex items-center justify-center rounded-xl bg-emerald-400 text-white px-5 py-3 hover:bg-emerald-500 transition shadow mt-auto self-center md:self-start">{{ _('Access Advanced Tools') }}</a>
     </div>
 
-    <!-- Feature 3: Community Prompts -->
+    <!-- {{ _('Feature 3: Community Prompts') }} -->
     <div class="glass p-8 rounded-xl shadow-glass transform transition duration-300 hover:scale-105 hover:shadow-xl h-full flex flex-col" role="region" aria-labelledby="community-prompts-heading">
       <div class="flex flex-col items-center text-center md:items-start md:text-left flex-grow">
         <i class="fas fa-users fa-3x text-yellow-400 mb-4 inline-block"></i>

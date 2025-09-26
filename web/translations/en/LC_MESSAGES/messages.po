@@ -272,3 +272,103 @@ msgstr "Share your own creative prompts with others."
 #: web/templates/index.html:63
 msgid "Discover new ideas and techniques."
 msgstr "Discover new ideas and techniques."
+
+#: web/templates/base.html:6
+msgid "Prompt Sanctuary"
+msgstr "Prompt Sanctuary"
+
+#: web/templates/base.html:159
+msgid "✖️"
+msgstr "✖️"
+
+#: web/templates/base.html:159
+msgid "Close feedback popup"
+msgstr "Close feedback popup"
+
+#: web/templates/landing.html:15
+msgid "Feature 1: Community Prompts"
+msgstr "Feature 1: Community Prompts"
+
+#: web/templates/landing.html:27
+msgid "Feature 2: Custom Prompt Generation"
+msgstr "Feature 2: Custom Prompt Generation"
+
+#: web/templates/landing.html:39
+msgid "Feature 3: Advanced Prompt Engineering"
+msgstr "Feature 3: Advanced Prompt Engineering"
+
+#: web/templates/index.html:5
+msgid "Hero Card"
+msgstr "Hero Card"
+
+#: web/templates/index.html:11
+msgid "Feature Cards"
+msgstr "Feature Cards"
+
+#: web/templates/index.html:13
+msgid "Feature 1: Basic Prompt"
+msgstr "Feature 1: Basic Prompt"
+
+#: web/templates/index.html:32
+msgid "Feature 2: Advanced Prompt"
+msgstr "Feature 2: Advanced Prompt"
+
+#: web/templates/index.html:51
+msgid "Feature 3: Community Prompts"
+msgstr "Feature 3: Community Prompts"
+
+#: web/templates/prompts/generator/basic.html:4
+msgid "Hero Section"
+msgstr "Hero Section"
+
+#: web/templates/prompts/generator/basic.html:12
+msgid "Tools Section"
+msgstr "Tools Section"
+
+#: web/templates/prompts/generator/basic.html:15
+msgid "Text Prompt"
+msgstr "Text Prompt"
+
+#: web/templates/prompts/generator/basic.html:39
+msgid "Image Prompt"
+msgstr "Image Prompt"
+
+#: web/templates/prompts/generator/basic.html:90
+msgid "Preview Section (hidden by default, shown only when image is uploaded)"
+msgstr "Preview Section (hidden by default, shown only when image is uploaded)"
+
+#: web/templates/prompts/generator/basic.html:96
+msgid "Loading Section"
+msgstr "Loading Section"
+
+#: web/templates/prompts/generator/basic.html:105
+msgid "Result Section (hidden by default, shown only when a prompt is generated)"
+msgstr "Result Section (hidden by default, shown only when a prompt is generated)"
+
+#: web/templates/prompts/generator/advance.html:4
+msgid "Hero Section"
+msgstr "Hero Section"
+
+#: web/templates/prompts/generator/advance.html:12
+msgid "Tools Section"
+msgstr "Tools Section"
+
+#: web/templates/prompts/generator/advance.html:15
+msgid "Text Prompt"
+msgstr "Text Prompt"
+
+#: web/templates/prompts/generator/advance.html:394
+msgid "Tools Section End"
+msgstr "Tools Section End"
+
+#: web/templates/prompts/generator/advance.html:396
+msgid "Preview Section (hidden by default, shown only when image is uploaded)"
+msgstr "Preview Section (hidden by default, shown only when image is uploaded)"
+
+#: web/templates/prompts/generator/advance.html:402
+msgid "Loading Section"
+msgstr "Loading Section"
+
+#: web/templates/prompts/generator/advance.html:411
+msgid "Result Section (hidden by default, shown only when a prompt is generated)"
+msgstr "Result Section (hidden by default, shown only when a prompt is generated)"
