@@ -3,11 +3,11 @@
 {% block content %}
 <section class="flex flex-col items-center justify-center min-h-screen px-6 py-12" role="region" aria-labelledby="main-heading">
   <div class="hero text-center mb-16">
-    <h1 class="text-6xl font-extrabold text-slate-900 mb-4" id="main-heading">Prompt Sanctuary</h1>
-    <p class="text-xl text-slate-600 max-w-2xl mb-8">Your one-stop platform to browse, generate, and refine AI prompts for creative storytelling, coding, and more.</p>
+    <h1 class="text-6xl font-extrabold text-slate-900 mb-4" id="main-heading">{{ _('Prompt Sanctuary') }}</h1>
+    <p class="text-xl text-slate-600 max-w-2xl mb-8">{{ _('Your one-stop platform to browse, generate, and refine AI prompts for creative storytelling, coding, and more.') }}</p>
     <div class="flex items-center justify-center gap-4">
-      <a href="{{ url_for('main.login') }}" class="inline-flex items-center justify-center rounded-xl bg-violet-400 text-white px-6 py-3 shadow hover:bg-violet-500 transition">Login</a>
-      <a href="{{ url_for('main.signup') }}" class="inline-flex items-center justify-center rounded-xl border border-violet-300 text-violet-700 px-6 py-3 hover:bg-violet-50 transition">Sign Up</a>
+      <a href="{{ url_for('main.login') }}" class="inline-flex items-center justify-center rounded-xl bg-violet-400 text-white px-6 py-3 shadow hover:bg-violet-500 transition">{{ _('Login') }}</a>
+      <a href="{{ url_for('main.signup') }}" class="inline-flex items-center justify-center rounded-xl border border-violet-300 text-violet-700 px-6 py-3 hover:bg-violet-50 transition">{{ _('Sign Up') }}</a>
     </div>
   </div>
 
@@ -16,36 +16,36 @@
     <div class="glass p-8 rounded-xl shadow-glass transform transition duration-300 hover:scale-105 hover:shadow-xl h-full flex flex-col" role="region" aria-labelledby="community-prompts-heading">
       <div class="flex flex-col items-center text-center md:items-start md:text-left flex-grow">
         <i class="fas fa-users fa-3x text-indigo-400 mb-4 inline-block"></i>
-        <h2 class="text-3xl font-semibold text-slate-900 mb-3" id="community-prompts-heading">Explore Community Prompts</h2>
+        <h2 class="text-3xl font-semibold text-slate-900 mb-3" id="community-prompts-heading">{{ _('Community Prompt') }}</h2>
         <p class="text-slate-600 leading-relaxed mb-6 flex-grow">
-          Dive into a diverse collection of prompts crafted by users like you. Share your own creations, discover new ideas, and get inspired by the collective creativity of the Prompt Sanctuary community.
+          {{ _('Dive into a diverse collection of prompts crafted by users like you. Share your own creations, discover new ideas, and get inspired by the collective creativity of the Prompt Sanctuary community.') }}
         </p>
       </div>
-      <a href="{{ url_for('main.library') }}" class="inline-flex items-center justify-center rounded-xl bg-indigo-300 text-slate-900 px-6 py-3 hover:bg-indigo-400 transition shadow mt-auto self-center md:self-start">Browse Community Library</a>
+      <a href="{{ url_for('main.library') }}" class="inline-flex items-center justify-center rounded-xl bg-indigo-300 text-slate-900 px-6 py-3 hover:bg-indigo-400 transition shadow mt-auto self-center md:self-start">{{ _('Browse Community Library') }}</a>
     </div>
 
     <!-- Feature 2: Custom Prompt Generation -->
     <div class="glass p-8 rounded-xl shadow-glass transform transition duration-300 hover:scale-105 hover:shadow-xl h-full flex flex-col" role="region" aria-labelledby="custom-prompt-heading">
       <div class="flex flex-col items-center text-center md:items-start md:text-left flex-grow">
         <i class="fas fa-pencil-alt fa-3x text-green-400 mb-4 inline-block"></i>
-        <h2 class="text-3xl font-semibold text-slate-900 mb-3" id="custom-prompt-heading">Custom Prompt Generation</h2>
+        <h2 class="text-3xl font-semibold text-slate-900 mb-3" id="custom-prompt-heading">{{ _('Basic Prompt') }}</h2>
         <p class="text-slate-600 leading-relaxed mb-6 flex-grow">
-          Unleash your creativity with our intuitive prompt generator. Whether you're brainstorming for a story, a coding project, or artistic inspiration, quickly generate tailored prompts with our basic tool to get you started.
+          {{ _('Unleash your creativity with our intuitive prompt generator. Whether you\'re brainstorming for a story, a coding project, or artistic inspiration, quickly generate tailored prompts with our basic tool to get you started.') }}
         </p>
       </div>
-      <a href="{{ url_for('main.generate') }}" class="inline-flex items-center justify-center rounded-xl bg-emerald-400 text-white px-6 py-3 hover:bg-emerald-500 transition shadow mt-auto self-center md:self-start">Try Basic Generator</a>
+      <a href="{{ url_for('main.generate') }}" class="inline-flex items-center justify-center rounded-xl bg-emerald-400 text-white px-6 py-3 hover:bg-emerald-500 transition shadow mt-auto self-center md:self-start">{{ _('Try Basic Generator') }}</a>
     </div>
 
     <!-- Feature 3: Advanced Prompt Engineering -->
     <div class="glass p-8 rounded-xl shadow-glass transform transition duration-300 hover:scale-105 hover:shadow-xl h-full flex flex-col" role="region" aria-labelledby="advanced-prompt-engineering-heading">
       <div class="flex flex-col items-center text-center md:items-start md:text-left flex-grow">
         <i class="fas fa-tools fa-3x text-yellow-400 mb-4 inline-block"></i>
-        <h2 class="text-3xl font-semibold text-slate-900 mb-3" id="advanced-prompt-engineering-heading">Advanced Prompt Engineering</h2>
+        <h2 class="text-3xl font-semibold text-slate-900 mb-3" id="advanced-prompt-engineering-heading">{{ _('Advance Prompt') }}</h2>
         <p class="text-slate-600 leading-relaxed mb-6 flex-grow">
-          Take full control with our advanced tools. Fine-tune every parameter, experiment with complex structures, and craft highly specific prompts for sophisticated AI interactions and specialized tasks.
+          {{ _('Take full control with our advanced tools. Fine-tune every parameter, experiment with complex structures, and craft highly specific prompts for sophisticated AI interactions and specialized tasks.') }}
         </p>
       </div>
-      <a href="{{ url_for('main.advance') }}" class="inline-flex items-center justify-center rounded-xl bg-amber-300 text-slate-900 px-6 py-3 hover:bg-amber-400 transition shadow mt-auto self-center md:self-start">Access Advanced Tools</a>
+      <a href="{{ url_for('main.advance') }}" class="inline-flex items-center justify-center rounded-xl bg-amber-300 text-slate-900 px-6 py-3 hover:bg-amber-400 transition shadow mt-auto self-center md:self-start">{{ _('Access Advanced Tools') }}</a>
     </div>
   </div>
 </section>

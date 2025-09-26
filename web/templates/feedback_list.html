@@ -2,14 +2,14 @@
 
 {% block content %}
 <div class="hero text-center mb-12 cursor-pointer" onclick="toggleSidePanel()">
-  <h1 class="text-5xl font-bold text-slate-900"><i class="fas fa-comments mr-2"></i>Feedback</h1>
-  <p class="text-lg text-slate-600">Browse all feedback messages.</p>
+  <h1 class="text-5xl font-bold text-slate-900"><i class="fas fa-comments mr-2"></i>{{ _('Feedback') }}</h1>
+  <p class="text-lg text-slate-600">{{ _('Browse all feedback messages.') }}</p>
 </div>
 <div class="mdc-layout-grid">
   <div class="mdc-layout-grid__inner justify-center">
     <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-8-desktop mdc-layout-grid__cell--span-12">
       <div class="mdc-card glass prompt-card p-6">
-        <h2 class="text-2xl font-semibold text-slate-900 mb-4">All Feedback</h2>
+        <h2 class="text-2xl font-semibold text-slate-900 mb-4">{{ _('All Feedback') }}</h2>
         {% if feedbacks %}
         <ul class="divide-y divide-gray-700">
           {% for fb in feedbacks %}
@@ -18,12 +18,12 @@
               <p class="text-slate-900 font-medium">{{ fb.id }}. {{ fb.username }}</p>
               <p class="text-slate-600 text-sm truncate">{{ fb.feedback }}</p>
             </div>
-            <button data-id="{{ fb.id }}" class="mdc-button mdc-button--text text-blue-400 hover:text-blue-300 view-button">View</button>
+            <button data-id="{{ fb.id }}" class="mdc-button mdc-button--text text-blue-400 hover:text-blue-300 view-button">{{ _('View') }}</button>
           </li>
           {% endfor %}
         </ul>
         {% else %}
-        <p class="text-gray-400">No feedback available.</p>
+        <p class="text-gray-400">{{ _('No feedback available.') }}</p>
         {% endif %}
       </div>
     </div>

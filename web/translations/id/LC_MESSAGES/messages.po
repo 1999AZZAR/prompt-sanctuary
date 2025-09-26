@@ -1,0 +1,705 @@
+# Translation for Indonesian (id)
+# Copyright (C) 2025 Prompt Sanctuary
+# This file is distributed under the same license as the Prompt Sanctuary project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Prompt Sanctuary 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-01-26 12:00+0000\n"
+"PO-Revision-Date: 2025-01-26 12:00+0000\n"
+"Last-Translator: Prompt Sanctuary <admin@promptsanctuary.com>\n"
+"Language-Team: Indonesian <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: id\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: web/routes.py:796 web/routes.py:801
+msgid "Language not supported"
+msgstr "Bahasa tidak didukung"
+
+#: web/routes.py:801
+msgid "Language changed to %(language)s"
+msgstr "Bahasa diubah ke %(language)s"
+
+#: web/templates/base.html:80
+msgid "Prompt Sanctuary"
+msgstr "Prompt Sanctuary"
+
+#: web/templates/base.html:81
+msgid "Your AI-powered prompt creation studio."
+msgstr "Studio pembuatan prompt bertenaga AI Anda."
+
+#: web/templates/base.html:88 web/templates/base.html:103
+msgid "Home"
+msgstr "Beranda"
+
+#: web/templates/base.html:91 web/templates/base.html:106
+msgid "Saved Prompts"
+msgstr "Prompt Tersimpan"
+
+#: web/templates/base.html:94 web/templates/base.html:109
+msgid "Community Prompt"
+msgstr "Prompt Komunitas"
+
+#: web/templates/base.html:97 web/templates/base.html:112
+msgid "Basic Prompt"
+msgstr "Prompt Dasar"
+
+#: web/templates/base.html:100 web/templates/base.html:115
+msgid "Advance Prompt"
+msgstr "Prompt Lanjutan"
+
+#: web/templates/base.html:118
+msgid "Profile"
+msgstr "Profil"
+
+#: web/templates/base.html:113 web/templates/base.html:126
+msgid "Logout"
+msgstr "Keluar"
+
+#: web/templates/base.html:119 web/templates/base.html:132
+msgid "Feedback"
+msgstr "Masukan"
+
+#: web/templates/base.html:122
+msgid "Built with ❤️ by"
+msgstr "Dibuat dengan ❤️ oleh"
+
+#: web/templates/base.html:122
+msgid "Azzar Budiyanto"
+msgstr "Azzar Budiyanto"
+
+#: web/templates/base.html:125
+msgid "Share your feedback"
+msgstr "Bagikan masukan Anda"
+
+#: web/templates/base.html:145
+msgid "Submit"
+msgstr "Kirim"
+
+#: web/templates/base.html:144
+msgid "Enter your feedback here"
+msgstr "Masukkan masukan Anda di sini"
+
+#: web/templates/account/profile.html:6
+msgid "Profile"
+msgstr "Profil"
+
+#: web/templates/account/profile.html:7
+msgid "Manage your account and prompts."
+msgstr "Kelola akun dan prompt Anda."
+
+#: web/templates/account/profile.html:16
+msgid "Profile Picture"
+msgstr "Foto Profil"
+
+#: web/templates/account/profile.html:19
+msgid "Regenerate"
+msgstr "Hasilkan Ulang"
+
+#: web/templates/account/profile.html:25
+msgid "Settings"
+msgstr "Pengaturan"
+
+#: web/templates/account/profile.html:18
+msgid "Current username:"
+msgstr "Nama pengguna saat ini:"
+
+#: web/templates/account/profile.html:19
+msgid "Old Password"
+msgstr "Kata Sandi Lama"
+
+#: web/templates/account/profile.html:20
+msgid "New Password"
+msgstr "Kata Sandi Baru"
+
+#: web/templates/account/profile.html:21
+msgid "Confirm Password"
+msgstr "Konfirmasi Kata Sandi"
+
+#: web/templates/account/profile.html:22
+msgid "Update Password"
+msgstr "Perbarui Kata Sandi"
+
+#: web/templates/account/profile.html:37
+msgid "Email (optional)"
+msgstr "Email (opsional)"
+
+#: web/templates/account/profile.html:39
+msgid "Update Email"
+msgstr "Perbarui Email"
+
+#: web/templates/account/profile.html:48
+msgid "Change Username"
+msgstr "Ubah Nama Pengguna"
+
+#: web/templates/account/profile.html:49
+msgid "Only letters, numbers and underscores. 3–32 chars."
+msgstr "Hanya huruf, angka dan garis bawah. 3–32 karakter."
+
+#: web/templates/account/profile.html:51
+msgid "Change Username"
+msgstr "Ubah Nama Pengguna"
+
+#: web/templates/account/profile.html:56
+msgid "Delete Account"
+msgstr "Hapus Akun"
+
+#: web/templates/account/profile.html:66
+msgid "Saved Prompts"
+msgstr "Prompt Tersimpan"
+
+#: web/templates/account/profile.html:68
+msgid "No saved prompts yet."
+msgstr "Belum ada prompt tersimpan."
+
+#: web/templates/account/profile.html:72
+msgid "View"
+msgstr "Lihat"
+
+#: web/templates/account/profile.html:73
+msgid "Delete"
+msgstr "Hapus"
+
+#: web/templates/account/profile.html:84
+msgid "Shared Prompts"
+msgstr "Prompt Berbagi"
+
+#: web/templates/account/profile.html:86
+msgid "No shared prompts yet."
+msgstr "Belum ada prompt yang dibagikan."
+
+#: web/templates/account/profile.html:92
+msgid "Unshare"
+msgstr "Batalkan Berbagi"
+
+#: web/templates/account/profile.html:105
+msgid "Sessions"
+msgstr "Sesi"
+
+#: web/templates/account/profile.html:124
+msgid "No sessions."
+msgstr "Tidak ada sesi."
+
+#: web/templates/account/profile.html:128
+msgid "Current"
+msgstr "Saat Ini"
+
+#: web/templates/account/profile.html:134
+msgid "Revoke"
+msgstr "Cabut"
+
+#: web/templates/account/profile.html:138
+msgid "Revoked"
+msgstr "Dicabut"
+
+# Generator Template Translations
+#: web/templates/prompts/generator/basic.html:7
+msgid "Prompt Generator (Basic)"
+msgstr "Generator Prompt (Dasar)"
+
+#: web/templates/prompts/generator/basic.html:9
+msgid "Create custom prompts tailored to your needs."
+msgstr "Buat prompt khusus yang disesuaikan dengan kebutuhan Anda."
+
+#: web/templates/prompts/generator/basic.html:13
+msgid "Basic Prompt Generation Tools"
+msgstr "Alat Generasi Prompt Dasar"
+
+#: web/templates/prompts/generator/basic.html:17
+msgid "Generate Text Prompt"
+msgstr "Hasilkan Prompt Teks"
+
+#: web/templates/prompts/generator/basic.html:22
+msgid "This section allows you to generate text prompts. Enter your input and click \"Generate\" to create a custom prompt, or click \"Random\" for a surprise prompt."
+msgstr "Bagian ini memungkinkan Anda untuk menghasilkan prompt teks. Masukkan input Anda dan klik \"Hasilkan\" untuk membuat prompt khusus, atau klik \"Acak\" untuk kejutan."
+
+#: web/templates/prompts/generator/basic.html:26
+msgid "Input:"
+msgstr "Masukan:"
+
+#: web/templates/prompts/generator/basic.html:27
+msgid "Write a Python code"
+msgstr "Tulis kode Python"
+
+#: web/templates/prompts/generator/basic.html:29
+msgid "Generate text prompt based on input"
+msgstr "Hasilkan prompt teks berdasarkan input"
+
+#: web/templates/prompts/generator/basic.html:31
+msgid "Generate random text prompt"
+msgstr "Hasilkan prompt teks acak"
+
+#: web/templates/prompts/generator/basic.html:31
+msgid "Random"
+msgstr "Acak"
+
+#: web/templates/prompts/generator/basic.html:42
+msgid "Generate Image Prompt"
+msgstr "Hasilkan Prompt Gambar"
+
+#: web/templates/prompts/generator/basic.html:46
+msgid "This section allows you to generate image prompts. You can input text, upload an image, or choose a random prompt. Click \"Generate\" to create your prompt."
+msgstr "Bagian ini memungkinkan Anda untuk menghasilkan prompt gambar. Anda dapat memasukkan teks, mengunggah gambar, atau memilih prompt acak. Klik \"Hasilkan\" untuk membuat prompt Anda."
+
+#: web/templates/prompts/generator/basic.html:50
+msgid "Choose image input type"
+msgstr "Pilih jenis input gambar"
+
+#: web/templates/prompts/generator/basic.html:52
+msgid "Text"
+msgstr "Teks"
+
+#: web/templates/prompts/generator/basic.html:56
+msgid "File"
+msgstr "File"
+
+#: web/templates/prompts/generator/basic.html:66
+msgid "Whale on the desert"
+msgstr "Paus di padang pasir"
+
+#: web/templates/prompts/generator/basic.html:74
+msgid "Upload Image:"
+msgstr "Unggah Gambar:"
+
+#: web/templates/prompts/generator/basic.html:81
+msgid "Generate image prompt"
+msgstr "Hasilkan prompt gambar"
+
+#: web/templates/prompts/generator/basic.html:83
+msgid "Generate random image prompt"
+msgstr "Hasilkan prompt gambar acak"
+
+#: web/templates/prompts/generator/basic.html:92
+msgid "Image Preview"
+msgstr "Pratinjau Gambar"
+
+#: web/templates/prompts/generator/basic.html:101
+msgid "Generating..."
+msgstr "Menghasilkan..."
+
+#: web/templates/prompts/generator/basic.html:107
+msgid "Generated Prompt:"
+msgstr "Prompt yang Dihasilkan:"
+
+#: web/templates/prompts/generator/basic.html:110
+msgid "Copy generated prompt to clipboard"
+msgstr "Salin prompt yang dihasilkan ke clipboard"
+
+#: web/templates/prompts/generator/basic.html:110
+msgid "Copy"
+msgstr "Salin"
+
+#: web/templates/prompts/generator/basic.html:112
+msgid "Save generated prompt to your library"
+msgstr "Simpan prompt yang dihasilkan ke perpustakaan Anda"
+
+#: web/templates/prompts/generator/basic.html:112
+msgid "Save"
+msgstr "Simpan"
+
+#: web/templates/prompts/generator/basic.html:117
+msgid "Prompt Generator (Advanced)"
+msgstr "Generator Prompt (Lanjutan)"
+
+#: web/templates/prompts/generator/basic.html:118
+msgid "Create custom and specialized prompts tailored to your needs."
+msgstr "Buat prompt khusus dan terspesialisasi yang disesuaikan dengan kebutuhan Anda."
+
+#: web/templates/prompts/generator/basic.html:119
+msgid "Prompt Generation Tools"
+msgstr "Alat Generasi Prompt"
+
+#: web/templates/prompts/generator/basic.html:122
+msgid "Use case:"
+msgstr "Kasus penggunaan:"
+
+#: web/templates/prompts/generator/basic.html:123
+msgid "Write a README file"
+msgstr "Tulis file README"
+
+#: web/templates/prompts/generator/basic.html:124
+msgid "Prompt type:"
+msgstr "Jenis prompt:"
+
+#: web/templates/prompts/generator/basic.html:125
+msgid "Simple"
+msgstr "Sederhana"
+
+#: web/templates/prompts/generator/basic.html:126
+msgid "Standard"
+msgstr "Standar"
+
+#: web/templates/prompts/generator/basic.html:127
+msgid "Detailed"
+msgstr "Detail"
+
+#: web/templates/prompts/generator/basic.html:128
+msgid "Step by Step"
+msgstr "Langkah demi Langkah"
+
+#: web/templates/prompts/generator/basic.html:129
+msgid "Harm content:"
+msgstr "Konten berbahaya:"
+
+#: web/templates/prompts/generator/basic.html:130
+msgid "Unspecified"
+msgstr "Tidak ditentukan"
+
+#: web/templates/prompts/generator/basic.html:131
+msgid "Block none"
+msgstr "Blokir tidak ada"
+
+#: web/templates/prompts/generator/basic.html:132
+msgid "Block few"
+msgstr "Blokir sedikit"
+
+#: web/templates/prompts/generator/basic.html:133
+msgid "Block some"
+msgstr "Blokir beberapa"
+
+#: web/templates/prompts/generator/basic.html:134
+msgid "Block most"
+msgstr "Blokir sebagian besar"
+
+#: web/templates/prompts/generator/basic.html:135
+msgid "Knowledge base:"
+msgstr "Basis pengetahuan:"
+
+#: web/templates/prompts/generator/basic.html:136
+msgid "Enter the Knowledge base if any"
+msgstr "Masukkan basis pengetahuan jika ada"
+
+#: web/templates/prompts/generator/basic.html:137
+msgid "Generate Text Prompt"
+msgstr "Hasilkan Prompt Teks"
+
+#: web/templates/prompts/generator/basic.html:138
+msgid "Toggle help for text prompt generation"
+msgstr "Alihkan bantuan untuk generasi prompt teks"
+
+#: web/templates/prompts/generator/basic.html:139
+msgid "This section allows you to generate text prompts. Enter your use case, select the prompt type, and configure other parameters to create a custom prompt."
+msgstr "Bagian ini memungkinkan Anda untuk menghasilkan prompt teks. Masukkan kasus penggunaan Anda, pilih jenis prompt, dan konfigurasikan parameter lain untuk membuat prompt khusus."
+
+#: web/templates/prompts/generator/basic.html:140
+msgid "Choose Image Prompt Mode"
+msgstr "Pilih Mode Prompt Gambar"
+
+#: web/templates/prompts/generator/basic.html:141
+msgid "Generate from Text"
+msgstr "Hasilkan dari Teks"
+
+#: web/templates/prompts/generator/basic.html:142
+msgid "Reverse from Image"
+msgstr "Balik dari Gambar"
+
+#: web/templates/prompts/generator/basic.html:143
+msgid "Toggle help for image prompt generation"
+msgstr "Alihkan bantuan untuk generasi prompt gambar"
+
+#: web/templates/prompts/generator/basic.html:144
+msgid "This section allows you to generate image prompts. Enter your input, select the mood, and choose the primary and secondary styles to create a custom image prompt."
+msgstr "Bagian ini memungkinkan Anda untuk menghasilkan prompt gambar. Masukkan input Anda, pilih suasana hati, dan pilih gaya utama dan sekunder untuk membuat prompt gambar khusus."
+
+#: web/templates/prompts/generator/basic.html:145
+msgid "This section allows you to upload an image and generate a prompt based on it. You can also select the mood and style to customize the output."
+msgstr "Bagian ini memungkinkan Anda untuk mengunggah gambar dan menghasilkan prompt berdasarkan itu. Anda juga dapat memilih suasana hati dan gaya untuk menyesuaikan output."
+
+#: web/templates/prompts/generator/basic.html:146
+msgid "Image Generation from Text Form"
+msgstr "Formulir Generasi Gambar dari Teks"
+
+#: web/templates/prompts/generator/basic.html:147
+msgid "Cat on the sky"
+msgstr "Kucing di langit"
+
+#: web/templates/prompts/generator/basic.html:148
+msgid "Primary mood:"
+msgstr "Suasana hati utama:"
+
+#: web/templates/prompts/generator/basic.html:149
+msgid "Happy"
+msgstr "Bahagia"
+
+#: web/templates/prompts/generator/basic.html:150
+msgid "Joyful"
+msgstr "Gembira"
+
+#: web/templates/prompts/generator/basic.html:151
+msgid "Excited"
+msgstr "Bersemangat"
+
+#: web/templates/prompts/generator/basic.html:152
+msgid "Cheerful"
+msgstr "Ceria"
+
+#: web/templates/prompts/generator/basic.html:153
+msgid "Content"
+msgstr "Konten"
+
+#: web/templates/prompts/generator/basic.html:154
+msgid "Angry"
+msgstr "Marah"
+
+#: web/templates/prompts/generator/basic.html:155
+msgid "Disgust"
+msgstr "Jijik"
+
+#: web/templates/prompts/generator/basic.html:156
+msgid "Fear"
+msgstr "Takut"
+
+#: web/templates/prompts/generator/basic.html:157
+msgid "Sad"
+msgstr "Sedih"
+
+#: web/templates/prompts/generator/basic.html:158
+msgid "Depressed"
+msgstr "Depresi"
+
+#: web/templates/prompts/generator/basic.html:159
+msgid "Neutral"
+msgstr "Netral"
+
+#: web/templates/prompts/generator/basic.html:160
+msgid "Calm"
+msgstr "Tenang"
+
+#: web/templates/prompts/generator/basic.html:161
+msgid "Relaxed"
+msgstr "Santai"
+
+#: web/templates/prompts/generator/basic.html:162
+msgid "Serene"
+msgstr "Damai"
+
+#: web/templates/prompts/generator/basic.html:163
+msgid "Tranquil"
+msgstr "Tentram"
+
+#: web/templates/prompts/generator/basic.html:164
+msgid "Surprised"
+msgstr "Terkejut"
+
+#: web/templates/prompts/generator/basic.html:165
+msgid "Curious"
+msgstr "Penasaran"
+
+#: web/templates/prompts/generator/basic.html:166
+msgid "Mysterious"
+msgstr "Misterius"
+
+#: web/templates/prompts/generator/basic.html:167
+msgid "Surreal"
+msgstr "Surealis"
+
+#: web/templates/prompts/generator/basic.html:168
+msgid "Eerie"
+msgstr "Mengerikan"
+
+#: web/templates/prompts/generator/basic.html:169
+msgid "Random"
+msgstr "Acak"
+
+#: web/templates/prompts/generator/basic.html:170
+msgid "Positive Moods"
+msgstr "Suasana Hati Positif"
+
+#: web/templates/prompts/generator/basic.html:171
+msgid "Negative Moods"
+msgstr "Suasana Hati Negatif"
+
+#: web/templates/prompts/generator/basic.html:172
+msgid "Other Moods"
+msgstr "Suasana Hati Lainnya"
+
+#: web/templates/prompts/generator/basic.html:173
+msgid "Styles"
+msgstr "Gaya"
+
+#: web/templates/prompts/generator/basic.html:174
+msgid "Genres"
+msgstr "Genre"
+
+#: web/templates/prompts/generator/basic.html:175
+msgid "Techniques"
+msgstr "Teknik"
+
+#: web/templates/prompts/generator/basic.html:176
+msgid "3D Model"
+msgstr "Model 3D"
+
+#: web/templates/prompts/generator/basic.html:177
+msgid "Abstract"
+msgstr "Abstrak"
+
+#: web/templates/prompts/generator/basic.html:178
+msgid "Analog Film"
+msgstr "Film Analog"
+
+#: web/templates/prompts/generator/basic.html:179
+msgid "Anime"
+msgstr "Anime"
+
+#: web/templates/account/profile.html:73
+msgid "Edit"
+msgstr "Edit"
+
+#: web/templates/prompts/generator/basic.html:180
+msgid "Cartoon"
+msgstr "Kartun"
+
+#: web/templates/prompts/generator/basic.html:181
+msgid "Chalk Art"
+msgstr "Seni Kapur"
+
+#: web/templates/prompts/generator/basic.html:182
+msgid "Comic Book"
+msgstr "Buku Komik"
+
+#: web/templates/prompts/generator/basic.html:183
+msgid "Digital Art"
+msgstr "Seni Digital"
+
+#: web/templates/prompts/generator/basic.html:184
+msgid "Disney"
+msgstr "Disney"
+
+#: web/templates/prompts/generator/basic.html:185
+msgid "Fantasy Art"
+msgstr "Seni Fantasi"
+
+#: web/templates/prompts/generator/basic.html:186
+msgid "Glitch Art"
+msgstr "Seni Glitch"
+
+#: web/templates/prompts/generator/basic.html:187
+msgid "Graffiti"
+msgstr "Graffiti"
+
+#: web/templates/prompts/generator/basic.html:188
+msgid "Cinematic"
+msgstr "Sinematik"
+
+#: web/templates/prompts/generator/basic.html:189
+msgid "Cyberpunk"
+msgstr "Cyberpunk"
+
+#: web/templates/prompts/generator/basic.html:190
+msgid "Pop Art"
+msgstr "Seni Pop"
+
+#: web/templates/prompts/generator/basic.html:191
+msgid "Steampunk"
+msgstr "Steampunk"
+
+#: web/templates/prompts/generator/basic.html:192
+msgid "Cubism"
+msgstr "Kubisme"
+
+#: web/templates/prompts/generator/basic.html:193
+msgid "Decoupage"
+msgstr "Dekupage"
+
+#: web/templates/prompts/generator/basic.html:194
+msgid "Enhance"
+msgstr "Tingkatkan"
+
+#: web/templates/prompts/generator/basic.html:195
+msgid "Expressionistic"
+msgstr "Ekspresionis"
+
+#: web/templates/prompts/generator/basic.html:196
+msgid "Hyperrealistic"
+msgstr "Hiperrealis"
+
+#: web/templates/prompts/generator/basic.html:197
+msgid "Impressionistic"
+msgstr "Impresionis"
+
+#: web/templates/prompts/generator/basic.html:198
+msgid "Isometric"
+msgstr "Isometrik"
+
+#: web/templates/prompts/generator/basic.html:199
+msgid "Line Art"
+msgstr "Seni Garis"
+
+#: web/templates/prompts/generator/basic.html:200
+msgid "Low Poly"
+msgstr "Poligon Rendah"
+
+#: web/templates/prompts/generator/basic.html:201
+msgid "Minimalist"
+msgstr "Minimalis"
+
+#: web/templates/prompts/generator/basic.html:202
+msgid "Modeling Compound"
+msgstr "Komponen Pemodelan"
+
+#: web/templates/prompts/generator/basic.html:203
+msgid "Origami"
+msgstr "Origami"
+
+#: web/templates/prompts/generator/basic.html:204
+msgid "Paper Cut"
+msgstr "Potongan Kertas"
+
+#: web/templates/prompts/generator/basic.html:205
+msgid "Photographic"
+msgstr "Fotografis"
+
+#: web/templates/prompts/generator/basic.html:206
+msgid "Pixel Art"
+msgstr "Seni Piksel"
+
+#: web/templates/prompts/generator/basic.html:207
+msgid "Tile Texture"
+msgstr "Tekstur Ubin"
+
+#: web/templates/prompts/generator/basic.html:208
+msgid "Vaporwave"
+msgstr "Vaporwave"
+
+#: web/templates/prompts/generator/basic.html:209
+msgid "Watercolor"
+msgstr "Cat Air"
+
+#: web/templates/prompts/generator/basic.html:210
+msgid "Secondary style:"
+msgstr "Gaya sekunder:"
+
+#: web/templates/prompts/generator/basic.html:211
+msgid "Generate Image from Text"
+msgstr "Hasilkan Gambar dari Teks"
+
+#: web/templates/prompts/generator/basic.html:212
+msgid "Image Generation from Uploaded Image Form"
+msgstr "Formulir Generasi Gambar dari Gambar yang Diunggah"
+
+#: web/templates/prompts/generator/basic.html:213
+msgid "Original"
+msgstr "Asli"
+
+#: web/templates/prompts/generator/basic.html:214
+msgid "Generate Prompt from Image"
+msgstr "Hasilkan Prompt dari Gambar"
+
+#: web/templates/prompts/generator/basic.html:215
+msgid "Reverse Image Prompt"
+msgstr "Prompt Gambar Balik"
+
+#: web/templates/prompts/generator/basic.html:148
+msgid "Primary style:"
+msgstr "Gaya utama:"
+
+
+#: web/templates/prompts/generator/basic.html:172
+msgid "Neutral Moods"
+msgstr "Suasana Hati Netral"
+

@@ -7,3 +7,4 @@ google-auth
 google-auth-oauthlib
 pillow
 Flask-WTF
+Flask-Babel

@@ -1,0 +1,197 @@
+# Translation template for Prompt Sanctuary
+# Copyright (C) 2025 Prompt Sanctuary
+# This file is distributed under the same license as the Prompt Sanctuary project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Prompt Sanctuary 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-01-26 12:00+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: web/routes.py:796 web/routes.py:801
+msgid "Language not supported"
+msgstr ""
+
+#: web/routes.py:801
+msgid "Language changed to %(language)s"
+msgstr ""
+
+#: web/templates/base.html:80
+msgid "Prompt Sanctuary"
+msgstr ""
+
+#: web/templates/base.html:81
+msgid "Your AI-powered prompt creation studio."
+msgstr ""
+
+#: web/templates/base.html:88 web/templates/base.html:103
+msgid "Home"
+msgstr ""
+
+#: web/templates/base.html:91 web/templates/base.html:106
+msgid "Saved Prompts"
+msgstr ""
+
+#: web/templates/base.html:94 web/templates/base.html:109
+msgid "Community Prompt"
+msgstr ""
+
+#: web/templates/base.html:97 web/templates/base.html:112
+msgid "Basic Prompt"
+msgstr ""
+
+#: web/templates/base.html:100 web/templates/base.html:115
+msgid "Advance Prompt"
+msgstr ""
+
+#: web/templates/base.html:118
+msgid "Profile"
+msgstr ""
+
+#: web/templates/base.html:113 web/templates/base.html:126
+msgid "Logout"
+msgstr ""
+
+#: web/templates/base.html:119 web/templates/base.html:132
+msgid "Feedback"
+msgstr ""
+
+#: web/templates/base.html:122
+msgid "Built with ❤️ by"
+msgstr ""
+
+#: web/templates/base.html:122
+msgid "Azzar Budiyanto"
+msgstr ""
+
+#: web/templates/base.html:125
+msgid "Share your feedback"
+msgstr ""
+
+#: web/templates/base.html:145
+msgid "Submit"
+msgstr ""
+
+#: web/templates/base.html:144
+msgid "Enter your feedback here"
+msgstr ""
+
+#: web/templates/account/profile.html:6
+msgid "Profile"
+msgstr ""
+
+#: web/templates/account/profile.html:7
+msgid "Manage your account and prompts."
+msgstr ""
+
+#: web/templates/account/profile.html:16
+msgid "Profile Picture"
+msgstr ""
+
+#: web/templates/account/profile.html:19
+msgid "Regenerate"
+msgstr ""
+
+#: web/templates/account/profile.html:25
+msgid "Settings"
+msgstr ""
+
+#: web/templates/account/profile.html:18
+msgid "Current username:"
+msgstr ""
+
+#: web/templates/account/profile.html:19
+msgid "Old Password"
+msgstr ""
+
+#: web/templates/account/profile.html:20
+msgid "New Password"
+msgstr ""
+
+#: web/templates/account/profile.html:21
+msgid "Confirm Password"
+msgstr ""
+
+#: web/templates/account/profile.html:22
+msgid "Update Password"
+msgstr ""
+
+#: web/templates/account/profile.html:37
+msgid "Email (optional)"
+msgstr ""
+
+#: web/templates/account/profile.html:39
+msgid "Update Email"
+msgstr ""
+
+#: web/templates/account/profile.html:48
+msgid "Change Username"
+msgstr ""
+
+#: web/templates/account/profile.html:49
+msgid "Only letters, numbers and underscores. 3–32 chars."
+msgstr ""
+
+#: web/templates/account/profile.html:51
+msgid "Change Username"
+msgstr ""
+
+#: web/templates/account/profile.html:56
+msgid "Delete Account"
+msgstr ""
+
+#: web/templates/account/profile.html:66
+msgid "Saved Prompts"
+msgstr ""
+
+#: web/templates/account/profile.html:68
+msgid "No saved prompts yet."
+msgstr ""
+
+#: web/templates/account/profile.html:72
+msgid "View"
+msgstr ""
+
+#: web/templates/account/profile.html:73
+msgid "Delete"
+msgstr ""
+
+#: web/templates/account/profile.html:84
+msgid "Shared Prompts"
+msgstr ""
+
+#: web/templates/account/profile.html:86
+msgid "No shared prompts yet."
+msgstr ""
+
+#: web/templates/account/profile.html:92
+msgid "Unshare"
+msgstr ""
+
+#: web/templates/account/profile.html:105
+msgid "Sessions"
+msgstr ""
+
+#: web/templates/account/profile.html:124
+msgid "No sessions."
+msgstr ""
+
+#: web/templates/account/profile.html:128
+msgid "Current"
+msgstr ""
+
+#: web/templates/account/profile.html:134
+msgid "Revoke"
+msgstr ""
+
+#: web/templates/account/profile.html:138
+msgid "Revoked"
+msgstr ""

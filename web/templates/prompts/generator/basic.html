@@ -4,31 +4,31 @@
     <!-- Hero Section -->
     <div class="hero text-center mb-12 cursor-pointer" onclick="toggleSidePanel()" role="region" aria-labelledby="basic-gen-page-heading">
         <div class="flex items-center justify-center mb-4 space-x-2">
-            <h1 id="basic-gen-page-heading" class="text-5xl font-bold text-slate-900"><i class="fas fa-cogs mr-2"></i>Prompt Generator (Basic)</h1>
+            <h1 id="basic-gen-page-heading" class="text-5xl font-bold text-slate-900"><i class="fas fa-cogs mr-2"></i>{{ _('Prompt Generator (Basic)') }}</h1>
         </div>
-        <p class="text-lg text-slate-600">Create custom prompts tailored to your needs.</p>
+        <p class="text-lg text-slate-600">{{ _('Create custom prompts tailored to your needs.') }}</p>
     </div>
 
     <!-- Tools Section -->
     <div class="prompting grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8" role="region" aria-labelledby="basic-tools-section-heading">
-        <h2 id="basic-tools-section-heading" class="sr-only">Basic Prompt Generation Tools</h2>
+        <h2 id="basic-tools-section-heading" class="sr-only">{{ _('Basic Prompt Generation Tools') }}</h2>
         <!-- Text Prompt -->
         <div class="mdc-card glass prompt-card p-6 flex flex-col text-[var(--md-sys-color-on-surface)]" role="form" aria-labelledby="basic-text-prompt-heading">
             <div class="flex justify-between items-center mb-6">
-                <h2 id="basic-text-prompt-heading" class="text-2xl font-bold">Generate Text Prompt</h2>
-                <button onclick="toggleHelp('text-help-basic-region')" class="bg-[var(--md-sys-color-surface)] text-[var(--md-sys-color-on-surface)] px-3 py-1 rounded-lg hover:bg-[var(--md-sys-color-surface)] transition duration-200" aria-controls="text-help-basic-region" aria-expanded="false" aria-label="Toggle help for basic text prompt generation">?</button>
+                <h2 id="basic-text-prompt-heading" class="text-2xl font-bold">{{ _('Generate Text Prompt') }}</h2>
+                <button onclick="toggleHelp('text-help-basic-region')" class="bg-[var(--md-sys-color-surface)] text-[var(--md-sys-color-on-surface)] px-3 py-1 rounded-lg hover:bg-[var(--md-sys-color-surface)] transition duration-200" aria-controls="text-help-basic-region" aria-expanded="false" aria-label="{{ _('Toggle help for basic text prompt generation') }}">?</button>
             </div>
             <div id="text-help-basic-region" class="hidden bg-[var(--md-sys-color-surface)] p-4 rounded-lg mb-4 text-[var(--md-sys-color-on-surface)]" role="region" aria-hidden="true">
-                <p class="text-[var(--md-sys-color-on-surface)]">This section allows you to generate text prompts. Enter your input and click "Generate" to create a custom prompt, or click "Random" for a surprise prompt.</p>
+                <p class="text-[var(--md-sys-color-on-surface)]">{{ _('This section allows you to generate text prompts. Enter your input and click "Generate" to create a custom prompt, or click "Random" for a surprise prompt.') }}</p>
             </div>
             <form id="text-prompt-form" class="space-y-4 flex-grow">
                 <div>
-                    <label for="user_input_text" class="block mb-2">Input:</label>
-                    <input type="text" name="user_input" id="user_input_text" placeholder="Write a Python code" class="w-full p-3 bg-[var(--md-sys-color-surface)] rounded-lg text-[var(--md-sys-color-on-surface)]" required>
+                    <label for="user_input_text" class="block mb-2">{{ _('Input:') }}</label>
+                    <input type="text" name="user_input" id="user_input_text" placeholder="{{ _('Write a Python code') }}" class="w-full p-3 bg-[var(--md-sys-color-surface)] rounded-lg text-[var(--md-sys-color-on-surface)]" required>
                 </div>
                 <div class="flex space-x-4">
-                    <input type="submit" value="Generate" aria-label="Generate text prompt based on input" class="bg-[var(--md-sys-color-primary)] text-[var(--md-sys-color-on-primary)] px-6 py-3 rounded-lg hover:bg-[var(--md-sys-color-secondary)] transition duration-200 cursor-pointer">
-                    <button type="button" onclick="submitForm('random-text-prompt-form','/generate/trandom')" aria-label="Generate random text prompt" class="bg-[var(--md-sys-color-secondary)] text-[var(--md-sys-color-on-secondary)] px-6 py-3 rounded-lg hover:opacity-90 transition duration-200">Random</button>
+                    <input type="submit" value="{{ _('Generate') }}" aria-label="{{ _('Generate text prompt based on input') }}" class="bg-[var(--md-sys-color-primary)] text-[var(--md-sys-color-on-primary)] px-6 py-3 rounded-lg hover:bg-[var(--md-sys-color-secondary)] transition duration-200 cursor-pointer">
+                    <button type="button" onclick="submitForm('random-text-prompt-form','/generate/trandom')" aria-label="{{ _('Generate random text prompt') }}" class="bg-[var(--md-sys-color-secondary)] text-[var(--md-sys-color-on-secondary)] px-6 py-3 rounded-lg hover:opacity-90 transition duration-200">{{ _('Random') }}</button>
                 </div>
             </form>
 
@@ -39,47 +39,47 @@
         <!-- Image Prompt -->
         <div class="mdc-card glass prompt-card p-6 flex flex-col text-[var(--md-sys-color-on-surface)]" role="region" aria-labelledby="basic-image-prompt-heading">
             <div class="flex justify-between items-center mb-6">
-                <h2 id="basic-image-prompt-heading" class="text-2xl font-bold">Generate Image Prompt</h2>
-                <button onclick="toggleHelp('image-help-basic-region')" class="bg-[var(--md-sys-color-surface)] text-[var(--md-sys-color-on-surface)] px-3 py-1 rounded-lg hover:bg-[var(--md-sys-color-surface)] transition duration-200" aria-controls="image-help-basic-region" aria-expanded="false" aria-label="Toggle help for basic image prompt generation">?</button>
+                <h2 id="basic-image-prompt-heading" class="text-2xl font-bold">{{ _('Generate Image Prompt') }}</h2>
+                <button onclick="toggleHelp('image-help-basic-region')" class="bg-[var(--md-sys-color-surface)] text-[var(--md-sys-color-on-surface)] px-3 py-1 rounded-lg hover:bg-[var(--md-sys-color-surface)] transition duration-200" aria-controls="image-help-basic-region" aria-expanded="false" aria-label="{{ _('Toggle help for basic image prompt generation') }}">?</button>
             </div>
             <div id="image-help-basic-region" class="hidden bg-[var(--md-sys-color-surface)] p-4 rounded-lg mb-4 text-[var(--md-sys-color-on-surface)]" role="region" aria-hidden="true">
-                <p class="text-[var(--md-sys-color-on-surface)]">This section allows you to generate image prompts. You can input text, upload an image, or choose a random prompt. Click "Generate" to create your prompt.</p>
+                <p class="text-[var(--md-sys-color-on-surface)]">{{ _('This section allows you to generate image prompts. You can input text, upload an image, or choose a random prompt. Click "Generate" to create your prompt.') }}</p>
             </div>
             <div class="space-y-4 flex-grow">
                 <div class="input-radio flex space-x-4" role="radiogroup" aria-labelledby="image-input-type-label">
-                    <span id="image-input-type-label" class="sr-only">Choose image input type</span>
+                    <span id="image-input-type-label" class="sr-only">{{ _('Choose image input type') }}</span>
                     <label class="flex items-center space-x-2">
                         <input type="radio" id="text-input-option" name="prompt-option" value="text" checked onclick="togglePromptInput('text')">
-                        <span>Text</span>
+                        <span>{{ _('Text') }}</span>
                     </label>
                     <label class="flex items-center space-x-2">
                         <input type="radio" id="image-upload-option" name="prompt-option" value="image" onclick="togglePromptInput('image')">
-                        <span>File</span>
+                        <span>{{ _('File') }}</span>
                     </label>
                 </div>
 
                 <!-- Text Input Section -->
                 <form id="image-prompt-form" class="space-y-4" role="form" aria-labelledby="image-text-input-heading">
-                    <h3 id="image-text-input-heading" class="sr-only">Image prompt from text input</h3>
+                    <h3 id="image-text-input-heading" class="sr-only">{{ _('Image prompt from text input') }}</h3>
                     <div>
-                        <label for="user_input_image" class="block mb-2">Input:</label>
-                        <input type="text" name="user_input" id="user_input_image" placeholder="Whale on the desert" class="w-full p-3 bg-[var(--md-sys-color-surface)] rounded-lg text-[var(--md-sys-color-on-surface)]" required>
+                        <label for="user_input_image" class="block mb-2">{{ _('Input:') }}</label>
+                        <input type="text" name="user_input" id="user_input_image" placeholder="{{ _('Whale on the desert') }}" class="w-full p-3 bg-[var(--md-sys-color-surface)] rounded-lg text-[var(--md-sys-color-on-surface)]" required>
                     </div>
                 </form>
 
                 <!-- Image Upload Section -->
                 <form id="image-upload-form" enctype="multipart/form-data" class="space-y-4" style="display: none;" role="form" aria-labelledby="image-file-input-heading">
-                    <h3 id="image-file-input-heading" class="sr-only">Image prompt from file upload</h3>
+                    <h3 id="image-file-input-heading" class="sr-only">{{ _('Image prompt from file upload') }}</h3>
                     <div>
-                        <label for="image" class="block mb-2">Upload Image:</label>
+                        <label for="image" class="block mb-2">{{ _('Upload Image:') }}</label>
                         <input type="file" name="image" id="image" accept="image/*" class="w-full p-3 bg-[var(--md-sys-color-surface)] rounded-lg text-[var(--md-sys-color-on-surface)]" required>
                     </div>
                 </form>
 
                 <!-- Buttons -->
                 <div class="flex space-x-4">
-                    <button id="generate-button" onclick="generatePrompt()" aria-label="Generate image prompt" class="bg-[var(--md-sys-color-primary)] text-[var(--md-sys-color-on-primary)] px-6 py-3 rounded-lg hover:bg-[var(--md-sys-color-secondary)] transition duration-200">Generate</button>
-                    <button type="button" onclick="submitForm('random-image-prompt-form','/generate/irandom')" aria-label="Generate random image prompt" class="bg-[var(--md-sys-color-secondary)] text-[var(--md-sys-color-on-secondary)] px-6 py-3 rounded-lg hover:opacity-90 transition duration-200">Random</button>
+                    <button id="generate-button" onclick="generatePrompt()" aria-label="{{ _('Generate image prompt') }}" class="bg-[var(--md-sys-color-primary)] text-[var(--md-sys-color-on-primary)] px-6 py-3 rounded-lg hover:bg-[var(--md-sys-color-secondary)] transition duration-200">{{ _('Generate') }}</button>
+                    <button type="button" onclick="submitForm('random-image-prompt-form','/generate/irandom')" aria-label="{{ _('Generate random image prompt') }}" class="bg-[var(--md-sys-color-secondary)] text-[var(--md-sys-color-on-secondary)] px-6 py-3 rounded-lg hover:opacity-90 transition duration-200">{{ _('Random') }}</button>
                 </div>
                 <!-- Hidden Random Form -->
                 <form id="random-image-prompt-form" style="display: none;"></form>
@@ -90,7 +90,7 @@
     <!-- Preview Section (hidden by default, shown only when image is uploaded) -->
     <div id="preview-container" class="image-preview mdc-card glass prompt-card p-6 mt-12 hidden" role="region" aria-labelledby="basic-image-preview-heading">
         <h3 id="basic-image-preview-heading" class="sr-only">Image Preview</h3>
-        <img id="preview-image" alt="Image Preview" class="w-64 h-auto mx-auto rounded-lg object-contain">
+        <img id="preview-image" alt="{{ _('Image Preview') }}" class="w-64 h-auto mx-auto rounded-lg object-contain">
     </div>
 
     <!-- Loading Section -->
@@ -98,17 +98,17 @@
         <div class="glass absolute inset-0 z-0"></div>
         <div class="glass p-8 rounded-lg z-10 flex flex-col items-center justify-center">
             <div class="loader-modern"><div class="ring"></div><div class="ring ring2"></div><div class="pulse"></div></div>
-            <h1 class="text-center mt-4 text-[var(--md-sys-color-on-surface)]">Generating...</h1>
+            <h1 class="text-center mt-4 text-[var(--md-sys-color-on-surface)]">{{ _('Generating...') }}</h1>
         </div>
     </div>
 
     <!-- Result Section (hidden by default, shown only when a prompt is generated) -->
     <div id="resultSection" class="result mdc-card glass prompt-card p-6 mt-8 hidden" role="region" aria-labelledby="basic-generated-prompt-heading">
-        <h2 id="basic-generated-prompt-heading" class="text-2xl font-bold mb-6">Generated Prompt:</h2>
+        <h2 id="basic-generated-prompt-heading" class="text-2xl font-bold mb-6">{{ _('Generated Prompt:') }}</h2>
         <div id="response" class="text-lg text-[var(--md-sys-color-on-surface)] space-y-4" aria-live="polite"></div>
         <div class="flex space-x-4 mt-6">
-            <button onclick="copyToClipboard()" class="bg-[var(--md-sys-color-primary)] text-[var(--md-sys-color-on-primary)] px-6 py-3 rounded-lg hover:bg-[var(--md-sys-color-secondary)] transition duration-200" aria-label="Copy generated prompt to clipboard">Copy</button>
-            <button id="save-to-library" class="bg-[var(--md-sys-color-secondary)] text-[var(--md-sys-color-on-secondary)] px-6 py-3 rounded-lg hover:opacity-90 transition duration-200" aria-label="Save generated prompt to your library">Save</button>
+            <button onclick="copyToClipboard()" class="bg-[var(--md-sys-color-primary)] text-[var(--md-sys-color-on-primary)] px-6 py-3 rounded-lg hover:bg-[var(--md-sys-color-secondary)] transition duration-200" aria-label="{{ _('Copy generated prompt to clipboard') }}">{{ _('Copy') }}</button>
+            <button id="save-to-library" class="bg-[var(--md-sys-color-secondary)] text-[var(--md-sys-color-on-secondary)] px-6 py-3 rounded-lg hover:opacity-90 transition duration-200" aria-label="{{ _('Save generated prompt to your library') }}">{{ _('Save') }}</button>
         </div>
     </div>
 

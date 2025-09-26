@@ -4,8 +4,8 @@
 <section class="flex flex-col items-center px-6 py-12" role="region" aria-labelledby="main-heading">
   <!-- Hero Card -->
   <div class="hero text-center mb-16 w-full max-w-5xl cursor-pointer" onclick="toggleSidePanel()">
-    <h1 class="text-5xl font-bold mb-4 text-slate-900" id="main-heading"><i class="fas fa-home mr-2"></i>Prompt Sanctuary</h1>
-    <p class="text-lg text-slate-600">Your AI-powered prompt creation studio.</p>
+    <h1 class="text-5xl font-bold mb-4 text-slate-900" id="main-heading"><i class="fas fa-home mr-2"></i>{{ _('Prompt Sanctuary') }}</h1>
+    <p class="text-lg text-slate-600">{{ _('Your AI-powered prompt creation studio.') }}</p>
   </div>
 
   <!-- Feature Cards -->
@@ -14,57 +14,57 @@
     <div class="glass p-8 rounded-xl shadow-glass transform transition duration-300 hover:scale-105 hover:shadow-xl h-full flex flex-col" role="region" aria-labelledby="basic-prompt-heading">
       <div class="flex flex-col items-center text-center md:items-start md:text-left flex-grow">
         <i class="fas fa-keyboard fa-3x text-purple-400 mb-4 inline-block"></i>
-        <h2 class="text-3xl font-semibold text-slate-900 mb-3" id="basic-prompt-heading">Basic Prompt Generation</h2>
+        <h2 class="text-3xl font-semibold text-slate-900 mb-3" id="basic-prompt-heading">{{ _('Basic Prompt') }}</h2>
         <div class="flex-grow">
           <p class="text-slate-600 leading-relaxed mb-2">
-            Our basic generator helps you get started quickly. Key features include:
+            {{ _('Our basic generator helps you get started quickly. Key features include:') }}
           </p>
           <ul class="list-disc list-inside text-slate-600 leading-relaxed mb-6 pl-4">
-            <li>Quickly generate creative prompts.</li>
-            <li>Ideal for sparking ideas in simple use cases.</li>
-            <li>Overcome writer's block with ease.</li>
+            <li>{{ _('Quickly generate creative prompts.') }}</li>
+            <li>{{ _('Ideal for sparking ideas in simple use cases.') }}</li>
+            <li>{{ _('Overcome writer\'s block with ease.') }}</li>
           </ul>
         </div>
       </div>
-      <a href="{{ url_for('main.generate') }}" class="inline-flex items-center justify-center rounded-xl bg-violet-400 text-white px-5 py-3 hover:bg-violet-500 transition shadow mt-auto self-center md:self-start">Try Basic Generator</a>
+      <a href="{{ url_for('main.generate') }}" class="inline-flex items-center justify-center rounded-xl bg-violet-400 text-white px-5 py-3 hover:bg-violet-500 transition shadow mt-auto self-center md:self-start">{{ _('Try Basic Generator') }}</a>
     </div>
 
     <!-- Feature 2: Advanced Prompt -->
     <div class="glass p-8 rounded-xl shadow-glass transform transition duration-300 hover:scale-105 hover:shadow-xl h-full flex flex-col" role="region" aria-labelledby="advanced-prompt-heading">
       <div class="flex flex-col items-center text-center md:items-start md:text-left flex-grow">
         <i class="fas fa-sliders-h fa-3x text-green-400 mb-4 inline-block"></i>
-        <h2 class="text-3xl font-semibold text-slate-900 mb-3" id="advanced-prompt-heading">Advanced Prompt Engineering</h2>
+        <h2 class="text-3xl font-semibold text-slate-900 mb-3" id="advanced-prompt-heading">{{ _('Advance Prompt') }}</h2>
         <div class="flex-grow">
           <p class="text-slate-600 leading-relaxed mb-2">
-            With advanced engineering, you gain more control. You can:
+            {{ _('With advanced engineering, you gain more control. You can:') }}
           </p>
           <ul class="list-disc list-inside text-slate-600 leading-relaxed mb-6 pl-4">
-            <li>Fine-tune multiple prompt parameters.</li>
-            <li>Regenerate and refine prompts on demand.</li>
-            <li>Craft complex and highly specific instructions.</li>
+            <li>{{ _('Fine-tune multiple prompt parameters.') }}</li>
+            <li>{{ _('Regenerate and refine prompts on demand.') }}</li>
+            <li>{{ _('Craft complex and highly specific instructions.') }}</li>
           </ul>
         </div>
       </div>
-      <a href="{{ url_for('main.advance') }}" class="inline-flex items-center justify-center rounded-xl bg-emerald-400 text-white px-5 py-3 hover:bg-emerald-500 transition shadow mt-auto self-center md:self-start">Access Advanced Tools</a>
+      <a href="{{ url_for('main.advance') }}" class="inline-flex items-center justify-center rounded-xl bg-emerald-400 text-white px-5 py-3 hover:bg-emerald-500 transition shadow mt-auto self-center md:self-start">{{ _('Access Advanced Tools') }}</a>
     </div>
 
     <!-- Feature 3: Community Prompts -->
     <div class="glass p-8 rounded-xl shadow-glass transform transition duration-300 hover:scale-105 hover:shadow-xl h-full flex flex-col" role="region" aria-labelledby="community-prompts-heading">
       <div class="flex flex-col items-center text-center md:items-start md:text-left flex-grow">
         <i class="fas fa-users fa-3x text-yellow-400 mb-4 inline-block"></i>
-        <h2 class="text-3xl font-semibold text-slate-900 mb-3" id="community-prompts-heading">Explore Community Prompts</h2>
+        <h2 class="text-3xl font-semibold text-slate-900 mb-3" id="community-prompts-heading">{{ _('Community Prompt') }}</h2>
         <div class="flex-grow">
           <p class="text-slate-600 leading-relaxed mb-2">
-            In our community library, you will find inspiration. Key benefits are:
+            {{ _('In our community library, you will find inspiration. Key benefits are:') }}
           </p>
           <ul class="list-disc list-inside text-slate-600 leading-relaxed mb-6 pl-4">
-            <li>Explore a diverse collection of prompts from users.</li>
-            <li>Share your own creative prompts with others.</li>
-            <li>Discover new ideas and techniques.</li>
+            <li>{{ _('Explore a diverse collection of prompts from users.') }}</li>
+            <li>{{ _('Share your own creative prompts with others.') }}</li>
+            <li>{{ _('Discover new ideas and techniques.') }}</li>
           </ul>
         </div>
       </div>
-      <a href="{{ url_for('main.library') }}" class="inline-flex items-center justify-center rounded-xl bg-amber-300 text-slate-900 px-5 py-3 hover:bg-amber-400 transition shadow mt-auto self-center md:self-start">Browse Community Library</a>
+      <a href="{{ url_for('main.library') }}" class="inline-flex items-center justify-center rounded-xl bg-amber-300 text-slate-900 px-5 py-3 hover:bg-amber-400 transition shadow mt-auto self-center md:self-start">{{ _('Browse Community Library') }}</a>
     </div>
   </div>
 </section>

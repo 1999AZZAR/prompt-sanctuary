@@ -208,7 +208,7 @@ def ensure_feedback_schema(feedback_db):
 
 
 def ensure_users_schema(user_db):
-    """Ensure users table includes optional unique email and sessions table exists."""
+    """Ensure users table includes optional unique email, identicon_value and sessions table exists."""
     with get_db_connection(user_db) as conn:
         cursor = conn.cursor()
         # Add email column if missing
@@ -216,6 +216,9 @@ def ensure_users_schema(user_db):
         cols = {row[1] for row in cursor.fetchall()}
         if "email" not in cols:
             cursor.execute("ALTER TABLE users ADD COLUMN email TEXT")
+            conn.commit()
+        if "identicon_value" not in cols:
+            cursor.execute("ALTER TABLE users ADD COLUMN identicon_value TEXT")
             conn.commit()
         # Create unique index on email if not exists (allows multiple NULLs in SQLite)
         cursor.execute(
@@ -348,6 +351,34 @@ def get_user_email(user_db, username: str) -> str | None:
         cursor.execute("SELECT email FROM users WHERE username = ?", (username,))
         row = cursor.fetchone()
         return row[0] if row else None
+
+
+def get_user_identicon_value(user_db, username: str) -> str | None:
+    """Get the identicon value for a user."""
+    with get_db_connection(user_db) as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT identicon_value FROM users WHERE username = ?", (username,))
+        row = cursor.fetchone()
+        return row[0] if row else None
+
+
+def set_user_identicon_value(user_db, username: str, identicon_value: str):
+    """Set the identicon value for a user."""
+    with get_db_connection(user_db) as conn:
+        execute_sql(
+            conn,
+            "UPDATE users SET identicon_value = ? WHERE username = ?",
+            (identicon_value, username),
+        )
+
+
+def generate_identicon_value(username: str) -> str:
+    """Generate a consistent identicon value based on username."""
+    import hashlib
+    # Use SHA256 hash of username to generate a consistent identicon value
+    hash_value = hashlib.sha256(username.encode('utf-8')).hexdigest()
+    # Return first 16 characters of hash for identicon generation
+    return hash_value[:16]
 
 
 def change_username_everywhere(old_username: str, new_username: str, user_db: str, prompt_db: str, community_db: str, feedback_db: str):

@@ -40,6 +40,11 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Caveat&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 
+    <!-- Jdenticon Library for user profile pictures -->
+    <script src="https://cdn.jsdelivr.net/npm/jdenticon@3.3.0/dist/jdenticon.min.js"
+            integrity="sha384-LfouGM03m83ArVtne1JPk926e3SGD0Tz8XHtW2OKGsgeBU/UfR0Fa8eX+UlwSSAZ"
+            crossorigin="anonymous" defer></script>
+
     <!-- JavaScript -->
     <script defer src="{{ url_for('static', filename='script/feedback.js') }}"></script>
     <script defer src="{{ url_for('static', filename='script/generator.js') }}"></script>
@@ -77,31 +82,31 @@
     <div class="side-panel fixed left-0 top-0 h-full w-72 glass bg-white/40 border border-white/30 shadow-xl backdrop-blur-xl transform -translate-x-full transition-transform duration-300 ease-in-out z-30 flex flex-col" id="sidePanel" role="navigation" aria-label="Main Navigation">
         <!-- Logo -->
         <div class="p-6 border-b border-white/30 flex flex-col items-center justify-center cursor-pointer" onclick="toggleSidePanel()" role="banner">
-            <h1 class="text-3xl font-bold text-slate-900">Prompt Sanctuary</h1>
-            <p class="text-sm italic text-slate-600 mt-1">Your AI-powered prompt creation studio.</p>
+            <h1 class="text-3xl font-bold text-slate-900">{{ _('Prompt Sanctuary') }}</h1>
+            <p class="text-sm italic text-slate-600 mt-1">{{ _('Your AI-powered prompt creation studio.') }}</p>
         </div>
 
         <!-- Navigation Links -->
         <div class="p-4">
             <ul class="space-y-1">
                 <li onclick="showGlobalLoader(); window.location.href='{{ url_for('main.home') }}';" class="cursor-pointer p-3 rounded-lg transition duration-200 text-slate-700 hover:text-slate-900 hover:bg-white/40">
-                    <i class="fas fa-home mr-2"></i><strong>Home</strong>
+                    <i class="fas fa-home mr-2"></i><strong>{{ _('Home') }}</strong>
                 </li>
                 <li onclick="showGlobalLoader(); window.location.href='{{ url_for('main.mylib') }}';" class="cursor-pointer p-3 rounded-lg transition duration-200 text-slate-700 hover:text-slate-900 hover:bg-white/40">
-                    <i class="fas fa-save mr-2"></i><strong>Saved Prompts</strong>
+                    <i class="fas fa-save mr-2"></i><strong>{{ _('Saved Prompts') }}</strong>
                 </li>
                 <!-- Prompt Trial removed -->
                 <li onclick="showGlobalLoader(); window.location.href='{{ url_for('main.library') }}';" class="cursor-pointer p-3 rounded-lg transition duration-200 text-slate-700 hover:text-slate-900 hover:bg-white/40">
-                    <i class="fas fa-users mr-2"></i><strong>Community Prompt</strong>
+                    <i class="fas fa-users mr-2"></i><strong>{{ _('Community Prompt') }}</strong>
                 </li>
                 <li onclick="showGlobalLoader(); window.location.href='{{ url_for('main.generate') }}';" class="cursor-pointer p-3 rounded-lg transition duration-200 text-slate-700 hover:text-slate-900 hover:bg-white/40">
-                    <i class="fas fa-cogs mr-2"></i><strong>Basic Prompt</strong>
+                    <i class="fas fa-cogs mr-2"></i><strong>{{ _('Basic Prompt') }}</strong>
                 </li>
                 <li onclick="showGlobalLoader(); window.location.href='{{ url_for('main.advance') }}';" class="cursor-pointer p-3 rounded-lg transition duration-200 text-slate-700 hover:text-slate-900 hover:bg-white/40">
-                    <i class="fas fa-tools mr-2"></i><strong>Advance Prompt</strong>
+                    <i class="fas fa-tools mr-2"></i><strong>{{ _('Advance Prompt') }}</strong>
                 </li>
                 <li onclick="showGlobalLoader(); window.location.href='{{ url_for('main.profile') }}';" class="cursor-pointer p-3 rounded-lg transition duration-200 text-slate-700 hover:text-slate-900 hover:bg-white/40">
-                    <i class="fas fa-user mr-2"></i><strong>Profile</strong>
+                    <i class="fas fa-user mr-2"></i><strong>{{ _('Profile') }}</strong>
                 </li>
             </ul>
         </div>
@@ -110,17 +115,27 @@
         <div class="p-4 border-t border-white/30">
             <ul class="space-y-3">
                 <li onclick="showGlobalLoader(); window.location.href='{{ url_for('main.logout') }}';" class="cursor-pointer p-3 rounded-lg transition duration-200 text-slate-700 hover:text-slate-900 hover:bg-white/40">
-                    <i class="fas fa-sign-out-alt mr-2"></i><strong>Logout {% if session.username %}({{ session.username }}){% endif %}</strong>
+                    <i class="fas fa-sign-out-alt mr-2"></i><strong>{{ _('Logout') }} {% if session.username %}({{ session.username }}){% endif %}</strong>
                 </li>
                 <li onclick="openFeedbackPopup()" class="cursor-pointer p-3 rounded-lg transition duration-200 text-slate-700 hover:text-slate-900 hover:bg-white/40">
-                    <i class="fas fa-comment-dots mr-2"></i><strong>Feedback</strong>
+                    <i class="fas fa-comment-dots mr-2"></i><strong>{{ _('Feedback') }}</strong>
+                </li>
+                <li class="p-3">
+                    <div class="flex items-center space-x-2">
+                        <i class="fas fa-language text-slate-600"></i>
+                        <span class="text-sm font-medium text-slate-700">{{ _('Language') }}:</span>
+                        <div class="flex space-x-1">
+                            <a href="{{ url_for('main.set_language', language='en') }}" class="px-2 py-1 text-xs rounded {{ 'bg-blue-500 text-white' if session.get('language') == 'en' else 'bg-gray-200 text-gray-700 hover:bg-gray-300' }} transition" title="English">EN</a>
+                            <a href="{{ url_for('main.set_language', language='id') }}" class="px-2 py-1 text-xs rounded {{ 'bg-blue-500 text-white' if session.get('language') == 'id' else 'bg-gray-200 text-gray-700 hover:bg-gray-300' }} transition" title="Bahasa Indonesia">ID</a>
+                        </div>
+                    </div>
                 </li>
             </ul>
         </div>
 
         <div class="mt-auto p-4 border-t border-white/30 text-center space-y-2" role="contentinfo">
             <p class="text-xs text-slate-500">&copy; 2025 Prompt Sanctuary.</p>
-            <p class="text-xs text-slate-500">Built with ❤️ by <a href="https://1999azzar.github.io/1999AZZAR/" target="_blank" class="underline">Azzar Budiyanto</a></p>
+            <p class="text-xs text-slate-500">{{ _('Built with ❤️ by') }} <a href="https://1999azzar.github.io/1999AZZAR/" target="_blank" class="underline">{{ _('Azzar Budiyanto') }}</a></p>
             <div class="flex justify-center space-x-3">
                 <a href="https://github.com/1999azzar" target="_blank" class="text-slate-400 hover:text-slate-600"><i class="fab fa-github fa-lg"></i></a>
                 <a href="https://twitter.com/siapa_hayosiapa" target="_blank" class="text-slate-400 hover:text-slate-600"><i class="fab fa-twitter fa-lg"></i></a>
@@ -140,10 +155,10 @@
             <button id="close-popup" class="float-right" aria-label="Close feedback popup">
                 ✖️
             </button>
-            <h2 class="text-2xl font-bold mb-6 text-slate-900">Share your feedback</h2>
+            <h2 class="text-2xl font-bold mb-6 text-slate-900">{{ _('Share your feedback') }}</h2>
             <form id="feedback-form" role="form" aria-labelledby="feedback-heading">
-                <textarea class="w-full h-40 p-4 bg-white/70 backdrop-blur-sm border border-white/40 text-slate-800 placeholder-slate-500 rounded-xl mb-6 resize-none focus:outline-none focus:ring-2 focus:ring-brand-purple/40" name="feedback" placeholder="Enter your feedback here" required aria-label="Feedback text area"></textarea>
-                <button type="submit" class="inline-flex items-center justify-center rounded-xl bg-brand-purple text-white px-6 py-3 shadow-sm hover:bg-violet-500 transition duration-200 focus:outline-none focus:ring-2 focus:ring-brand-purple/40">Submit</button>
+                <textarea class="w-full h-40 p-4 bg-white/70 backdrop-blur-sm border border-white/40 text-slate-800 placeholder-slate-500 rounded-xl mb-6 resize-none focus:outline-none focus:ring-2 focus:ring-brand-purple/40" name="feedback" placeholder="{{ _('Enter your feedback here') }}" required aria-label="Feedback text area"></textarea>
+                <button type="submit" class="inline-flex items-center justify-center rounded-xl bg-brand-purple text-white px-6 py-3 shadow-sm hover:bg-violet-500 transition duration-200 focus:outline-none focus:ring-2 focus:ring-brand-purple/40">{{ _('Submit') }}</button>
             </form>
         </div>
     </div>
@@ -154,7 +169,27 @@
     <script>
       mdc.autoInit();
     </script>
-        <!-- Azzar AI Chat Widget -->
+
+    <!-- Identicon functionality -->
+    <script>
+      // Initialize identicons when DOM is loaded
+      document.addEventListener('DOMContentLoaded', function() {
+        // Update all identicons on the page
+        jdenticon.update();
+
+        // Add functionality to regenerate identicon if needed
+        window.regenerateIdenticon = function(value) {
+          // Force update of all identicons with the new value
+          const identicons = document.querySelectorAll('[data-jdenticon-value]');
+          identicons.forEach(function(svg) {
+            svg.setAttribute('data-jdenticon-value', value);
+          });
+          jdenticon.update();
+        };
+      });
+    </script>
+
+    <!-- Azzar AI Chat Widget -->
     <script src="https://llm-test.azzar.workers.dev/widget.js"></script>
 </body>
 </html>

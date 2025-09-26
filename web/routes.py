@@ -6,10 +6,17 @@ from flask import (
     url_for,
     session,
     jsonify,
+    flash,
 )
+from flask_babel import _, gettext
 from werkzeug.exceptions import BadRequestKeyError
 from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
+import os
+import sys
+# Add current directory to path for imports
+sys.path.insert(0, os.path.dirname(__file__))
+
 from models import (
     get_db_connection,
     create_user_table_if_not_exists,
@@ -25,7 +32,13 @@ from models import (
     update_user_email,
     get_user_email,
     change_username_everywhere,
+    get_user_identicon_value,
+    set_user_identicon_value,
+    generate_identicon_value,
 )
+
+# LANGUAGES will be imported from app after initialization
+LANGUAGES = None
 from response2 import GenerativeAI
 from response import GenerativeModel
 import logging
@@ -516,6 +529,18 @@ def create_main_blueprint(
             email_value = get_user_email(main_blueprint.user_db, username)
         except Exception:
             logger.exception("Failed to get user email")
+
+        # Identicon value
+        identicon_value = None
+        try:
+            identicon_value = get_user_identicon_value(main_blueprint.user_db, username)
+            # Generate identicon value if not exists
+            if not identicon_value:
+                identicon_value = generate_identicon_value(username)
+                set_user_identicon_value(main_blueprint.user_db, username, identicon_value)
+        except Exception:
+            logger.exception("Failed to get or set user identicon value")
+
         return render_template(
             "account/profile.html",
             error=error,
@@ -525,6 +550,7 @@ def create_main_blueprint(
             sessions=sessions_list,
             email=email_value,
             current_token=session.get("session_token"),
+            identicon_value=identicon_value,
         )
 
     @main_blueprint.route("/delete_account", methods=["POST"])
@@ -771,5 +797,16 @@ def create_main_blueprint(
         if not row:
             return jsonify({"success": False, "error": "Feedback not found"}), 404
         return jsonify({"id": feedback_id, "username": row[0], "feedback": row[1]})
+
+    @main_blueprint.route("/language/<language>")
+    def set_language(language):
+        """Set user language preference"""
+        if language not in LANGUAGES:
+            flash(_("Language not supported"), "error")
+            return redirect(request.referrer or url_for('main.home'))
+
+        session['language'] = language
+        flash(_("Language changed to %(language)s", language=LANGUAGES[language]), "success")
+        return redirect(request.referrer or url_for('main.home'))
 
     return main_blueprint

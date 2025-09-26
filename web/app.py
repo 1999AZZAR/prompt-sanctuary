@@ -1,6 +1,11 @@
 import os
-from flask import Flask
+import sys
+# Add current directory to path for imports
+sys.path.insert(0, os.path.dirname(__file__))
+
+from flask import Flask, request, session
 from flask_wtf.csrf import CSRFProtect, generate_csrf
+from flask_babel import Babel, gettext, ngettext, _
 from models import create_tables
 from routes import create_main_blueprint
 
@@ -8,6 +13,36 @@ from routes import create_main_blueprint
 app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY", "default_secret_key")
 csrf = CSRFProtect(app)
+
+# Initialize Babel
+babel = Babel(app)
+
+# Define supported languages
+LANGUAGES = {
+    'en': 'English',
+    'id': 'Bahasa Indonesia'
+}
+
+# Babel configuration
+app.config['BABEL_DEFAULT_LOCALE'] = 'en'
+app.config['BABEL_DEFAULT_TIMEZONE'] = 'UTC'
+app.config['BABEL_TRANSLATION_DIRECTORIES'] = os.path.join(os.path.dirname(__file__), 'translations')
+app.config['BABEL_LANGUAGES'] = list(LANGUAGES.keys())  # Explicitly specify supported languages
+
+def get_locale():
+    """Get locale from user session or browser preferences"""
+    # Check if user has set a language preference
+    if 'language' in session:
+        return session['language']
+
+    # Try to get language from browser Accept-Language header
+    best_match = request.accept_languages.best_match(list(LANGUAGES.keys()))
+    if best_match:
+        return best_match
+
+    return 'en'  # Default fallback
+
+babel.init_app(app, locale_selector=get_locale)
 
 # Database paths (absolute, relative to this file)
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
@@ -39,6 +74,11 @@ main_blueprint = create_main_blueprint(
     COMMUNITY_DATABASE,
     FEEDBACK_DATABASE,
 )
+
+# Set LANGUAGES in routes module to avoid circular import
+import routes
+routes.LANGUAGES = LANGUAGES
+
 app.register_blueprint(main_blueprint)
 
 # Set CSRF cookie for frontend fetches

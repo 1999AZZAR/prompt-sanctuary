@@ -1,0 +1,198 @@
+# Translation for English (en)
+# Copyright (C) 2025 Prompt Sanctuary
+# This file is distributed under the same license as the Prompt Sanctuary project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Prompt Sanctuary 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-01-26 12:00+0000\n"
+"PO-Revision-Date: 2025-01-26 12:00+0000\n"
+"Last-Translator: Prompt Sanctuary <admin@promptsanctuary.com>\n"
+"Language-Team: English <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: web/routes.py:796 web/routes.py:801
+msgid "Language not supported"
+msgstr "Language not supported"
+
+#: web/routes.py:801
+msgid "Language changed to %(language)s"
+msgstr "Language changed to %(language)s"
+
+#: web/templates/base.html:80
+msgid "Prompt Sanctuary"
+msgstr "Prompt Sanctuary"
+
+#: web/templates/base.html:81
+msgid "Your AI-powered prompt creation studio."
+msgstr "Your AI-powered prompt creation studio."
+
+#: web/templates/base.html:88 web/templates/base.html:103
+msgid "Home"
+msgstr "Home"
+
+#: web/templates/base.html:91 web/templates/base.html:106
+msgid "Saved Prompts"
+msgstr "Saved Prompts"
+
+#: web/templates/base.html:94 web/templates/base.html:109
+msgid "Community Prompt"
+msgstr "Community Prompt"
+
+#: web/templates/base.html:97 web/templates/base.html:112
+msgid "Basic Prompt"
+msgstr "Basic Prompt"
+
+#: web/templates/base.html:100 web/templates/base.html:115
+msgid "Advance Prompt"
+msgstr "Advance Prompt"
+
+#: web/templates/base.html:118
+msgid "Profile"
+msgstr "Profile"
+
+#: web/templates/base.html:113 web/templates/base.html:126
+msgid "Logout"
+msgstr "Logout"
+
+#: web/templates/base.html:119 web/templates/base.html:132
+msgid "Feedback"
+msgstr "Feedback"
+
+#: web/templates/base.html:122
+msgid "Built with ❤️ by"
+msgstr "Built with ❤️ by"
+
+#: web/templates/base.html:122
+msgid "Azzar Budiyanto"
+msgstr "Azzar Budiyanto"
+
+#: web/templates/base.html:125
+msgid "Share your feedback"
+msgstr "Share your feedback"
+
+#: web/templates/base.html:145
+msgid "Submit"
+msgstr "Submit"
+
+#: web/templates/base.html:144
+msgid "Enter your feedback here"
+msgstr "Enter your feedback here"
+
+#: web/templates/account/profile.html:6
+msgid "Profile"
+msgstr "Profile"
+
+#: web/templates/account/profile.html:7
+msgid "Manage your account and prompts."
+msgstr "Manage your account and prompts."
+
+#: web/templates/account/profile.html:16
+msgid "Profile Picture"
+msgstr "Profile Picture"
+
+#: web/templates/account/profile.html:19
+msgid "Regenerate"
+msgstr "Regenerate"
+
+#: web/templates/account/profile.html:25
+msgid "Settings"
+msgstr "Settings"
+
+#: web/templates/account/profile.html:18
+msgid "Current username:"
+msgstr "Current username:"
+
+#: web/templates/account/profile.html:19
+msgid "Old Password"
+msgstr "Old Password"
+
+#: web/templates/account/profile.html:20
+msgid "New Password"
+msgstr "New Password"
+
+#: web/templates/account/profile.html:21
+msgid "Confirm Password"
+msgstr "Confirm Password"
+
+#: web/templates/account/profile.html:22
+msgid "Update Password"
+msgstr "Update Password"
+
+#: web/templates/account/profile.html:37
+msgid "Email (optional)"
+msgstr "Email (optional)"
+
+#: web/templates/account/profile.html:39
+msgid "Update Email"
+msgstr "Update Email"
+
+#: web/templates/account/profile.html:48
+msgid "Change Username"
+msgstr "Change Username"
+
+#: web/templates/account/profile.html:49
+msgid "Only letters, numbers and underscores. 3–32 chars."
+msgstr "Only letters, numbers and underscores. 3–32 chars."
+
+#: web/templates/account/profile.html:51
+msgid "Change Username"
+msgstr "Change Username"
+
+#: web/templates/account/profile.html:56
+msgid "Delete Account"
+msgstr "Delete Account"
+
+#: web/templates/account/profile.html:66
+msgid "Saved Prompts"
+msgstr "Saved Prompts"
+
+#: web/templates/account/profile.html:68
+msgid "No saved prompts yet."
+msgstr "No saved prompts yet."
+
+#: web/templates/account/profile.html:72
+msgid "View"
+msgstr "View"
+
+#: web/templates/account/profile.html:73
+msgid "Delete"
+msgstr "Delete"
+
+#: web/templates/account/profile.html:84
+msgid "Shared Prompts"
+msgstr "Shared Prompts"
+
+#: web/templates/account/profile.html:86
+msgid "No shared prompts yet."
+msgstr "No shared prompts yet."
+
+#: web/templates/account/profile.html:92
+msgid "Unshare"
+msgstr "Unshare"
+
+#: web/templates/account/profile.html:105
+msgid "Sessions"
+msgstr "Sessions"
+
+#: web/templates/account/profile.html:124
+msgid "No sessions."
+msgstr "No sessions."
+
+#: web/templates/account/profile.html:128
+msgid "Current"
+msgstr "Current"
+
+#: web/templates/account/profile.html:134
+msgid "Revoke"
+msgstr "Revoke"
+
+#: web/templates/account/profile.html:138
+msgid "Revoked"
+msgstr "Revoked"

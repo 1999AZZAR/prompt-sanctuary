@@ -3,15 +3,15 @@
 {% block content %}
     <!-- Hero Section -->
     <div class="hero text-center mb-12 cursor-pointer" onclick="toggleSidePanel()" role="region" aria-labelledby="community-page-heading">
-        <h1 id="community-page-heading" class="text-5xl font-bold mb-4 text-slate-900"><i class="fas fa-users mr-2"></i>Community Prompt(s)</h1>
-        <p class="text-lg text-slate-600">Explore prompts shared by the community.</p>
+        <h1 id="community-page-heading" class="text-5xl font-bold mb-4 text-slate-900"><i class="fas fa-users mr-2"></i>{{ _('Community Prompt') }}</h1>
+        <p class="text-lg text-slate-600">{{ _('Explore prompts shared by the community.') }}</p>
     </div>
 
     <!-- Search Bar -->
-    <h2 id="search-prompts-heading" class="text-2xl font-bold mb-6">Search Prompts</h2>
+    <h2 id="search-prompts-heading" class="text-2xl font-bold mb-6">{{ _('Search Prompts') }}</h2>
     <div class="search-container mb-6" role="search">
-    <input type="text" id="searchInput" placeholder="Search prompts..." class="w-full p-3 rounded-xl bg-white/70 border border-white/40 text-slate-800 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-violet-300" aria-label="Search community prompts">
-        <button id="clearSearchBtn" class="clear-search-btn hidden" aria-label="Clear search">&times;</button>
+    <input type="text" id="searchInput" placeholder="{{ _('Search prompts...') }}" class="w-full p-3 rounded-xl bg-white/70 border border-white/40 text-slate-800 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-violet-300" aria-label="{{ _('Search community prompts') }}">
+        <button id="clearSearchBtn" class="clear-search-btn hidden" aria-label="{{ _('Clear search') }}">&times;</button>
     </div>
 
     <!-- Combined Prompts Section -->
@@ -29,9 +29,9 @@
                     </div>
                     <div class="mdc-card__actions">
                         <div class="mdc-card__action-buttons">
-                            <button class="text-blue-400 hover:text-blue-300 mdc-button mdc-button--text copy-button" data-clipboard-text="{{ prompt[3] | e }}" aria-label="Copy prompt: {{ prompt[2] | e }}">Copy</button>
-                            <button class="text-green-400 hover:text-green-300 mdc-button mdc-button--text save-button" data-title="{{ prompt[2] | e }}" data-prompt="{{ prompt[3] | e }}" aria-label="Save prompt: {{ prompt[2] | e }}">Save</button>
-                            <button class="text-indigo-400 hover:text-indigo-300 mdc-button mdc-button--text see-button" data-title="{{ prompt[2] | e }}" data-content="{{ prompt[3] | e }}" aria-label="See details for prompt: {{ prompt[2] | e }}">See</button>
+                            <button class="text-blue-400 hover:text-blue-300 mdc-button mdc-button--text copy-button" data-clipboard-text="{{ prompt[3] | e }}" aria-label="{{ _('Copy prompt:') }} {{ prompt[2] | e }}">{{ _('Copy') }}</button>
+                            <button class="text-green-400 hover:text-green-300 mdc-button mdc-button--text save-button" data-title="{{ prompt[2] | e }}" data-prompt="{{ prompt[3] | e }}" aria-label="{{ _('Save prompt:') }} {{ prompt[2] | e }}">{{ _('Save') }}</button>
+                            <button class="text-indigo-400 hover:text-indigo-300 mdc-button mdc-button--text see-button" data-title="{{ prompt[2] | e }}" data-content="{{ prompt[3] | e }}" aria-label="{{ _('See details for prompt:') }} {{ prompt[2] | e }}">{{ _('See') }}</button>
                         </div>
                     </div>
                 </div>
@@ -49,12 +49,12 @@
                     </div>
                     <div class="mdc-card__actions">
                         <div class="mdc-card__action-buttons">
-                            <button class="text-blue-400 hover:text-blue-300 mdc-button mdc-button--text copy-button" data-clipboard-text="{{ prompt[3] | e }}" aria-label="Copy prompt: {{ prompt[2] | e }}">Copy</button>
-                            <button class="text-green-400 hover:text-green-300 mdc-button mdc-button--text save-button" data-title="{{ prompt[2] | e }}" data-prompt="{{ prompt[3] | e }}" aria-label="Save prompt: {{ prompt[2] | e }}">Save</button>
+                            <button class="text-blue-400 hover:text-blue-300 mdc-button mdc-button--text copy-button" data-clipboard-text="{{ prompt[3] | e }}" aria-label="{{ _('Copy prompt:') }} {{ prompt[2] | e }}">{{ _('Copy') }}</button>
+                            <button class="text-green-400 hover:text-green-300 mdc-button mdc-button--text save-button" data-title="{{ prompt[2] | e }}" data-prompt="{{ prompt[3] | e }}" aria-label="{{ _('Save prompt:') }} {{ prompt[2] | e }}">{{ _('Save') }}</button>
                             {% if prompt[0] == session['username'] %}
-                            <button class="text-red-400 hover:text-red-300 mdc-button mdc-button--text unshare-button" data-prompt-id="{{ prompt[1] }}" aria-label="Unshare your prompt: {{ prompt[2] | e }}">Unshare</button>
+                            <button class="text-red-400 hover:text-red-300 mdc-button mdc-button--text unshare-button" data-prompt-id="{{ prompt[1] }}" aria-label="{{ _('Unshare your prompt:') }} {{ prompt[2] | e }}">{{ _('Unshare') }}</button>
                             {% endif %}
-                            <button class="text-indigo-400 hover:text-indigo-300 mdc-button mdc-button--text see-button" data-title="{{ prompt[2] | e }}" data-content="{{ prompt[3] | e }}" aria-label="See details for prompt: {{ prompt[2] | e }}">See</button>
+                            <button class="text-indigo-400 hover:text-indigo-300 mdc-button mdc-button--text see-button" data-title="{{ prompt[2] | e }}" data-content="{{ prompt[3] | e }}" aria-label="{{ _('See details for prompt:') }} {{ prompt[2] | e }}">{{ _('See') }}</button>
                         </div>
                     </div>
                 </div>
