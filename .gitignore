@@ -1,7 +1,7 @@
 other/
 reverseimage/
 sanctuary/
-web/database/*.*
+web/database/*.db
 web/.env
 web/get_model.py
 .fuse_*

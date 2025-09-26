@@ -36,11 +36,7 @@ function showGlobalLoader() {
     }
 }
 
-// Helper to read CSRF token from cookie
-function getCsrfTokenFromCookie() {
-    const match = document.cookie.match(/(?:^|; )csrf_token=([^;]+)/);
-    return match ? decodeURIComponent(match[1]) : null;
-}
+// CSRF token handling moved to dedicated csrf.js utility
 
 function hideGlobalLoader() {
     const loader = document.getElementById('global-loader-overlay');

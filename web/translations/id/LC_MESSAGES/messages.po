@@ -65,9 +65,9 @@ msgstr "Keluar"
 msgid "Feedback"
 msgstr "Masukan"
 
-#: web/templates/base.html:122
-msgid "Built with ❤️ by"
-msgstr "Dibuat dengan ❤️ oleh"
+#: web/templates/base.html:146
+msgid "Created By"
+msgstr "Dibuat Oleh"
 
 #: web/templates/base.html:122
 msgid "Azzar Budiyanto"
@@ -702,4 +702,80 @@ msgstr "Gaya utama:"
 #: web/templates/prompts/generator/basic.html:172
 msgid "Neutral Moods"
 msgstr "Suasana Hati Netral"
+
+#: web/templates/landing.html:7
+msgid "Your one-stop platform to browse, generate, and refine AI prompts for creative storytelling, coding, and more."
+msgstr "Platform satu atap Anda untuk menjelajahi, menghasilkan, dan menyempurnakan prompt AI untuk bercerita kreatif, pemrograman, dan banyak lagi."
+
+#: web/templates/landing.html:21
+msgid "Dive into a diverse collection of prompts crafted by users like you. Share your own creations, discover new ideas, and get inspired by the collective creativity of the Prompt Sanctuary community."
+msgstr "Selami koleksi prompt yang beragam yang dibuat oleh pengguna seperti Anda. Bagikan kreasi Anda sendiri, temukan ide-ide baru, dan terinspirasi oleh kreativitas kolektif komunitas Prompt Sanctuary."
+
+#: web/templates/landing.html:24
+msgid "Browse Community Library"
+msgstr "Jelajahi Perpustakaan Komunitas"
+
+#: web/templates/landing.html:33
+msgid "Unleash your creativity with our intuitive prompt generator. Whether you're brainstorming for a story, a coding project, or artistic inspiration, quickly generate tailored prompts with our basic tool to get you started."
+msgstr "Lepaskan kreativitas Anda dengan generator prompt intuitif kami. Baik Anda sedang memikirkan cerita, proyek pemrograman, atau inspirasi artistik, hasilkan prompt yang disesuaikan dengan cepat menggunakan alat dasar kami untuk memulai."
+
+#: web/templates/landing.html:36
+msgid "Try Basic Generator"
+msgstr "Coba Generator Dasar"
+
+#: web/templates/landing.html:45
+msgid "Take full control with our advanced tools. Fine-tune every parameter, experiment with complex structures, and craft highly specific prompts for sophisticated AI interactions and specialized tasks."
+msgstr "Ambil kendali penuh dengan alat canggih kami. Sesuaikan setiap parameter, bereksperimen dengan struktur yang kompleks, dan buat prompt yang sangat spesifik untuk interaksi AI yang canggih dan tugas-tugas khusus."
+
+#: web/templates/landing.html:48
+msgid "Access Advanced Tools"
+msgstr "Akses Alat Canggih"
+
+#: web/templates/index.html:20
+msgid "Our basic generator helps you get started quickly. Key features include:"
+msgstr "Generator dasar kami membantu Anda memulai dengan cepat. Fitur utama meliputi:"
+
+#: web/templates/index.html:23
+msgid "Quickly generate creative prompts."
+msgstr "Cepat menghasilkan prompt kreatif."
+
+#: web/templates/index.html:24
+msgid "Ideal for sparking ideas in simple use cases."
+msgstr "Ideal untuk memicu ide dalam kasus penggunaan sederhana."
+
+#: web/templates/index.html:25
+msgid "Overcome writer's block with ease."
+msgstr "Atasi hambatan penulis dengan mudah."
+
+#: web/templates/index.html:39
+msgid "With advanced engineering, you gain more control. You can:"
+msgstr "Dengan rekayasa canggih, Anda mendapatkan kontrol lebih. Anda bisa:"
+
+#: web/templates/index.html:42
+msgid "Fine-tune multiple prompt parameters."
+msgstr "Menyesuaikan parameter prompt ganda."
+
+#: web/templates/index.html:43
+msgid "Regenerate and refine prompts on demand."
+msgstr "Regenerasi dan sempurnakan prompt sesuai permintaan."
+
+#: web/templates/index.html:44
+msgid "Craft complex and highly specific instructions."
+msgstr "Buat instruksi yang kompleks dan sangat spesifik."
+
+#: web/templates/index.html:58
+msgid "In our community library, you will find inspiration. Key benefits are:"
+msgstr "Di perpustakaan komunitas kami, Anda akan menemukan inspirasi. Manfaat utama adalah:"
+
+#: web/templates/index.html:61
+msgid "Explore a diverse collection of prompts from users."
+msgstr "Jelajahi koleksi prompt yang beragam dari pengguna."
+
+#: web/templates/index.html:62
+msgid "Share your own creative prompts with others."
+msgstr "Bagikan prompt kreatif Anda sendiri dengan orang lain."
+
+#: web/templates/index.html:63
+msgid "Discover new ideas and techniques."
+msgstr "Temukan ide dan teknik baru."
 

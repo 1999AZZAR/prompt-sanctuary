@@ -316,7 +316,7 @@ function deletePrompt(randomVal) {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
-            'X-CSRFToken': getCsrfTokenFromCookie() || ''
+            ...window.CSRF.getFormHeaders()
         },
         body: 'prompt_id=' + encodeURIComponent(randomVal),
     })
@@ -375,7 +375,7 @@ function sharePrompt(promptId, title, promptContent, buttonElement) {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'X-CSRFToken': getCsrfTokenFromCookie() || ''
+            ...window.CSRF.getFormHeaders()
         },
         body: JSON.stringify(data),
     })
@@ -404,7 +404,7 @@ function unsharePrompt(promptId, buttonElement) {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'X-CSRFToken': getCsrfTokenFromCookie() || ''
+            ...window.CSRF.getFormHeaders()
         },
         body: JSON.stringify({ prompt_id: promptId }),
     })

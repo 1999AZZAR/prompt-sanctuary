@@ -52,8 +52,8 @@
 | Quality | ORM (SQLAlchemy) | P2 | Planned | Optional migration from raw sqlite |
 | Observability | Error tracking (Sentry/Logfire) | P1 | Planned | Capture server/client errors (no PII) |
 | Observability | Privacy-friendly analytics (Plausible) | P3 | Planned | Minimal analytics with consent |
-| i18n/a11y | Language switch mechanism | P1 | Not Started | UI toggle; persist choice |
-| i18n/a11y | Internationalization (Flask-Babel) | P1 | Planned | Extract strings; locales: en, id |
+| i18n/a11y | Language switch mechanism | P1 | Done | UI toggle; persist choice; instant switching |
+| i18n/a11y | Internationalization (Flask-Babel) | P1 | Done | Complete multilingual system: English + Indonesian |
 | i18n/a11y | Accessibility audit and fixes | P1 | Planned | Landmarks, focus, ARIA live regions |
 | Backups | Weekly DB backups (library, user, feedback) | P1 | Not Started | Cron/Task; rotate; offsite option |
 | Image Gen | Combine image generator input | P1 | In Progress | ~50%; unify text/file modes |
@@ -84,7 +84,8 @@
   - Weekly cron/script dumps `.db` files to a timestamped dir; keep last N; optional remote copy.
 
 - Internationalization
-  - Extract strings, add flask-babel, and a simple language selector. Start with en, id.
+  - Complete multilingual system implemented with Flask-Babel, language switcher UI, and full Indonesian translations.
+  - English as default with instant language switching, session persistence, and comprehensive template coverage.
 
 - Testing/CI
   - Add pytest with temp sqlite dbs; GH Actions to lint/format/typecheck/test on PRs.
@@ -99,5 +100,5 @@
 - [ ] Prompt versioning (P1)
 - [ ] Weekly backups (P1)
 - [ ] Containerize + Tailwind build (P1)
-- [ ] Language switch + i18n base (P1)
+- [x] Language switch + i18n base (P1)
 - [ ] Tests + CI + Alembic (P1)

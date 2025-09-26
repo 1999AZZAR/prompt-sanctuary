@@ -32,7 +32,24 @@ With this new implementation, users can:
 - Safer, richer result rendering: Markdown + DOMPurify sanitization + Prism code highlighting with copy buttons
 - Default Gemini model updated to latest stable free-tier friendly model (`gemini-2.5-flash`) with easy override
 - More robust filesystem handling for SQLite DBs (auto-create DB directories)
- - Prompt versioning: automatic snapshots on save/edit, history view, and rollback from personal library
+- Complete multilingual system: English + Indonesian with instant language switching
+- Prompt versioning: automatic snapshots on save/edit, history view, and rollback from personal library
+
+## Multilingual Support
+
+Prompt Sanctuary now supports **English** and **Indonesian** languages with complete internationalization:
+
+- **🌍 Dual Language Interface**: Switch between English and Indonesian instantly
+- **💾 Session Persistence**: Language preference remembered across sessions
+- **🎨 Complete UI Coverage**: All templates, forms, and UI elements translated
+- **⚡ Real-time Switching**: No page reload required
+- **📱 Mobile Responsive**: Language switcher works on all devices
+
+### Language Features
+- **Default Language**: English (reliable fallback for all strings)
+- **Language Switcher**: Located in sidebar navigation (EN/ID buttons)
+- **Comprehensive Coverage**: All generator templates, forms, and navigation translated
+- **Production Ready**: Full Flask-Babel implementation with compiled translation files
 
 ## Features
 
@@ -46,7 +63,8 @@ With this new implementation, users can:
 | Security | CSRF protection on all POSTs | Done |
 | Backend | Absolute DB paths + auto-create directories | Done |
 | Backend | Latest stable free Gemini default (gemini-2.5-flash) | Done |
-| i18n | Language switch | Planned |
+| i18n | Language switch | Done |
+| i18n | Complete multilingual system (English + Indonesian) | Done |
 | Perf/Infra | Containerization + Tailwind build | Planned |
 | Quality | Tests + CI + Alembic migrations | Planned |
 
@@ -60,7 +78,8 @@ Prompt-sanctuary's web interface is intuitive and user-friendly. Here's a quick 
 - **Advanced Options**: For more advanced content generation, navigate to `/advance` and provide the required parameters.
 - **Community Library**: Access various content generation templates and tools from the library section. Navigate to `/library` and choose the desired option.
 - **Personal library**: contain per user prompt that they have saved before.
-  - New: “History” button to view previous versions, preview, and restore.
+  - New: "History" button to view previous versions, preview, and restore.
+- **Language Switching**: Click the EN/ID buttons in the sidebar to switch between English and Indonesian. Language preference is saved and persists across sessions.
 
 ### Key routes
 
@@ -84,6 +103,7 @@ Prompt-sanctuary's web interface is intuitive and user-friendly. Here's a quick 
 | `/unshare_prompt` | POST | Unshare a prompt | ✓ |
 | `/versions/<id>` | GET | List versions of a prompt | ✓ |
 | `/versions/rollback` | POST | Restore a specific version | ✓ |
+| `/language/<lang>` | GET | Set user language preference | ✓ |
 
 ## Quick start (local)
 

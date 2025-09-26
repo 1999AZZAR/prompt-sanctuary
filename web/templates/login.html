@@ -8,6 +8,7 @@
     <p class="text-slate-600 text-center mb-4">{% if show_signup %}{{ _('Create an account to join Prompt Sanctuary.') }}{% else %}{{ _('Log in to access Prompt Sanctuary features.') }}{% endif %}</p>
     <form id="loginForm" action="{{ url_for('main.login') }}" method="post" class="space-y-4 {% if show_signup %}hidden{% endif %}" role="form" aria-labelledby="login-heading">
       <h2 id="login-heading" class="sr-only">Login Form</h2>
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
       <input type="text" name="honeypot" class="hidden">
       <label for="usernameLogin" class="sr-only">{{ _('Username') }}</label>
       <input type="text" id="usernameLogin" name="username" required class="w-full p-3 rounded-xl bg-white/70 border border-white/40 text-slate-800 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-purple/40" placeholder="{{ _('Username') }}">
@@ -19,6 +20,7 @@
     </form>
     <form id="signupForm" action="{{ url_for('main.signup') }}" method="post" class="space-y-4 {% if not show_signup %}hidden{% endif %}" role="form" aria-labelledby="signup-heading">
       <h2 id="signup-heading" class="sr-only">Sign Up Form</h2>
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
       <input type="text" name="honeypot" class="hidden">
       <label for="usernameSignup" class="sr-only">{{ _('Choose username') }}</label>
       <input type="text" id="usernameSignup" name="username" required class="w-full p-3 rounded-xl bg-white/70 border border-white/40 text-slate-800 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-purple/40" placeholder="{{ _('Choose username') }}">

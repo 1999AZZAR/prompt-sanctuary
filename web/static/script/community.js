@@ -73,7 +73,7 @@ function attachSaveButtonListeners() {
 function unsharePrompt(promptId) {
     fetch('/unshare_prompt', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCsrfTokenFromCookie() || '' },
+        headers: window.CSRF.getJsonHeaders(),
         body: JSON.stringify({ prompt_id: promptId })
     })
     .then(response => {
@@ -124,7 +124,7 @@ function savePrompt(title, prompt) {
 
     fetch('/save_prompt', {
         method: 'POST',
-        headers: { 'X-CSRFToken': getCsrfTokenFromCookie() || '' },
+        headers: window.CSRF.getFormHeaders(),
         body: formData,
     })
     .then(response => response.json()) // Assuming /save_prompt returns JSON now

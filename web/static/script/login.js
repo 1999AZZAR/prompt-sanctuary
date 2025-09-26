@@ -32,15 +32,7 @@ function handleFormSubmission(form, action) {
 
     fetch(action, {
         method: 'POST',
-        headers: {
-            'X-CSRFToken': (typeof getCsrfTokenFromCookie === 'function'
-                ? (getCsrfTokenFromCookie() || '')
-                : (function(){
-                    const m = document.cookie.match(/(?:^|; )csrf_token=([^;]+)/);
-                    return m ? decodeURIComponent(m[1]) : '';
-                  })()
-            )
-        },
+        headers: window.CSRF.getFormHeaders(),
         body: formData
     })
     .then(response => {

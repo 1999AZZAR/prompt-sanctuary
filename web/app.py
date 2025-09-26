@@ -4,7 +4,7 @@ import sys
 sys.path.insert(0, os.path.dirname(__file__))
 
 from flask import Flask, request, session
-from flask_wtf.csrf import CSRFProtect, generate_csrf
+from flask_wtf.csrf import CSRFProtect, generate_csrf, validate_csrf
 from flask_babel import Babel, gettext, ngettext, _
 from models import create_tables
 from routes import create_main_blueprint
@@ -13,6 +13,12 @@ from routes import create_main_blueprint
 app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY", "default_secret_key")
 csrf = CSRFProtect(app)
+
+# Configure CSRF to accept tokens from headers for AJAX requests
+app.config['WTF_CSRF_HEADERS'] = ['X-CSRFToken', 'X-CSRF-Token']
+app.config['WTF_CSRF_CHECK_DEFAULT'] = False  # Disable automatic CSRF checking for all requests
+
+# Import CSRF validation from utils (avoid circular import)
 
 # Initialize Babel
 babel = Babel(app)

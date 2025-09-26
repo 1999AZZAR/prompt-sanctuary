@@ -65,7 +65,7 @@ msgid "Feedback"
 msgstr ""
 
 #: web/templates/base.html:122
-msgid "Built with ❤️ by"
+msgid "Created"
 msgstr ""
 
 #: web/templates/base.html:122

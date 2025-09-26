@@ -8,6 +8,7 @@ from flask import (
     jsonify,
     flash,
 )
+from utils import validate_csrf_token
 from flask_babel import _, gettext
 from werkzeug.exceptions import BadRequestKeyError
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -119,6 +120,11 @@ def create_main_blueprint(
         """Handle user signup. Validates input and creates a new user if valid."""
         if request.method == "GET":
             return render_template("login.html", show_signup=True)
+
+        # Validate CSRF token
+        if not validate_csrf_token():
+            return jsonify({"success": False, "error": "CSRF token validation failed."}), 400
+
         honeypot_value = request.form.get("honeypot", "")
         if honeypot_value:
             return jsonify(
@@ -166,6 +172,11 @@ def create_main_blueprint(
         """Handle user login. Validates input and authenticates user."""
         if request.method == "GET":
             return render_template("login.html", show_signup=False)
+
+        # Validate CSRF token
+        if not validate_csrf_token():
+            return jsonify({"success": False, "error": "CSRF token validation failed."}), 400
+
         honeypot_value = request.form.get("honeypot", "")
         if honeypot_value:
             return jsonify(
@@ -737,6 +748,10 @@ def create_main_blueprint(
     @main_blueprint.route("/submit_feedback", methods=["POST"])
     @required_login
     def submit_feedback():
+        # Validate CSRF token
+        if not validate_csrf_token():
+            return jsonify({"success": False, "error": "CSRF token validation failed."}), 400
+
         username = session["username"]
         feedback = request.form["feedback"]
 

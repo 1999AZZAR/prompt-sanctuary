@@ -65,9 +65,9 @@ msgstr "Logout"
 msgid "Feedback"
 msgstr "Feedback"
 
-#: web/templates/base.html:122
-msgid "Built with ❤️ by"
-msgstr "Built with ❤️ by"
+#: web/templates/base.html:146
+msgid "Created By"
+msgstr "Created By"
 
 #: web/templates/base.html:122
 msgid "Azzar Budiyanto"
@@ -196,3 +196,79 @@ msgstr "Revoke"
 #: web/templates/account/profile.html:138
 msgid "Revoked"
 msgstr "Revoked"
+
+#: web/templates/landing.html:7
+msgid "Your one-stop platform to browse, generate, and refine AI prompts for creative storytelling, coding, and more."
+msgstr "Your one-stop platform to browse, generate, and refine AI prompts for creative storytelling, coding, and more."
+
+#: web/templates/landing.html:21
+msgid "Dive into a diverse collection of prompts crafted by users like you. Share your own creations, discover new ideas, and get inspired by the collective creativity of the Prompt Sanctuary community."
+msgstr "Dive into a diverse collection of prompts crafted by users like you. Share your own creations, discover new ideas, and get inspired by the collective creativity of the Prompt Sanctuary community."
+
+#: web/templates/landing.html:24
+msgid "Browse Community Library"
+msgstr "Browse Community Library"
+
+#: web/templates/landing.html:33
+msgid "Unleash your creativity with our intuitive prompt generator. Whether you're brainstorming for a story, a coding project, or artistic inspiration, quickly generate tailored prompts with our basic tool to get you started."
+msgstr "Unleash your creativity with our intuitive prompt generator. Whether you're brainstorming for a story, a coding project, or artistic inspiration, quickly generate tailored prompts with our basic tool to get you started."
+
+#: web/templates/landing.html:36
+msgid "Try Basic Generator"
+msgstr "Try Basic Generator"
+
+#: web/templates/landing.html:45
+msgid "Take full control with our advanced tools. Fine-tune every parameter, experiment with complex structures, and craft highly specific prompts for sophisticated AI interactions and specialized tasks."
+msgstr "Take full control with our advanced tools. Fine-tune every parameter, experiment with complex structures, and craft highly specific prompts for sophisticated AI interactions and specialized tasks."
+
+#: web/templates/landing.html:48
+msgid "Access Advanced Tools"
+msgstr "Access Advanced Tools"
+
+#: web/templates/index.html:20
+msgid "Our basic generator helps you get started quickly. Key features include:"
+msgstr "Our basic generator helps you get started quickly. Key features include:"
+
+#: web/templates/index.html:23
+msgid "Quickly generate creative prompts."
+msgstr "Quickly generate creative prompts."
+
+#: web/templates/index.html:24
+msgid "Ideal for sparking ideas in simple use cases."
+msgstr "Ideal for sparking ideas in simple use cases."
+
+#: web/templates/index.html:25
+msgid "Overcome writer's block with ease."
+msgstr "Overcome writer's block with ease."
+
+#: web/templates/index.html:39
+msgid "With advanced engineering, you gain more control. You can:"
+msgstr "With advanced engineering, you gain more control. You can:"
+
+#: web/templates/index.html:42
+msgid "Fine-tune multiple prompt parameters."
+msgstr "Fine-tune multiple prompt parameters."
+
+#: web/templates/index.html:43
+msgid "Regenerate and refine prompts on demand."
+msgstr "Regenerate and refine prompts on demand."
+
+#: web/templates/index.html:44
+msgid "Craft complex and highly specific instructions."
+msgstr "Craft complex and highly specific instructions."
+
+#: web/templates/index.html:58
+msgid "In our community library, you will find inspiration. Key benefits are:"
+msgstr "In our community library, you will find inspiration. Key benefits are:"
+
+#: web/templates/index.html:61
+msgid "Explore a diverse collection of prompts from users."
+msgstr "Explore a diverse collection of prompts from users."
+
+#: web/templates/index.html:62
+msgid "Share your own creative prompts with others."
+msgstr "Share your own creative prompts with others."
+
+#: web/templates/index.html:63
+msgid "Discover new ideas and techniques."
+msgstr "Discover new ideas and techniques."

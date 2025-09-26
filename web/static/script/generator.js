@@ -15,7 +15,7 @@ function submitForm(formId, url) {
 
     fetch(url, {
         method: 'POST',
-        headers: { 'X-CSRFToken': getCsrfTokenFromCookie() || '' },
+        headers: window.CSRF.getFormHeaders(),
         body: formData
     })
     .then(response => response.text()) // Assuming text response for prompt generation
@@ -364,7 +364,7 @@ function saveToLibrary(title, promptContent) {
 
     fetch('/save_prompt', {
         method: 'POST',
-        headers: { 'X-CSRFToken': getCsrfTokenFromCookie() || '' },
+        headers: window.CSRF.getFormHeaders(),
         body: formData
     })
     .then(response => response.json())
