@@ -53,6 +53,7 @@ function attachInitialEventListeners() {
     attachShareButtonListeners();
     attachHistoryButtonListeners();
     attachSeeButtonListeners();
+    attachUpdateSharedButtonListeners();
     // Note: ClipboardJS is initialized once and handles elements matching '.copy-button'
 }
 
@@ -64,6 +65,7 @@ function reattachEventListeners() {
     attachShareButtonListeners();
     attachHistoryButtonListeners();
     attachSeeButtonListeners();
+    attachUpdateSharedButtonListeners();
 }
 // Version history: view and rollback
 function attachHistoryButtonListeners() {
@@ -340,11 +342,10 @@ function attachShareButtonListeners() {
     document.querySelectorAll('.share-button:not(.listener-attached)').forEach(button => {
         button.addEventListener('click', function () {
             // CORRECTED: Read prompt ID from data-prompt-id attribute
-            const promptId = this.dataset.promptId; 
+            const promptId = this.dataset.promptId;
             const title = this.dataset.title;
             // Prompt content is correctly read from data-prompt based on HTML
-            const promptContent = this.dataset.prompt; 
-            const isShared = this.classList.contains('unshare-action');
+            const promptContent = this.dataset.prompt;
 
             if (!promptId || !title || !promptContent) {
                 console.error('Share button is missing data attributes:', this.dataset);
@@ -352,7 +353,10 @@ function attachShareButtonListeners() {
                 return;
             }
 
-            if (isShared) {
+            // Check button type
+            if (this.classList.contains('update-shared-button')) {
+                updateSharedPrompt(promptId, title, promptContent, this);
+            } else if (this.classList.contains('unshare-button')) {
                 unsharePrompt(promptId, this);
             } else {
                 sharePrompt(promptId, title, promptContent, this);
@@ -425,6 +429,63 @@ function unsharePrompt(promptId, buttonElement) {
     .catch((error) => {
         console.error('Error:', error);
         showToast("Error unsharing prompt: " + error.message, "error");
+    });
+}
+
+// Update Shared function
+function updateSharedPrompt(promptId, title, promptContent, buttonElement) {
+    const data = {
+        prompt_id: promptId,
+        title: title,
+        prompt: promptContent
+    };
+
+    fetch('/share_prompt', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            ...window.CSRF.getFormHeaders()
+        },
+        body: JSON.stringify(data),
+    })
+    .then(response => response.json())
+    .then(result => {
+        if (result.success) {
+            showToast("Prompt updated successfully!", "success");
+            if(buttonElement) {
+                buttonElement.textContent = 'Unshare';
+                buttonElement.classList.remove('update-shared-button');
+                buttonElement.classList.add('unshare-button');
+                buttonElement.classList.remove('bg-yellow-100', 'text-yellow-700', 'hover:bg-yellow-200');
+                buttonElement.classList.add('bg-red-100', 'text-red-700', 'hover:bg-red-200');
+            }
+        } else {
+            showToast(result.error || "Failed to update prompt.", "error");
+        }
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+        showToast("Error updating prompt: " + error.message, "error");
+    });
+}
+
+// Update Shared Button listeners
+function attachUpdateSharedButtonListeners() {
+    document.querySelectorAll('.update-shared-button:not(.listener-attached)').forEach(button => {
+        button.addEventListener('click', function () {
+            const promptId = this.dataset.promptId;
+            const title = this.dataset.title;
+            const promptContent = this.dataset.prompt;
+
+            if (!promptId || !title || !promptContent) {
+                console.error('Update shared button is missing data attributes:', this.dataset);
+                showToast("Cannot update: critical data missing from button.", "error");
+                return;
+            }
+
+            updateSharedPrompt(promptId, title, promptContent, this);
+        });
+        button.classList.add('listener-attached');
     });
 }
 

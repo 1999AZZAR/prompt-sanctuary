@@ -1,6 +1,8 @@
 import os
 import time
 import logging
+import json
+import re
 import google.generativeai as genai
 from dotenv import load_dotenv
 import random
@@ -104,7 +106,7 @@ class GenerativeModel:
             if hasattr(response, 'text'):
                 txt = response.text  # may raise ValueError
                 if txt:
-                    return txt
+                    return self._clean_ai_response(txt)
         except Exception:
             pass
 
@@ -121,11 +123,90 @@ class GenerativeModel:
                         if t:
                             texts.append(t)
                     if texts:
-                        return "\n".join(texts)
+                        return self._clean_ai_response("\n".join(texts))
         except Exception:
             pass
 
         return ""
+
+    def _clean_ai_response(self, text: str) -> str:
+        """Clean AI response to remove unwanted formatting while preserving markdown structure."""
+        if not text:
+            return ""
+
+        # Remove any JSON-like structure that might have been accidentally generated
+        text = text.strip()
+
+        # If it looks like JSON, try to extract the actual content
+        if text.startswith('{') and text.endswith('}'):
+            try:
+                parsed = json.loads(text)
+                # Look for common response keys
+                for key in ['response', 'text', 'content', 'message', 'result']:
+                    if key in parsed and isinstance(parsed[key], str):
+                        text = parsed[key]
+                        break
+                # If it has success: true, extract the main content
+                if 'success' in parsed and parsed.get('success') is True:
+                    for key, value in parsed.items():
+                        if key != 'success' and isinstance(value, str):
+                            text = value
+                            break
+                elif isinstance(parsed, str):
+                    text = parsed
+            except (json.JSONDecodeError, TypeError):
+                pass
+
+        # Clean up formatting artifacts while preserving markdown structure
+        cleaned = text
+
+        # Convert escaped characters to actual characters
+        cleaned = cleaned.replace('\\n', '\n')  # Escaped newlines -> actual newlines
+        cleaned = cleaned.replace('\\"', '"')   # Escaped quotes -> actual quotes
+        cleaned = cleaned.replace('\\\\', '\\') # Escaped backslashes -> actual backslashes
+        cleaned = cleaned.replace('\\t', '    ') # Escaped tabs -> 4 spaces (markdown indent)
+
+        # Decode HTML entities
+        cleaned = cleaned.replace('&lt;', '<')
+        cleaned = cleaned.replace('&gt;', '>')
+        cleaned = cleaned.replace('&amp;', '&')
+        cleaned = cleaned.replace('&quot;', '"')
+
+        # Normalize line endings for consistent parsing
+        cleaned = cleaned.replace('\r\n', '\n').replace('\r', '\n')
+
+        # Fix non-standard markdown formatting (apply in specific order to avoid conflicts)
+        # First: Fix double hash with brackets: # # [Header] -> ## Header
+        cleaned = re.sub(r'^# # \[([^\]]+)\]$', r'## \1', cleaned, flags=re.MULTILINE)
+
+        # Second: Convert square bracket headers (these take priority)
+        cleaned = re.sub(r'^\[([^\]]+)\]\*?$', r'## \1', cleaned, flags=re.MULTILINE)  # Convert [Header]* or [Header] to ## Header
+
+        # Third: Convert standalone asterisks to list markers (but avoid headers)
+        cleaned = re.sub(r'^(?!##)([^*]+)\*$', r'- \1', cleaned, flags=re.MULTILINE)  # Convert "text*" to "- text" (but not if it starts with ##)
+
+        # Fourth: Fix indented content with spaces (convert to proper markdown)
+        # Handle various indentation levels
+        for indent_level in range(1, 10):  # Handle up to 10 levels of indentation
+            spaces = ' ' * (indent_level * 4)
+            replacement = '    ' * indent_level + '- '
+            # Match content that ends with * (since the AI uses * for formatting)
+            cleaned = re.sub(r'^' + re.escape(spaces) + r'([^*:\n]+)\*$', replacement + r'\1', cleaned, flags=re.MULTILINE)
+
+        # Fifth: Convert *text* to **text**
+        cleaned = re.sub(r'^\*([^*]+)\*$', r'**\1**', cleaned, flags=re.MULTILINE)  # Convert *text* to **text**
+
+        # Fix common markdown formatting issues
+        cleaned = re.sub(r'^(#+)([^\s])', r'\1 \2', cleaned, flags=re.MULTILINE)  # Add spacing around headers
+        cleaned = re.sub(r'^([*-+])([^\s])', r'\1 \2', cleaned, flags=re.MULTILINE)  # Add spacing around list items
+        cleaned = re.sub(r'^(\d+\.)([^\s])', r'\1 \2', cleaned, flags=re.MULTILINE)  # Add spacing around numbered lists
+
+        # Remove excessive newlines at start/end but preserve internal structure
+        cleaned = cleaned.strip()
+        # Fix multiple consecutive newlines (keep at most 2 for paragraph breaks)
+        cleaned = re.sub(r'\n{3,}', '\n\n', cleaned)
+
+        return cleaned
 
     def generate_response(self, prompt_file_path: str, user_input_text: str) -> str:
         """Generate a response based on a prompt file and user input."""

@@ -36,6 +36,14 @@ from models import (
     get_user_identicon_value,
     set_user_identicon_value,
     generate_identicon_value,
+    get_user_points,
+    deduct_user_points,
+    add_user_points,
+    initialize_achievements,
+    check_and_award_achievements,
+    get_user_achievements,
+    process_daily_login_bonus,
+    get_prompt_sharing_status,
 )
 
 # LANGUAGES will be imported from app after initialization
@@ -158,7 +166,7 @@ def create_main_blueprint(
                         return jsonify({"success": False, "error": "Email is already in use."}), 409
 
                 hashed_password = generate_password_hash(password)
-                cursor.execute("INSERT INTO users (username, password, email) VALUES (?, ?, ?)", (username, hashed_password, email))
+                cursor.execute("INSERT INTO users (username, password, email, points) VALUES (?, ?, ?, 80.0)", (username, hashed_password, email))
                 conn.commit()
                 create_user_table_if_not_exists(username, main_blueprint.prompt_db)
         except Exception as e:
@@ -207,11 +215,40 @@ def create_main_blueprint(
             session["session_token"] = token
             ua = request.headers.get("User-Agent")
             ip = request.headers.get("X-Forwarded-For", request.remote_addr)
+
+            # Prepare default response data
+            response_data = {"success": True, "redirect": url_for("main.home")}
+
             try:
                 create_session_record(main_blueprint.user_db, username, token, ua, ip)
+
+                # Initialize achievements system if not already done
+                initialize_achievements(main_blueprint.user_db)
+
+                # Process daily login bonus with retry logic
+                try:
+                    daily_bonus = process_daily_login_bonus(main_blueprint.user_db, username)
+                    if daily_bonus > 0:
+                        response_data["daily_bonus"] = daily_bonus
+                except Exception as e:
+                    logger.exception("Failed to process daily login bonus, continuing without it")
+                    daily_bonus = 0
+
+                # Check for new achievements and get notifications
+                try:
+                    newly_unlocked, achievement_points = check_and_award_achievements(
+                        main_blueprint.user_db, username, main_blueprint.prompt_db, main_blueprint.community_db
+                    )
+                    if newly_unlocked:
+                        response_data["new_achievements"] = newly_unlocked
+                        response_data["achievement_points"] = achievement_points
+                except Exception as e:
+                    logger.exception("Failed to check achievements, continuing without them")
+
             except Exception:
-                logger.exception("Failed to create session record")
-            return jsonify({"success": True, "redirect": url_for("main.home")})
+                logger.exception("Failed to create session record or process login bonuses")
+
+            return jsonify(response_data)
 
         return jsonify({"success": False, "error": "Invalid username or password. Please try again."}), 401
 
@@ -230,12 +267,22 @@ def create_main_blueprint(
     @main_blueprint.route("/home")
     @required_login
     def home():
-        return render_template("index.html")
+        username = session["username"]
+        try:
+            current_points = get_user_points(main_blueprint.user_db, username)
+        except Exception:
+            current_points = 80.0  # Default fallback
+        return render_template("index.html", current_user_points=current_points)
 
     @main_blueprint.route("/mylib")
     @required_login
     def mylib():
         username = session["username"]
+        try:
+            current_points = get_user_points(main_blueprint.user_db, username)
+        except Exception:
+            current_points = 80.0  # Default fallback
+
         conn = get_db_connection(main_blueprint.prompt_db)
         cursor = conn.cursor()
 
@@ -250,7 +297,7 @@ def create_main_blueprint(
             saved_prompts = []
 
         conn.close()
-        return render_template("prompts/lib/personal.html", saved_prompts=saved_prompts, title="My Library")
+        return render_template("prompts/lib/personal.html", saved_prompts=saved_prompts, title="My Library", current_user_points=current_points)
 
     @main_blueprint.route("/save_edit", methods=["POST"])
     @required_login
@@ -365,6 +412,9 @@ def create_main_blueprint(
                     (owner, random_val, title, prompt_text),
                 )
                 conn.commit()
+
+            # Reward user with 1 point for sharing
+            add_user_points(main_blueprint.user_db, owner, 1.0)
         except Exception as e:
             logger.exception("Error sharing prompt")
             return jsonify({"success": False, "error": "Internal server error."}), 500
@@ -386,6 +436,9 @@ def create_main_blueprint(
                     (owner, prompt_id),
                 )
                 conn.commit()
+
+            # Deduct 1 point for unsharing
+            deduct_user_points(main_blueprint.user_db, owner, 1.0)
         except Exception as e:
             logger.exception("Error unsharing prompt")
             return jsonify({"success": False, "error": "Internal server error."}), 500
@@ -407,6 +460,12 @@ def create_main_blueprint(
     @main_blueprint.route("/library")
     @required_login
     def library():
+        username = session["username"]
+        try:
+            current_points = get_user_points(main_blueprint.user_db, username)
+        except Exception:
+            current_points = 80.0  # Default fallback
+
         try:
             with get_db_connection(main_blueprint.query_db) as conn:
                 cursor = conn.cursor()
@@ -430,6 +489,7 @@ def create_main_blueprint(
             "prompts/lib/community.html",
             system_prompts=system_prompts,
             shared_prompts=shared_prompts,
+            current_user_points=current_points,
         )
 
     @main_blueprint.route("/profile", methods=["GET", "POST"])
@@ -518,7 +578,31 @@ def create_main_blueprint(
                 f'SELECT random_val AS prompt_id, title, prompt, time FROM "{username}" '
                 'ORDER BY time DESC LIMIT 5'
             )
-            saved_prompts = cursor.fetchall()
+            raw_saved_prompts = cursor.fetchall()
+
+        # Add sharing status to each saved prompt
+        saved_prompts = []
+        for prompt in raw_saved_prompts:
+            prompt_id = prompt[0]
+            title = prompt[1]
+            content = prompt[2]
+            time = prompt[3]
+
+            sharing_status = get_prompt_sharing_status(
+                username, prompt_id, title, content,
+                main_blueprint.prompt_db, main_blueprint.community_db
+            )
+
+            # Create enhanced prompt object with sharing status
+            enhanced_prompt = {
+                'prompt_id': prompt_id,
+                'title': title,
+                'prompt': content,
+                'time': time,
+                'is_shared': sharing_status['is_shared'],
+                'needs_update': sharing_status['needs_update']
+            }
+            saved_prompts.append(enhanced_prompt)
         with get_db_connection(main_blueprint.community_db) as conn:
             cursor = conn.cursor()
             # Fetch shared prompt ID, title, content, and timestamp
@@ -552,6 +636,20 @@ def create_main_blueprint(
         except Exception:
             logger.exception("Failed to get or set user identicon value")
 
+        # Get user points
+        current_points = None
+        try:
+            current_points = get_user_points(main_blueprint.user_db, username)
+        except Exception:
+            logger.exception("Failed to get user points")
+
+        # Get user achievements
+        user_achievements = []
+        try:
+            user_achievements = get_user_achievements(main_blueprint.user_db, username)
+        except Exception:
+            logger.exception("Failed to get user achievements")
+
         return render_template(
             "account/profile.html",
             error=error,
@@ -562,6 +660,8 @@ def create_main_blueprint(
             email=email_value,
             current_token=session.get("session_token"),
             identicon_value=identicon_value,
+            current_points=current_points,
+            user_achievements=user_achievements,
         )
 
     @main_blueprint.route("/delete_account", methods=["POST"])
@@ -615,27 +715,49 @@ def create_main_blueprint(
     @main_blueprint.route("/generate")
     @required_login
     def generate():
-        return render_template("prompts/generator/basic.html")
+        username = session["username"]
+        try:
+            current_points = get_user_points(main_blueprint.user_db, username)
+        except Exception:
+            current_points = 80.0  # Default fallback
+        return render_template("prompts/generator/basic.html", current_user_points=current_points)
 
     @main_blueprint.route("/generate/tprompt", methods=["POST"])
     @required_login
     def process():
         """Generate a text prompt using user input. Validates input and returns model response."""
         user_input = request.form.get("user_input", "").strip()
+        username = session["username"]
+        cost = 1.5  # Basic prompt cost
+
         if not user_input:
             return jsonify({"success": False, "error": "Input cannot be empty."}), 400
         if len(user_input) > 500:
             return jsonify({"success": False, "error": "Input is too long (max 500 characters)."}), 400
+
+        # Check if user has enough points
+        if not deduct_user_points(main_blueprint.user_db, username, cost):
+            current_points = get_user_points(main_blueprint.user_db, username)
+            return jsonify({"success": False, "error": f"Insufficient points. You need {cost} points but have {current_points}."}), 402
+
         try:
             response_text = model.generate_response("./instruction/basic1.txt", user_input)
-            return jsonify({"success": True, "response": response_text})
+            return response_text
         except Exception as e:
             logger.exception("Error generating prompt response")
-            return jsonify({"success": False, "error": "Failed to generate response."}), 500
+            return f"Error: {str(e)}"
 
     @main_blueprint.route("/generate/trandom", methods=["POST"])
     @required_login
     def random_prompt():
+        username = session["username"]
+        cost = 0.8  # Basic random prompt cost
+
+        # Check if user has enough points
+        if not deduct_user_points(main_blueprint.user_db, username, cost):
+            current_points = get_user_points(main_blueprint.user_db, username)
+            return jsonify({"success": False, "error": f"Insufficient points. You need {cost} points but have {current_points}."}), 402
+
         response_text = model.generate_random("./instruction/basic2.txt")
         return response_text
 
@@ -643,6 +765,14 @@ def create_main_blueprint(
     @required_login
     def vprocess():
         user_input = request.form["user_input"]
+        username = session["username"]
+        cost = 1.5  # Basic image prompt cost
+
+        # Check if user has enough points
+        if not deduct_user_points(main_blueprint.user_db, username, cost):
+            current_points = get_user_points(main_blueprint.user_db, username)
+            return jsonify({"success": False, "error": f"Insufficient points. You need {cost} points but have {current_points}."}), 402
+
         response_text = model.generate_imgdescription(
             "./instruction/image_styles.txt", user_input
         )
@@ -651,6 +781,14 @@ def create_main_blueprint(
     @main_blueprint.route("/generate/irandom", methods=["POST"])
     @required_login
     def vrandom_prompt():
+        username = session["username"]
+        cost = 0.8  # Basic random image prompt cost
+
+        # Check if user has enough points
+        if not deduct_user_points(main_blueprint.user_db, username, cost):
+            current_points = get_user_points(main_blueprint.user_db, username)
+            return jsonify({"success": False, "error": f"Insufficient points. You need {cost} points but have {current_points}."}), 402
+
         response_text = model.generate_vrandom("./instruction/image_styles.txt")
         return response_text
 
@@ -658,6 +796,14 @@ def create_main_blueprint(
     @required_login
     def reverse_image():
         try:
+            username = session["username"]
+            cost = 2.0  # Basic reverse image prompt cost
+
+            # Check if user has enough points
+            if not deduct_user_points(main_blueprint.user_db, username, cost):
+                current_points = get_user_points(main_blueprint.user_db, username)
+                return jsonify({"success": False, "error": f"Insufficient points. You need {cost} points but have {current_points}."}), 402
+
             image_file = request.files["image"]
             image_data = image_file.read()
             response_text = model.generate_visual(
@@ -671,12 +817,27 @@ def create_main_blueprint(
     @main_blueprint.route("/advance")
     @required_login
     def advance():
-        return render_template("prompts/generator/advance.html")
+        username = session["username"]
+        try:
+            current_points = get_user_points(main_blueprint.user_db, username)
+        except Exception:
+            current_points = 80.0  # Default fallback
+        return render_template("prompts/generator/advance.html", current_user_points=current_points)
 
     @main_blueprint.route("/advance/generate", methods=["POST"])
     @required_login
     def generate_advance_response():
         try:
+            username = session["username"]
+            # Advanced prompt cost varies based on prompt type (1.7-2.1)
+            # For now, use a fixed cost of 1.9
+            cost = 1.9
+
+            # Check if user has enough points
+            if not deduct_user_points(main_blueprint.user_db, username, cost):
+                current_points = get_user_points(main_blueprint.user_db, username)
+                return jsonify({"success": False, "error": f"Insufficient points. You need {cost} points but have {current_points}."}), 402
+
             parameters = [request.form[f"parameter{i}"] for i in range(4)]
             response_text = ai.response(*parameters, "./instruction/advance1.txt")
             return response_text
@@ -688,6 +849,16 @@ def create_main_blueprint(
     @required_login
     def generate_advance_iresponse():
         try:
+            username = session["username"]
+            # Advanced image prompt cost varies (1.8-2.0)
+            # For now, use a fixed cost of 1.9
+            cost = 1.9
+
+            # Check if user has enough points
+            if not deduct_user_points(main_blueprint.user_db, username, cost):
+                current_points = get_user_points(main_blueprint.user_db, username)
+                return jsonify({"success": False, "error": f"Insufficient points. You need {cost} points but have {current_points}."}), 402
+
             parameters = [request.form[f"parameter{i}"] for i in range(4)]
             response_text = ai.response(*parameters, "./instruction/advance2.txt")
             return response_text
@@ -699,6 +870,14 @@ def create_main_blueprint(
     @required_login
     def advance_image():
         try:
+            username = session["username"]
+            cost = 2.5  # Advanced reverse image prompt cost
+
+            # Check if user has enough points
+            if not deduct_user_points(main_blueprint.user_db, username, cost):
+                current_points = get_user_points(main_blueprint.user_db, username)
+                return jsonify({"success": False, "error": f"Insufficient points. You need {cost} points but have {current_points}."}), 402
+
             image_file = request.files["image"]
             image_data = image_file.read()
             parameters = [request.form[f"parameter{i}"] for i in range(1, 4)]
@@ -812,6 +991,18 @@ def create_main_blueprint(
         if not row:
             return jsonify({"success": False, "error": "Feedback not found"}), 404
         return jsonify({"id": feedback_id, "username": row[0], "feedback": row[1]})
+
+    @main_blueprint.route("/get_user_points")
+    @required_login
+    def get_user_points_route():
+        """Get current user points for AJAX requests."""
+        try:
+            username = session["username"]
+            points = get_user_points(main_blueprint.user_db, username)
+            return jsonify({"success": True, "points": points})
+        except Exception as e:
+            logger.exception("Error getting user points")
+            return jsonify({"success": False, "error": "Internal server error."}), 500
 
     @main_blueprint.route("/language/<language>")
     def set_language(language):

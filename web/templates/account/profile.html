@@ -6,163 +6,279 @@
   <p class="text-lg text-slate-600">{{ _('Manage your account and prompts.') }}</p>
 </div>
 
-<!-- User Profile Picture Section -->
-<div class="flex justify-center mb-8">
-  <div class="text-center">
-    <div class="relative inline-block">
-      <svg width="120" height="120" data-jdenticon-value="{{ identicon_value or session.username }}" class="rounded-full border-4 border-white shadow-lg"></svg>
-      <div class="mt-4">
-        <h3 class="text-xl font-semibold text-slate-900">{{ session.username }}</h3>
-        <p class="text-slate-600">{{ _('Profile Picture') }}</p>
-        <button onclick="regenerateIdenticon('{{ session.username }}' + Math.random().toString(36).substring(7))"
-                class="mt-2 inline-flex items-center justify-center rounded-lg border border-violet-300 text-violet-700 px-3 py-1 text-sm hover:bg-violet-50 transition">
-          <i class="fas fa-refresh mr-1"></i>{{ _('Regenerate') }}
-        </button>
+
+<!-- Points and Profile Overview Section -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+  <!-- Profile Overview Card -->
+  <div class="lg:col-span-1">
+    <div class="mdc-card glass prompt-card p-6 text-center">
+      <div class="relative inline-block mb-4">
+        <svg width="100" height="100" data-jdenticon-value="{{ identicon_value or session.username }}" class="rounded-full border-3 border-white shadow-lg mx-auto"></svg>
+      </div>
+      <h3 class="text-xl font-semibold text-slate-900 mb-1">{{ session.username }}</h3>
+      <div class="text-center">
+        <div class="inline-flex items-center justify-center space-x-2 bg-yellow-50 px-4 py-2 rounded-full">
+          <i class="fas fa-coins text-yellow-500"></i>
+          <span class="text-sm font-medium text-slate-900">{{ "%.1f"|format(current_points or 80.0) }} {{ _('pts') }}</span>
+        </div>
+        <p class="text-xs text-slate-500 mt-1">{{ _('Available Points') }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Stats Cards -->
+  <div class="lg:col-span-2">
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 h-full">
+      <!-- Total Prompts -->
+      <div class="mdc-card glass prompt-card p-4 text-center flex flex-col justify-center">
+        <i class="fas fa-edit text-blue-500 text-2xl mb-2"></i>
+        <div class="text-2xl font-bold text-slate-900">{{ (saved_prompts|length + shared_prompts|length) }}</div>
+        <div class="text-xs text-slate-600 uppercase tracking-wide">{{ _('Total Prompts') }}</div>
+      </div>
+
+      <!-- Achievements -->
+      <div class="mdc-card glass prompt-card p-4 text-center flex flex-col justify-center">
+        <i class="fas fa-trophy text-yellow-500 text-2xl mb-2"></i>
+        <div class="text-2xl font-bold text-slate-900">{{ user_achievements|length }}</div>
+        <div class="text-xs text-slate-600 uppercase tracking-wide">{{ _('Achievements') }}</div>
+      </div>
+
+      <!-- Sessions -->
+      <div class="mdc-card glass prompt-card p-4 text-center flex flex-col justify-center">
+        <i class="fas fa-shield-alt text-purple-500 text-2xl mb-2"></i>
+        <div class="text-2xl font-bold text-slate-900">{{ sessions|length }}</div>
+        <div class="text-xs text-slate-600 uppercase tracking-wide">{{ _('Active Sessions') }}</div>
       </div>
     </div>
   </div>
 </div>
-<div class="mdc-layout-grid" role="region" aria-labelledby="page-heading">
-  <div class="mdc-layout-grid__inner">
-    <!-- Settings Card -->
-    <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12 mdc-layout-grid__cell--span-4-desktop mb-6" role="region" aria-labelledby="settings-heading">
-      <div class="mdc-card glass prompt-card">
-        <div class="mdc-card__primary-action p-6" tabindex="0">
-          <h2 id="settings-heading" class="text-2xl font-semibold text-slate-900 mb-4 flex items-center space-x-2">
-            <i class="fas fa-cog fa-lg text-blue-400"></i>
-            <span>{{ _('Settings') }}</span>
-          </h2>
-          <p class="text-slate-700 mb-4">{{ _('Current username:') }} <span class="font-mono text-slate-900">{{ session.username }}</span></p>
-          {% if error %}<div class="text-red-400 mb-4" role="alert">{{ error }}</div>{% endif %}
-          {% if success %}<div class="text-green-400 mb-4" role="status">{{ success }}</div>{% endif %}
-          <form action="{{ url_for('main.profile') }}" method="post" class="space-y-4" role="form" aria-labelledby="update-password-heading">
-            <h3 id="update-password-heading" class="sr-only">Update Password Form</h3>
-            <input type="hidden" name="action" value="change_password">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-            <div><label for="old_password" class="block text-slate-700">{{ _('Old Password') }}</label><input type="password" id="old_password" name="old_password" class="w-full p-3 rounded-xl bg-white/70 border border-white/40 text-slate-800 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-purple/40" required></div>
-            <div><label for="new_password" class="block text-slate-700">{{ _('New Password') }}</label><input type="password" id="new_password" name="new_password" class="w-full p-3 rounded-xl bg-white/70 border border-white/40 text-slate-800 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-purple/40" required></div>
-            <div><label for="confirm_password" class="block text-slate-700">{{ _('Confirm Password') }}</label><input type="password" id="confirm_password" name="confirm_password" class="w-full p-3 rounded-xl bg-white/70 border border-white/40 text-slate-800 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-purple/40" required></div>
-            <button class="w-full inline-flex items-center justify-center rounded-xl bg-violet-400 text-white px-4 py-3 shadow hover:bg-violet-500 transition" type="submit"><span>{{ _('Update Password') }}</span></button>
-          </form>
 
-          <form action="{{ url_for('main.profile') }}" method="post" class="space-y-4 mt-6" role="form" aria-labelledby="update-email-heading">
-            <h3 id="update-email-heading" class="sr-only">Update Email Form</h3>
-            <input type="hidden" name="action" value="update_email">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-            <div>
-              <label for="email" class="block text-slate-700">{{ _('Email (optional)') }}</label>
-              <input type="email" id="email" name="email" value="{{ email or '' }}" placeholder="you@example.com" class="w-full p-3 rounded-xl bg-white/70 border border-white/40 text-slate-800 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-purple/40">
-            </div>
-            <button class="w-full inline-flex items-center justify-center rounded-xl border border-violet-300 text-violet-700 px-4 py-3 hover:bg-violet-50 transition" type="submit"><span>{{ _('Update Email') }}</span></button>
-          </form>
+<!-- Main Content Grid -->
+<div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
+  <!-- Left Column - Settings & Security -->
+  <div class="xl:col-span-1 space-y-6">
+    <!-- Account Settings Card -->
+    <div class="mdc-card glass prompt-card">
+      <div class="p-6">
+        <h2 class="text-xl font-semibold text-slate-900 mb-4 flex items-center space-x-2">
+          <i class="fas fa-cog text-blue-500"></i>
+          <span>{{ _('Account Settings') }}</span>
+        </h2>
+        <p class="text-slate-600 mb-6">{{ _('Current username:') }} <span class="font-mono text-slate-900">{{ session.username }}</span></p>
 
-          <form action="{{ url_for('main.profile') }}" method="post" class="space-y-4 mt-6" role="form" aria-labelledby="update-username-heading">
-            <h3 id="update-username-heading" class="sr-only">Change Username Form</h3>
-            <input type="hidden" name="action" value="change_username">
+        {% if error %}<div class="text-red-500 mb-4 p-3 bg-red-50 rounded-lg" role="alert">{{ error }}</div>{% endif %}
+        {% if success %}<div class="text-green-500 mb-4 p-3 bg-green-50 rounded-lg" role="status">{{ success }}</div>{% endif %}
+
+        <!-- Change Password -->
+        <form action="{{ url_for('main.profile') }}" method="post" class="mb-6">
+          <h3 class="font-medium text-slate-900 mb-3">{{ _('Change Password') }}</h3>
+          <input type="hidden" name="action" value="change_password">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <div class="space-y-3">
+            <input type="password" id="old_password" name="old_password" placeholder="{{ _('Current password') }}" class="w-full p-3 rounded-lg bg-slate-50 border border-slate-200 text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-violet-500">
+            <input type="password" id="new_password" name="new_password" placeholder="{{ _('New password') }}" class="w-full p-3 rounded-lg bg-slate-50 border border-slate-200 text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-violet-500">
+            <input type="password" id="confirm_password" name="confirm_password" placeholder="{{ _('Confirm new password') }}" class="w-full p-3 rounded-lg bg-slate-50 border border-slate-200 text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-violet-500">
+            <button class="w-full bg-violet-500 text-white px-4 py-2 rounded-lg hover:bg-violet-600 transition-colors" type="submit">{{ _('Update Password') }}</button>
+          </div>
+        </form>
+
+        <!-- Update Email -->
+        <form action="{{ url_for('main.profile') }}" method="post" class="mb-6">
+          <h3 class="font-medium text-slate-900 mb-3">{{ _('Update Email') }}</h3>
+          <input type="hidden" name="action" value="update_email">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <div class="space-y-3">
+            <input type="email" id="email" name="email" value="{{ email or '' }}" placeholder="{{ _('your@email.com') }}" class="w-full p-3 rounded-lg bg-slate-50 border border-slate-200 text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-violet-500">
+            <button class="w-full bg-slate-500 text-white px-4 py-2 rounded-lg hover:bg-slate-600 transition-colors" type="submit">{{ _('Update Email') }}</button>
+          </div>
+        </form>
+
+        <!-- Change Username -->
+        <form action="{{ url_for('main.profile') }}" method="post" class="mb-6">
+          <h3 class="font-medium text-slate-900 mb-3">{{ _('Change Username') }}</h3>
+          <input type="hidden" name="action" value="change_username">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <div class="space-y-3">
+            <input type="text" id="new_username" name="new_username" placeholder="{{ _('New username') }}" minlength="3" maxlength="32" pattern="[A-Za-z0-9_]+" class="w-full p-3 rounded-lg bg-slate-50 border border-slate-200 text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-violet-500">
+            <p class="text-xs text-slate-500">{{ _('Only letters, numbers and underscores. 3–32 chars.') }}</p>
+            <button class="w-full bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors" type="submit">{{ _('Change Username') }}</button>
+          </div>
+        </form>
+
+        <!-- Danger Zone -->
+        <div class="border-t border-slate-200 pt-6">
+          <h3 class="font-medium text-red-600 mb-3">{{ _('Danger Zone') }}</h3>
+          <form action="{{ url_for('main.delete_account') }}" method="post" onsubmit="return confirm('Are you sure? This cannot be undone.');">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-            <div>
-              <label for="new_username" class="block text-slate-700">{{ _('Change Username') }}</label>
-              <input type="text" id="new_username" name="new_username" placeholder="New username" minlength="3" maxlength="32" pattern="[A-Za-z0-9_]+" class="w-full p-3 rounded-xl bg-white/70 border border-white/40 text-slate-800 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-purple/40">
-              <p class="text-xs text-slate-500 mt-1">{{ _('Only letters, numbers and underscores. 3–32 chars.') }}</p>
-            </div>
-            <button class="w-full inline-flex items-center justify-center rounded-xl border border-violet-300 text-violet-700 px-4 py-3 hover:bg-violet-50 transition" type="submit"><span>{{ _('Change Username') }}</span></button>
-          </form>
-          <form action="{{ url_for('main.delete_account') }}" method="post" onsubmit="return confirm('Are you sure? This cannot be undone.');" class="mt-4" role="form" aria-labelledby="delete-account-heading">
-            <h3 id="delete-account-heading" class="sr-only">Delete Account Form</h3>
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-            <button class="w-full inline-flex items-center justify-center rounded-xl border border-red-300 text-red-600 px-4 py-3 hover:bg-red-50 transition" type="submit"><span>{{ _('Delete Account') }}</span></button>
+            <button class="w-full bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors" type="submit">{{ _('Delete Account') }}</button>
           </form>
         </div>
       </div>
     </div>
+
+    <!-- Security Sessions Card -->
+    <div class="mdc-card glass prompt-card">
+      <div class="p-6">
+        <h2 class="text-xl font-semibold text-slate-900 mb-4 flex items-center space-x-2">
+          <i class="fas fa-shield-alt text-purple-500"></i>
+          <span>{{ _('Active Sessions') }}</span>
+        </h2>
+        {% if sessions %}
+        <div class="space-y-3">
+          {% for s in sessions %}
+          <div class="flex justify-between items-center p-3 bg-slate-50 rounded-lg">
+            <div class="flex-1 min-w-0">
+              <p class="text-slate-900 text-sm truncate">{{ s.user_agent or 'Unknown device' }}</p>
+              <p class="text-slate-500 text-xs">{{ s.ip or 'N/A' }} • {{ s.last_active or s.created_at }}</p>
+            </div>
+            <div class="flex items-center space-x-2">
+              {% if not s.revoked %}
+              {% if s.token == current_token %}
+              <span class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">{{ _('Current') }}</span>
+              {% else %}
+              <form method="post" action="{{ url_for('main.revoke_a_session') }}" onsubmit="return confirm('Revoke this session?');" class="inline">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="hidden" name="token" value="{{ s.token }}">
+                <button class="text-xs bg-red-100 text-red-700 px-2 py-1 rounded hover:bg-red-200 transition-colors" type="submit">{{ _('Revoke') }}</button>
+              </form>
+              {% endif %}
+              {% else %}
+              <span class="text-xs bg-slate-100 text-slate-500 px-2 py-1 rounded-full">{{ _('Revoked') }}</span>
+              {% endif %}
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+        <p class="text-slate-500 text-center py-4">{{ _('No active sessions.') }}</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Middle Column - Prompts -->
+  <div class="xl:col-span-2 space-y-6">
     <!-- Saved Prompts Card -->
-    <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12 mdc-layout-grid__cell--span-4-desktop mb-6" role="region" aria-labelledby="saved-prompts-heading">
-      <div class="mdc-card glass prompt-card">
-        <div class="mdc-card__primary-action p-6" tabindex="0">
-          <h2 id="saved-prompts-heading" class="text-2xl font-semibold text-slate-900 mb-4 flex items-center space-x-2">
-            <i class="fas fa-bookmark fa-lg text-green-400"></i>
-            <span>{{ _('Saved Prompts') }}</span>
-          </h2>
-          {% if saved_prompts %}
-          <ul class="divide-y divide-gray-700 space-y-2" role="list">
-            {% for pr in saved_prompts %}
-            <li class="flex justify-between items-center py-2" role="listitem">
-              <div><p class="text-slate-900">{{ pr['title'] }}</p><p class="text-slate-500 text-sm">{{ pr['time'] }}</p></div>
-              <div class="space-x-2">
-                <button class="mdc-button mdc-button--text see-button" data-title="{{ pr['title']|e }}" data-content="{{ pr['prompt']|e }}" aria-label="{{ _('View') }} {{ pr['title'] }}">{{ _('View') }}</button>
-                <button class="mdc-button mdc-button--text text-red-400 delete-button" data-prompt-id="{{ pr['prompt_id'] }}" aria-label="{{ _('Delete') }} {{ pr['title'] }}">{{ _('Delete') }}</button>
+    <div class="mdc-card glass prompt-card">
+      <div class="p-6">
+        <h2 class="text-xl font-semibold text-slate-900 mb-4 flex items-center space-x-2">
+          <i class="fas fa-bookmark text-green-500"></i>
+          <span>{{ _('My Saved Prompts') }}</span>
+          <span class="text-sm font-normal text-slate-500">({{ saved_prompts|length }})</span>
+        </h2>
+        {% if saved_prompts %}
+        <div class="grid gap-3">
+          {% for pr in saved_prompts %}
+          <div class="p-4 bg-slate-50 rounded-lg border border-slate-200">
+            <div class="flex justify-between items-start mb-2">
+              <div>
+                <h4 class="font-medium text-slate-900">{{ pr['title'] }}</h4>
+                <p class="text-xs text-slate-500">{{ pr['time'] }}</p>
               </div>
-            </li>
-            {% endfor %}
-          </ul>
-          {% else %}<p class="text-gray-400">{{ _('No saved prompts yet.') }}</p>{% endif %}
-        </div>
-      </div>
-    </div>
-    <!-- Shared Prompts Card -->
-    <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12 mdc-layout-grid__cell--span-4-desktop mb-6" role="region" aria-labelledby="shared-prompts-heading">
-      <div class="mdc-card glass prompt-card">
-        <div class="mdc-card__primary-action p-6" tabindex="0">
-          <h2 id="shared-prompts-heading" class="text-2xl font-semibold text-slate-900 mb-4 flex items-center space-x-2">
-            <i class="fas fa-share-alt fa-lg text-yellow-400"></i>
-            <span>{{ _('Shared Prompts') }}</span>
-          </h2>
-          {% if shared_prompts %}
-          <ul class="divide-y divide-gray-700 space-y-2" role="list">
-            {% for pr in shared_prompts %}
-            <li class="flex justify-between items-center py-2" role="listitem">
-              <div><p class="text-slate-900">{{ pr['title'] }}</p><p class="text-slate-500 text-sm">{{ pr['time'] }}</p></div>
-              <div class="space-x-2">
-                <button class="mdc-button mdc-button--text see-button" data-title="{{ pr['title']|e }}" data-content="{{ pr['prompt']|e }}" aria-label="{{ _('View') }} {{ pr['title'] }}">{{ _('View') }}</button>
-                <button class="mdc-button mdc-button--text text-red-400 unshare-button" data-prompt-id="{{ pr['prompt_id'] }}" aria-label="{{ _('Unshare') }} {{ pr['title'] }}">{{ _('Unshare') }}</button>
+              <div class="flex space-x-2">
+                <button class="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded hover:bg-blue-200 transition-colors see-button" data-title="{{ pr['title']|e }}" data-content="{{ pr['prompt']|e }}" aria-label="{{ _('View') }} {{ pr['title'] }}">{{ _('View') }}</button>
+                {% if pr['is_shared'] %}
+                  {% if pr['needs_update'] %}
+                    <button class="text-xs bg-yellow-100 text-yellow-700 px-2 py-1 rounded hover:bg-yellow-200 transition-colors update-shared-button" data-prompt-id="{{ pr['prompt_id'] }}" data-title="{{ pr['title']|e }}" data-content="{{ pr['prompt']|e }}" aria-label="{{ _('Update Shared') }} {{ pr['title'] }}">{{ _('Update Shared') }}</button>
+                  {% else %}
+                    <button class="text-xs bg-red-100 text-red-700 px-2 py-1 rounded hover:bg-red-200 transition-colors unshare-button" data-prompt-id="{{ pr['prompt_id'] }}" aria-label="{{ _('Unshare') }} {{ pr['title'] }}">{{ _('Unshare') }}</button>
+                  {% endif %}
+                {% else %}
+                  <button class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded hover:bg-green-200 transition-colors share-button" data-prompt-id="{{ pr['prompt_id'] }}" data-title="{{ pr['title']|e }}" data-content="{{ pr['prompt']|e }}" aria-label="{{ _('Share') }} {{ pr['title'] }}">{{ _('Share') }}</button>
+                {% endif %}
+                <button class="text-xs bg-red-100 text-red-700 px-2 py-1 rounded hover:bg-red-200 transition-colors delete-button" data-prompt-id="{{ pr['prompt_id'] }}" aria-label="{{ _('Delete') }} {{ pr['title'] }}">{{ _('Delete') }}</button>
               </div>
-            </li>
-            {% endfor %}
-          </ul>
-          {% else %}<p class="text-gray-400">{{ _('No shared prompts yet.') }}</p>{% endif %}
+            </div>
+          </div>
+          {% endfor %}
         </div>
+        {% else %}
+        <div class="text-center py-8">
+          <i class="fas fa-inbox text-slate-300 text-3xl mb-3"></i>
+          <p class="text-slate-500">{{ _('No saved prompts yet.') }}</p>
+          <p class="text-slate-400 text-sm mt-1">{{ _('Start creating prompts to see them here!') }}</p>
+        </div>
+        {% endif %}
       </div>
     </div>
 
-    <!-- Sessions Card -->
-    <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12 mdc-layout-grid__cell--span-4-desktop mb-6" role="region" aria-labelledby="sessions-heading">
-      <div class="mdc-card glass prompt-card">
-        <div class="mdc-card__primary-action p-6" tabindex="0">
-          <h2 id="sessions-heading" class="text-2xl font-semibold text-slate-900 mb-4 flex items-center space-x-2">
-            <i class="fas fa-shield-alt fa-lg text-purple-400"></i>
-            <span>{{ _('Sessions') }}</span>
-          </h2>
-          {% if sessions %}
-          <ul class="divide-y divide-gray-700 space-y-2" role="list">
-            {% for s in sessions %}
-            <li class="flex justify-between items-center py-2" role="listitem">
+    <!-- Shared Prompts Card -->
+    <div class="mdc-card glass prompt-card">
+      <div class="p-6">
+        <h2 class="text-xl font-semibold text-slate-900 mb-4 flex items-center space-x-2">
+          <i class="fas fa-share-alt text-orange-500"></i>
+          <span>{{ _('Shared Prompts') }}</span>
+          <span class="text-sm font-normal text-slate-500">({{ shared_prompts|length }})</span>
+        </h2>
+        {% if shared_prompts %}
+        <div class="grid gap-3">
+          {% for pr in shared_prompts %}
+          <div class="p-4 bg-orange-50 rounded-lg border border-orange-200">
+            <div class="flex justify-between items-start mb-2">
               <div>
-                <p class="text-slate-900 text-sm truncate max-w-[20rem]">{{ s.user_agent or 'Unknown device' }}</p>
-                <p class="text-slate-500 text-xs">{{ s.ip or 'N/A' }} • {{ s.last_active or s.created_at }}</p>
+                <h4 class="font-medium text-slate-900">{{ pr['title'] }}</h4>
+                <p class="text-xs text-slate-500">{{ pr['time'] }}</p>
               </div>
-              <div class="space-x-2">
-                {% if not s.revoked %}
-                {% if s.token == current_token %}
-                <span class="text-xs text-green-500">{{ _('Current') }}</span>
-                {% else %}
-                <form method="post" action="{{ url_for('main.revoke_a_session') }}" onsubmit="return confirm('Revoke this session?');" class="inline">
-                  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                  <input type="hidden" name="token" value="{{ s.token }}">
-                  <button class="mdc-button mdc-button--text text-red-400" type="submit">{{ _('Revoke') }}</button>
-                </form>
-                {% endif %}
-                {% else %}
-                <span class="text-xs text-slate-400">{{ _('Revoked') }}</span>
-                {% endif %}
+              <div class="flex space-x-2">
+                <button class="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded hover:bg-blue-200 transition-colors see-button" data-title="{{ pr['title']|e }}" data-content="{{ pr['prompt']|e }}" aria-label="{{ _('View') }} {{ pr['title'] }}">{{ _('View') }}</button>
+                <button class="text-xs bg-red-100 text-red-700 px-2 py-1 rounded hover:bg-red-200 transition-colors unshare-button" data-prompt-id="{{ pr['prompt_id'] }}" aria-label="{{ _('Unshare') }} {{ pr['title'] }}">{{ _('Unshare') }}</button>
               </div>
-            </li>
-            {% endfor %}
-          </ul>
-          {% else %}
-          <p class="text-gray-400">{{ _('No sessions.') }}</p>
-          {% endif %}
+            </div>
+          </div>
+          {% endfor %}
         </div>
+        {% else %}
+        <div class="text-center py-8">
+          <i class="fas fa-users text-slate-300 text-3xl mb-3"></i>
+          <p class="text-slate-500">{{ _('No shared prompts yet.') }}</p>
+          <p class="text-slate-400 text-sm mt-1">{{ _('Share your prompts to help the community!') }}</p>
+        </div>
+        {% endif %}
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- Achievements Section (Full Width) -->
+<div class="mt-8">
+  <div class="mdc-card glass prompt-card">
+    <div class="p-6">
+      <h2 class="text-xl font-semibold text-slate-900 mb-6 flex items-center space-x-2">
+        <i class="fas fa-trophy text-yellow-500"></i>
+        <span>{{ _('Achievements') }}</span>
+        <span class="text-sm font-normal text-slate-500">({{ user_achievements|length }} {{ _('unlocked') }})</span>
+      </h2>
+
+      {% if user_achievements %}
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {% for achievement in user_achievements %}
+        <div class="bg-gradient-to-br from-yellow-50 to-amber-50 p-4 rounded-lg border border-yellow-200 hover:shadow-md transition-shadow">
+          <div class="flex items-start space-x-3">
+            <div class="flex-shrink-0">
+              <div class="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center">
+                <i class="{{ achievement[3] }} text-yellow-600"></i>
+              </div>
+            </div>
+            <div class="flex-grow min-w-0">
+              <h4 class="font-semibold text-slate-900 mb-1">{{ achievement[1] }}</h4>
+              <p class="text-sm text-slate-600 mb-2">{{ achievement[2] }}</p>
+              <div class="flex items-center justify-between">
+                <span class="text-xs bg-yellow-200 text-yellow-800 px-2 py-1 rounded-full">{{ achievement[5] }}</span>
+                <span class="text-xs text-slate-500">+{{ achievement[4] }} pts</span>
+              </div>
+              <p class="text-xs text-slate-500 mt-1">{{ _('Unlocked') }} {{ achievement[6] }}</p>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="text-center py-12">
+        <i class="fas fa-medal text-slate-300 text-4xl mb-4"></i>
+        <p class="text-slate-500 mb-2">{{ _('No achievements yet!') }}</p>
+        <p class="text-slate-400 text-sm">{{ _('Start generating and sharing prompts to earn your first achievement!') }}</p>
+      </div>
+      {% endif %}
     </div>
   </div>
 </div>

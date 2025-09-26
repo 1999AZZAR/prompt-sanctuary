@@ -18,19 +18,43 @@ function submitForm(formId, url) {
         headers: window.CSRF.getFormHeaders(),
         body: formData
     })
-    .then(response => response.text()) // Assuming text response for prompt generation
-    .then(result => {
-        console.log('Response from server:', result);
+    .then(response => {
+        // Check if the response is JSON (for error responses) or plain text (for successful responses)
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+            return response.json().then(data => ({ response, data }));
+        } else {
+            return response.text().then(text => ({ response, text }));
+        }
+    })
+    .then(({ response, data, text }) => {
+        // Handle error responses (JSON format)
+        if (data && !data.success) {
+            if (response.status === 402) {
+                showToast("Insufficient points! Visit your profile to see your current balance.", 'warning');
+                return;
+            } else {
+                showToast(data.error || "An error occurred while generating the response.", 'error');
+                return;
+            }
+        }
+
+        // Handle successful responses (plain text)
+        const result = data ? data.response : text;
+
+        // Clean the response to remove any formatting artifacts
+        const cleanedResult = cleanResponse(result);
+        console.log('Cleaned response from server:', cleanedResult);
 
         // Update result section with safe rendered markdown and code highlight
         const resultSection = document.getElementById('resultSection');
         const responseContainer = document.getElementById('response');
         if (resultSection && responseContainer) {
-            if (result && result.trim() !== '') {
+            if (cleanedResult && cleanedResult.trim() !== '') {
                 resultSection.classList.remove('hidden');
 
                 // Normalize fenced code blocks for Prism
-                const normalized = normalizeFences(result);
+                const normalized = normalizeFences(cleanedResult);
                 // Render markdown
                 const rendered = marked.parse(normalized, { mangle: false, headerIds: false });
                 const safeHtml = DOMPurify.sanitize(rendered, { USE_PROFILES: { html: true } });
@@ -70,13 +94,75 @@ function submitForm(formId, url) {
     })
     .catch(error => {
         console.error('Error submitting form:', error);
-        showToast("An error occurred while submitting the form.", 'error'); 
+        showToast("An error occurred while submitting the form.", 'error');
     })
     .finally(() => {
         // hideGlobalLoader(); // No longer using global loader here
-        if (loading) loading.classList.add('hidden'); 
+        if (loading) loading.classList.add('hidden');
         blurBackground(false); // Restore blur removal
+        updateUserPoints(); // Update points display after generation
     });
+}
+
+// Function to clean and parse the server response
+function cleanResponse(text) {
+    if (!text) return '';
+
+    // Remove any JSON-like formatting that might have been accidentally included
+    try {
+        // Check if the response looks like JSON (starts with { and ends with })
+        if (text.trim().startsWith('{') && text.trim().endsWith('}')) {
+            const parsed = JSON.parse(text);
+            // If it's a proper JSON response, extract the actual content
+            if (parsed.response) {
+                text = parsed.response;
+            } else if (parsed.success === true && parsed.response) {
+                text = parsed.response;
+            } else if (typeof parsed === 'string') {
+                text = parsed;
+            }
+        }
+    } catch (e) {
+        // Not valid JSON, continue with text processing
+    }
+
+    // Clean up formatting artifacts while preserving markdown structure
+    let cleaned = text
+        .replace(/\\n/g, '\n')  // Convert escaped newlines to actual newlines
+        .replace(/\\"/g, '"')   // Convert escaped quotes to actual quotes
+        .replace(/\\\\/g, '\\') // Convert escaped backslashes to actual backslashes
+        .replace(/\\t/g, '    ')  // Convert escaped tabs to 4 spaces (markdown code indent)
+        .replace(/&lt;/g, '<')  // Convert HTML entities back
+        .replace(/&gt;/g, '>')  // Convert HTML entities back
+        .replace(/&amp;/g, '&') // Convert HTML entities back
+        .trim();
+
+    // Normalize line endings for consistent markdown parsing
+    cleaned = cleaned.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+
+    // Fix non-standard markdown formatting
+    cleaned = cleaned
+        // Fix double hash with brackets: # # [Header] -> ## Header
+        .replace(/^# # \[([^\]]+)\]$/gm, '## $1')
+        // Convert square bracket headers to proper headers
+        .replace(/^\[([^\]]+)\]\*?$/gm, '## $1')
+        .replace(/^\[([^\]]+)\]$/gm, '### $1')
+        // Fix standalone asterisks that should be list markers
+        .replace(/^([^*]+)\*$/gm, '- $1')
+        // Fix indented content with spaces (convert to proper markdown)
+        .replace(/^(\s{4,})([^*:\n]+):$/gm, '    - $2:')
+        .replace(/^(\s{8,})([^*:\n]+):$/gm, '        - $2:')
+        .replace(/^(\s{12,})([^*:\n]+):$/gm, '            - $2:')
+        // Add spacing around headers if missing
+        .replace(/^(#+)([^\s])/gm, '$1 $2')
+        // Add spacing around list items if missing
+        .replace(/^([*-+])([^\s])/gm, '$1 $2')
+        // Ensure proper spacing around numbered lists
+        .replace(/^(\d+\.)([^\s])/gm, '$1 $2')
+        // Fix common markdown issues
+        .replace(/^\*([^*]+)\*$/gm, '**$1**');  // Convert *text* to **text**
+
+    return cleaned;
 }
 
 // Function to parse the server response
@@ -99,6 +185,26 @@ function escapeHtml(str) {
         .replace(/>/g, '&gt;')
         .replace(/"/g, '&quot;')
         .replace(/'/g, '&#039;');
+}
+
+// Function to update user points display
+function updateUserPoints() {
+    fetch('/get_user_points', {
+        method: 'GET',
+        headers: window.CSRF.getFormHeaders()
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success && data.points !== undefined) {
+            const pointsElement = document.getElementById('user-points');
+            if (pointsElement) {
+                pointsElement.textContent = parseFloat(data.points).toFixed(1);
+            }
+        }
+    })
+    .catch(error => {
+        console.error('Error updating user points:', error);
+    });
 }
 
 // Image input preview

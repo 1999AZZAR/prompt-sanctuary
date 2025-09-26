@@ -2,18 +2,26 @@ import os
 import secrets
 import time
 import re
+import logging
 from datetime import datetime
 from sqlite3 import connect, OperationalError, Row
 
 DATABASE_NAME = 'database/prompts.db'
 SHARED_PROMPTS_TABLE = 'shared_prompts'
 
+# Initialize logging
+logger = logging.getLogger(__name__)
+
 def get_db_connection(db_path):
     """Get a connection to the SQLite database with integrity enforced.
     Ensures the directory for the database exists before connecting.
+    Enables WAL mode for better concurrent access.
     """
     os.makedirs(os.path.dirname(db_path) or '.', exist_ok=True)
     conn = connect(db_path)
+    # Enable WAL mode for better concurrent access
+    conn.execute("PRAGMA journal_mode=WAL")
+    conn.execute("PRAGMA synchronous=NORMAL")
     conn.execute("PRAGMA foreign_keys = ON")
     conn.row_factory = Row
     return conn
@@ -29,17 +37,62 @@ def execute_sql(conn, sql, params=None):
     conn.commit()
 
 
+def enable_wal_mode(db_path):
+    """Enable WAL mode on an existing SQLite database."""
+    try:
+        conn = connect(db_path)
+        conn.execute("PRAGMA journal_mode=WAL")
+        conn.execute("PRAGMA synchronous=NORMAL")
+        conn.execute("PRAGMA foreign_keys = ON")
+        conn.commit()
+        conn.close()
+        logger.info(f"Enabled WAL mode for database: {db_path}")
+    except Exception as e:
+        logger.exception(f"Failed to enable WAL mode for database: {db_path}")
+
+
 def create_tables(user_db, prompt_db, community_db, feedback_db):
     """Create necessary tables in the databases."""
+    # Enable WAL mode on all databases
+    for db_path in [user_db, prompt_db, community_db, feedback_db]:
+        enable_wal_mode(db_path)
+
     tables = {
-        user_db: """
-            CREATE TABLE IF NOT EXISTS users (
+        user_db: [
+            """CREATE TABLE IF NOT EXISTS users (
                 username TEXT PRIMARY KEY,
-                password TEXT NOT NULL
-            );
-        """,
-        prompt_db: """
-            CREATE TABLE IF NOT EXISTS prompt_versions (
+                password TEXT NOT NULL,
+                points REAL DEFAULT 80.0
+            );""",
+            """CREATE TABLE IF NOT EXISTS achievements (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT UNIQUE NOT NULL,
+                description TEXT NOT NULL,
+                icon TEXT NOT NULL,
+                points_reward REAL NOT NULL,
+                category TEXT NOT NULL,
+                condition_type TEXT NOT NULL,
+                condition_value INTEGER,
+                hidden INTEGER DEFAULT 0
+            );""",
+            """CREATE TABLE IF NOT EXISTS user_achievements (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                username TEXT NOT NULL,
+                achievement_id INTEGER NOT NULL,
+                unlocked_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (achievement_id) REFERENCES achievements(id),
+                UNIQUE(username, achievement_id)
+            );""",
+            """CREATE TABLE IF NOT EXISTS user_logins (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                username TEXT NOT NULL,
+                login_date DATE NOT NULL,
+                points_awarded REAL DEFAULT 0,
+                UNIQUE(username, login_date)
+            );""",
+        ],
+        prompt_db: [
+            """CREATE TABLE IF NOT EXISTS prompt_versions (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 username TEXT NOT NULL,
                 prompt_id TEXT NOT NULL,
@@ -48,30 +101,31 @@ def create_tables(user_db, prompt_db, community_db, feedback_db):
                 prompt TEXT NOT NULL,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 UNIQUE(username, prompt_id, version_number)
-            );
-        """,
-        community_db: """
-            CREATE TABLE IF NOT EXISTS shared (
+            );""",
+        ],
+        community_db: [
+            """CREATE TABLE IF NOT EXISTS shared (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 owner TEXT NOT NULL,
                 random_val TEXT UNIQUE NOT NULL,
                 title TEXT NOT NULL,
                 prompt TEXT NOT NULL,
                 time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            );
-        """,
-        feedback_db: """
-            CREATE TABLE IF NOT EXISTS feedback (
+            );""",
+        ],
+        feedback_db: [
+            """CREATE TABLE IF NOT EXISTS feedback (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 username TEXT NOT NULL,
                 feedback TEXT NOT NULL
-            );
-        """,
+            );""",
+        ],
     }
 
-    for db_path, sql in tables.items():
+    for db_path, sql_statements in tables.items():
         with get_db_connection(db_path) as conn:
-            execute_sql(conn, sql)
+            for sql in sql_statements:
+                execute_sql(conn, sql)
 
     # Ensure prompt_versions schema is compatible with single-DB FKs (SQLite cannot FK across DB files)
     ensure_prompt_versions_schema(prompt_db)
@@ -219,6 +273,9 @@ def ensure_users_schema(user_db):
             conn.commit()
         if "identicon_value" not in cols:
             cursor.execute("ALTER TABLE users ADD COLUMN identicon_value TEXT")
+            conn.commit()
+        if "points" not in cols:
+            cursor.execute("ALTER TABLE users ADD COLUMN points REAL DEFAULT 80.0")
             conn.commit()
         # Create unique index on email if not exists (allows multiple NULLs in SQLite)
         cursor.execute(
@@ -509,3 +566,389 @@ def save_prompt_to_db(username, random_val, title, prompt_text, prompt_db):
         sql = f'INSERT INTO "{username}" (random_val, title, prompt) VALUES (?, ?, ?)'
         execute_sql(conn, sql, (random_val, title, prompt_text))
     return random_val
+
+
+def get_user_points(user_db, username: str) -> float:
+    """Get the current points for a user."""
+    max_retries = 3
+    for attempt in range(max_retries):
+        try:
+            with get_db_connection(user_db) as conn:
+                cursor = conn.cursor()
+                cursor.execute("SELECT points FROM users WHERE username = ?", (username,))
+                row = cursor.fetchone()
+                return row[0] if row else 80.0  # Default to 80 if user not found
+        except Exception as e:
+            if attempt < max_retries - 1:
+                time.sleep(0.1 * (attempt + 1))
+                continue
+            else:
+                logger.exception("Failed to get user points after retries")
+                return 80.0  # Return default on failure
+
+
+def update_user_points(user_db, username: str, points: float):
+    """Update a user's points."""
+    max_retries = 5  # Increased retries
+    for attempt in range(max_retries):
+        try:
+            with get_db_connection(user_db) as conn:
+                # Use immediate transaction mode for better concurrency
+                conn.execute("BEGIN IMMEDIATE")
+                cursor = conn.cursor()
+                cursor.execute("UPDATE users SET points = ? WHERE username = ?", (points, username))
+                conn.commit()
+            return  # Success, exit the function
+        except Exception as e:
+            logger.warning(f"Attempt {attempt + 1}/{max_retries} failed to update user points: {e}")
+            if attempt < max_retries - 1:
+                # Exponential backoff with jitter
+                delay = 0.1 * (2 ** attempt) + (0.05 * attempt)  # 0.1s, 0.2s, 0.4s, 0.8s, 1.6s
+                time.sleep(delay)
+                continue
+            else:
+                logger.exception("Failed to update user points after all retries")
+                raise e
+
+
+def deduct_user_points(user_db, username: str, cost: float) -> bool:
+    """Deduct points from a user if they have enough. Returns True if successful."""
+    current_points = get_user_points(user_db, username)
+    if current_points >= cost:
+        update_user_points(user_db, username, current_points - cost)
+        return True
+    return False
+
+
+def add_user_points(user_db, username: str, points: float):
+    """Add points to a user."""
+    current_points = get_user_points(user_db, username)
+    update_user_points(user_db, username, current_points + points)
+
+
+def get_prompt_sharing_status(username: str, prompt_id: str, title: str, prompt_content: str, prompt_db: str, community_db: str):
+    """Check if a prompt is shared and if it needs updating.
+
+    Returns:
+        dict with keys:
+        - is_shared: bool
+        - needs_update: bool (True if shared but content differs)
+        - shared_title: str (title in shared version, if different)
+        - shared_content: str (content in shared version, if different)
+    """
+    with get_db_connection(community_db) as conn:
+        cursor = conn.cursor()
+        cursor.execute(
+            "SELECT title, prompt FROM shared WHERE owner = ? AND random_val = ?",
+            (username, prompt_id)
+        )
+        shared_row = cursor.fetchone()
+
+    if not shared_row:
+        # Prompt is not shared
+        return {
+            'is_shared': False,
+            'needs_update': False,
+            'shared_title': None,
+            'shared_content': None
+        }
+
+    shared_title, shared_content = shared_row
+
+    # Check if content differs
+    title_changed = shared_title != title
+    content_changed = shared_content != prompt_content
+    needs_update = title_changed or content_changed
+
+    return {
+        'is_shared': True,
+        'needs_update': needs_update,
+        'shared_title': shared_title,
+        'shared_content': shared_content
+    }
+
+
+def initialize_achievements(user_db):
+    """Initialize the achievements table with default achievements."""
+    achievements = [
+        # Welcome achievements
+        ("Welcome!", "Create your first account", "fas fa-star", 10, "welcome", "first_login", 1, 0),
+        ("First Steps", "Generate your first prompt", "fas fa-baby", 5, "generation", "prompts_generated", 1, 0),
+        ("Collector", "Save your first prompt", "fas fa-bookmark", 5, "collection", "prompts_saved", 1, 0),
+        ("Community Member", "Share your first prompt", "fas fa-users", 10, "social", "prompts_shared", 1, 0),
+
+        # Progress achievements
+        ("Getting Started", "Generate 10 prompts", "fas fa-seedling", 15, "generation", "prompts_generated", 10, 0),
+        ("Dedicated", "Generate 50 prompts", "fas fa-fire", 25, "generation", "prompts_generated", 50, 0),
+        ("Prompt Master", "Generate 100 prompts", "fas fa-crown", 50, "generation", "prompts_generated", 100, 0),
+        ("Legendary Creator", "Generate 500 prompts", "fas fa-gem", 100, "generation", "prompts_generated", 500, 0),
+
+        ("Archivist", "Save 10 prompts", "fas fa-archive", 15, "collection", "prompts_saved", 10, 0),
+        ("Librarian", "Save 50 prompts", "fas fa-library", 25, "collection", "prompts_saved", 50, 0),
+        ("Master Archivist", "Save 100 prompts", "fas fa-university", 50, "collection", "prompts_saved", 100, 0),
+
+        ("Contributor", "Share 5 prompts", "fas fa-handshake", 20, "social", "prompts_shared", 5, 0),
+        ("Community Leader", "Share 25 prompts", "fas fa-crown", 40, "social", "prompts_shared", 25, 0),
+        ("Legendary Contributor", "Share 50 prompts", "fas fa-trophy", 75, "social", "prompts_shared", 50, 0),
+
+        # Special achievements
+        ("Explorer", "Try all prompt types", "fas fa-compass", 25, "special", "prompt_types_used", 6, 0),
+        ("Profile Complete", "Complete your profile", "fas fa-user-check", 15, "profile", "profile_completed", 1, 0),
+        ("Daily Visitor", "Login for 7 consecutive days", "fas fa-calendar-check", 30, "streak", "login_streak", 7, 0),
+        ("Weekly Warrior", "Login for 30 consecutive days", "fas fa-shield-alt", 75, "streak", "login_streak", 30, 0),
+        ("Monthly Master", "Login for 100 consecutive days", "fas fa-star-shield", 150, "streak", "login_streak", 100, 0),
+
+        # Hidden achievements
+        ("Early Adopter", "Be among the first 100 users", "fas fa-rocket", 100, "special", "user_rank", 100, 1),
+        ("Reverse Engineer", "Use reverse image prompts", "fas fa-magic", 15, "special", "reverse_image_used", 1, 0),
+        ("Advanced User", "Use advanced prompts", "fas fa-graduation-cap", 20, "special", "advanced_prompts_used", 1, 0),
+    ]
+
+    with get_db_connection(user_db) as conn:
+        cursor = conn.cursor()
+
+        for achievement in achievements:
+            try:
+                cursor.execute("""
+                    INSERT OR IGNORE INTO achievements (name, description, icon, points_reward, category, condition_type, condition_value, hidden)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                """, achievement)
+            except Exception as e:
+                print(f"Error inserting achievement {achievement[0]}: {e}")
+
+        conn.commit()
+
+
+def check_and_award_achievements(user_db, username: str, prompt_db: str, community_db: str):
+    """Check if user has earned any new achievements and award them."""
+    max_retries = 3
+    for attempt in range(max_retries):
+        try:
+            with get_db_connection(user_db) as conn:
+                cursor = conn.cursor()
+
+                # Get user's current stats
+                stats = get_user_stats(username, prompt_db, community_db)
+
+                # Get user's unlocked achievements
+                cursor.execute("SELECT achievement_id FROM user_achievements WHERE username = ?", (username,))
+                unlocked = {row[0] for row in cursor.fetchall()}
+
+                # Check each achievement
+                cursor.execute("SELECT * FROM achievements WHERE hidden = 0 OR id IN (SELECT achievement_id FROM user_achievements WHERE username = ?)", (username,))
+                all_achievements = cursor.fetchall()
+
+                newly_unlocked = []
+                total_points_earned = 0
+
+                for achievement in all_achievements:
+                    achievement_id = achievement[0]
+                    if achievement_id in unlocked:
+                        continue
+
+                    condition_type = achievement[6]  # condition_type column
+                    condition_value = achievement[7]  # condition_value column
+
+                    if check_achievement_condition(stats, condition_type, condition_value):
+                        # Award achievement
+                        cursor.execute(
+                            "INSERT INTO user_achievements (username, achievement_id) VALUES (?, ?)",
+                            (username, achievement_id)
+                        )
+                        newly_unlocked.append(achievement[1])  # name
+                        total_points_earned += achievement[4]  # points_reward
+
+                if newly_unlocked:
+                    # Add points to user
+                    try:
+                        current_points = get_user_points(user_db, username)
+                        update_user_points(user_db, username, current_points + total_points_earned)
+                    except Exception as e:
+                        logger.exception("Failed to add achievement points")
+                        # Don't fail the entire operation if points update fails
+
+                conn.commit()
+                return newly_unlocked, total_points_earned
+
+        except Exception as e:
+            if attempt < max_retries - 1:
+                time.sleep(0.1 * (attempt + 1))
+                continue
+            else:
+                logger.exception("Failed to check achievements after retries")
+                return [], 0  # Return empty results on failure
+
+
+def get_user_stats(username: str, prompt_db: str, community_db: str):
+    """Get user's statistics for achievement checking."""
+    stats = {
+        'prompts_generated': 0,
+        'prompts_saved': 0,
+        'prompts_shared': 0,
+        'prompt_types_used': set(),
+        'login_streak': 0,
+        'profile_completed': 0,
+        'user_rank': 0,
+        'reverse_image_used': 0,
+        'advanced_prompts_used': 0
+    }
+
+    # Get prompts generated (from prompt_versions)
+    with get_db_connection(prompt_db) as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT COUNT(*) FROM prompt_versions WHERE username = ?", (username,))
+        stats['prompts_generated'] = cursor.fetchone()[0]
+
+        # Get prompts saved (from user's personal table)
+        cursor.execute(f"SELECT COUNT(*) FROM \"{username}\"")
+        stats['prompts_saved'] = cursor.fetchone()[0]
+
+    # Get prompts shared
+    with get_db_connection(community_db) as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT COUNT(*) FROM shared WHERE owner = ?", (username,))
+        stats['prompts_shared'] = cursor.fetchone()[0]
+
+    # Get user rank (count of users created before this user)
+    with get_db_connection(prompt_db) as conn:
+        cursor = conn.cursor()
+        cursor.execute("""
+            SELECT COUNT(*) FROM users
+            WHERE username IN (
+                SELECT DISTINCT username FROM prompt_versions
+                UNION
+                SELECT DISTINCT owner FROM shared
+                UNION
+                SELECT DISTINCT username FROM user_logins
+            ) AND username != ?
+        """, (username,))
+        stats['user_rank'] = cursor.fetchone()[0]
+
+    return stats
+
+
+def check_achievement_condition(stats, condition_type: str, condition_value: int):
+    """Check if a specific achievement condition is met."""
+    if condition_type == "prompts_generated":
+        return stats['prompts_generated'] >= condition_value
+    elif condition_type == "prompts_saved":
+        return stats['prompts_saved'] >= condition_value
+    elif condition_type == "prompts_shared":
+        return stats['prompts_shared'] >= condition_value
+    elif condition_type == "prompt_types_used":
+        return len(stats['prompt_types_used']) >= condition_value
+    elif condition_type == "login_streak":
+        return stats['login_streak'] >= condition_value
+    elif condition_type == "profile_completed":
+        return stats['profile_completed'] >= condition_value
+    elif condition_type == "user_rank":
+        return stats['user_rank'] < condition_value  # Lower rank number means earlier user
+    elif condition_type == "first_login":
+        return True  # Always true for welcome achievements
+    elif condition_type == "reverse_image_used":
+        return stats['reverse_image_used'] >= condition_value
+    elif condition_type == "advanced_prompts_used":
+        return stats['advanced_prompts_used'] >= condition_value
+
+    return False
+
+
+def get_user_achievements(user_db, username: str):
+    """Get all achievements for a user."""
+    with get_db_connection(user_db) as conn:
+        cursor = conn.cursor()
+        cursor.execute("""
+            SELECT a.id, a.name, a.description, a.icon, a.points_reward, a.category,
+                   ua.unlocked_at
+            FROM achievements a
+            JOIN user_achievements ua ON a.id = ua.achievement_id
+            WHERE ua.username = ?
+            ORDER BY ua.unlocked_at DESC
+        """, (username,))
+        return cursor.fetchall()
+
+
+def process_daily_login_bonus(user_db, username: str):
+    """Process daily login bonus for a user. Returns points awarded."""
+    import random
+    import time
+    from datetime import datetime, date
+
+    today = date.today()
+    yesterday = today.replace(day=today.day - 1) if today.day > 1 else today.replace(month=today.month - 1, day=31)
+
+    # Retry logic for database operations
+    max_retries = 3
+    for attempt in range(max_retries):
+        try:
+            with get_db_connection(user_db) as conn:
+                # Use immediate transaction for better concurrency
+                conn.execute("BEGIN IMMEDIATE")
+                cursor = conn.cursor()
+
+                # Check if user already got bonus today
+                cursor.execute("SELECT points_awarded FROM user_logins WHERE username = ? AND login_date = ?", (username, today))
+                today_login = cursor.fetchone()
+
+                if today_login:
+                    conn.commit()
+                    return 0  # Already got bonus today
+
+                # Check yesterday's login to calculate streak
+                cursor.execute("SELECT points_awarded FROM user_logins WHERE username = ? AND login_date = ?", (username, yesterday))
+                yesterday_login = cursor.fetchone()
+
+                # Calculate streak
+                streak = 1
+                if yesterday_login:
+                    # Get current streak from yesterday's record
+                    cursor.execute("""
+                        SELECT login_date FROM user_logins
+                        WHERE username = ?
+                        ORDER BY login_date DESC
+                        LIMIT 2
+                    """, (username,))
+                    recent_logins = cursor.fetchall()
+
+                    if len(recent_logins) == 2:
+                        from datetime import timedelta
+                        date1 = recent_logins[0][0]
+                        date2 = recent_logins[1][0]
+                        if isinstance(date1, str):
+                            date1 = datetime.strptime(date1, '%Y-%m-%d').date()
+                        if isinstance(date2, str):
+                            date2 = datetime.strptime(date2, '%Y-%m-%d').date()
+
+                        if (date1 - date2).days == 1:
+                            streak = 2  # At least 2 days in a row
+
+                # Generate random bonus points (5-12)
+                bonus_points = random.randint(5, 12)
+
+                # Insert today's login record
+                cursor.execute(
+                    "INSERT OR REPLACE INTO user_logins (username, login_date, points_awarded) VALUES (?, ?, ?)",
+                    (username, today, bonus_points)
+                )
+
+                # Add points to user with retry logic
+                try:
+                    current_points = get_user_points(user_db, username)
+                    cursor.execute("UPDATE users SET points = ? WHERE username = ?", (current_points + bonus_points, username))
+                except Exception as e:
+                    # If updating points fails, try to rollback the login record
+                    cursor.execute("DELETE FROM user_logins WHERE username = ? AND login_date = ?", (username, today))
+                    conn.rollback()
+                    raise e
+
+                conn.commit()
+                return bonus_points
+
+        except Exception as e:
+            if attempt < max_retries - 1:
+                # Wait before retrying
+                time.sleep(0.1 * (attempt + 1))
+                continue
+            else:
+                logger.exception("Failed to process daily login bonus after retries")
+                return 0  # Return 0 if all retries fail

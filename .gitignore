@@ -11,3 +11,5 @@ monospace.json
 .vscode/
 web/database/community/shared.db
 .venv/
+*.db-shm
+*.db-wal

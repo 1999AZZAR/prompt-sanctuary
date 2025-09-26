@@ -55,6 +55,10 @@ function handleFormSubmission(form, action) {
     })
     .then(data => {
         if (data.success) {
+            // Check for achievements and daily bonus
+            if (data.daily_bonus || data.new_achievements) {
+                showLoginRewards(data);
+            }
             handleSuccess(data.redirect);
         } else {
             hideLoadingAnimation(form);
@@ -172,6 +176,29 @@ function showLoadingAnimation(form) {
     loadingContainer.appendChild(loadingAnimation);
     form.parentNode.insertBefore(loadingContainer, form);
     form.classList.add("hidden");
+}
+
+// Function to show login rewards (achievements and daily bonus)
+function showLoginRewards(data) {
+    let message = "Welcome back! ";
+
+    if (data.daily_bonus > 0) {
+        message += `You earned ${data.daily_bonus} points for your daily login! `;
+    }
+
+    if (data.new_achievements && data.new_achievements.length > 0) {
+        if (data.new_achievements.length === 1) {
+            message += `You unlocked a new achievement: ${data.new_achievements[0]}! `;
+        } else {
+            message += `You unlocked ${data.new_achievements.length} new achievements! `;
+        }
+
+        if (data.achievement_points > 0) {
+            message += `You earned ${data.achievement_points} achievement points!`;
+        }
+    }
+
+    showToast(message, 'success');
 }
 
 // Event listeners for login and signup forms

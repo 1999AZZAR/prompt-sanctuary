@@ -114,6 +114,17 @@
             </ul>
         </div>
 
+        <!-- Points Display -->
+        <div class="p-4 border-t border-white/30">
+          <div class="text-center">
+            <div class="flex items-center justify-center space-x-2 mb-2">
+              <i class="fas fa-coins text-yellow-500"></i>
+              <span class="text-sm font-medium text-slate-700">{{ _('Points') }}</span>
+            </div>
+            <div class="text-lg font-bold text-slate-900" id="user-points">{{ "%.1f"|format(current_user_points or 80.0) }}</div>
+          </div>
+        </div>
+
         <!-- Logout and Feedback -->
         <div class="p-4 border-t border-white/30">
             <ul class="space-y-3">
@@ -181,15 +192,6 @@
         // Update all identicons on the page
         jdenticon.update();
 
-        // Add functionality to regenerate identicon if needed
-        window.regenerateIdenticon = function(value) {
-          // Force update of all identicons with the new value
-          const identicons = document.querySelectorAll('[data-jdenticon-value]');
-          identicons.forEach(function(svg) {
-            svg.setAttribute('data-jdenticon-value', value);
-          });
-          jdenticon.update();
-        };
 
       });
     </script>
