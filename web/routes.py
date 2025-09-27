@@ -578,8 +578,11 @@ def create_main_blueprint(
     @main_blueprint.route("/profile", methods=["GET", "POST"])
     @required_login
     def profile():
-        error = None
-        success = None
+        # Get messages from URL parameters (for redirects from other routes)
+        error = request.args.get('error', None)
+        success = request.args.get('success', None)
+        
+        # Override with POST form messages if this is a POST request
         if request.method == "POST":
             action = request.form.get("action", "")
             if action == "change_password":
@@ -794,15 +797,18 @@ def create_main_blueprint(
     def revoke_a_session():
         token = request.form.get("token", "")
         if not token:
-            return jsonify({"success": False, "error": "Missing session token."}), 400
+            return redirect(url_for('main.profile', error='Missing session token.'))
+        
         ok = False
         try:
             ok = revoke_session(main_blueprint.user_db, token, session["username"])
         except Exception:
             logger.exception("Failed to revoke session")
+        
         if not ok:
-            return jsonify({"success": False, "error": "Unable to revoke session."}), 400
-        return jsonify({"success": True})
+            return redirect(url_for('main.profile', error='Unable to revoke session.'))
+        else:
+            return redirect(url_for('main.profile', success='Session revoked successfully.'))
 
     @main_blueprint.route("/sessions/list", methods=["GET"])
     @required_login
