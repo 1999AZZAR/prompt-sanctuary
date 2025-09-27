@@ -20,6 +20,8 @@ class GenerativeModel:
         self.user_api_key = None  # For storing user-provided API keys
         self.current_user = None  # For tracking which user is making the request
         self.user_db_path = "database/user.db"  # Default database path
+        # Enable streaming by default for better response handling
+        self.streaming_enabled = os.getenv("ENABLE_STREAMING", "true").lower() == "true"
         genai.configure(api_key=self.get_current_api_key())
 
         # Key health telemetry
@@ -36,7 +38,7 @@ class GenerativeModel:
             "temperature": 0.75,
             "top_p": 0.65,
             "top_k": 35,
-            "max_output_tokens": 2048,
+            "max_output_tokens": 8192,  # Increased from 2048 to allow longer responses
             "stop_sequences": [],
         }
 
@@ -240,7 +242,35 @@ class GenerativeModel:
 
         return cleaned
 
-    def generate_response(self, prompt_file_path: str, user_input_text: str) -> str:
+    def _generate_content_with_retry(self, prompt_part: str, api_key: str = None, use_streaming: bool = False) -> str:
+        """Generate content with retry logic and optional streaming."""
+        if api_key:
+            genai.configure(api_key=api_key)
+        
+        self.model = genai.GenerativeModel(
+            model_name=self.model_name,
+            generation_config=self.generation_config,
+            safety_settings=self.safety_settings,
+        )
+        
+        try:
+            if use_streaming:
+                # Use streaming for better response handling
+                response_stream = self.model.generate_content(prompt_part, stream=True)
+                full_text = ""
+                for chunk in response_stream:
+                    if chunk.text:
+                        full_text += chunk.text
+                return self._clean_ai_response(full_text)
+            else:
+                # Use standard generation
+                response = self.model.generate_content(prompt_part)
+                text = self._extract_text(response)
+                return text
+        except Exception as e:
+            raise e
+
+    def generate_response(self, prompt_file_path: str, user_input_text: str, use_streaming: bool = False) -> str:
         """Generate a response based on a prompt file and user input."""
         prompt_part = self.read_prompt_part_from_file(prompt_file_path, user_input_text)
         last_error = None
@@ -248,14 +278,7 @@ class GenerativeModel:
         # If user has provided an API key, try it first
         if self.user_api_key:
             try:
-                genai.configure(api_key=self.user_api_key)
-                self.model = genai.GenerativeModel(
-                    model_name=self.model_name,
-                    generation_config=self.generation_config,
-                    safety_settings=self.safety_settings,
-                )
-                response = self.model.generate_content(prompt_part)
-                text = self._extract_text(response)
+                text = self._generate_content_with_retry(prompt_part, self.user_api_key, use_streaming)
                 if text and text.strip():
                     return text
                 else:
@@ -268,14 +291,7 @@ class GenerativeModel:
         system_api_key, key_owner = self.get_system_api_key()
         if system_api_key:
             try:
-                genai.configure(api_key=system_api_key)
-                self.model = genai.GenerativeModel(
-                    model_name=self.model_name,
-                    generation_config=self.generation_config,
-                    safety_settings=self.safety_settings,
-                )
-                response = self.model.generate_content(prompt_part)
-                text = self._extract_text(response)
+                text = self._generate_content_with_retry(prompt_part, system_api_key, use_streaming)
                 if text and text.strip():
                     logging.info(f"Generated response using system API key from user {key_owner}")
                     return text
@@ -287,26 +303,13 @@ class GenerativeModel:
         
         # Fall back to system API keys
         for _ in range(len(self.api_keys)):
-            genai.configure(api_key=self.get_current_api_key())
-            self.model = genai.GenerativeModel(
-                model_name=self.model_name,
-                generation_config=self.generation_config,
-                safety_settings=self.safety_settings,
-            )
             try:
                 # Exponential backoff with key rotation
                 backoff = 0.5
                 for attempt in range(len(self.api_keys)):
                     api_key = self.get_current_api_key()
-                    genai.configure(api_key=api_key)
-                    self.model = genai.GenerativeModel(
-                        model_name=self.model_name,
-                        generation_config=self.generation_config,
-                        safety_settings=self.safety_settings,
-                    )
                     try:
-                        response = self.model.generate_content(prompt_part)
-                        text = self._extract_text(response)
+                        text = self._generate_content_with_retry(prompt_part, api_key, use_streaming)
                         if text and text.strip():
                             self._record_success(api_key)
                             return text
@@ -325,7 +328,7 @@ class GenerativeModel:
         # As a last resort, return a friendly message instead of raising
         return "No content generated. Please try again."
 
-    def generate_random(self, prompt_file_path: str) -> str:
+    def generate_random(self, prompt_file_path: str, use_streaming: bool = False) -> str:
         """Generate a random response based on a prompt file."""
         prompt_part = self.read_prompt_part_from_file(prompt_file_path)
         last_error = None
@@ -333,14 +336,7 @@ class GenerativeModel:
         # If user has provided an API key, try it first
         if self.user_api_key:
             try:
-                genai.configure(api_key=self.user_api_key)
-                self.model = genai.GenerativeModel(
-                    model_name=self.model_name,
-                    generation_config=self.generation_config,
-                    safety_settings=self.safety_settings,
-                )
-                response = self.model.generate_content(prompt_part)
-                text = self._extract_text(response)
+                text = self._generate_content_with_retry(prompt_part, self.user_api_key, use_streaming)
                 if text and text.strip():
                     return text
                 else:
@@ -353,14 +349,7 @@ class GenerativeModel:
         system_api_key, key_owner = self.get_system_api_key()
         if system_api_key:
             try:
-                genai.configure(api_key=system_api_key)
-                self.model = genai.GenerativeModel(
-                    model_name=self.model_name,
-                    generation_config=self.generation_config,
-                    safety_settings=self.safety_settings,
-                )
-                response = self.model.generate_content(prompt_part)
-                text = self._extract_text(response)
+                text = self._generate_content_with_retry(prompt_part, system_api_key, use_streaming)
                 if text and text.strip():
                     logging.info(f"Generated random response using system API key from user {key_owner}")
                     return text
@@ -372,25 +361,12 @@ class GenerativeModel:
         
         # Fall back to system API keys
         for _ in range(len(self.api_keys)):
-            genai.configure(api_key=self.get_current_api_key())
-            self.model = genai.GenerativeModel(
-                model_name=self.model_name,
-                generation_config=self.generation_config,
-                safety_settings=self.safety_settings,
-            )
             try:
                 backoff = 0.5
                 for attempt in range(len(self.api_keys)):
                     api_key = self.get_current_api_key()
-                    genai.configure(api_key=api_key)
-                    self.model = genai.GenerativeModel(
-                        model_name=self.model_name,
-                        generation_config=self.generation_config,
-                        safety_settings=self.safety_settings,
-                    )
                     try:
-                        response = self.model.generate_content(prompt_part)
-                        text = self._extract_text(response)
+                        text = self._generate_content_with_retry(prompt_part, api_key, use_streaming)
                         if text and text.strip():
                             self._record_success(api_key)
                             return text
@@ -461,7 +437,7 @@ class GenerativeModel:
         return prompt
 
     def generate_imgdescription(
-        self, image_styles_file_path: str, user_input_image: str
+        self, image_styles_file_path: str, user_input_image: str, use_streaming: bool = False
     ) -> str:
         """Generate an image description based on styles, user input, and examples."""
         styles = self._read_styles_from_file(image_styles_file_path)
@@ -472,36 +448,24 @@ class GenerativeModel:
         
         # Use user API key if available
         if self.user_api_key:
-            genai.configure(api_key=self.user_api_key)
-            self.model = genai.GenerativeModel(
-                model_name=self.model_name,
-                generation_config=self.generation_config,
-                safety_settings=self.safety_settings,
-            )
-            response = self.model.generate_content(prompt_part)
-            return response.text
+            text = self._generate_content_with_retry(prompt_part, self.user_api_key, use_streaming)
+            return text
         
         # Try to get a system API key from the pool first
         system_api_key, key_owner = self.get_system_api_key()
         if system_api_key:
             try:
-                genai.configure(api_key=system_api_key)
-                self.model = genai.GenerativeModel(
-                    model_name=self.model_name,
-                    generation_config=self.generation_config,
-                    safety_settings=self.safety_settings,
-                )
-                response = self.model.generate_content(prompt_part)
+                text = self._generate_content_with_retry(prompt_part, system_api_key, use_streaming)
                 logging.info(f"Generated image description using system API key from user {key_owner}")
-                return response.text
+                return text
             except Exception as e:
                 logging.warning(f"System API key from {key_owner} failed: {e}")
         
         # Fall back to system API keys
-        response = self.model.generate_content(prompt_part)
-        return response.text
+        text = self._generate_content_with_retry(prompt_part, None, use_streaming)
+        return text
 
-    def generate_vrandom(self, image_styles_file_path: str) -> str:
+    def generate_vrandom(self, image_styles_file_path: str, use_streaming: bool = False) -> str:
         """Generate a random image description based on styles and examples."""
         styles = self._read_styles_from_file(image_styles_file_path)
         chosen_styles = random.sample(styles, k=3)
@@ -511,34 +475,80 @@ class GenerativeModel:
         
         # Use user API key if available
         if self.user_api_key:
-            genai.configure(api_key=self.user_api_key)
-            self.model = genai.GenerativeModel(
-                model_name=self.model_name,
-                generation_config=self.generation_config,
-                safety_settings=self.safety_settings,
-            )
-            response = self.model.generate_content(prompt_part)
-            return response.text
+            text = self._generate_content_with_retry(prompt_part, self.user_api_key, use_streaming)
+            return text
         
         # Try to get a system API key from the pool first
         system_api_key, key_owner = self.get_system_api_key()
         if system_api_key:
             try:
-                genai.configure(api_key=system_api_key)
-                self.model = genai.GenerativeModel(
-                    model_name=self.model_name,
-                    generation_config=self.generation_config,
-                    safety_settings=self.safety_settings,
-                )
-                response = self.model.generate_content(prompt_part)
+                text = self._generate_content_with_retry(prompt_part, system_api_key, use_streaming)
                 logging.info(f"Generated random image description using system API key from user {key_owner}")
-                return response.text
+                return text
             except Exception as e:
                 logging.warning(f"System API key from {key_owner} failed: {e}")
         
         # Fall back to system API keys
-        response = self.model.generate_content(prompt_part)
-        return response.text
+        text = self._generate_content_with_retry(prompt_part, None, use_streaming)
+        return text
+
+    def generate_response_stream(self, prompt_file_path: str, user_input_text: str):
+        """Generate a streaming response based on a prompt file and user input."""
+        prompt_part = self.read_prompt_part_from_file(prompt_file_path, user_input_text)
+        
+        def response_generator():
+            try:
+                # Use user API key if available
+                if self.user_api_key:
+                    yield from self._stream_content(prompt_part, self.user_api_key)
+                    return
+                
+                # Try to get a system API key from the pool first
+                system_api_key, key_owner = self.get_system_api_key()
+                if system_api_key:
+                    try:
+                        logging.info(f"Streaming response using system API key from user {key_owner}")
+                        yield from self._stream_content(prompt_part, system_api_key)
+                        return
+                    except Exception as e:
+                        logging.warning(f"System API key from {key_owner} failed: {e}")
+                
+                # Fall back to system API keys
+                for api_key in self.api_keys:
+                    try:
+                        yield from self._stream_content(prompt_part, api_key)
+                        return
+                    except Exception as e:
+                        continue
+                
+                # If all keys fail, yield an error message
+                yield "data: No content generated. Please try again.\n\n"
+                
+            except Exception as e:
+                logging.exception("Error in response stream")
+                yield f"data: Error: {str(e)}\n\n"
+        
+        return response_generator()
+    
+    def _stream_content(self, prompt_part, api_key: str):
+        """Stream content using the specified API key."""
+        genai.configure(api_key=api_key)
+        
+        model = genai.GenerativeModel(
+            model_name=self.model_name,
+            generation_config=self.generation_config,
+            safety_settings=self.safety_settings,
+        )
+        
+        try:
+            response_stream = model.generate_content(prompt_part, stream=True)
+            for chunk in response_stream:
+                if chunk.text:
+                    # Clean and yield the chunk
+                    cleaned_chunk = self._clean_ai_response(chunk.text)
+                    yield f"data: {cleaned_chunk}\n\n"
+        except Exception as e:
+            raise e
 
     def _read_styles_from_file(self, file_path: str) -> List[str]:
         """Read styles from a file and return them as a list."""
@@ -546,7 +556,7 @@ class GenerativeModel:
         with open(resolved_path, "r") as file:
             return [line.strip() for line in file.readlines()]
 
-    def generate_visual(self, image_styles_file_path: str, image_data: bytes) -> str:
+    def generate_visual(self, image_styles_file_path: str, image_data: bytes, use_streaming: bool = False) -> str:
         """Generate a detailed description of an image based on styles and image data."""
         styles = self._read_styles_from_file(image_styles_file_path)
         chosen_styles = random.sample(styles, k=3)
@@ -563,37 +573,25 @@ class GenerativeModel:
         
         # Use user API key if available
         if self.user_api_key:
-            genai.configure(api_key=self.user_api_key)
-            self.model = genai.GenerativeModel(
-                model_name=self.model_name,
-                generation_config=self.generation_config,
-                safety_settings=self.safety_settings,
-            )
-            response = self.model.generate_content(prompt_part)
-            return response.text
+            text = self._generate_content_with_retry(prompt_part, self.user_api_key, use_streaming)
+            return text
         
         # Try to get a system API key from the pool first
         system_api_key, key_owner = self.get_system_api_key()
         if system_api_key:
             try:
-                genai.configure(api_key=system_api_key)
-                self.model = genai.GenerativeModel(
-                    model_name=self.model_name,
-                    generation_config=self.generation_config,
-                    safety_settings=self.safety_settings,
-                )
-                response = self.model.generate_content(prompt_part)
+                text = self._generate_content_with_retry(prompt_part, system_api_key, use_streaming)
                 logging.info(f"Generated visual description using system API key from user {key_owner}")
-                return response.text
+                return text
             except Exception as e:
                 logging.warning(f"System API key from {key_owner} failed: {e}")
         
         # Fall back to system API keys
-        response = self.model.generate_content(prompt_part)
-        return response.text
+        text = self._generate_content_with_retry(prompt_part, None, use_streaming)
+        return text
 
     def generate_visual2(
-        self, image_data: bytes, parameter1: str, parameter2: str, parameter3: str
+        self, image_data: bytes, parameter1: str, parameter2: str, parameter3: str, use_streaming: bool = False
     ) -> str:
         """Generate a detailed description of an image with specific parameters."""
         prompt_part = [
@@ -611,31 +609,19 @@ class GenerativeModel:
         
         # Use user API key if available
         if self.user_api_key:
-            genai.configure(api_key=self.user_api_key)
-            self.model = genai.GenerativeModel(
-                model_name=self.model_name,
-                generation_config=self.generation_config,
-                safety_settings=self.safety_settings,
-            )
-            response = self.model.generate_content(prompt_part)
-            return response.text
+            text = self._generate_content_with_retry(prompt_part, self.user_api_key, use_streaming)
+            return text
         
         # Try to get a system API key from the pool first
         system_api_key, key_owner = self.get_system_api_key()
         if system_api_key:
             try:
-                genai.configure(api_key=system_api_key)
-                self.model = genai.GenerativeModel(
-                    model_name=self.model_name,
-                    generation_config=self.generation_config,
-                    safety_settings=self.safety_settings,
-                )
-                response = self.model.generate_content(prompt_part)
+                text = self._generate_content_with_retry(prompt_part, system_api_key, use_streaming)
                 logging.info(f"Generated visual2 description using system API key from user {key_owner}")
-                return response.text
+                return text
             except Exception as e:
                 logging.warning(f"System API key from {key_owner} failed: {e}")
         
         # Fall back to system API keys
-        response = self.model.generate_content(prompt_part)
-        return response.text
+        text = self._generate_content_with_retry(prompt_part, None, use_streaming)
+        return text

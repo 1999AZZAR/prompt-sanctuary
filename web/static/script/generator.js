@@ -1,3 +1,163 @@
+// Submit form with streaming response
+function submitFormStream(formId, url) {
+    var formElement = document.getElementById(formId);
+    if (!formElement) {
+        console.error(`Form with ID "${formId}" not found.`);
+        return;
+    }
+
+    var formData = new FormData(formElement);
+
+    var loading = document.getElementById("loading"); 
+    if (loading) loading.classList.remove('hidden');
+    blurBackground(true);
+
+    // Clear previous response
+    const resultSection = document.getElementById('resultSection');
+    const responseContainer = document.getElementById('response');
+    if (resultSection && responseContainer) {
+        resultSection.classList.remove('hidden');
+        responseContainer.innerHTML = '<div class="streaming-response">Generating response...</div>';
+    }
+
+    fetch(url, {
+        method: 'POST',
+        headers: window.CSRF.getFormHeaders(),
+        body: formData
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.body.getReader();
+    })
+    .then(reader => {
+        const decoder = new TextDecoder();
+        let buffer = '';
+        let fullResponse = '';
+
+        function readStream() {
+            return reader.read().then(({ done, value }) => {
+                if (done) {
+                    // Final processing of the complete response
+                    if (fullResponse.trim()) {
+                        processCompleteResponse(fullResponse);
+                    }
+                    return;
+                }
+
+                // Decode the chunk
+                buffer += decoder.decode(value, { stream: true });
+                
+                // Process complete lines
+                const lines = buffer.split('\n');
+                buffer = lines.pop(); // Keep the incomplete line in buffer
+
+                for (const line of lines) {
+                    if (line.startsWith('data: ')) {
+                        const data = line.slice(6); // Remove 'data: ' prefix
+                        
+                        if (data === '[DONE]') {
+                            // Stream complete
+                            if (fullResponse.trim()) {
+                                processCompleteResponse(fullResponse);
+                            }
+                            return;
+                        }
+                        
+                        if (data.trim()) {
+                            fullResponse += data;
+                            // Update display progressively
+                            updateStreamingDisplay(fullResponse);
+                        }
+                    }
+                }
+
+                return readStream();
+            });
+        }
+
+        return readStream();
+    })
+    .catch(error => {
+        console.error('Error in streaming response:', error);
+        showToast("An error occurred while generating the response.", 'error');
+        if (responseContainer) {
+            responseContainer.innerHTML = '<div class="error">Error generating response. Please try again.</div>';
+        }
+    })
+    .finally(() => {
+        if (loading) loading.classList.add('hidden');
+        blurBackground(false);
+        updateUserPoints();
+    });
+}
+
+// Update the display progressively during streaming
+function updateStreamingDisplay(text) {
+    const responseContainer = document.getElementById('response');
+    if (responseContainer && text.trim()) {
+        const cleanedText = cleanResponse(text);
+        const normalized = normalizeFences(cleanedText);
+        const rendered = marked.parse(normalized, { mangle: false, headerIds: false });
+        const safeHtml = DOMPurify.sanitize(rendered, { USE_PROFILES: { html: true } });
+        responseContainer.innerHTML = `<div class="rendered relative">${safeHtml}</div>`;
+        
+        // Add copy buttons to code blocks
+        responseContainer.querySelectorAll('pre code').forEach((codeEl) => {
+            const pre = codeEl.parentElement;
+            if (!pre.querySelector('.code-copy-btn')) {
+                pre.classList.add('relative');
+                const btn = document.createElement('button');
+                btn.textContent = 'Copy';
+                btn.className = 'code-copy-btn';
+                btn.addEventListener('click', () => {
+                    navigator.clipboard.writeText(codeEl.textContent)
+                        .then(() => showToast('Code copied!', 'success'))
+                        .catch(() => showToast('Copy failed.', 'error'));
+                });
+                pre.appendChild(btn);
+            }
+        });
+        if (window.Prism) Prism.highlightAllUnder(responseContainer);
+    }
+}
+
+// Process the complete response after streaming is done
+function processCompleteResponse(text) {
+    const responseContainer = document.getElementById('response');
+    if (responseContainer && text.trim()) {
+        const cleanedText = cleanResponse(text);
+        const normalized = normalizeFences(cleanedText);
+        const rendered = marked.parse(normalized, { mangle: false, headerIds: false });
+        const safeHtml = DOMPurify.sanitize(rendered, { USE_PROFILES: { html: true } });
+        responseContainer.innerHTML = `<div class="rendered relative">${safeHtml}</div>`;
+        
+        // Add copy buttons to code blocks and highlight
+        responseContainer.querySelectorAll('pre code').forEach((codeEl) => {
+            const pre = codeEl.parentElement;
+            pre.classList.add('relative');
+            const btn = document.createElement('button');
+            btn.textContent = 'Copy';
+            btn.className = 'code-copy-btn';
+            btn.addEventListener('click', () => {
+                navigator.clipboard.writeText(codeEl.textContent)
+                    .then(() => showToast('Code copied!', 'success'))
+                    .catch(() => showToast('Copy failed.', 'error'));
+            });
+            pre.appendChild(btn);
+        });
+        if (window.Prism) Prism.highlightAllUnder(responseContainer);
+        
+        // Show refinement buttons after response is complete
+        setTimeout(() => {
+            if (typeof showRefinementButtons === 'function') {
+                showRefinementButtons();
+            }
+        }, 100);
+    }
+}
+
 // Submit form asynchronously
 function submitForm(formId, url) {
     var formElement = document.getElementById(formId);
@@ -75,6 +235,13 @@ function submitForm(formId, url) {
                     pre.appendChild(btn);
                 });
                 if (window.Prism) Prism.highlightAllUnder(responseContainer);
+                
+                // Show refinement buttons after response is complete
+                setTimeout(() => {
+                    if (typeof showRefinementButtons === 'function') {
+                        showRefinementButtons();
+                    }
+                }, 100);
             } else {
                 resultSection.classList.add('hidden');
                 responseContainer.innerHTML = '';
@@ -272,7 +439,7 @@ document.addEventListener("DOMContentLoaded", function () {
     if (textPromptForm) {
         textPromptForm.addEventListener('submit', function(event) {
             event.preventDefault(); // Prevent default form submission behavior
-            submitForm('text-prompt-form', '/generate/tprompt'); // Submit form asynchronously
+            submitFormStream('text-prompt-form', '/generate/tprompt/stream'); // Submit form with streaming
         });
     } else {
         console.error('Text prompt form not found in the DOM');

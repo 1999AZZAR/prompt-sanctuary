@@ -27,7 +27,7 @@ class GenerativeAI:
             "temperature": 0.75,  # Controls the randomness of generated responses
             "top_p": 0.65,        # Top-p (nucleus) sampling parameter
             "top_k": 35,          # Top-k filtering parameter for token sampling
-            "max_output_tokens": 2048,  # Maximum number of tokens in the generated response
+            "max_output_tokens": 8192,  # Increased from 2048 to allow longer responses
             "stop_sequences": [],
         }
 

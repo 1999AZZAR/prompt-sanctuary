@@ -7,6 +7,8 @@ from flask import (
     session,
     jsonify,
     flash,
+    Response,
+    stream_template,
 )
 from utils import validate_csrf_token
 from flask_babel import _, gettext
@@ -867,10 +869,57 @@ def create_main_blueprint(
             else:
                 model.clear_user_api_key()
             
-            response_text = model.generate_response("./instruction/basic1.txt", user_input)
+            response_text = model.generate_response("./instruction/basic1.txt", user_input, use_streaming=model.streaming_enabled)
             return response_text
         except Exception as e:
             logger.exception("Error generating prompt response")
+            return f"Error: {str(e)}"
+
+    @main_blueprint.route("/generate/tprompt/stream", methods=["POST"])
+    @required_login
+    def process_stream():
+        """Generate a text prompt using streaming response."""
+        user_input = request.form.get("user_input", "").strip()
+        username = session["username"]
+        cost = 1.5  # Basic prompt cost
+
+        if not user_input:
+            return jsonify({"success": False, "error": "Input cannot be empty."}), 400
+        if len(user_input) > 500:
+            return jsonify({"success": False, "error": "Input is too long (max 500 characters)."}), 400
+
+        # Check if user has a validated API key
+        user_has_api_key = is_api_key_validated(main_blueprint.user_db, username)
+        
+        # Only deduct points if user doesn't have their own API key
+        if not user_has_api_key:
+            if not deduct_user_points_with_source(main_blueprint.user_db, username, cost, 'prompt_generation', 'Generated basic prompt'):
+                current_points = get_user_points(main_blueprint.user_db, username)
+                return jsonify({"success": False, "error": f"Insufficient points. You need {cost} points but have {current_points}."}), 402
+
+        try:
+            # Set user API key if available
+            user_api_key = get_user_api_key(main_blueprint.user_db, username)
+            model.set_current_user(username)
+            model.set_user_db_path(main_blueprint.user_db)
+            if user_api_key:
+                model.set_user_api_key(user_api_key)
+            else:
+                model.clear_user_api_key()
+            
+            def generate():
+                try:
+                    yield "data: \n\n"  # Start streaming
+                    for chunk in model.generate_response_stream("./instruction/basic1.txt", user_input):
+                        yield chunk
+                    yield "data: [DONE]\n\n"  # End streaming
+                except Exception as e:
+                    logger.exception("Error in streaming response")
+                    yield f"data: Error: {str(e)}\n\n"
+            
+            return Response(generate(), mimetype='text/plain')
+        except Exception as e:
+            logger.exception("Error setting up streaming response")
             return f"Error: {str(e)}"
 
     @main_blueprint.route("/generate/trandom", methods=["POST"])
@@ -898,7 +947,7 @@ def create_main_blueprint(
             else:
                 model.clear_user_api_key()
             
-            response_text = model.generate_random("./instruction/basic2.txt")
+            response_text = model.generate_random("./instruction/basic2.txt", use_streaming=model.streaming_enabled)
             return response_text
         except Exception as e:
             logger.exception("Error generating random prompt")
@@ -931,7 +980,7 @@ def create_main_blueprint(
                 model.clear_user_api_key()
             
             response_text = model.generate_imgdescription(
-                "./instruction/image_styles.txt", user_input
+                "./instruction/image_styles.txt", user_input, use_streaming=model.streaming_enabled
             )
             return response_text
         except Exception as e:
@@ -963,7 +1012,7 @@ def create_main_blueprint(
             else:
                 model.clear_user_api_key()
             
-            response_text = model.generate_vrandom("./instruction/image_styles.txt")
+            response_text = model.generate_vrandom("./instruction/image_styles.txt", use_streaming=model.streaming_enabled)
             return response_text
         except Exception as e:
             logger.exception("Error generating random image prompt")
@@ -997,7 +1046,7 @@ def create_main_blueprint(
             image_file = request.files["image"]
             image_data = image_file.read()
             response_text = model.generate_visual(
-                "./instruction/image_styles.txt", image_data
+                "./instruction/image_styles.txt", image_data, use_streaming=model.streaming_enabled
             )
             return response_text
         except Exception as e:
@@ -1092,7 +1141,7 @@ def create_main_blueprint(
             image_file = request.files["image"]
             image_data = image_file.read()
             parameters = [request.form[f"parameter{i}"] for i in range(1, 4)]
-            response_text = model.generate_visual2(image_data, *parameters)
+            response_text = model.generate_visual2(image_data, *parameters, use_streaming=model.streaming_enabled)
             return response_text
         except Exception as e:
             logger.error(f"Error processing advance image: {e}")
@@ -1385,6 +1434,69 @@ def create_main_blueprint(
         except Exception as e:
             logger.exception("Error getting API key pool stats")
             return jsonify({"success": False, "error": "Internal server error."}), 500
+
+    @main_blueprint.route("/refine_prompt", methods=["POST"])
+    @required_login
+    def refine_prompt():
+        """Refine a prompt by shortening or elaborating it using AI."""
+        if not validate_csrf_token():
+            return jsonify({"success": False, "error": "CSRF token validation failed."}), 400
+        
+        username = session["username"]
+        text = request.form.get("text", "").strip()
+        action = request.form.get("action", "").strip().lower()
+        
+        if not text:
+            return jsonify({"success": False, "error": "No text provided."}), 400
+        
+        if action not in ["shorten", "elaborate"]:
+            return jsonify({"success": False, "error": "Invalid action. Use 'shorten' or 'elaborate'."}), 400
+        
+        # Check if user has a validated API key
+        user_has_api_key = is_api_key_validated(main_blueprint.user_db, username)
+        
+        # Only deduct points if user doesn't have their own API key
+        if not user_has_api_key:
+            cost = 0.5  # Refinement cost
+            if not deduct_user_points_with_source(main_blueprint.user_db, username, cost, 'prompt_refinement', f'Refined prompt ({action})'):
+                current_points = get_user_points(main_blueprint.user_db, username)
+                return jsonify({"success": False, "error": f"Insufficient points. You need {cost} points but have {current_points}."}), 402
+        
+        try:
+            # Set user API key if available
+            user_api_key = get_user_api_key(main_blueprint.user_db, username)
+            model.set_current_user(username)
+            model.set_user_db_path(main_blueprint.user_db)
+            if user_api_key:
+                model.set_user_api_key(user_api_key)
+            else:
+                model.clear_user_api_key()
+            
+            # Generate refinement prompt based on action
+            if action == "shorten":
+                refinement_prompt = f"""Please shorten the following text while keeping the essential meaning and key information. Make it more concise and to the point:
+
+"{text}"
+
+Provide only the shortened version, no explanations."""
+            else:  # elaborate
+                refinement_prompt = f"""Please elaborate on the following text by adding more details, context, and specificity while maintaining the core meaning:
+
+"{text}"
+
+Provide only the elaborated version, no explanations."""
+            
+            # Use the AI model to refine the prompt
+            refined_text = model._generate_content_with_retry(refinement_prompt, model.get_effective_api_key(), use_streaming=False)
+            
+            if refined_text and refined_text.strip():
+                return refined_text.strip()
+            else:
+                return jsonify({"success": False, "error": "Failed to refine prompt."}), 500
+                
+        except Exception as e:
+            logger.exception("Error refining prompt")
+            return jsonify({"success": False, "error": f"Error refining prompt: {str(e)}"}), 500
 
     @main_blueprint.route("/language/<language>")
     def set_language(language):

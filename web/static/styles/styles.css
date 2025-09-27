@@ -56,6 +56,79 @@
     }
 }
 
+/* Streaming response styles */
+.streaming-response {
+    color: #9ca3af;
+    font-style: italic;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+.rendered {
+    transition: opacity 0.3s ease-in-out;
+}
+
+.rendered.streaming {
+    opacity: 0.8;
+}
+
+/* Prompt refinement styles */
+.refinement-btn {
+    transition: all 0.2s ease;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.refinement-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.refinement-btn:active {
+    transform: translateY(0);
+}
+
+.refinement-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.refinement-btn i {
+    font-size: 0.875rem;
+}
+
+.refinement-status {
+    transition: all 0.3s ease;
+}
+
+.refinement-status.success {
+    color: #10b981;
+}
+
+.refinement-status.error {
+    color: #ef4444;
+}
+
+.refinement-status.loading {
+    color: #6b7280;
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+/* Ensure input fields have enough padding for buttons */
+input[type="text"].with-refinement {
+    padding-right: 8rem !important;
+}
+
 .modal-container {
     position: fixed;
     top: 0;
