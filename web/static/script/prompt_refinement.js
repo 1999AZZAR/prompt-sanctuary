@@ -3,8 +3,8 @@ class PromptRefinement {
     constructor() {
         this.thresholds = {
             short: 100,    // Show "Elaborate" button if < 100 chars
-            long: 500,     // Show "Shorten" button if > 500 chars
-            veryLong: 1000 // Show warning if > 1000 chars
+            long: 1000,    // Show "Shorten" button if > 1000 chars
+            veryLong: 1500 // Show warning if > 1500 chars
         };
         
         this.init();
