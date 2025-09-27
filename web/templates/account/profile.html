@@ -54,44 +54,24 @@
 </div>
 
 <!-- Main Content Grid -->
-<div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
-  <!-- Left Column - Settings & Security -->
-  <div class="xl:col-span-1 space-y-6">
-    <!-- Account Settings Card -->
+<div class="grid grid-cols-1 xl:grid-cols-12 gap-6">
+  <!-- Left Column - Account & Security Settings -->
+  <div class="xl:col-span-4 space-y-6">
+    <!-- Account Information Card -->
     <div class="mdc-card glass prompt-card">
       <div class="p-6">
         <h2 class="text-xl font-semibold text-slate-900 mb-4 flex items-center space-x-2">
-          <i class="fas fa-cog text-blue-500"></i>
-          <span>{{ _('Account Settings') }}</span>
+          <i class="fas fa-user-edit text-blue-500"></i>
+          <span>{{ _('Account Information') }}</span>
         </h2>
-        <p class="text-slate-600 mb-6">{{ _('Current username:') }} <span class="font-mono text-slate-900">{{ session.username }}</span></p>
-
+        
         {% if error %}<div class="text-red-500 mb-4 p-3 bg-red-50 rounded-lg" role="alert">{{ error }}</div>{% endif %}
         {% if success %}<div class="text-green-500 mb-4 p-3 bg-green-50 rounded-lg" role="status">{{ success }}</div>{% endif %}
 
-        <!-- Change Password -->
-        <form action="{{ url_for('main.profile') }}" method="post" class="mb-6">
-          <h3 class="font-medium text-slate-900 mb-3">{{ _('Change Password') }}</h3>
-          <input type="hidden" name="action" value="change_password">
-          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-          <div class="space-y-3">
-            <input type="password" id="old_password" name="old_password" placeholder="{{ _('Current password') }}" class="w-full p-3 rounded-lg bg-slate-50 border border-slate-200 text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-violet-500">
-            <input type="password" id="new_password" name="new_password" placeholder="{{ _('New password') }}" class="w-full p-3 rounded-lg bg-slate-50 border border-slate-200 text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-violet-500">
-            <input type="password" id="confirm_password" name="confirm_password" placeholder="{{ _('Confirm new password') }}" class="w-full p-3 rounded-lg bg-slate-50 border border-slate-200 text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-violet-500">
-            <button class="w-full bg-violet-500 text-white px-4 py-2 rounded-lg hover:bg-violet-600 transition-colors" type="submit">{{ _('Update Password') }}</button>
-          </div>
-        </form>
-
-        <!-- Update Email -->
-        <form action="{{ url_for('main.profile') }}" method="post" class="mb-6">
-          <h3 class="font-medium text-slate-900 mb-3">{{ _('Update Email') }}</h3>
-          <input type="hidden" name="action" value="update_email">
-          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-          <div class="space-y-3">
-            <input type="email" id="email" name="email" value="{{ email or '' }}" placeholder="{{ _('your@email.com') }}" class="w-full p-3 rounded-lg bg-slate-50 border border-slate-200 text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-violet-500">
-            <button class="w-full bg-slate-500 text-white px-4 py-2 rounded-lg hover:bg-slate-600 transition-colors" type="submit">{{ _('Update Email') }}</button>
-          </div>
-        </form>
+        <div class="mb-6 p-4 bg-slate-50 rounded-lg">
+          <p class="text-sm text-slate-600 mb-2">{{ _('Current username:') }}</p>
+          <p class="font-mono text-lg text-slate-900 bg-white px-3 py-2 rounded border">{{ session.username }}</p>
+        </div>
 
         <!-- Change Username -->
         <form action="{{ url_for('main.profile') }}" method="post" class="mb-6">
@@ -105,87 +85,16 @@
           </div>
         </form>
 
-        <!-- API Key Management -->
-        <div class="border-t border-slate-200 pt-6 mb-6">
-          <h3 class="font-medium text-slate-900 mb-3 flex items-center space-x-2">
-            <i class="fas fa-key text-purple-500"></i>
-            <span>{{ _('Gemini API Key') }}</span>
-          </h3>
-          <p class="text-xs text-slate-500 mb-4">{{ _('Use your own API key to avoid point consumption and earn 100 points!') }}</p>
-          
-          <div id="api-key-status" class="mb-4">
-            <div class="flex items-center space-x-2 p-3 bg-slate-50 rounded-lg">
-              <i class="fas fa-info-circle text-blue-500"></i>
-              <span class="text-sm text-slate-600">{{ _('Loading API key status...') }}</span>
-            </div>
+        <!-- Update Email -->
+        <form action="{{ url_for('main.profile') }}" method="post" class="mb-6">
+          <h3 class="font-medium text-slate-900 mb-3">{{ _('Update Email') }}</h3>
+          <input type="hidden" name="action" value="update_email">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <div class="space-y-3">
+            <input type="email" id="email" name="email" value="{{ email or '' }}" placeholder="{{ _('your@email.com') }}" class="w-full p-3 rounded-lg bg-slate-50 border border-slate-200 text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-violet-500">
+            <button class="w-full bg-slate-500 text-white px-4 py-2 rounded-lg hover:bg-slate-600 transition-colors" type="submit">{{ _('Update Email') }}</button>
           </div>
-
-          <div id="api-key-form" style="display: none;">
-            <form id="validate-api-key-form" class="mb-4">
-              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-              <div class="space-y-3">
-                <input type="password" id="api_key_input" name="api_key" placeholder="{{ _('Enter your Gemini API key') }}" class="w-full p-3 rounded-lg bg-slate-50 border border-slate-200 text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-violet-500">
-                <div class="flex space-x-2">
-                  <button type="submit" class="flex-1 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors">
-                    <i class="fas fa-check mr-2"></i>{{ _('Validate & Save') }}
-                  </button>
-                  <button type="button" id="remove-api-key-btn" class="flex-1 bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors" style="display: none;">
-                    <i class="fas fa-trash mr-2"></i>{{ _('Remove') }}
-                  </button>
-                </div>
-              </div>
-            </form>
-            <p class="text-xs text-slate-500">
-              {{ _('Get your API key from') }} 
-              <a href="https://makersuite.google.com/app/apikey" target="_blank" class="text-violet-500 hover:text-violet-600 underline">{{ _('Google AI Studio') }}</a>
-            </p>
-          </div>
-        </div>
-
-        <!-- API Key Pool Statistics -->
-        <div class="border-t border-slate-200 pt-6 mb-6">
-          <h3 class="font-medium text-slate-900 mb-3 flex items-center space-x-2">
-            <i class="fas fa-chart-line text-green-500"></i>
-            <span>{{ _('API Key Pool Statistics') }}</span>
-          </h3>
-          <p class="text-xs text-slate-500 mb-4">{{ _('See how your API key is being used by the system and earn compensation!') }}</p>
-          
-          <div id="api-pool-stats" class="space-y-3">
-            <div class="grid grid-cols-2 gap-4">
-              <div class="p-3 bg-slate-50 rounded-lg">
-                <div class="text-sm text-slate-600">{{ _('Your Usage Count') }}</div>
-                <div id="user-usage-count" class="text-lg font-semibold text-slate-900">-</div>
-              </div>
-              <div class="p-3 bg-slate-50 rounded-lg">
-                <div class="text-sm text-slate-600">{{ _('Total Compensation') }}</div>
-                <div id="user-compensation" class="text-lg font-semibold text-green-600">-</div>
-              </div>
-            </div>
-            
-            <div class="p-3 bg-blue-50 rounded-lg">
-              <div class="text-sm text-blue-600 mb-2">{{ _('Pool Overview') }}</div>
-              <div class="grid grid-cols-3 gap-2 text-xs">
-                <div>
-                  <div class="text-blue-700 font-medium">{{ _('Active Keys') }}</div>
-                  <div id="pool-active-keys" class="text-blue-900">-</div>
-                </div>
-                <div>
-                  <div class="text-blue-700 font-medium">{{ _('Total Usage') }}</div>
-                  <div id="pool-total-usage" class="text-blue-900">-</div>
-                </div>
-                <div>
-                  <div class="text-blue-700 font-medium">{{ _('Avg per Key') }}</div>
-                  <div id="pool-avg-usage" class="text-blue-900">-</div>
-                </div>
-              </div>
-            </div>
-            
-            <div class="text-xs text-slate-500">
-              <i class="fas fa-info-circle mr-1"></i>
-              {{ _('You earn 0.5 points each time the system uses your API key for other users.') }}
-            </div>
-          </div>
-        </div>
+        </form>
 
         <!-- Danger Zone -->
         <div class="border-t border-slate-200 pt-6">
@@ -238,8 +147,121 @@
     </div>
   </div>
 
-  <!-- Middle Column - Prompts -->
-  <div class="xl:col-span-2 space-y-6">
+  <!-- Middle Column - API Settings -->
+  <div class="xl:col-span-4 space-y-6">
+    <!-- Security & API Settings Card -->
+    <div class="mdc-card glass prompt-card">
+      <div class="p-6">
+        <h2 class="text-xl font-semibold text-slate-900 mb-4 flex items-center space-x-2">
+          <i class="fas fa-lock text-green-500"></i>
+          <span>{{ _('Security Settings') }}</span>
+        </h2>
+
+        <!-- Change Password -->
+        <form action="{{ url_for('main.profile') }}" method="post" class="mb-6">
+          <h3 class="font-medium text-slate-900 mb-3 flex items-center space-x-2">
+            <i class="fas fa-key text-green-500"></i>
+            <span>{{ _('Change Password') }}</span>
+          </h3>
+          <input type="hidden" name="action" value="change_password">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <div class="space-y-3">
+            <input type="password" id="old_password" name="old_password" placeholder="{{ _('Current password') }}" class="w-full p-3 rounded-lg bg-slate-50 border border-slate-200 text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-violet-500">
+            <input type="password" id="new_password" name="new_password" placeholder="{{ _('New password') }}" class="w-full p-3 rounded-lg bg-slate-50 border border-slate-200 text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-violet-500">
+            <input type="password" id="confirm_password" name="confirm_password" placeholder="{{ _('Confirm new password') }}" class="w-full p-3 rounded-lg bg-slate-50 border border-slate-200 text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-violet-500">
+            <button class="w-full bg-violet-500 text-white px-4 py-2 rounded-lg hover:bg-violet-600 transition-colors" type="submit">{{ _('Update Password') }}</button>
+          </div>
+        </form>
+
+        <!-- API Key Management -->
+        <div class="border-t border-slate-200 pt-6">
+          <h3 class="font-medium text-slate-900 mb-3 flex items-center space-x-2">
+            <i class="fas fa-key text-purple-500"></i>
+            <span>{{ _('Gemini API Key') }}</span>
+          </h3>
+          <p class="text-xs text-slate-500 mb-4">{{ _('Use your own API key to avoid point consumption and earn 100 points!') }}</p>
+          
+          <div id="api-key-status" class="mb-4">
+            <div class="flex items-center space-x-2 p-3 bg-slate-50 rounded-lg">
+              <i class="fas fa-info-circle text-blue-500"></i>
+              <span class="text-sm text-slate-600">{{ _('Loading API key status...') }}</span>
+            </div>
+          </div>
+
+          <div id="api-key-form" style="display: none;">
+            <form id="validate-api-key-form" class="mb-4">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <div class="space-y-3">
+                <input type="password" id="api_key_input" name="api_key" placeholder="{{ _('Enter your Gemini API key') }}" class="w-full p-3 rounded-lg bg-slate-50 border border-slate-200 text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-violet-500">
+                <div class="flex space-x-2">
+                  <button type="submit" class="flex-1 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors">
+                    <i class="fas fa-check mr-2"></i>{{ _('Validate & Save') }}
+                  </button>
+                  <button type="button" id="remove-api-key-btn" class="flex-1 bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors" style="display: none;">
+                    <i class="fas fa-trash mr-2"></i>{{ _('Remove') }}
+                  </button>
+                </div>
+              </div>
+            </form>
+            <p class="text-xs text-slate-500">
+              {{ _('Get your API key from') }} 
+              <a href="https://makersuite.google.com/app/apikey" target="_blank" class="text-violet-500 hover:text-violet-600 underline">{{ _('Google AI Studio') }}</a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- API Key Pool Statistics Card -->
+    <div class="mdc-card glass prompt-card">
+      <div class="p-6">
+        <h2 class="text-xl font-semibold text-slate-900 mb-4 flex items-center space-x-2">
+          <i class="fas fa-chart-line text-green-500"></i>
+          <span>{{ _('API Key Pool Statistics') }}</span>
+        </h2>
+        <p class="text-xs text-slate-500 mb-4">{{ _('See how your API key is being used by the system and earn compensation!') }}</p>
+        
+        <div id="api-pool-stats" class="space-y-3">
+          <div class="grid grid-cols-2 gap-4">
+            <div class="p-3 bg-slate-50 rounded-lg">
+              <div class="text-sm text-slate-600">{{ _('Your Usage Count') }}</div>
+              <div id="user-usage-count" class="text-lg font-semibold text-slate-900">-</div>
+            </div>
+            <div class="p-3 bg-slate-50 rounded-lg">
+              <div class="text-sm text-slate-600">{{ _('Total Compensation') }}</div>
+              <div id="user-compensation" class="text-lg font-semibold text-green-600">-</div>
+            </div>
+          </div>
+          
+          <div class="p-3 bg-blue-50 rounded-lg">
+            <div class="text-sm text-blue-600 mb-2">{{ _('Pool Overview') }}</div>
+            <div class="grid grid-cols-3 gap-2 text-xs">
+              <div>
+                <div class="text-blue-700 font-medium">{{ _('Active Keys') }}</div>
+                <div id="pool-active-keys" class="text-blue-900">-</div>
+              </div>
+              <div>
+                <div class="text-blue-700 font-medium">{{ _('Total Usage') }}</div>
+                <div id="pool-total-usage" class="text-blue-900">-</div>
+              </div>
+              <div>
+                <div class="text-blue-700 font-medium">{{ _('Avg per Key') }}</div>
+                <div id="pool-avg-usage" class="text-blue-900">-</div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="text-xs text-slate-500">
+            <i class="fas fa-info-circle mr-1"></i>
+            {{ _('You earn 0.5 points each time the system uses your API key for other users.') }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right Column - Prompts -->
+  <div class="xl:col-span-4 space-y-6">
     <!-- Saved Prompts Card -->
     <div class="mdc-card glass prompt-card">
       <div class="p-6">
