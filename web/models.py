@@ -3,7 +3,8 @@ import secrets
 import time
 import re
 import logging
-from datetime import datetime
+import random
+from datetime import datetime, timedelta
 from sqlite3 import connect, OperationalError, Row
 
 DATABASE_NAME = 'database/prompts.db'
@@ -11,6 +12,16 @@ SHARED_PROMPTS_TABLE = 'shared_prompts'
 
 # Initialize logging
 logger = logging.getLogger(__name__)
+
+# Point expiration periods (in days)
+POINT_EXPIRATION = {
+    'daily_login': (17, 30),  # Random between 17-30 days
+    'achievement': 45,         # 45 days
+    'api_key_add': 80,         # 80 days
+    'api_key_usage': 95,       # 95 days
+    'prompt_share': 30,        # 30 days
+    'original': None          # Original 80 points never expire
+}
 
 def get_db_connection(db_path):
     """Get a connection to the SQLite database with integrity enforced.
@@ -91,6 +102,28 @@ def create_tables(user_db, prompt_db, community_db, feedback_db):
                 login_date DATE NOT NULL,
                 points_awarded REAL DEFAULT 0,
                 UNIQUE(username, login_date)
+            );""",
+            """CREATE TABLE IF NOT EXISTS point_transactions (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                username TEXT NOT NULL,
+                points REAL NOT NULL,
+                source TEXT NOT NULL,
+                description TEXT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                expires_at TIMESTAMP,
+                is_expired INTEGER DEFAULT 0,
+                FOREIGN KEY (username) REFERENCES users(username)
+            );""",
+            """CREATE TABLE IF NOT EXISTS point_history (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                username TEXT NOT NULL,
+                transaction_id INTEGER NOT NULL,
+                action TEXT NOT NULL,
+                points_before REAL NOT NULL,
+                points_after REAL NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (username) REFERENCES users(username),
+                FOREIGN KEY (transaction_id) REFERENCES point_transactions(id)
             );""",
         ],
         prompt_db: [
@@ -577,62 +610,200 @@ def save_prompt_to_db(username, random_val, title, prompt_text, prompt_db):
 
 
 def get_user_points(user_db, username: str) -> float:
-    """Get the current points for a user."""
+    """Get the current effective points for a user (excluding expired points)."""
     max_retries = 3
     for attempt in range(max_retries):
         try:
             with get_db_connection(user_db) as conn:
                 cursor = conn.cursor()
-                cursor.execute("SELECT points FROM users WHERE username = ?", (username,))
-                row = cursor.fetchone()
-                return row[0] if row else 80.0  # Default to 80 if user not found
+                
+                # Get current effective points from transactions
+                cursor.execute("""
+                    SELECT COALESCE(SUM(points), 0) 
+                    FROM point_transactions 
+                    WHERE username = ? AND is_expired = 0 AND (expires_at IS NULL OR expires_at > datetime('now'))
+                """, (username,))
+                result = cursor.fetchone()
+                
+                if result:
+                    return result[0]
+                else:
+                    # If no transactions exist, return default 80 points
+                    return 80.0
+                    
         except Exception as e:
+            logger.warning(f"Attempt {attempt + 1}/{max_retries} failed to get user points: {e}")
             if attempt < max_retries - 1:
                 time.sleep(0.1 * (attempt + 1))
                 continue
             else:
-                logger.exception("Failed to get user points after retries")
-                return 80.0  # Return default on failure
+                logger.exception("Failed to get user points after all retries")
+                return 80.0
 
 
-def update_user_points(user_db, username: str, points: float):
-    """Update a user's points."""
-    max_retries = 5  # Increased retries
+def calculate_expiration_date(source: str) -> datetime:
+    """Calculate expiration date for a given point source."""
+    if source == 'original':
+        return None  # Original points never expire
+    
+    expiration_config = POINT_EXPIRATION.get(source)
+    if not expiration_config:
+        return None
+    
+    if isinstance(expiration_config, tuple):
+        # Random range (e.g., daily_login: (17, 30))
+        min_days, max_days = expiration_config
+        days = random.randint(min_days, max_days)
+    else:
+        # Fixed days
+        days = expiration_config
+    
+    return datetime.now() + timedelta(days=days)
+
+
+def add_user_points_with_source(user_db, username: str, points: float, source: str, description: str = None):
+    """Add points to a user with source tracking and expiration."""
+    max_retries = 5
     for attempt in range(max_retries):
         try:
             with get_db_connection(user_db) as conn:
-                # Use immediate transaction mode for better concurrency
                 conn.execute("BEGIN IMMEDIATE")
                 cursor = conn.cursor()
-                cursor.execute("UPDATE users SET points = ? WHERE username = ?", (points, username))
+                
+                # Check if user has initial points transaction
+                cursor.execute("SELECT COUNT(*) FROM point_transactions WHERE username = ? AND source = 'original'", (username,))
+                has_initial = cursor.fetchone()[0] > 0
+                
+                # Add initial 80 points if user doesn't have them
+                if not has_initial:
+                    cursor.execute("""
+                        INSERT INTO point_transactions (username, points, source, description, expires_at, is_expired)
+                        VALUES (?, ?, ?, ?, ?, ?)
+                    """, (username, 80.0, 'original', 'Initial points', None, 0))
+                
+                # Calculate expiration date
+                expires_at = calculate_expiration_date(source)
+                
+                # Add new points transaction
+                cursor.execute("""
+                    INSERT INTO point_transactions (username, points, source, description, expires_at, is_expired)
+                    VALUES (?, ?, ?, ?, ?, ?)
+                """, (username, points, source, description, expires_at, 0))
+                
+                # Get transaction ID for history
+                transaction_id = cursor.lastrowid
+                
+                # Get points before and after
+                points_before = get_user_points(user_db, username) - points
+                points_after = min(points_before + points, 500.0)  # Cap at 500
+                
+                # Record in history
+                cursor.execute("""
+                    INSERT INTO point_history (username, transaction_id, action, points_before, points_after)
+                    VALUES (?, ?, ?, ?, ?)
+                """, (username, transaction_id, 'add', points_before, points_after))
+                
                 conn.commit()
-            return  # Success, exit the function
+                return True
+                
         except Exception as e:
-            logger.warning(f"Attempt {attempt + 1}/{max_retries} failed to update user points: {e}")
+            logger.warning(f"Attempt {attempt + 1}/{max_retries} failed to add user points: {e}")
             if attempt < max_retries - 1:
-                # Exponential backoff with jitter
-                delay = 0.1 * (2 ** attempt) + (0.05 * attempt)  # 0.1s, 0.2s, 0.4s, 0.8s, 1.6s
+                delay = 0.1 * (2 ** attempt) + (0.05 * attempt)
                 time.sleep(delay)
                 continue
             else:
-                logger.exception("Failed to update user points after all retries")
+                logger.exception("Failed to add user points after all retries")
                 raise e
 
 
-def deduct_user_points(user_db, username: str, cost: float) -> bool:
-    """Deduct points from a user if they have enough. Returns True if successful."""
-    current_points = get_user_points(user_db, username)
-    if current_points >= cost:
-        update_user_points(user_db, username, current_points - cost)
-        return True
-    return False
+def deduct_user_points_with_source(user_db, username: str, cost: float, source: str, description: str = None) -> bool:
+    """Deduct points from a user with source tracking."""
+    max_retries = 5
+    for attempt in range(max_retries):
+        try:
+            with get_db_connection(user_db) as conn:
+                conn.execute("BEGIN IMMEDIATE")
+                cursor = conn.cursor()
+                
+                current_points = get_user_points(user_db, username)
+                if current_points < cost:
+                    return False
+                
+                # Add deduction transaction
+                cursor.execute("""
+                    INSERT INTO point_transactions (username, points, source, description, expires_at, is_expired)
+                    VALUES (?, ?, ?, ?, ?, ?)
+                """, (username, -cost, source, description, None, 0))
+                
+                # Get transaction ID for history
+                transaction_id = cursor.lastrowid
+                
+                # Record in history
+                points_after = current_points - cost
+                cursor.execute("""
+                    INSERT INTO point_history (username, transaction_id, action, points_before, points_after)
+                    VALUES (?, ?, ?, ?, ?)
+                """, (username, transaction_id, 'deduct', current_points, points_after))
+                
+                conn.commit()
+                return True
+                
+        except Exception as e:
+            logger.warning(f"Attempt {attempt + 1}/{max_retries} failed to deduct user points: {e}")
+            if attempt < max_retries - 1:
+                delay = 0.1 * (2 ** attempt) + (0.05 * attempt)
+                time.sleep(delay)
+                continue
+            else:
+                logger.exception("Failed to deduct user points after all retries")
+                raise e
 
 
+def expire_user_points(user_db, username: str):
+    """Mark expired points as expired for a user."""
+    try:
+        with get_db_connection(user_db) as conn:
+            cursor = conn.cursor()
+            cursor.execute("""
+                UPDATE point_transactions 
+                SET is_expired = 1 
+                WHERE username = ? AND is_expired = 0 AND expires_at IS NOT NULL AND expires_at <= datetime('now')
+            """, (username,))
+            conn.commit()
+    except Exception as e:
+        logger.exception(f"Failed to expire points for user {username}: {e}")
+
+
+def get_point_history(user_db, username: str, limit: int = 50) -> list:
+    """Get point transaction history for a user."""
+    try:
+        with get_db_connection(user_db) as conn:
+            cursor = conn.cursor()
+            cursor.execute("""
+                SELECT pt.points, pt.source, pt.description, pt.created_at, pt.expires_at, pt.is_expired,
+                       ph.action, ph.points_before, ph.points_after
+                FROM point_transactions pt
+                LEFT JOIN point_history ph ON pt.id = ph.transaction_id
+                WHERE pt.username = ?
+                ORDER BY pt.created_at DESC
+                LIMIT ?
+            """, (username, limit))
+            return cursor.fetchall()
+    except Exception as e:
+        logger.exception(f"Failed to get point history for user {username}: {e}")
+        return []
+
+
+# Legacy functions for backward compatibility
 def add_user_points(user_db, username: str, points: float):
-    """Add points to a user, with a maximum limit of 500 points."""
-    current_points = get_user_points(user_db, username)
-    new_points = min(current_points + points, 500.0)  # Cap at 500 points
-    update_user_points(user_db, username, new_points)
+    """Legacy function - adds points with 'legacy' source."""
+    return add_user_points_with_source(user_db, username, points, 'legacy', 'Legacy point addition')
+
+
+def deduct_user_points(user_db, username: str, cost: float) -> bool:
+    """Legacy function - deducts points with 'legacy' source."""
+    return deduct_user_points_with_source(user_db, username, cost, 'legacy', 'Legacy point deduction')
 
 
 def get_prompt_sharing_status(username: str, prompt_id: str, title: str, prompt_content: str, prompt_db: str, community_db: str):
@@ -815,10 +986,31 @@ def check_and_award_achievements(user_db, username: str, prompt_db: str, communi
                         total_points_earned += achievement[4]  # points_reward
 
                 if newly_unlocked:
-                    # Add points to user
+                    # Add achievement points using the new system
                     try:
+                        # Calculate expiration date for achievement points
+                        expires_at = calculate_expiration_date('achievement')
+                        
+                        # Add points transaction
+                        cursor.execute("""
+                            INSERT INTO point_transactions (username, points, source, description, expires_at, is_expired)
+                            VALUES (?, ?, ?, ?, ?, ?)
+                        """, (username, total_points_earned, 'achievement', f'Achievement rewards: {", ".join(newly_unlocked)}', expires_at, 0))
+                        
+                        # Get transaction ID for history
+                        transaction_id = cursor.lastrowid
+                        
+                        # Get points before and after
                         current_points = get_user_points(user_db, username)
-                        update_user_points(user_db, username, current_points + total_points_earned)
+                        points_before = current_points - total_points_earned
+                        points_after = min(current_points, 500.0)  # Cap at 500
+                        
+                        # Record in history
+                        cursor.execute("""
+                            INSERT INTO point_history (username, transaction_id, action, points_before, points_after)
+                            VALUES (?, ?, ?, ?, ?)
+                        """, (username, transaction_id, 'add', points_before, points_after))
+                        
                     except Exception as e:
                         logger.exception("Failed to add achievement points")
                         # Don't fail the entire operation if points update fails
@@ -1081,10 +1273,31 @@ def process_daily_login_bonus(user_db, username: str):
                     (username, today, bonus_points)
                 )
 
-                # Add points to user with retry logic
+                # Add points using the new system with source tracking
                 try:
+                    # Calculate expiration date for daily login points
+                    expires_at = calculate_expiration_date('daily_login')
+                    
+                    # Add points transaction
+                    cursor.execute("""
+                        INSERT INTO point_transactions (username, points, source, description, expires_at, is_expired)
+                        VALUES (?, ?, ?, ?, ?, ?)
+                    """, (username, bonus_points, 'daily_login', f'Daily login bonus (streak: {streak})', expires_at, 0))
+                    
+                    # Get transaction ID for history
+                    transaction_id = cursor.lastrowid
+                    
+                    # Get points before and after
                     current_points = get_user_points(user_db, username)
-                    cursor.execute("UPDATE users SET points = ? WHERE username = ?", (current_points + bonus_points, username))
+                    points_before = current_points - bonus_points
+                    points_after = min(current_points, 500.0)  # Cap at 500
+                    
+                    # Record in history
+                    cursor.execute("""
+                        INSERT INTO point_history (username, transaction_id, action, points_before, points_after)
+                        VALUES (?, ?, ?, ?, ?)
+                    """, (username, transaction_id, 'add', points_before, points_after))
+                    
                 except Exception as e:
                     # If updating points fails, try to rollback the login record
                     cursor.execute("DELETE FROM user_logins WHERE username = ? AND login_date = ?", (username, today))

@@ -148,8 +148,8 @@ class ApiKeyPool:
             amount = self.compensation_rate
             
         try:
-            from models import add_user_points
-            add_user_points(self.user_db_path, username, amount)
+            from models import add_user_points_with_source
+            add_user_points_with_source(self.user_db_path, username, amount, 'api_key_usage', f'Compensation for API key usage by system')
             
             # Update the key's compensation tracking
             key_info = next((k for k in self.api_keys if k.username == username), None)

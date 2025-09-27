@@ -39,6 +39,10 @@ from models import (
     get_user_points,
     deduct_user_points,
     add_user_points,
+    add_user_points_with_source,
+    deduct_user_points_with_source,
+    expire_user_points,
+    get_point_history,
     initialize_achievements,
     check_and_award_achievements,
     get_user_achievements,
@@ -460,7 +464,7 @@ def create_main_blueprint(
                     conn.commit()
 
             # Reward user with 1 point for sharing (only for new shares, not updates)
-            add_user_points(main_blueprint.user_db, owner, 1.0)
+            add_user_points_with_source(main_blueprint.user_db, owner, 1.0, 'prompt_share', 'Shared prompt to community')
         except Exception as e:
             logger.exception("Error sharing prompt")
             return jsonify({"success": False, "error": "Internal server error."}), 500
@@ -484,7 +488,7 @@ def create_main_blueprint(
                 conn.commit()
 
             # Deduct 1 point for unsharing
-            deduct_user_points(main_blueprint.user_db, owner, 1.0)
+            deduct_user_points_with_source(main_blueprint.user_db, owner, 1.0, 'prompt_unshare', 'Unshared prompt from community')
         except Exception as e:
             logger.exception("Error unsharing prompt")
             return jsonify({"success": False, "error": "Internal server error."}), 500
@@ -722,9 +726,11 @@ def create_main_blueprint(
         except Exception:
             logger.exception("Failed to get or set user identicon value")
 
-        # Get user points
+        # Get user points (check and expire points first)
         current_points = None
         try:
+            # Check and expire points before getting current total
+            expire_user_points(main_blueprint.user_db, username)
             current_points = get_user_points(main_blueprint.user_db, username)
         except Exception:
             logger.exception("Failed to get user points")
@@ -1238,8 +1244,8 @@ def create_main_blueprint(
                 # Mark as validated
                 set_api_key_validated(main_blueprint.user_db, username, True)
                 
-                # Award 100 points (will be capped at 500 by add_user_points function)
-                add_user_points(main_blueprint.user_db, username, 100.0)
+                # Award 100 points for API key validation (will be capped at 500)
+                add_user_points_with_source(main_blueprint.user_db, username, 100.0, 'api_key_add', 'Added and validated Gemini API key')
                 
                 # Check for achievements
                 newly_unlocked, achievement_points = check_and_award_achievements(
@@ -1275,11 +1281,22 @@ def create_main_blueprint(
         username = session["username"]
         
         try:
+            # Check if user has enough points to remove API key (costs 100 points)
+            current_points = get_user_points(main_blueprint.user_db, username)
+            removal_cost = 100.0
+            
+            if current_points < removal_cost:
+                return jsonify({"success": False, "error": f"Insufficient points. Removing API key costs {removal_cost} points but you have {current_points}."}), 402
+            
+            # Deduct 100 points for removing API key
+            if not deduct_user_points_with_source(main_blueprint.user_db, username, removal_cost, 'api_key_remove', 'Removed Gemini API key'):
+                return jsonify({"success": False, "error": "Failed to deduct points for API key removal."}), 500
+            
             # Clear the API key and validation status
             set_user_api_key(main_blueprint.user_db, username, "")
             set_api_key_validated(main_blueprint.user_db, username, False)
             
-            return jsonify({"success": True, "message": "API key removed successfully."})
+            return jsonify({"success": True, "message": f"API key removed successfully. {removal_cost} points deducted."})
             
         except Exception as e:
             logger.exception("Error removing API key")
@@ -1304,6 +1321,47 @@ def create_main_blueprint(
             
         except Exception as e:
             logger.exception("Error getting API key status")
+            return jsonify({"success": False, "error": "Internal server error."}), 500
+
+    @main_blueprint.route("/points/history")
+    @required_login
+    def point_history():
+        """Get user's point transaction history."""
+        username = session["username"]
+        
+        try:
+            # Check and expire points first
+            expire_user_points(main_blueprint.user_db, username)
+            
+            # Get point history
+            history = get_point_history(main_blueprint.user_db, username, limit=100)
+            
+            # Format history for JSON response
+            formatted_history = []
+            for record in history:
+                points, source, description, created_at, expires_at, is_expired, action, points_before, points_after = record
+                
+                formatted_record = {
+                    'points': points,
+                    'source': source,
+                    'description': description or '',
+                    'created_at': created_at,
+                    'expires_at': expires_at,
+                    'is_expired': bool(is_expired),
+                    'action': action or '',
+                    'points_before': points_before,
+                    'points_after': points_after
+                }
+                formatted_history.append(formatted_record)
+            
+            return jsonify({
+                "success": True,
+                "history": formatted_history,
+                "current_points": get_user_points(main_blueprint.user_db, username)
+            })
+            
+        except Exception as e:
+            logger.exception("Error getting point history")
             return jsonify({"success": False, "error": "Internal server error."}), 500
 
     @main_blueprint.route("/api_key/pool_stats")
