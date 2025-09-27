@@ -21,6 +21,14 @@
 - Fixed SQLite database lock issues with WAL mode and retry mechanisms
 - Fixed JSON formatting artifacts and implemented robust markdown cleaning
 - Fixed non-standard markdown patterns (square brackets, asterisks, indentation)
+- Implemented personal API key management system with validation and rewards
+- Added API key pool system for system-wide usage with fair compensation
+- Enhanced point system with expiration tracking and detailed transaction history
+- Created interactive point history modal with clickable points display
+- Implemented comprehensive database migration utility (safe_migration.py)
+- Improved profile page with better card organization and layout
+- Enhanced session management with proper revocation handling
+- Added API key usage tracking and statistics
 
 ---
 
@@ -69,6 +77,11 @@
 | Community     | User interactions (likes/comments)                    |    P2    |   Planned   | Requires moderation basics                                                                                                                        |
 | Economy       | Point system (earn/charge/transfer)                   |    P1    |    Done    | Comprehensive point system: 80 default points, costs for prompt types, daily login bonuses (5-12 random points)                                   |
 | Economy       | Achievement system with points rewards                |    P1    |    Done    | Stack Overflow/Reddit-style achievement system with automatic point rewards                                                                       |
+| Economy       | Enhanced point system with expiration and history     |    P1    |    Done    | Point expiration tracking, detailed transaction history, interactive point history modal                                                          |
+| API Keys      | Personal API key management system                    |    P1    |    Done    | User-provided API key validation, rewards (100 points), point savings, achievement unlock                                                         |
+| API Keys      | API key pool system with fair compensation            |    P1    |    Done    | System-wide API key pooling, LRU rotation, 0.5 points compensation per use, usage tracking                                                        |
+| Backend       | Database migration utility                            |    P1    |    Done    | Comprehensive safe_migration.py with backup, rebuild, dry-run capabilities                                                                        |
+| UX/UI         | Profile page improvements                             |    P1    |    Done    | Better card organization, improved layout, enhanced session management                                                                            |
 
 ---
 
@@ -110,6 +123,27 @@
   - Fixed non-standard markdown: `[Header]*` → `## Header`, `text*` → `- text`
   - Proper markdown preservation and rendering with DOMPurify sanitization
   - Smart pattern recognition for various AI formatting quirks
+- API Key Management
+
+  - Personal API key validation with real-time Gemini API testing
+  - API key pool system with LRU rotation and fair compensation (0.5 points per use)
+  - 100-point reward for successful API key validation and "API Key Provider" achievement
+  - 100-point cost for API key removal to balance the reward system
+  - System-wide API key pooling with automatic refresh and usage tracking
+- Enhanced Point System
+
+  - Point expiration tracking with different periods based on source (17-95 days)
+  - Detailed transaction history with source attribution and balance tracking
+  - Interactive point history modal with clickable points display
+  - Maximum 500-point cap per user to maintain system balance
+  - Original 80 points never expire, all other points have expiration dates
+- Database Migration
+
+  - Comprehensive safe_migration.py utility with backup, rebuild, and dry-run capabilities
+  - Smart database type detection and appropriate schema migrations
+  - Automatic backup creation before any destructive operations
+  - Support for incremental migrations and complete database rebuilds
+  - Production-ready with comprehensive error handling and logging
 
 ---
 
@@ -118,11 +152,16 @@
 - [ ] CSRF + secure cookies + CSP (P0)
 - [ ] Mobile UI fixes (P0)
 - [ ] Streaming responses (P1)
-- [ ] Prompt versioning (P1)
+- [X] Prompt versioning (P1)
 - [ ] Weekly backups (P1)
 - [ ] Containerize + Tailwind build (P1)
 - [X] Language switch + i18n base (P1)
 - [X] Economy system (points + achievements) (P1)
+- [X] Enhanced point system with expiration and history (P1)
+- [X] API key management system (P1)
+- [X] API key pool system (P1)
+- [X] Database migration utility (P1)
+- [X] Profile page improvements (P1)
 - [X] Response formatting fixes (P1)
 - [X] Database lock handling with WAL mode (P1)
 - [ ] Tests + CI + Alembic (P1)
