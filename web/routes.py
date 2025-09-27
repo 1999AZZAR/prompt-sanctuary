@@ -55,6 +55,7 @@ LANGUAGES = None
 from response2 import GenerativeAI
 from response import GenerativeModel
 from api_key_validator import validate_gemini_api_key
+from api_key_pool import get_api_key_pool
 import logging
 import secrets
 from datetime import datetime
@@ -847,6 +848,8 @@ def create_main_blueprint(
         try:
             # Set user API key if available
             user_api_key = get_user_api_key(main_blueprint.user_db, username)
+            model.set_current_user(username)
+            model.set_user_db_path(main_blueprint.user_db)
             if user_api_key:
                 model.set_user_api_key(user_api_key)
             else:
@@ -876,6 +879,8 @@ def create_main_blueprint(
         try:
             # Set user API key if available
             user_api_key = get_user_api_key(main_blueprint.user_db, username)
+            model.set_current_user(username)
+            model.set_user_db_path(main_blueprint.user_db)
             if user_api_key:
                 model.set_user_api_key(user_api_key)
             else:
@@ -906,6 +911,8 @@ def create_main_blueprint(
         try:
             # Set user API key if available
             user_api_key = get_user_api_key(main_blueprint.user_db, username)
+            model.set_current_user(username)
+            model.set_user_db_path(main_blueprint.user_db)
             if user_api_key:
                 model.set_user_api_key(user_api_key)
             else:
@@ -937,6 +944,8 @@ def create_main_blueprint(
         try:
             # Set user API key if available
             user_api_key = get_user_api_key(main_blueprint.user_db, username)
+            model.set_current_user(username)
+            model.set_user_db_path(main_blueprint.user_db)
             if user_api_key:
                 model.set_user_api_key(user_api_key)
             else:
@@ -966,6 +975,8 @@ def create_main_blueprint(
 
             # Set user API key if available
             user_api_key = get_user_api_key(main_blueprint.user_db, username)
+            model.set_current_user(username)
+            model.set_user_db_path(main_blueprint.user_db)
             if user_api_key:
                 model.set_user_api_key(user_api_key)
             else:
@@ -1059,6 +1070,8 @@ def create_main_blueprint(
 
             # Set user API key if available
             user_api_key = get_user_api_key(main_blueprint.user_db, username)
+            model.set_current_user(username)
+            model.set_user_db_path(main_blueprint.user_db)
             if user_api_key:
                 model.set_user_api_key(user_api_key)
             else:
@@ -1285,6 +1298,28 @@ def create_main_blueprint(
             
         except Exception as e:
             logger.exception("Error getting API key status")
+            return jsonify({"success": False, "error": "Internal server error."}), 500
+
+    @main_blueprint.route("/api_key/pool_stats")
+    @required_login
+    def api_key_pool_stats():
+        """Get API key pool statistics for system administrators."""
+        username = session["username"]
+        
+        try:
+            # Get user's own API key stats
+            pool = get_api_key_pool(main_blueprint.user_db)
+            user_stats = pool.get_user_stats(username)
+            pool_stats = pool.get_pool_stats()
+            
+            return jsonify({
+                "success": True,
+                "user_stats": user_stats,
+                "pool_stats": pool_stats
+            })
+            
+        except Exception as e:
+            logger.exception("Error getting API key pool stats")
             return jsonify({"success": False, "error": "Internal server error."}), 500
 
     @main_blueprint.route("/language/<language>")

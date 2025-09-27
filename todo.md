@@ -16,11 +16,11 @@
 - Remapped all the instructions into dedicated txt files.
 - Fixed the share mechanism.
 - Implemented prompt versioning (snapshots + history + rollback) in personal library UI.
-- **NEW:** Implemented comprehensive point system (80 default points, costs for prompt types, daily login bonuses 5-12 points)
-- **NEW:** Implemented achievement system with points rewards (Stack Overflow/Reddit-style achievements)
-- **NEW:** Fixed SQLite database lock issues with WAL mode and retry mechanisms
-- **NEW:** Fixed JSON formatting artifacts and implemented robust markdown cleaning
-- **NEW:** Fixed non-standard markdown patterns (square brackets, asterisks, indentation)
+- Implemented comprehensive point system (80 default points, costs for prompt types, daily login bonuses 5-12 points)
+- Implemented achievement system with points rewards (Stack Overflow/Reddit-style achievements)
+- Fixed SQLite database lock issues with WAL mode and retry mechanisms
+- Fixed JSON formatting artifacts and implemented robust markdown cleaning
+- Fixed non-standard markdown patterns (square brackets, asterisks, indentation)
 
 ---
 
@@ -29,81 +29,82 @@
 - Priority: P0 critical, P1 high, P2 medium, P3 low
 - Status: Not Started, In Progress, Blocked, Planned, Done
 
-| Area | Item | Priority | Status | Notes |
-|---|---|:---:|:---:|---|
-| Backend/AI | Streaming responses (SSE) for live typing | P1 | Planned | Use Flask SSE; client progressively renders Markdown |
-| Backend/AI | Structured outputs (JSON schema) for advanced prompts | P1 | Planned | Toggle JSON mode; validate; add Copy JSON/Use in app |
-| Backend/AI | Model selector + thinking budget | P2 | Planned | Switch gemini-2.5-flash/2.5-pro; expose budget knob |
-| Backend/AI | Auto rate-limit backoff/retry + key health telemetry | P1 | Done | Implemented comprehensive retry mechanisms with exponential backoff, key rotation, database lock handling with WAL mode, and key health telemetry |
-| Security | CSRF protection on all POST | P0 | Done | Flask-WTF enabled; CSRF cookie + X-CSRFToken on fetch |
-| Security | Secure cookies + CSP | P0 | Not Started | HttpOnly, Secure, SameSite; CSP to whitelist origins |
-| Security | Sanitize all popup HTML with DOMPurify | P1 | Planned | Apply DOMPurify in showAppPopup for custom HTML |
-| Data/Features | Prompt versioning (snapshots + history + rollback) | P1 | In Progress | Implemented snapshots on save/edit, history popup and rollback; diff view and fork flow pending |
-| Data/Features | Categorize prompts + advanced facets | P1 | Not Started | Extend tags to facets; multi-filter UI; saved filters |
-| Data/Features | Shareable permalinks (public/private) | P1 | Planned | Slug/ID links; owner controls; optional expiry |
-| Data/Features | Export/Import library (Markdown/JSON) | P2 | Planned | Batch export; import with conflict rules |
-| UX/UI | Prompt details popup tabs (Rendered/Raw/Meta) | P1 | Planned | Tabs; per-block copy; wrap long content |
-| UX/UI | Keyboard shortcuts (g,s,c,/ etc.) | P2 | Planned | Shortcut help overlay; accessible fallbacks |
-| UX/UI | Skeleton loaders + reduced-motion support | P2 | Planned | Respect prefers-reduced-motion; skeletons |
-| UX/UI | Dark mode toggle | P2 | Planned | Tailwind dark variants; persist setting |
-| UX/UI | Fix mobile UI | P0 | Not Started | Audit responsive grid, spacing, popups, side panel |
-| UX/UI | Response formatting and markdown cleaning | P1 | Done | Fixed JSON artifacts, non-standard markdown patterns, proper formatting preservation |
-| Infra/Perf | Containerize (Dockerfile + compose) | P1 | Planned | Gunicorn + Nginx; healthcheck; .env |
-| Infra/Perf | Tailwind build (purged) | P1 | Planned | Move from CDN to built stylesheet; purge |
-| Infra/Perf | Serve static locally + cache headers | P1 | Planned | Cache-control for static; preconnect/prefetch |
-| Quality | Tests (pytest) for routes/models | P1 | Planned | Unit/integration; sqlite temp DB fixtures |
-| Quality | E2E tests (Playwright/Cypress) | P2 | Planned | Login → generate → save → share happy path |
-| Quality | CI (lint/format/typecheck/tests) | P1 | Planned | GH Actions: ruff/black/mypy/pytest |
-| Quality | DB migrations (Alembic) | P1 | Planned | Versioned schema; downgrade paths |
-| Quality | ORM (SQLAlchemy) | P2 | Planned | Optional migration from raw sqlite |
-| Observability | Error tracking (Sentry/Logfire) | P1 | Planned | Capture server/client errors (no PII) |
-| Observability | Privacy-friendly analytics (Plausible) | P3 | Planned | Minimal analytics with consent |
-| i18n/a11y | Language switch mechanism | P1 | Done | UI toggle; persist choice; instant switching |
-| i18n/a11y | Internationalization (Flask-Babel) | P1 | Done | Complete multilingual system: English + Indonesian |
-| i18n/a11y | Accessibility audit and fixes | P1 | Planned | Landmarks, focus, ARIA live regions |
-| Backups | Weekly DB backups (library, user, feedback) | P1 | Not Started | Cron/Task; rotate; offsite option |
-| Image Gen | Combine image generator input | P1 | In Progress | ~50%; unify text/file modes |
-| Accounts | Account settings page | P1 | In Progress | Password, delete (exists), future API creds |
-| Community | Remodel community page + share flow | P1 | Not Started | Better cards, filters, see/copy/save/share |
-| Accounts | Account management flows | P1 | Done | Implemented: Email (optional), username change, session list/revoke |
-| Community | User interactions (likes/comments) | P2 | Planned | Requires moderation basics |
-| Economy | Point system (earn/charge/transfer) | P1 | Done | Comprehensive point system: 80 default points, costs for prompt types, daily login bonuses (5-12 random points) |
-| Economy | Achievement system with points rewards | P1 | Done | Stack Overflow/Reddit-style achievement system with automatic point rewards |
+| Area          | Item                                                  | Priority |   Status   | Notes                                                                                                                                             |
+| ------------- | ----------------------------------------------------- | :------: | :---------: | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Backend/AI    | Streaming responses (SSE) for live typing             |    P1    |   Planned   | Use Flask SSE; client progressively renders Markdown                                                                                              |
+| Backend/AI    | Structured outputs (JSON schema) for advanced prompts |    P1    |   Planned   | Toggle JSON mode; validate; add Copy JSON/Use in app                                                                                              |
+| Backend/AI    | Model selector + thinking budget                      |    P2    |   Planned   | Switch gemini-2.5-flash/2.5-pro; expose budget knob                                                                                               |
+| Backend/AI    | Auto rate-limit backoff/retry + key health telemetry  |    P1    |    Done    | Implemented comprehensive retry mechanisms with exponential backoff, key rotation, database lock handling with WAL mode, and key health telemetry |
+| Security      | CSRF protection on all POST                           |    P0    |    Done    | Flask-WTF enabled; CSRF cookie + X-CSRFToken on fetch                                                                                             |
+| Security      | Secure cookies + CSP                                  |    P0    | Not Started | HttpOnly, Secure, SameSite; CSP to whitelist origins                                                                                              |
+| Security      | Sanitize all popup HTML with DOMPurify                |    P1    |   Planned   | Apply DOMPurify in showAppPopup for custom HTML                                                                                                   |
+| Data/Features | Prompt versioning (snapshots + history + rollback)    |    P1    | In Progress | Implemented snapshots on save/edit, history popup and rollback; diff view and fork flow pending                                                   |
+| Data/Features | Categorize prompts + advanced facets                  |    P1    | Not Started | Extend tags to facets; multi-filter UI; saved filters                                                                                             |
+| Data/Features | Shareable permalinks (public/private)                 |    P1    |   Planned   | Slug/ID links; owner controls; optional expiry                                                                                                    |
+| Data/Features | Export/Import library (Markdown/JSON)                 |    P2    |   Planned   | Batch export; import with conflict rules                                                                                                          |
+| UX/UI         | Prompt details popup tabs (Rendered/Raw/Meta)         |    P1    |   Planned   | Tabs; per-block copy; wrap long content                                                                                                           |
+| UX/UI         | Keyboard shortcuts (g,s,c,/ etc.)                     |    P2    |   Planned   | Shortcut help overlay; accessible fallbacks                                                                                                       |
+| UX/UI         | Skeleton loaders + reduced-motion support             |    P2    |   Planned   | Respect prefers-reduced-motion; skeletons                                                                                                         |
+| UX/UI         | Dark mode toggle                                      |    P2    |   Planned   | Tailwind dark variants; persist setting                                                                                                           |
+| UX/UI         | Fix mobile UI                                         |    P0    | Not Started | Audit responsive grid, spacing, popups, side panel                                                                                                |
+| UX/UI         | Response formatting and markdown cleaning             |    P1    |    Done    | Fixed JSON artifacts, non-standard markdown patterns, proper formatting preservation                                                              |
+| Infra/Perf    | Containerize (Dockerfile + compose)                   |    P1    |   Planned   | Gunicorn + Nginx; healthcheck; .env                                                                                                               |
+| Infra/Perf    | Tailwind build (purged)                               |    P1    |   Planned   | Move from CDN to built stylesheet; purge                                                                                                          |
+| Infra/Perf    | Serve static locally + cache headers                  |    P1    |   Planned   | Cache-control for static; preconnect/prefetch                                                                                                     |
+| Quality       | Tests (pytest) for routes/models                      |    P1    |   Planned   | Unit/integration; sqlite temp DB fixtures                                                                                                         |
+| Quality       | E2E tests (Playwright/Cypress)                        |    P2    |   Planned   | Login → generate → save → share happy path                                                                                                     |
+| Quality       | CI (lint/format/typecheck/tests)                      |    P1    |   Planned   | GH Actions: ruff/black/mypy/pytest                                                                                                                |
+| Quality       | DB migrations (Alembic)                               |    P1    |   Planned   | Versioned schema; downgrade paths                                                                                                                 |
+| Quality       | ORM (SQLAlchemy)                                      |    P2    |   Planned   | Optional migration from raw sqlite                                                                                                                |
+| Observability | Error tracking (Sentry/Logfire)                       |    P1    |   Planned   | Capture server/client errors (no PII)                                                                                                             |
+| Observability | Privacy-friendly analytics (Plausible)                |    P3    |   Planned   | Minimal analytics with consent                                                                                                                    |
+| i18n/a11y     | Language switch mechanism                             |    P1    |    Done    | UI toggle; persist choice; instant switching                                                                                                      |
+| i18n/a11y     | Internationalization (Flask-Babel)                    |    P1    |    Done    | Complete multilingual system: English + Indonesian                                                                                                |
+| i18n/a11y     | Accessibility audit and fixes                         |    P1    |   Planned   | Landmarks, focus, ARIA live regions                                                                                                               |
+| Backups       | Weekly DB backups (library, user, feedback)           |    P1    | Not Started | Cron/Task; rotate; offsite option                                                                                                                 |
+| Image Gen     | Combine image generator input                         |    P1    | In Progress | ~50%; unify text/file modes                                                                                                                       |
+| Accounts      | Account settings page                                 |    P1    | In Progress | Password, delete (exists), future API creds                                                                                                       |
+| Community     | Remodel community page + share flow                   |    P1    | Not Started | Better cards, filters, see/copy/save/share                                                                                                        |
+| Accounts      | Account management flows                              |    P1    |    Done    | Implemented: Email (optional), username change, session list/revoke                                                                               |
+| Community     | User interactions (likes/comments)                    |    P2    |   Planned   | Requires moderation basics                                                                                                                        |
+| Economy       | Point system (earn/charge/transfer)                   |    P1    |    Done    | Comprehensive point system: 80 default points, costs for prompt types, daily login bonuses (5-12 random points)                                   |
+| Economy       | Achievement system with points rewards                |    P1    |    Done    | Stack Overflow/Reddit-style achievement system with automatic point rewards                                                                       |
 
 ---
 
 ## Implementation notes
 
 - Streaming (SSE)
+
   - Add `/stream` endpoints for text and advanced generations.
   - Client consumes EventSource and progressively renders Markdown.
-
 - Structured outputs
+
   - Add “JSON mode” toggle. Define JSON schema per generator; validate and show a JSON viewer with copy.
-
 - Security basics
+
   - CSRF tokens on all POST forms and fetches. Set cookie flags and a CSP that whitelists our static origins.
-
 - Versioning
+
   - `prompts_versions(prompt_id, version, title, content, created_at, author)`; compute diff on demand.
-
 - Backups
-  - Weekly cron/script dumps `.db` files to a timestamped dir; keep last N; optional remote copy.
 
+  - Weekly cron/script dumps `.db` files to a timestamped dir; keep last N; optional remote copy.
 - Internationalization
+
   - Complete multilingual system implemented with Flask-Babel, language switcher UI, and full Indonesian translations.
   - English as default with instant language switching, session persistence, and comprehensive template coverage.
-
 - Testing/CI
-  - Add pytest with temp sqlite dbs; GH Actions to lint/format/typecheck/test on PRs.
 
+  - Add pytest with temp sqlite dbs; GH Actions to lint/format/typecheck/test on PRs.
 - Economy System
+
   - Comprehensive point system with 80 default points, costs for different prompt types (basic: 0.8-2.0, advanced: 1.9-2.5)
   - Daily login bonuses (5-12 random points once per day)
   - Achievement system with automatic point rewards (Stack Overflow/Reddit-style achievements)
   - Database schema with user points tracking and login history
-
 - Response Formatting
+
   - Multi-layer cleaning system: AI prompt prevention, backend cleaning, frontend cleaning
   - Fixed JSON artifacts (`\n`, `\"`, `{ "response": "..." }`)
   - Fixed non-standard markdown: `[Header]*` → `## Header`, `text*` → `- text`
@@ -120,8 +121,8 @@
 - [ ] Prompt versioning (P1)
 - [ ] Weekly backups (P1)
 - [ ] Containerize + Tailwind build (P1)
-- [x] Language switch + i18n base (P1)
-- [x] Economy system (points + achievements) (P1)
-- [x] Response formatting fixes (P1)
-- [x] Database lock handling with WAL mode (P1)
+- [X] Language switch + i18n base (P1)
+- [X] Economy system (points + achievements) (P1)
+- [X] Response formatting fixes (P1)
+- [X] Database lock handling with WAL mode (P1)
 - [ ] Tests + CI + Alembic (P1)

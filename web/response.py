@@ -6,7 +6,7 @@ import re
 import google.generativeai as genai
 from dotenv import load_dotenv
 import random
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional, Tuple
 
 
 class GenerativeModel:
@@ -18,6 +18,8 @@ class GenerativeModel:
         # Allow overriding model via env var; default to stable free-tier friendly model
         self.model_name = os.getenv("GENAI_MODEL_NAME", "gemini-2.5-flash")
         self.user_api_key = None  # For storing user-provided API keys
+        self.current_user = None  # For tracking which user is making the request
+        self.user_db_path = "database/user.db"  # Default database path
         genai.configure(api_key=self.get_current_api_key())
 
         # Key health telemetry
@@ -64,10 +66,27 @@ class GenerativeModel:
     def clear_user_api_key(self):
         """Clear the user-provided API key."""
         self.user_api_key = None
+    
+    def set_current_user(self, username: str):
+        """Set the current user for API key pool management."""
+        self.current_user = username
+    
+    def set_user_db_path(self, db_path: str):
+        """Set the user database path for API key pool management."""
+        self.user_db_path = db_path
 
     def get_effective_api_key(self) -> str:
         """Get the API key to use (user key if available, otherwise system key)."""
         return self.user_api_key if self.user_api_key else self.get_current_api_key()
+    
+    def get_system_api_key(self) -> Tuple[Optional[str], Optional[str]]:
+        """Get a system API key from the pool for generating content for other users."""
+        try:
+            from api_key_pool import use_system_api_key
+            return use_system_api_key(self.user_db_path, self.current_user)
+        except Exception as e:
+            logging.exception("Failed to get system API key from pool")
+            return None, None
 
     def _mask_key(self, key: str) -> str:
         return f"***{key[-4:]}" if key else "(none)"
@@ -245,6 +264,27 @@ class GenerativeModel:
                 # If user key fails, fall back to system keys
                 last_error = e
         
+        # Try to get a system API key from the pool first
+        system_api_key, key_owner = self.get_system_api_key()
+        if system_api_key:
+            try:
+                genai.configure(api_key=system_api_key)
+                self.model = genai.GenerativeModel(
+                    model_name=self.model_name,
+                    generation_config=self.generation_config,
+                    safety_settings=self.safety_settings,
+                )
+                response = self.model.generate_content(prompt_part)
+                text = self._extract_text(response)
+                if text and text.strip():
+                    logging.info(f"Generated response using system API key from user {key_owner}")
+                    return text
+                else:
+                    raise ValueError("Empty response content")
+            except Exception as e:
+                logging.warning(f"System API key from {key_owner} failed: {e}")
+                last_error = e
+        
         # Fall back to system API keys
         for _ in range(len(self.api_keys)):
             genai.configure(api_key=self.get_current_api_key())
@@ -307,6 +347,27 @@ class GenerativeModel:
                     raise ValueError("Empty response content")
             except Exception as e:
                 # If user key fails, fall back to system keys
+                last_error = e
+        
+        # Try to get a system API key from the pool first
+        system_api_key, key_owner = self.get_system_api_key()
+        if system_api_key:
+            try:
+                genai.configure(api_key=system_api_key)
+                self.model = genai.GenerativeModel(
+                    model_name=self.model_name,
+                    generation_config=self.generation_config,
+                    safety_settings=self.safety_settings,
+                )
+                response = self.model.generate_content(prompt_part)
+                text = self._extract_text(response)
+                if text and text.strip():
+                    logging.info(f"Generated random response using system API key from user {key_owner}")
+                    return text
+                else:
+                    raise ValueError("Empty response content")
+            except Exception as e:
+                logging.warning(f"System API key from {key_owner} failed: {e}")
                 last_error = e
         
         # Fall back to system API keys
@@ -417,7 +478,26 @@ class GenerativeModel:
                 generation_config=self.generation_config,
                 safety_settings=self.safety_settings,
             )
+            response = self.model.generate_content(prompt_part)
+            return response.text
         
+        # Try to get a system API key from the pool first
+        system_api_key, key_owner = self.get_system_api_key()
+        if system_api_key:
+            try:
+                genai.configure(api_key=system_api_key)
+                self.model = genai.GenerativeModel(
+                    model_name=self.model_name,
+                    generation_config=self.generation_config,
+                    safety_settings=self.safety_settings,
+                )
+                response = self.model.generate_content(prompt_part)
+                logging.info(f"Generated image description using system API key from user {key_owner}")
+                return response.text
+            except Exception as e:
+                logging.warning(f"System API key from {key_owner} failed: {e}")
+        
+        # Fall back to system API keys
         response = self.model.generate_content(prompt_part)
         return response.text
 
@@ -437,7 +517,26 @@ class GenerativeModel:
                 generation_config=self.generation_config,
                 safety_settings=self.safety_settings,
             )
+            response = self.model.generate_content(prompt_part)
+            return response.text
         
+        # Try to get a system API key from the pool first
+        system_api_key, key_owner = self.get_system_api_key()
+        if system_api_key:
+            try:
+                genai.configure(api_key=system_api_key)
+                self.model = genai.GenerativeModel(
+                    model_name=self.model_name,
+                    generation_config=self.generation_config,
+                    safety_settings=self.safety_settings,
+                )
+                response = self.model.generate_content(prompt_part)
+                logging.info(f"Generated random image description using system API key from user {key_owner}")
+                return response.text
+            except Exception as e:
+                logging.warning(f"System API key from {key_owner} failed: {e}")
+        
+        # Fall back to system API keys
         response = self.model.generate_content(prompt_part)
         return response.text
 
@@ -470,7 +569,26 @@ class GenerativeModel:
                 generation_config=self.generation_config,
                 safety_settings=self.safety_settings,
             )
+            response = self.model.generate_content(prompt_part)
+            return response.text
         
+        # Try to get a system API key from the pool first
+        system_api_key, key_owner = self.get_system_api_key()
+        if system_api_key:
+            try:
+                genai.configure(api_key=system_api_key)
+                self.model = genai.GenerativeModel(
+                    model_name=self.model_name,
+                    generation_config=self.generation_config,
+                    safety_settings=self.safety_settings,
+                )
+                response = self.model.generate_content(prompt_part)
+                logging.info(f"Generated visual description using system API key from user {key_owner}")
+                return response.text
+            except Exception as e:
+                logging.warning(f"System API key from {key_owner} failed: {e}")
+        
+        # Fall back to system API keys
         response = self.model.generate_content(prompt_part)
         return response.text
 
@@ -499,6 +617,25 @@ class GenerativeModel:
                 generation_config=self.generation_config,
                 safety_settings=self.safety_settings,
             )
+            response = self.model.generate_content(prompt_part)
+            return response.text
         
+        # Try to get a system API key from the pool first
+        system_api_key, key_owner = self.get_system_api_key()
+        if system_api_key:
+            try:
+                genai.configure(api_key=system_api_key)
+                self.model = genai.GenerativeModel(
+                    model_name=self.model_name,
+                    generation_config=self.generation_config,
+                    safety_settings=self.safety_settings,
+                )
+                response = self.model.generate_content(prompt_part)
+                logging.info(f"Generated visual2 description using system API key from user {key_owner}")
+                return response.text
+            except Exception as e:
+                logging.warning(f"System API key from {key_owner} failed: {e}")
+        
+        # Fall back to system API keys
         response = self.model.generate_content(prompt_part)
         return response.text

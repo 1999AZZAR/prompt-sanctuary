@@ -7,8 +7,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const removeApiKeyBtn = document.getElementById('remove-api-key-btn');
     const apiKeyInput = document.getElementById('api_key_input');
 
-    // Load API key status on page load
+    // Load API key status and pool stats on page load
     loadApiKeyStatus();
+    loadPoolStats();
 
     // Handle API key validation form submission
     validateApiKeyForm.addEventListener('submit', function(e) {
@@ -140,8 +141,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     showNotification(`New achievement unlocked: ${data.new_achievements.join(', ')}`, 'achievement');
                 }
 
-                // Reload status
+                // Reload status and pool stats
                 await loadApiKeyStatus();
+                await loadPoolStats();
                 apiKeyInput.value = '';
             } else {
                 showError(data.error || 'Failed to validate API key');
@@ -154,6 +156,44 @@ document.addEventListener('DOMContentLoaded', function() {
             submitBtn.innerHTML = originalText;
             submitBtn.disabled = false;
         }
+    }
+
+    async function loadPoolStats() {
+        try {
+            const response = await fetch('/api_key/pool_stats');
+            const data = await response.json();
+
+            if (data.success) {
+                updatePoolStatsDisplay(data.user_stats, data.pool_stats);
+            } else {
+                console.error('Failed to load pool stats:', data.error);
+            }
+        } catch (error) {
+            console.error('Error loading pool stats:', error);
+        }
+    }
+
+    function updatePoolStatsDisplay(userStats, poolStats) {
+        // Update user statistics
+        const userUsageCount = document.getElementById('user-usage-count');
+        const userCompensation = document.getElementById('user-compensation');
+        
+        if (userStats.has_key) {
+            userUsageCount.textContent = userStats.usage_count || 0;
+            userCompensation.textContent = `${userStats.total_compensation || 0} pts`;
+        } else {
+            userUsageCount.textContent = 'N/A';
+            userCompensation.textContent = 'N/A';
+        }
+
+        // Update pool statistics
+        const poolActiveKeys = document.getElementById('pool-active-keys');
+        const poolTotalUsage = document.getElementById('pool-total-usage');
+        const poolAvgUsage = document.getElementById('pool-avg-usage');
+
+        poolActiveKeys.textContent = poolStats.active_keys || 0;
+        poolTotalUsage.textContent = poolStats.total_usage || 0;
+        poolAvgUsage.textContent = Math.round(poolStats.average_usage || 0);
     }
 
     async function removeApiKey() {
@@ -175,6 +215,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (data.success) {
                 showSuccess(data.message);
                 await loadApiKeyStatus();
+                await loadPoolStats();
                 apiKeyInput.value = '';
             } else {
                 showError(data.error || 'Failed to remove API key');
