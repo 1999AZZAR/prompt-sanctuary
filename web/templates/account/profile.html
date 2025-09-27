@@ -105,6 +105,43 @@
           </div>
         </form>
 
+        <!-- API Key Management -->
+        <div class="border-t border-slate-200 pt-6 mb-6">
+          <h3 class="font-medium text-slate-900 mb-3 flex items-center space-x-2">
+            <i class="fas fa-key text-purple-500"></i>
+            <span>{{ _('Gemini API Key') }}</span>
+          </h3>
+          <p class="text-xs text-slate-500 mb-4">{{ _('Use your own API key to avoid point consumption and earn 100 points!') }}</p>
+          
+          <div id="api-key-status" class="mb-4">
+            <div class="flex items-center space-x-2 p-3 bg-slate-50 rounded-lg">
+              <i class="fas fa-info-circle text-blue-500"></i>
+              <span class="text-sm text-slate-600">{{ _('Loading API key status...') }}</span>
+            </div>
+          </div>
+
+          <div id="api-key-form" style="display: none;">
+            <form id="validate-api-key-form" class="mb-4">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <div class="space-y-3">
+                <input type="password" id="api_key_input" name="api_key" placeholder="{{ _('Enter your Gemini API key') }}" class="w-full p-3 rounded-lg bg-slate-50 border border-slate-200 text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-violet-500">
+                <div class="flex space-x-2">
+                  <button type="submit" class="flex-1 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors">
+                    <i class="fas fa-check mr-2"></i>{{ _('Validate & Save') }}
+                  </button>
+                  <button type="button" id="remove-api-key-btn" class="flex-1 bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors" style="display: none;">
+                    <i class="fas fa-trash mr-2"></i>{{ _('Remove') }}
+                  </button>
+                </div>
+              </div>
+            </form>
+            <p class="text-xs text-slate-500">
+              {{ _('Get your API key from') }} 
+              <a href="https://makersuite.google.com/app/apikey" target="_blank" class="text-violet-500 hover:text-violet-600 underline">{{ _('Google AI Studio') }}</a>
+            </p>
+          </div>
+        </div>
+
         <!-- Danger Zone -->
         <div class="border-t border-slate-200 pt-6">
           <h3 class="font-medium text-red-600 mb-3">{{ _('Danger Zone') }}</h3>
@@ -284,4 +321,5 @@
 </div>
 <script defer src="{{ url_for('static', filename='script/personal.js') }}"></script>
 <script defer src="{{ url_for('static', filename='script/community.js') }}"></script>
+<script defer src="{{ url_for('static', filename='script/api_key_manager.js') }}"></script>
 {% endblock %}

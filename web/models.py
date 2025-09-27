@@ -62,7 +62,9 @@ def create_tables(user_db, prompt_db, community_db, feedback_db):
             """CREATE TABLE IF NOT EXISTS users (
                 username TEXT PRIMARY KEY,
                 password TEXT NOT NULL,
-                points REAL DEFAULT 80.0
+                points REAL DEFAULT 80.0,
+                gemini_api_key TEXT,
+                api_key_validated INTEGER DEFAULT 0
             );""",
             """CREATE TABLE IF NOT EXISTS achievements (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -276,6 +278,12 @@ def ensure_users_schema(user_db):
             conn.commit()
         if "points" not in cols:
             cursor.execute("ALTER TABLE users ADD COLUMN points REAL DEFAULT 80.0")
+            conn.commit()
+        if "gemini_api_key" not in cols:
+            cursor.execute("ALTER TABLE users ADD COLUMN gemini_api_key TEXT")
+            conn.commit()
+        if "api_key_validated" not in cols:
+            cursor.execute("ALTER TABLE users ADD COLUMN api_key_validated INTEGER DEFAULT 0")
             conn.commit()
         # Create unique index on email if not exists (allows multiple NULLs in SQLite)
         cursor.execute(
@@ -621,9 +629,10 @@ def deduct_user_points(user_db, username: str, cost: float) -> bool:
 
 
 def add_user_points(user_db, username: str, points: float):
-    """Add points to a user."""
+    """Add points to a user, with a maximum limit of 500 points."""
     current_points = get_user_points(user_db, username)
-    update_user_points(user_db, username, current_points + points)
+    new_points = min(current_points + points, 500.0)  # Cap at 500 points
+    update_user_points(user_db, username, new_points)
 
 
 def get_prompt_sharing_status(username: str, prompt_id: str, title: str, prompt_content: str, prompt_db: str, community_db: str):
@@ -748,6 +757,7 @@ def initialize_achievements(user_db):
         ("Early Adopter", "Be among the first 100 users", "fas fa-rocket", 100, "special", "user_rank", 100, 1),
         ("Reverse Engineer", "Use reverse image prompts", "fas fa-magic", 15, "special", "reverse_image_used", 1, 0),
         ("Advanced User", "Use advanced prompts", "fas fa-graduation-cap", 20, "special", "advanced_prompts_used", 1, 0),
+        ("API Key Provider", "Add and validate your own Gemini API key", "fas fa-key", 100, "special", "api_key_validated", 1, 0),
     ]
 
     with get_db_connection(user_db) as conn:
@@ -837,6 +847,7 @@ def get_user_stats(username: str, prompt_db: str, community_db: str):
         'user_rank': 0,
         'reverse_image_used': 0,
         'advanced_prompts_used': 0,
+        'api_key_validated': 0,
         # Quality stats
         'feedback_given': 0,
         'positive_ratings': 0,
@@ -900,6 +911,13 @@ def get_user_stats(username: str, prompt_db: str, community_db: str):
         cursor = conn.cursor()
         cursor.execute("SELECT COUNT(*) FROM user_logins WHERE username = ?", (username,))
         stats['total_logins'] = cursor.fetchone()[0]
+
+    # Get API key validation status
+    with get_db_connection(user_db) as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT api_key_validated FROM users WHERE username = ?", (username,))
+        row = cursor.fetchone()
+        stats['api_key_validated'] = 1 if row and row[0] else 0
 
     # Convert sets to lengths for achievement checking
     stats['styles_tried'] = len(stats['styles_tried'])
@@ -979,6 +997,8 @@ def check_achievement_condition(stats, condition_type: str, condition_value: int
         return stats['tools_used'] >= condition_value
     elif condition_type == "hidden_features_used":
         return stats['hidden_features_used'] >= condition_value
+    elif condition_type == "api_key_validated":
+        return stats['api_key_validated'] >= condition_value
 
     return False
 
@@ -1082,3 +1102,41 @@ def process_daily_login_bonus(user_db, username: str):
             else:
                 logger.exception("Failed to process daily login bonus after retries")
                 return 0  # Return 0 if all retries fail
+
+
+def get_user_api_key(user_db, username: str) -> str | None:
+    """Get the user's Gemini API key."""
+    with get_db_connection(user_db) as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT gemini_api_key FROM users WHERE username = ?", (username,))
+        row = cursor.fetchone()
+        return row[0] if row else None
+
+
+def set_user_api_key(user_db, username: str, api_key: str):
+    """Set the user's Gemini API key."""
+    with get_db_connection(user_db) as conn:
+        execute_sql(
+            conn,
+            "UPDATE users SET gemini_api_key = ? WHERE username = ?",
+            (api_key, username),
+        )
+
+
+def is_api_key_validated(user_db, username: str) -> bool:
+    """Check if the user's API key has been validated."""
+    with get_db_connection(user_db) as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT api_key_validated FROM users WHERE username = ?", (username,))
+        row = cursor.fetchone()
+        return bool(row and row[0])
+
+
+def set_api_key_validated(user_db, username: str, validated: bool = True):
+    """Mark the user's API key as validated."""
+    with get_db_connection(user_db) as conn:
+        execute_sql(
+            conn,
+            "UPDATE users SET api_key_validated = ? WHERE username = ?",
+            (1 if validated else 0, username),
+        )

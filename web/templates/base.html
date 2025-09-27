@@ -122,6 +122,14 @@
               <span class="text-sm font-medium text-slate-700">{{ _('Points') }}</span>
             </div>
             <div class="text-lg font-bold text-slate-900" id="user-points">{{ "%.1f"|format(current_user_points or 80.0) }}</div>
+            
+            <!-- API Key Status Indicator -->
+            <div id="api-key-indicator" class="mt-2 text-xs" style="display: none;">
+              <div class="inline-flex items-center space-x-1 px-2 py-1 bg-green-100 text-green-700 rounded-full">
+                <i class="fas fa-key"></i>
+                <span>{{ _('Using Own API Key') }}</span>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -198,5 +206,8 @@
 
     <!-- Azzar AI Chat Widget -->
     <script src="https://llm-test.azzar.workers.dev/widget.js"></script>
+    
+    <!-- API Key Status Indicator -->
+    <script defer src="{{ url_for('static', filename='script/api_key_indicator.js') }}"></script>
 </body>
 </html>

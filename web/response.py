@@ -17,6 +17,7 @@ class GenerativeModel:
         self.current_key_index = 0
         # Allow overriding model via env var; default to stable free-tier friendly model
         self.model_name = os.getenv("GENAI_MODEL_NAME", "gemini-2.5-flash")
+        self.user_api_key = None  # For storing user-provided API keys
         genai.configure(api_key=self.get_current_api_key())
 
         # Key health telemetry
@@ -55,6 +56,18 @@ class GenerativeModel:
         key = self.api_keys[self.current_key_index]
         self.current_key_index = (self.current_key_index + 1) % len(self.api_keys)
         return key
+
+    def set_user_api_key(self, api_key: str):
+        """Set a user-provided API key to use for generation."""
+        self.user_api_key = api_key
+
+    def clear_user_api_key(self):
+        """Clear the user-provided API key."""
+        self.user_api_key = None
+
+    def get_effective_api_key(self) -> str:
+        """Get the API key to use (user key if available, otherwise system key)."""
+        return self.user_api_key if self.user_api_key else self.get_current_api_key()
 
     def _mask_key(self, key: str) -> str:
         return f"***{key[-4:]}" if key else "(none)"
@@ -212,6 +225,27 @@ class GenerativeModel:
         """Generate a response based on a prompt file and user input."""
         prompt_part = self.read_prompt_part_from_file(prompt_file_path, user_input_text)
         last_error = None
+        
+        # If user has provided an API key, try it first
+        if self.user_api_key:
+            try:
+                genai.configure(api_key=self.user_api_key)
+                self.model = genai.GenerativeModel(
+                    model_name=self.model_name,
+                    generation_config=self.generation_config,
+                    safety_settings=self.safety_settings,
+                )
+                response = self.model.generate_content(prompt_part)
+                text = self._extract_text(response)
+                if text and text.strip():
+                    return text
+                else:
+                    raise ValueError("Empty response content")
+            except Exception as e:
+                # If user key fails, fall back to system keys
+                last_error = e
+        
+        # Fall back to system API keys
         for _ in range(len(self.api_keys)):
             genai.configure(api_key=self.get_current_api_key())
             self.model = genai.GenerativeModel(
@@ -255,6 +289,27 @@ class GenerativeModel:
         """Generate a random response based on a prompt file."""
         prompt_part = self.read_prompt_part_from_file(prompt_file_path)
         last_error = None
+        
+        # If user has provided an API key, try it first
+        if self.user_api_key:
+            try:
+                genai.configure(api_key=self.user_api_key)
+                self.model = genai.GenerativeModel(
+                    model_name=self.model_name,
+                    generation_config=self.generation_config,
+                    safety_settings=self.safety_settings,
+                )
+                response = self.model.generate_content(prompt_part)
+                text = self._extract_text(response)
+                if text and text.strip():
+                    return text
+                else:
+                    raise ValueError("Empty response content")
+            except Exception as e:
+                # If user key fails, fall back to system keys
+                last_error = e
+        
+        # Fall back to system API keys
         for _ in range(len(self.api_keys)):
             genai.configure(api_key=self.get_current_api_key())
             self.model = genai.GenerativeModel(
@@ -353,6 +408,16 @@ class GenerativeModel:
         prompt_part = self._build_imgdesc_prompt_with_examples(
             chosen_styles, user_input_image, examples_file="./instruction/advance2.txt"
         )
+        
+        # Use user API key if available
+        if self.user_api_key:
+            genai.configure(api_key=self.user_api_key)
+            self.model = genai.GenerativeModel(
+                model_name=self.model_name,
+                generation_config=self.generation_config,
+                safety_settings=self.safety_settings,
+            )
+        
         response = self.model.generate_content(prompt_part)
         return response.text
 
@@ -363,6 +428,16 @@ class GenerativeModel:
         prompt_part = self._build_imgdesc_prompt_with_examples(
             chosen_styles, user_input=None, examples_file="./instruction/advance2.txt"
         )
+        
+        # Use user API key if available
+        if self.user_api_key:
+            genai.configure(api_key=self.user_api_key)
+            self.model = genai.GenerativeModel(
+                model_name=self.model_name,
+                generation_config=self.generation_config,
+                safety_settings=self.safety_settings,
+            )
+        
         response = self.model.generate_content(prompt_part)
         return response.text
 
@@ -386,6 +461,16 @@ class GenerativeModel:
             "Try to make your description as similar as possible to the original image, just like an audio describer would. "
             "Remember to begin your description with the word 'imagine.' For example, 'imagine a red-hooded woman in the forest...'",
         ]
+        
+        # Use user API key if available
+        if self.user_api_key:
+            genai.configure(api_key=self.user_api_key)
+            self.model = genai.GenerativeModel(
+                model_name=self.model_name,
+                generation_config=self.generation_config,
+                safety_settings=self.safety_settings,
+            )
+        
         response = self.model.generate_content(prompt_part)
         return response.text
 
@@ -405,5 +490,15 @@ class GenerativeModel:
             "just like an audio describer would.",
             "\nRemember to begin your description with the word 'imagine.' For example, 'imagine a red-hooded woman in the forest...'",
         ]
+        
+        # Use user API key if available
+        if self.user_api_key:
+            genai.configure(api_key=self.user_api_key)
+            self.model = genai.GenerativeModel(
+                model_name=self.model_name,
+                generation_config=self.generation_config,
+                safety_settings=self.safety_settings,
+            )
+        
         response = self.model.generate_content(prompt_part)
         return response.text
