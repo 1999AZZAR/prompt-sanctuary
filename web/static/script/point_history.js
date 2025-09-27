@@ -46,6 +46,11 @@ async function loadPointHistory() {
     
     try {
         const response = await fetch('/points/history');
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
         const data = await response.json();
         
         if (data.success) {
@@ -190,7 +195,9 @@ function createTransactionElement(transaction) {
     
     const balanceText = document.createElement('p');
     balanceText.className = 'text-xs text-gray-500';
-    balanceText.textContent = `${transaction.points_before.toFixed(1)} → ${transaction.points_after.toFixed(1)}`;
+    const beforePoints = transaction.points_before !== null ? transaction.points_before.toFixed(1) : 'N/A';
+    const afterPoints = transaction.points_after !== null ? transaction.points_after.toFixed(1) : 'N/A';
+    balanceText.textContent = `${beforePoints} → ${afterPoints}`;
     
     pointsChange.appendChild(pointsText);
     pointsChange.appendChild(balanceText);
@@ -214,7 +221,7 @@ function createExpirationStatus(transaction) {
     const statusElement = document.createElement('div');
     statusElement.className = 'text-right';
     
-    if (transaction.expires_at) {
+    if (transaction.expires_at && transaction.expires_at !== null) {
         const expirationDate = new Date(transaction.expires_at);
         const now = new Date();
         const daysLeft = Math.ceil((expirationDate - now) / (1000 * 60 * 60 * 24));

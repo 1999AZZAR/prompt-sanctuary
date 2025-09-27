@@ -793,7 +793,10 @@ def get_point_history(user_db, username: str, limit: int = 50) -> list:
                 ORDER BY pt.created_at DESC
                 LIMIT ?
             """, (username, limit))
-            return cursor.fetchall()
+            rows = cursor.fetchall()
+            
+            # Convert sqlite3.Row objects to tuples for consistent handling
+            return [tuple(row) for row in rows]
     except Exception as e:
         logger.exception(f"Failed to get point history for user {username}: {e}")
         return []
