@@ -433,6 +433,92 @@
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
 }
 
+/* Profile Page Mobile Improvements */
+@media (max-width: 768px) {
+    /* Profile page mobile improvements */
+    .profile-grid {
+        grid-template-columns: 1fr !important;
+        gap: 1rem !important;
+    }
+    
+    .profile-stats-grid {
+        grid-template-columns: 1fr !important;
+        gap: 0.75rem !important;
+    }
+    
+    .profile-action-buttons {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 0.5rem !important;
+    }
+    
+    .profile-action-buttons .btn {
+        flex: 1 1 calc(50% - 0.25rem) !important;
+        min-width: 0 !important;
+        padding: 0.75rem 0.5rem !important;
+        font-size: 0.75rem !important;
+        min-height: 44px !important;
+        text-align: center !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+    }
+    
+    .profile-prompt-item {
+        padding: 0.75rem !important;
+    }
+    
+    .profile-prompt-actions {
+        margin-top: 0.75rem !important;
+        flex-wrap: wrap !important;
+        gap: 0.5rem !important;
+    }
+    
+    .profile-prompt-actions .btn {
+        flex: 1 1 calc(50% - 0.25rem) !important;
+        min-height: 40px !important;
+        padding: 0.5rem 0.25rem !important;
+        font-size: 0.7rem !important;
+    }
+    
+    .profile-form-grid {
+        grid-template-columns: 1fr !important;
+        gap: 1rem !important;
+    }
+    
+    .profile-form-buttons {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 0.5rem !important;
+    }
+    
+    .profile-form-buttons .btn {
+        width: 100% !important;
+        min-height: 44px !important;
+        padding: 0.75rem !important;
+    }
+    
+    /* Feedback list mobile improvements */
+    .feedback-list-item {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 0.75rem !important;
+        padding: 1rem !important;
+    }
+    
+    .feedback-list-actions {
+        width: 100% !important;
+        display: flex !important;
+        justify-content: flex-end !important;
+    }
+    
+    .feedback-list-actions .btn {
+        min-height: 44px !important;
+        padding: 0.75rem 1.5rem !important;
+        font-size: 0.875rem !important;
+    }
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .prompt-card-enhanced {
