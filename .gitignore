@@ -13,3 +13,4 @@ web/database/community/shared.db
 .venv/
 *.db-shm
 *.db-wal
+*.log

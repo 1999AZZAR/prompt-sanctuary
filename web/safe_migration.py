@@ -447,6 +447,76 @@ class DatabaseMigrator:
             logger.error(f"Failed to migrate prompt_versions table: {e}")
             return False
     
+    def migrate_point_transactions_table(self, db_path: str, dry_run: bool = False) -> bool:
+        """Migrate the point_transactions table."""
+        logger.info(f"Migrating point_transactions table in {db_path}")
+        
+        # Only migrate this table in user database
+        if 'user.db' not in db_path:
+            logger.info(f"Skipping point_transactions table for non-user database: {db_path}")
+            return True
+        
+        try:
+            # Create point_transactions table
+            point_transactions_table = """
+            (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                username TEXT NOT NULL,
+                points REAL NOT NULL,
+                source TEXT NOT NULL,
+                description TEXT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                expires_at TIMESTAMP,
+                is_expired INTEGER DEFAULT 0,
+                FOREIGN KEY (username) REFERENCES users(username)
+            )
+            """
+            
+            self.create_table_if_not_exists(
+                db_path, 'point_transactions', point_transactions_table, dry_run
+            )
+            
+            return True
+            
+        except Exception as e:
+            logger.error(f"Failed to migrate point_transactions table: {e}")
+            return False
+    
+    def migrate_point_history_table(self, db_path: str, dry_run: bool = False) -> bool:
+        """Migrate the point_history table."""
+        logger.info(f"Migrating point_history table in {db_path}")
+        
+        # Only migrate this table in user database
+        if 'user.db' not in db_path:
+            logger.info(f"Skipping point_history table for non-user database: {db_path}")
+            return True
+        
+        try:
+            # Create point_history table
+            point_history_table = """
+            (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                username TEXT NOT NULL,
+                transaction_id INTEGER NOT NULL,
+                action TEXT NOT NULL,
+                points_before REAL NOT NULL,
+                points_after REAL NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (username) REFERENCES users(username),
+                FOREIGN KEY (transaction_id) REFERENCES point_transactions(id)
+            )
+            """
+            
+            self.create_table_if_not_exists(
+                db_path, 'point_history', point_history_table, dry_run
+            )
+            
+            return True
+            
+        except Exception as e:
+            logger.error(f"Failed to migrate point_history table: {e}")
+            return False
+    
     def migrate_database(self, db_path: str, dry_run: bool = False) -> bool:
         """Perform complete migration of a database."""
         logger.info(f"Starting migration of {db_path}")
@@ -479,6 +549,8 @@ class DatabaseMigrator:
         success &= self.migrate_community_tables(db_path, dry_run)
         success &= self.migrate_feedback_table(db_path, dry_run)
         success &= self.migrate_prompt_versions_table(db_path, dry_run)
+        success &= self.migrate_point_transactions_table(db_path, dry_run)
+        success &= self.migrate_point_history_table(db_path, dry_run)
         
         if success:
             logger.info(f"Migration completed successfully for {db_path}")

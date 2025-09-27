@@ -853,7 +853,7 @@ def create_main_blueprint(
         
         # Only deduct points if user doesn't have their own API key
         if not user_has_api_key:
-            if not deduct_user_points(main_blueprint.user_db, username, cost):
+            if not deduct_user_points_with_source(main_blueprint.user_db, username, cost, 'prompt_generation', 'Generated basic prompt'):
                 current_points = get_user_points(main_blueprint.user_db, username)
                 return jsonify({"success": False, "error": f"Insufficient points. You need {cost} points but have {current_points}."}), 402
 
@@ -884,7 +884,7 @@ def create_main_blueprint(
         
         # Only deduct points if user doesn't have their own API key
         if not user_has_api_key:
-            if not deduct_user_points(main_blueprint.user_db, username, cost):
+            if not deduct_user_points_with_source(main_blueprint.user_db, username, cost, 'prompt_generation', 'Generated basic prompt'):
                 current_points = get_user_points(main_blueprint.user_db, username)
                 return jsonify({"success": False, "error": f"Insufficient points. You need {cost} points but have {current_points}."}), 402
 
@@ -916,7 +916,7 @@ def create_main_blueprint(
         
         # Only deduct points if user doesn't have their own API key
         if not user_has_api_key:
-            if not deduct_user_points(main_blueprint.user_db, username, cost):
+            if not deduct_user_points_with_source(main_blueprint.user_db, username, cost, 'prompt_generation', 'Generated basic prompt'):
                 current_points = get_user_points(main_blueprint.user_db, username)
                 return jsonify({"success": False, "error": f"Insufficient points. You need {cost} points but have {current_points}."}), 402
 
@@ -949,7 +949,7 @@ def create_main_blueprint(
         
         # Only deduct points if user doesn't have their own API key
         if not user_has_api_key:
-            if not deduct_user_points(main_blueprint.user_db, username, cost):
+            if not deduct_user_points_with_source(main_blueprint.user_db, username, cost, 'prompt_generation', 'Generated basic prompt'):
                 current_points = get_user_points(main_blueprint.user_db, username)
                 return jsonify({"success": False, "error": f"Insufficient points. You need {cost} points but have {current_points}."}), 402
 
@@ -981,7 +981,7 @@ def create_main_blueprint(
             
             # Only deduct points if user doesn't have their own API key
             if not user_has_api_key:
-                if not deduct_user_points(main_blueprint.user_db, username, cost):
+                if not deduct_user_points_with_source(main_blueprint.user_db, username, cost, 'advance_generation', 'Generated advance prompt'):
                     current_points = get_user_points(main_blueprint.user_db, username)
                     return jsonify({"success": False, "error": f"Insufficient points. You need {cost} points but have {current_points}."}), 402
 
@@ -1028,7 +1028,7 @@ def create_main_blueprint(
             
             # Only deduct points if user doesn't have their own API key
             if not user_has_api_key:
-                if not deduct_user_points(main_blueprint.user_db, username, cost):
+                if not deduct_user_points_with_source(main_blueprint.user_db, username, cost, 'advance_generation', 'Generated advance prompt'):
                     current_points = get_user_points(main_blueprint.user_db, username)
                     return jsonify({"success": False, "error": f"Insufficient points. You need {cost} points but have {current_points}."}), 402
 
@@ -1053,7 +1053,7 @@ def create_main_blueprint(
             
             # Only deduct points if user doesn't have their own API key
             if not user_has_api_key:
-                if not deduct_user_points(main_blueprint.user_db, username, cost):
+                if not deduct_user_points_with_source(main_blueprint.user_db, username, cost, 'advance_generation', 'Generated advance prompt'):
                     current_points = get_user_points(main_blueprint.user_db, username)
                     return jsonify({"success": False, "error": f"Insufficient points. You need {cost} points but have {current_points}."}), 402
 
@@ -1076,7 +1076,7 @@ def create_main_blueprint(
             
             # Only deduct points if user doesn't have their own API key
             if not user_has_api_key:
-                if not deduct_user_points(main_blueprint.user_db, username, cost):
+                if not deduct_user_points_with_source(main_blueprint.user_db, username, cost, 'advance_generation', 'Generated advance prompt'):
                     current_points = get_user_points(main_blueprint.user_db, username)
                     return jsonify({"success": False, "error": f"Insufficient points. You need {cost} points but have {current_points}."}), 402
 

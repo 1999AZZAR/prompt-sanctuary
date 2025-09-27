@@ -20,6 +20,10 @@ POINT_EXPIRATION = {
     'api_key_add': 80,         # 80 days
     'api_key_usage': 95,       # 95 days
     'prompt_share': 30,        # 30 days
+    'prompt_unshare': 30,      # 30 days (same as share)
+    'prompt_generation': 15,   # 15 days for basic prompt generation
+    'advance_generation': 20,  # 20 days for advance prompt generation
+    'api_key_remove': None,    # Removal cost doesn't expire (it's a penalty)
     'original': None          # Original 80 points never expire
 }
 
