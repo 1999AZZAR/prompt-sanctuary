@@ -372,21 +372,40 @@ class DatabaseMigrator:
         logger.info(f"Migrating community tables in {db_path}")
         
         try:
-            # Create shared table if it doesn't exist
-            shared_table = """
-            (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                owner TEXT NOT NULL,
-                random_val TEXT UNIQUE NOT NULL,
-                title TEXT NOT NULL,
-                prompt TEXT NOT NULL,
-                time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            )
-            """
+            # Create shared table if it doesn't exist (for shared.db)
+            if 'shared.db' in db_path:
+                shared_table = """
+                (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    owner TEXT NOT NULL,
+                    random_val TEXT UNIQUE NOT NULL,
+                    title TEXT NOT NULL,
+                    prompt TEXT NOT NULL,
+                    time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+                """
+                
+                self.create_table_if_not_exists(
+                    db_path, 'shared', shared_table, dry_run
+                )
             
-            self.create_table_if_not_exists(
-                db_path, 'shared', shared_table, dry_run
-            )
+            # Create community table if it doesn't exist (for query.db)
+            elif 'query.db' in db_path:
+                community_table = """
+                (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    random_val TEXT UNIQUE NOT NULL,
+                    username TEXT NOT NULL,
+                    tittle TEXT NOT NULL,
+                    prompt TEXT NOT NULL,
+                    tag TEXT,
+                    time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+                """
+                
+                self.create_table_if_not_exists(
+                    db_path, 'community', community_table, dry_run
+                )
             
             return True
             
@@ -517,16 +536,44 @@ class DatabaseMigrator:
             logger.error(f"Failed to migrate point_history table: {e}")
             return False
     
+    def initialize_achievements(self, db_path: str, dry_run: bool = False) -> bool:
+        """Initialize achievements table with default achievements."""
+        logger.info(f"Initializing achievements in {db_path}")
+        
+        # Only initialize achievements in user database
+        if 'user.db' not in db_path:
+            logger.info(f"Skipping achievements initialization for non-user database: {db_path}")
+            return True
+        
+        if dry_run:
+            logger.info(f"[DRY RUN] Would initialize achievements table with default data")
+            return True
+        
+        try:
+            from models import initialize_achievements
+            initialize_achievements(db_path)
+            logger.info(f"Successfully initialized achievements table")
+            return True
+        except Exception as e:
+            logger.error(f"Failed to initialize achievements: {e}")
+            return False
+    
     def migrate_database(self, db_path: str, dry_run: bool = False) -> bool:
         """Perform complete migration of a database."""
         logger.info(f"Starting migration of {db_path}")
         
+        # Create database file if it doesn't exist
         if not os.path.exists(db_path):
-            logger.error(f"Database file does not exist: {db_path}")
-            return False
+            logger.info(f"Database file does not exist, creating: {db_path}")
+            if not dry_run:
+                # Ensure directory exists
+                os.makedirs(os.path.dirname(db_path), exist_ok=True)
+                # Create empty database
+                with get_db_connection(db_path) as conn:
+                    conn.commit()
         
-        # Create backup unless in dry run mode
-        if not dry_run:
+        # Create backup unless in dry run mode (only if database already existed)
+        elif not dry_run:
             try:
                 self.backup_database(db_path)
             except Exception as e:
@@ -540,22 +587,97 @@ class DatabaseMigrator:
         
         success = True
         
-        # Migrate all tables
-        success &= self.migrate_users_table(db_path, dry_run)
-        success &= self.migrate_achievements_table(db_path, dry_run)
-        success &= self.migrate_user_achievements_table(db_path, dry_run)
-        success &= self.migrate_user_logins_table(db_path, dry_run)
-        success &= self.migrate_sessions_table(db_path, dry_run)
-        success &= self.migrate_community_tables(db_path, dry_run)
-        success &= self.migrate_feedback_table(db_path, dry_run)
-        success &= self.migrate_prompt_versions_table(db_path, dry_run)
-        success &= self.migrate_point_transactions_table(db_path, dry_run)
-        success &= self.migrate_point_history_table(db_path, dry_run)
+        # Migrate all tables based on database type
+        if 'user.db' in db_path:
+            # User database migrations
+            success &= self.migrate_users_table(db_path, dry_run)
+            success &= self.migrate_achievements_table(db_path, dry_run)
+            success &= self.migrate_user_achievements_table(db_path, dry_run)
+            success &= self.migrate_user_logins_table(db_path, dry_run)
+            success &= self.migrate_sessions_table(db_path, dry_run)
+            success &= self.migrate_point_transactions_table(db_path, dry_run)
+            success &= self.migrate_point_history_table(db_path, dry_run)
+            # Initialize achievements after table creation
+            success &= self.initialize_achievements(db_path, dry_run)
+        elif 'prompt_data.db' in db_path:
+            # Prompt database migrations
+            success &= self.migrate_prompt_versions_table(db_path, dry_run)
+        elif 'shared.db' in db_path or 'query.db' in db_path:
+            # Community database migrations
+            success &= self.migrate_community_tables(db_path, dry_run)
+        elif 'feedback.db' in db_path:
+            # Feedback database migrations
+            success &= self.migrate_feedback_table(db_path, dry_run)
+        else:
+            logger.warning(f"Unknown database type for {db_path}, attempting all migrations")
+            # Try all migrations for unknown database types
+            success &= self.migrate_users_table(db_path, dry_run)
+            success &= self.migrate_achievements_table(db_path, dry_run)
+            success &= self.migrate_user_achievements_table(db_path, dry_run)
+            success &= self.migrate_user_logins_table(db_path, dry_run)
+            success &= self.migrate_sessions_table(db_path, dry_run)
+            success &= self.migrate_community_tables(db_path, dry_run)
+            success &= self.migrate_feedback_table(db_path, dry_run)
+            success &= self.migrate_prompt_versions_table(db_path, dry_run)
+            success &= self.migrate_point_transactions_table(db_path, dry_run)
+            success &= self.migrate_point_history_table(db_path, dry_run)
         
         if success:
             logger.info(f"Migration completed successfully for {db_path}")
         else:
             logger.error(f"Migration failed for {db_path}")
+        
+        return success
+    
+    def rebuild_database(self, db_path: str, dry_run: bool = False) -> bool:
+        """Completely rebuild a database from scratch to match current schema."""
+        logger.info(f"Rebuilding database from scratch: {db_path}")
+        
+        # Create backup of existing database if it exists
+        if os.path.exists(db_path) and not dry_run:
+            try:
+                self.backup_database(db_path)
+            except Exception as e:
+                logger.error(f"Backup failed: {e}")
+                if not self.force:
+                    return False
+        
+        # Remove existing database file
+        if os.path.exists(db_path) and not dry_run:
+            logger.info(f"Removing existing database: {db_path}")
+            os.remove(db_path)
+        elif dry_run:
+            logger.info(f"[DRY RUN] Would remove existing database: {db_path}")
+        
+        # Create new database file
+        if not dry_run:
+            logger.info(f"Creating new database: {db_path}")
+            os.makedirs(os.path.dirname(db_path), exist_ok=True)
+            with get_db_connection(db_path) as conn:
+                conn.commit()
+        
+        # Run migration on the new database
+        return self.migrate_database(db_path, dry_run)
+    
+    def rebuild_all_databases(self, dry_run: bool = False) -> bool:
+        """Completely rebuild all databases from scratch."""
+        logger.info("Rebuilding all databases from scratch")
+        
+        # Define database paths
+        base_dir = os.path.dirname(__file__)
+        databases = {
+            'user': os.path.join(base_dir, 'database', 'user.db'),
+            'prompt': os.path.join(base_dir, 'database', 'prompt_data.db'),
+            'community': os.path.join(base_dir, 'database', 'community', 'shared.db'),
+            'query': os.path.join(base_dir, 'database', 'community', 'query.db'),
+            'feedback': os.path.join(base_dir, 'database', 'feedback.db')
+        }
+        
+        success = True
+        
+        for db_name, db_path in databases.items():
+            logger.info(f"Rebuilding {db_name} database: {db_path}")
+            success &= self.rebuild_database(db_path, dry_run)
         
         return success
     
@@ -623,6 +745,8 @@ Examples:
   python safe_migration.py                    # Normal migration with backup
   python safe_migration.py --dry-run          # Show what would be changed
   python safe_migration.py --force            # Force migration even if backup fails
+  python safe_migration.py --rebuild          # Completely rebuild all databases
+  python safe_migration.py --rebuild --dry-run # Show what rebuild would do
   python safe_migration.py --backup-dir ./my_backups  # Custom backup directory
         """
     )
@@ -637,6 +761,12 @@ Examples:
         '--force', 
         action='store_true',
         help='Force migration even if backup fails'
+    )
+    
+    parser.add_argument(
+        '--rebuild', 
+        action='store_true',
+        help='Completely rebuild all databases from scratch (destructive!)'
     )
     
     parser.add_argument(
@@ -658,6 +788,16 @@ Examples:
         print("⚠️  FORCE MODE - Migration will continue even if backup fails")
         print()
     
+    if args.rebuild:
+        print("🔥 REBUILD MODE - All databases will be completely rebuilt!")
+        if not args.dry_run:
+            print("⚠️  WARNING: This will delete all existing data!")
+            response = input("Are you sure you want to continue? (yes/no): ")
+            if response.lower() != 'yes':
+                print("Rebuild cancelled.")
+                sys.exit(0)
+        print()
+    
     print(f"Backup directory: {args.backup_dir}")
     print()
     
@@ -665,30 +805,38 @@ Examples:
     migrator = DatabaseMigrator(backup_dir=args.backup_dir, force=args.force)
     
     try:
-        # Run migration
-        success = migrator.migrate_all_databases(dry_run=args.dry_run)
+        # Run migration or rebuild
+        if args.rebuild:
+            success = migrator.rebuild_all_databases(dry_run=args.dry_run)
+            operation = "rebuild"
+        else:
+            success = migrator.migrate_all_databases(dry_run=args.dry_run)
+            operation = "migration"
         
         # Print summary
         migrator.print_summary()
         
         if success:
             if args.dry_run:
-                print("\n✅ Dry run completed successfully!")
-                print("Run without --dry-run to apply changes.")
+                print(f"\n✅ Dry run completed successfully!")
+                print(f"Run without --dry-run to apply changes.")
             else:
-                print("\n✅ Migration completed successfully!")
-                print("Your databases are now up to date.")
+                print(f"\n✅ {operation.title()} completed successfully!")
+                if args.rebuild:
+                    print("All databases have been rebuilt from scratch.")
+                else:
+                    print("Your databases are now up to date.")
         else:
-            print("\n❌ Migration failed!")
+            print(f"\n❌ {operation.title()} failed!")
             print("Check the log file 'migration.log' for details.")
             sys.exit(1)
             
     except KeyboardInterrupt:
-        print("\n\n⚠️  Migration interrupted by user")
+        print("\n\n⚠️  Operation interrupted by user")
         sys.exit(1)
     except Exception as e:
-        logger.exception("Migration failed with exception")
-        print(f"\n❌ Migration failed: {e}")
+        logger.exception(f"{operation.title()} failed with exception")
+        print(f"\n❌ {operation.title()} failed: {e}")
         sys.exit(1)
 
 
