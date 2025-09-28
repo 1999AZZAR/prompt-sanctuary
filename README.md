@@ -1,331 +1,402 @@
-# Prompt-Sanctuary
+# Prompt Sanctuary
 
-Modify, generate, or get a random prompt to optimize AI assistant responses.
+A comprehensive web application for creating, managing, and optimizing AI prompts to enhance assistant performance across various tasks.
 
-This project provides a redesigned UI and expanded capabilities building on my previous work, which was composed of three parts:
+## Overview
 
-- [Prompt Library](https://github.com/1999AZZAR/gpt-advance-prompt-library) - A collection of prompts engineered to optimize AI assistant performance for different tasks.
-- [Prompt Generator](https://github.com/1999AZZAR/prompt-generator) - A tool to generate prompts by combining elements from the library.
-- [stability chat](https://github.com/1999AZZAR/stability_chat_bot) - A chatbot web app built with flask to generate image using stability api and text using gemini.
+Prompt Sanctuary combines the best features from three previous projects into a unified platform:
 
-With this new implementation, users can:
+- **[Prompt Library](https://github.com/1999AZZAR/gpt-advance-prompt-library)** - Curated collection of optimized prompts
+- **[Prompt Generator](https://github.com/1999AZZAR/prompt-generator)** - Dynamic prompt creation tool
+- **[Stability Chat](https://github.com/1999AZZAR/stability_chat_bot)** - Multi-modal AI assistant
 
-- Access the prompt library to copy proven prompts for their use case.
-- Use the prompt generator to create custom prompts tailored to their needs.
-- Get randomly generated prompts for experimentation.
-- Provide feedback on prompts to continuously improve the library.
-- ability to save the generated prompt.
+### Key Capabilities
 
-> You can try the tools yourself at [**prompt sanctuary**](https://sanctuary01.pythonanywhere.com/) or run(host) it yourself by following the instructions [here](instruction.md).
-> You can also try the [**streamlit**](https://github.com/1999AZZAR/streamlit_promptgen) version.
+- **Prompt Library Access** - Browse and copy proven prompts for specific use cases
+- **Custom Generation** - Create tailored prompts using advanced generation tools
+- **Random Generation** - Discover new approaches through experimental prompts
+- **Personal Library** - Save, organize, and version your custom prompts
+- **Community Sharing** - Contribute to and benefit from community-driven improvements
+- **Feedback System** - Continuous improvement through user feedback
 
-## What's new (2025 UI/Backend refresh)
+### Live Demo
 
-- Tailwind CSS v3, pastel theme, and glassmorphism across the app
-- Global popup system (details/confirm/custom) with keyboard focus-trap and backdrop click-to-close
-- Safer, richer result rendering: Markdown + DOMPurify sanitization + Prism code highlighting with copy buttons
-- Default Gemini model updated to latest stable free-tier friendly model (`gemini-2.5-flash`) with easy override
-- More robust filesystem handling for SQLite DBs (auto-create DB directories)
-- Complete multilingual system: English + Indonesian with instant language switching
-- Prompt versioning: automatic snapshots on save/edit, history view, and rollback from personal library
-- Comprehensive economy system with points and achievements
-- Advanced response formatting with intelligent markdown cleaning
-- SQLite WAL mode for improved database concurrency and performance
-- Robust error handling and retry mechanisms for stable operation
-- Personal API key management system with validation and rewards
-- Enhanced point system with expiration tracking and detailed history
-- API key pool system for system-wide usage with fair compensation
-- Comprehensive database migration utility for production deployments
-- Interactive point history modal with transaction details
-- Improved profile page with better organization and session management
+- **Web Application**: [prompt sanctuary](https://sanctuary01.pythonanywhere.com/)
+- **Streamlit Version**: [streamlit promptgen](https://github.com/1999AZZAR/streamlit_promptgen)
+- **Self-Hosting**: Follow the [setup instructions](instruction.md)
 
-## Multilingual Support
+## Latest Updates (2025)
 
-Prompt Sanctuary now supports **English** and **Indonesian** languages with complete internationalization:
+### User Interface & Experience
+- **Modern Design System** - Tailwind CSS v3 with pastel theme and glassmorphism effects
+- **Enhanced Modals** - Global popup system with keyboard navigation and accessibility features
+- **Rich Content Rendering** - Markdown support with DOMPurify sanitization and Prism syntax highlighting
+- **Copy Functionality** - One-click copying for generated content and code blocks
 
-- **Dual Language Interface**: Switch between English and Indonesian instantly
-- **Session Persistence**: Language preference remembered across sessions
-- **Complete UI Coverage**: All templates, forms, and UI elements translated
-- **Real-time Switching**: No page reload required
-- **Mobile Responsive**: Language switcher works on all devices
+### Multilingual Support
+- **Dual Language Interface** - Complete English and Indonesian language support
+- **Instant Switching** - Real-time language switching without page reloads
+- **Session Persistence** - Language preferences saved across sessions
 
-### Language Features
+### Prompt Management
+- **Version Control** - Automatic snapshots and version history for saved prompts
+- **Advanced Editing** - Rollback functionality and prompt evolution tracking
+- **Community Integration** - Enhanced sharing and feedback systems
 
-- **Default Language**: English (reliable fallback for all strings)
-- **Language Switcher**: Located in sidebar navigation (EN/ID buttons)
-- **Comprehensive Coverage**: All generator templates, forms, and navigation translated
-- **Production Ready**: Full Flask-Babel implementation with compiled translation files
+### Economy & Gamification
+- **Point System** - Comprehensive economy with points, achievements, and rewards
+- **API Key Management** - Personal API key integration with validation and compensation
+- **Usage Tracking** - Detailed transaction history and point expiration management
 
-## Economy System
+### Technical Improvements
+- **Enhanced Performance** - SQLite WAL mode for improved concurrency
+- **Robust Architecture** - Better error handling and retry mechanisms
+- **Database Migration** - Production-ready migration utilities
+- **Latest AI Models** - Updated to `gemini-2.5-flash` with easy model override
 
-Prompt Sanctuary now features a comprehensive economy system with points and achievements:
+## Getting Started
 
-### Point System
+### Quick Setup
 
-- **Default Points**: Every user starts with 80 points
-- **Prompt Costs**: Different costs based on complexity:
-  - Basic text prompts: 1.5 points
-  - Basic random prompts: 0.8 points
-  - Basic image prompts: 1.5 points
-  - Basic random image prompts: 0.8 points
-  - Basic reverse image prompts: 2.0 points
-  - Advanced text prompts: 1.9 points
-  - Advanced image prompts: 1.9 points
-  - Advanced reverse image prompts: 2.5 points
-- **Daily Login Bonus**: Earn 5-12 random points once per day
-- **Achievement Rewards**: Stack Overflow/Reddit-style achievements with point rewards
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/1999AZZAR/prompt-sanctuary.git
+   cd prompt-sanctuary
+   ```
 
-### Achievement System
+2. **Create virtual environment**
+   ```bash
+   python -m venv .venv
+   source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+   ```
 
-- **User Statistics Tracking**: Prompts generated, saved, shared, etc.
-- **Automatic Achievement Unlocking**: Based on user activity patterns
-- **Point Rewards**: Achievements grant additional points to users
-- **Achievement Categories**: Various categories like generation, sharing, consistency, etc.
+3. **Install dependencies**
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-### API Key Management System
+4. **Configure environment**
+   ```bash
+   # Create .env file with your Google AI Studio key(s)
+   GENAI_API_KEY=your_api_key_here
+   ```
 
-Prompt Sanctuary now features a comprehensive API key management system that allows users to use their own Gemini API keys:
+5. **Run the application**
+   ```bash
+   python web/app.py
+   ```
+   
+   The application will be available at `http://127.0.0.1:5000`
 
-#### Personal API Key Features
+### Language Support
 
-- **Personal API Keys**: Users can provide and validate their own Gemini API keys
-- **Automatic Validation**: Real-time API key validation with immediate feedback
-- **Reward System**: Earn 100 points for successfully adding and validating an API key
-- **Point Savings**: Using your own API key doesn't consume your points
-- **Achievement Unlock**: "API Key Provider" achievement for successful validation
-- **Removal Cost**: Removing an API key costs 100 points (balancing the reward)
+- **Available Languages**: English (default) and Indonesian
+- **Language Switching**: Use EN/ID buttons in the sidebar navigation
+- **Session Persistence**: Language preferences are saved across sessions
+- **Complete Coverage**: All UI elements, forms, and templates are translated
 
-#### API Key Pool System
+## Features
 
-- **System-Wide Usage**: Validated user API keys are pooled for system-wide use
-- **Fair Rotation**: LRU (Least Recently Used) rotation ensures fair distribution
-- **Compensation**: Users earn 0.5 points each time their API key is used by the system
-- **Usage Tracking**: Detailed tracking of API key usage and compensation
-- **Auto-Refresh**: Pool automatically refreshes with new validated keys
-- **Statistics**: Real-time pool statistics and usage metrics
+### Economy System
 
-#### Enhanced Point System
+**Point-Based Economy**
+- **Starting Balance**: 80 points for new users
+- **Daily Bonuses**: 5-12 random points per day
+- **Achievement Rewards**: Unlock points through various activities
+- **Point Expiration**: Different expiration periods based on source (17-95 days)
 
-- **Point Expiration**: Different expiration periods based on point source:
-  - Daily login rewards: 17-30 days (random)
-  - Achievement points: 45 days
-  - API key addition: 80 days
-  - API key usage compensation: 95 days
-  - Original points: Never expire
-- **Transaction History**: Detailed point transaction tracking with source attribution
-- **Point Cap**: Maximum 500 points per user to maintain balance
-- **Interactive History**: Click on points display to view detailed transaction history
+**Prompt Generation Costs**
+| Prompt Type | Cost (Points) |
+|-------------|---------------|
+| Basic Text | 1.5 |
+| Basic Random | 0.8 |
+| Basic Image | 1.5 |
+| Basic Random Image | 0.8 |
+| Basic Reverse Image | 2.0 |
+| Advanced Text | 1.9 |
+| Advanced Image | 1.9 |
+| Advanced Reverse Image | 2.5 |
 
-## Database Migration System
+**Achievement System**
+- **Automatic Unlocking**: Based on user activity patterns
+- **Multiple Categories**: Generation, sharing, consistency, and more
+- **Point Rewards**: Each achievement grants additional points
+- **Progress Tracking**: Monitor your statistics and achievements
 
-Prompt Sanctuary includes a comprehensive database migration utility for production deployments:
+### API Key Management
 
-### Migration Features
+**Personal API Keys**
+- **Integration**: Use your own Gemini API keys for unlimited usage
+- **Validation**: Real-time API key validation with immediate feedback
+- **Rewards**: Earn 100 points for successful API key addition
+- **Cost-Free Generation**: No point consumption when using personal keys
+- **Achievement**: Unlock "API Key Provider" achievement
 
-- **Safe Migration**: Incremental updates to existing databases without data loss
-- **Complete Rebuild**: Option to completely rebuild databases from scratch
-- **Automatic Backups**: All operations are backed up before making changes
-- **Dry Run Mode**: Preview changes without applying them
-- **Smart Detection**: Automatically detects database types and applies appropriate migrations
-- **Error Handling**: Robust error handling with rollback capabilities
+**API Key Pool System**
+- **Community Sharing**: Validated keys are pooled for system-wide use
+- **Fair Distribution**: LRU rotation ensures equitable usage
+- **Compensation**: Earn 0.5 points per system usage of your key
+- **Usage Tracking**: Detailed statistics and usage metrics
+- **Pool Management**: Automatic refresh with new validated keys
 
-### Migration Capabilities
+**Enhanced Point Tracking**
+- **Transaction History**: Detailed logs with source attribution
+- **Expiration Management**: Different periods based on point source
+- **Point Cap**: Maximum 500 points per user
+- **Interactive Dashboard**: Click points display for detailed history
 
-- **Schema Updates**: Adds new columns and tables as needed
-- **Table Creation**: Creates missing tables with proper schemas
-- **Index Management**: Creates necessary indexes for performance
-- **Data Initialization**: Initializes default data (achievements, etc.)
-- **WAL Mode**: Enables SQLite WAL mode for better concurrency
+### Database Management
 
-### Usage Examples
+**Migration System**
+- **Safe Updates**: Incremental migrations without data loss
+- **Automatic Backups**: All operations backed up before changes
+- **Dry Run Mode**: Preview changes before applying
+- **Smart Detection**: Automatic database type detection
+- **Rollback Support**: Robust error handling with recovery
 
+**Migration Commands**
 ```bash
-# Normal migration (safe, incremental updates)
+# Standard migration
 python safe_migration.py
 
-# Preview changes without applying them
+# Preview changes
 python safe_migration.py --dry-run
 
-# Completely rebuild all databases (destructive!)
+# Complete rebuild (destructive)
 python safe_migration.py --rebuild
 
-# Force migration even if backup fails
+# Force migration
 python safe_migration.py --force
 ```
 
-## Advanced Response Formatting
+**Database Features**
+- **Schema Updates**: Automatic table and column creation
+- **Index Optimization**: Performance index management
+- **Data Initialization**: Default data seeding
+- **WAL Mode**: Enhanced SQLite concurrency
 
-The system now includes intelligent response processing to ensure perfect markdown rendering:
+### Content Processing
 
-### Formatting Features
-
-- **Multi-Layer Cleaning**: AI prompts, backend processing, and frontend cleaning
-- **Pattern Recognition**: Automatically detects and fixes non-standard markdown
-- **Smart Conversion**: Converts AI formatting quirks to proper markdown
+**Intelligent Formatting**
+- **Multi-Layer Processing**: AI prompts, backend, and frontend cleaning
+- **Pattern Recognition**: Automatic detection and correction of formatting issues
+- **Smart Conversion**: AI formatting quirks converted to proper markdown
 - **Security**: DOMPurify sanitization for all rendered content
 - **Rich Display**: Proper headers, lists, code blocks, and formatting
 
-### Fixed Patterns
-
+**Supported Patterns**
 - Square brackets: `[Header]*` → `## Header`
 - Double hash brackets: `# # [Header]` → `## Header`
 - Standalone asterisks: `text*` → `- text` or `**text**`
 - JSON artifacts: Clean removal of formatting characters
-- Indentation: Proper markdown list indentation
+- Indentation: Proper markdown list formatting
 
-## Features
+## Feature Status
 
-| Area       | Feature                                                                               | Status                 |
-| ---------- | ------------------------------------------------------------------------------------- | ---------------------- |
-| UI/UX      | Tailwind v3 pastel theme with glassmorphism                                           | Done                   |
-| UI/UX      | Global popups (details/confirm/custom), wide modal for details/history                | Done                   |
-| UI/UX      | Improved profile page with better card organization                                   | Done                   |
-| Results    | Markdown rendering, sanitization (DOMPurify), Prism syntax highlighting, copy buttons | Done                   |
-| Results    | Advanced response formatting with intelligent markdown cleaning                       | Done                   |
-| Prompts    | Save, edit, delete, share/unshare (community)                                         | Done                   |
-| Prompts    | Versioning (snapshots on save/edit, history, rollback)                                | Done (diff+fork later) |
-| Economy    | Point system (80 default, costs for prompt types, daily bonuses)                      | Done                   |
-| Economy    | Enhanced point system with expiration tracking and history                            | Done                   |
-| Economy    | Achievement system with automatic point rewards                                       | Done                   |
-| Economy    | Interactive point history modal with transaction details                              | Done                   |
-| API Keys   | Personal API key management with validation and rewards                               | Done                   |
-| API Keys   | API key pool system with fair rotation and compensation                               | Done                   |
-| API Keys   | API key usage tracking and statistics                                                 | Done                   |
-| Security   | CSRF protection on all POSTs                                                          | Done                   |
-| Security   | Enhanced session management with proper revocation                                    | Done                   |
-| Backend    | Absolute DB paths + auto-create directories                                           | Done                   |
-| Backend    | Latest stable free Gemini default (gemini-2.5-flash)                                  | Done                   |
-| Backend    | SQLite WAL mode for improved concurrency and retry mechanisms                         | Done                   |
-| Backend    | Comprehensive database migration utility                                              | Done                   |
-| i18n       | Language switch                                                                       | Done                   |
-| i18n       | Complete multilingual system (English + Indonesian)                                   | Done                   |
-| Perf/Infra | Containerization + Tailwind build                                                     | Planned                |
-| Quality    | Tests + CI + Alembic migrations                                                       | Planned                |
+| Category | Feature | Status |
+|----------|---------|--------|
+| **UI/UX** | Tailwind v3 pastel theme with glassmorphism | ✅ Done |
+| **UI/UX** | Global popups with accessibility features | ✅ Done |
+| **UI/UX** | Enhanced profile page organization | ✅ Done |
+| **Content** | Markdown rendering with sanitization | ✅ Done |
+| **Content** | Advanced response formatting | ✅ Done |
+| **Prompts** | Save, edit, delete, share functionality | ✅ Done |
+| **Prompts** | Versioning with snapshots and rollback | ✅ Done |
+| **Economy** | Point system with daily bonuses | ✅ Done |
+| **Economy** | Achievement system with rewards | ✅ Done |
+| **Economy** | Interactive point history | ✅ Done |
+| **API Keys** | Personal API key management | ✅ Done |
+| **API Keys** | API key pool with compensation | ✅ Done |
+| **Security** | CSRF protection and session management | ✅ Done |
+| **Backend** | SQLite WAL mode and migration utility | ✅ Done |
+| **Backend** | Latest Gemini model integration | ✅ Done |
+| **i18n** | Complete multilingual system | ✅ Done |
+| **Infrastructure** | Containerization + Tailwind build | 📋 Planned |
+| **Quality** | Tests + CI + Alembic migrations | 📋 Planned |
 
-## Usage
+## Application Guide
 
-Prompt-sanctuary's web interface is intuitive and user-friendly. Here's a quick guide on using its features:
+### Navigation
 
-- **Landing page**: Accessible from the root URL (`/`). Entry point with quick links to Login/Sign Up and features.
-- **Home Page**: Accessible from the URL (`/home`). This is the starting point of the application.
-- **Generate Content**: Navigate to `/generate` to access the content generation page. You can input text or select options to generate content.
-- **Advanced Options**: For more advanced content generation, navigate to `/advance` and provide the required parameters.
-- **Community Library**: Access various content generation templates and tools from the library section. Navigate to `/library` and choose the desired option.
-- **Personal library**: contain per user prompt that they have saved before.
-  - New: "History" button to view previous versions, preview, and restore.
-- **Economy System**: Check your points balance in the sidebar. Earn points by logging in daily (5-12 random points) and unlock achievements for various activities.
-- **Achievement System**: View your unlocked achievements in your profile. Achievements automatically grant points based on your activity patterns.
-- **API Key Management**: Add your own Gemini API key in the profile to avoid point consumption and earn 100 bonus points. Your key may be used by the system with fair compensation (0.5 points per use).
-- **Point History**: Click on your points display to view detailed transaction history with expiration tracking and source attribution.
-- **Language Switching**: Click the EN/ID buttons in the sidebar to switch between English and Indonesian. Language preference is saved and persists across sessions.
+- **Landing Page** (`/`) - Entry point with feature overview and login/signup options
+- **Home Dashboard** (`/home`) - Main application interface and starting point
+- **Basic Generator** (`/generate`) - Simple content generation with text input and options
+- **Advanced Generator** (`/advance`) - Advanced content generation with detailed parameters
+- **Community Library** (`/library`) - Browse shared prompts and templates
+- **Personal Library** (`/mylib`) - Manage your saved prompts with version history
 
-### Key routes
+### Key Features Usage
 
-| Path                    | Method   | Description                              | Auth |
-| ----------------------- | -------- | ---------------------------------------- | :---: |
-| `/`                   | GET      | Landing page                             |   -   |
-| `/login`, `/signup` | GET/POST | Auth flows                               | - / - |
-| `/home`               | GET      | Home/dashboard                           |  ✓  |
-| `/generate`           | GET      | Basic generator UI                       |  ✓  |
-| `/generate/tprompt`   | POST     | Generate text from input                 |  ✓  |
-| `/generate/trandom`   | POST     | Generate random text                     |  ✓  |
-| `/advance`            | GET      | Advanced generator UI                    |  ✓  |
-| `/advance/generate`   | POST     | Advanced text generation                 |  ✓  |
-| `/advance/igenerate`  | POST     | Advanced image prompt from text          |  ✓  |
-| `/library`            | GET      | Community library                        |  ✓  |
-| `/mylib`              | GET      | Personal library                         |  ✓  |
-| `/save_prompt`        | POST     | Save current prompt                      |  ✓  |
-| `/save_edit`          | POST     | Save edits to a prompt                   |  ✓  |
-| `/delete_prompt`      | POST     | Delete a saved prompt                    |  ✓  |
-| `/share_prompt`       | POST     | Share a saved prompt to community        |  ✓  |
-| `/unshare_prompt`     | POST     | Unshare a prompt                         |  ✓  |
-| `/versions/<id>`      | GET      | List versions of a prompt                |  ✓  |
-| `/versions/rollback`  | POST     | Restore a specific version               |  ✓  |
-| `/language/<lang>`    | GET      | Set user language preference             |  ✓  |
-| `/get_user_points`    | GET      | Get current user points balance          |  ✓  |
-| `/api_key/validate`   | POST     | Validate and store user's Gemini API key |  ✓  |
-| `/api_key/remove`     | POST     | Remove user's API key (costs 100 points) |  ✓  |
-| `/api_key/pool_stats` | GET      | Get API key pool statistics              |  ✓  |
-| `/points/history`     | GET      | Get user's point transaction history     |  ✓  |
+**Prompt Management**
+- **Save Prompts**: Store generated content in your personal library
+- **Version Control**: Access "History" button to view, preview, and restore previous versions
+- **Community Sharing**: Share prompts to the community library for others to use
 
-## Quick start (local)
+**Economy System**
+- **Point Balance**: Check your points in the sidebar navigation
+- **Daily Bonuses**: Log in daily to earn 5-12 random points
+- **Achievements**: Unlock achievements through various activities for additional points
 
-1) Create a virtual environment and install deps
+**API Key Integration**
+- **Personal Keys**: Add your Gemini API key in profile settings
+- **Benefits**: No point consumption + 100 bonus points + system compensation
+- **Compensation**: Earn 0.5 points each time your key is used by the system
 
-```bash
-python -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-```
+**Language Support**
+- **Switching**: Use EN/ID buttons in sidebar for instant language changes
+- **Persistence**: Language preferences saved across sessions
 
-2) Create a `.env` file with your Google AI Studio key(s)
+### API Endpoints
 
-```bash
-# One or more keys, comma-separated; will auto-rotate
-GENAI_API_KEY=key1,key2
+**Core Application Routes**
+| Path | Method | Description | Auth |
+|------|--------|-------------|------|
+| `/` | GET | Landing page | ❌ |
+| `/login`, `/signup` | GET/POST | Authentication flows | ❌ |
+| `/home` | GET | Dashboard | ✅ |
+| `/generate` | GET | Basic generator interface | ✅ |
+| `/advance` | GET | Advanced generator interface | ✅ |
+| `/library` | GET | Community library | ✅ |
+| `/mylib` | GET | Personal library | ✅ |
 
-# Optional: override model (defaults to gemini-2.5-flash)
-# GENAI_MODEL_NAME=gemini-2.5-pro
+**Generation Endpoints**
+| Path | Method | Description | Auth |
+|------|--------|-------------|------|
+| `/generate/tprompt` | POST | Generate text from input | ✅ |
+| `/generate/trandom` | POST | Generate random text | ✅ |
+| `/advance/generate` | POST | Advanced text generation | ✅ |
+| `/advance/igenerate` | POST | Advanced image prompt generation | ✅ |
 
-# Optional: Flask secret
-# SECRET_KEY=your-secret
-```
+**Prompt Management**
+| Path | Method | Description | Auth |
+|------|--------|-------------|------|
+| `/save_prompt` | POST | Save current prompt | ✅ |
+| `/save_edit` | POST | Save prompt edits | ✅ |
+| `/delete_prompt` | POST | Delete saved prompt | ✅ |
+| `/share_prompt` | POST | Share prompt to community | ✅ |
+| `/unshare_prompt` | POST | Unshare prompt | ✅ |
+| `/versions/<id>` | GET | List prompt versions | ✅ |
+| `/versions/rollback` | POST | Restore prompt version | ✅ |
 
-3) Run the app
+**User Management**
+| Path | Method | Description | Auth |
+|------|--------|-------------|------|
+| `/language/<lang>` | GET | Set language preference | ✅ |
+| `/get_user_points` | GET | Get user points balance | ✅ |
+| `/points/history` | GET | Get point transaction history | ✅ |
+| `/api_key/validate` | POST | Validate API key | ✅ |
+| `/api_key/remove` | POST | Remove API key (costs 100 points) | ✅ |
+| `/api_key/pool_stats` | GET | Get API key pool statistics | ✅ |
 
-```bash
-python web/app.py
-# App runs on http://127.0.0.1:5000 by default
-```
+## Development Setup
 
-### Databases
+### Prerequisites
 
-SQLite files are stored under `web/database/`. Paths are created automatically on startup:
+- Python 3.8 or higher
+- Google AI Studio API key(s)
 
-- `web/database/user.db`
-- `web/database/prompt_data.db`
-- `web/database/community/query.db` (system prompts)
-- `web/database/community/shared.db`
-- `web/database/feedback.db`
+### Installation Steps
 
-To reset data locally, stop the app and remove the relevant `.db` files.
+1. **Clone and setup environment**
+   ```bash
+   git clone https://github.com/1999AZZAR/prompt-sanctuary.git
+   cd prompt-sanctuary
+   python -m venv .venv
+   source .venv/bin/activate  # Windows: .venv\Scripts\activate
+   pip install -r requirements.txt
+   ```
+
+2. **Configure environment variables**
+   ```bash
+   # Create .env file
+   GENAI_API_KEY=your_api_key_here,optional_second_key
+   
+   # Optional configurations
+   # GENAI_MODEL_NAME=gemini-2.5-pro
+   # SECRET_KEY=your-secret-key
+   ```
+
+3. **Start the application**
+   ```bash
+   python web/app.py
+   ```
+   
+   Application will be available at `http://127.0.0.1:5000`
+
+### Database Structure
+
+SQLite databases are automatically created in `web/database/`:
+
+- `user.db` - User accounts and authentication
+- `prompt_data.db` - Personal prompt library
+- `community/query.db` - System prompts
+- `community/shared.db` - Community shared prompts
+- `feedback.db` - User feedback and ratings
+
+**Reset Data**: Stop the application and delete relevant `.db` files to reset data.
 
 ## Configuration
 
-| Variable               | Required | Default                              | Description                                                                   |
-| ---------------------- | :------: | ------------------------------------ | ----------------------------------------------------------------------------- |
-| `GENAI_API_KEY`      |    ✓    | -                                    | One or more Google AI Studio keys, comma-separated; keys rotate automatically |
-| `GENAI_MODEL_NAME`   |          | `gemini-2.5-flash`                 | Override model, e.g.,`gemini-2.5-pro`                                       |
-| `SECRET_KEY`         |          | generated fallback                   | Flask session secret                                                          |
-| `USER_DATABASE`      |          | `web/database/user.db`             | Path to user DB                                                               |
-| `PROMPT_DATABASE`    |          | `web/database/prompt_data.db`      | Path to personal prompts DB                                                   |
-| `QUERY_DATABASE`     |          | `web/database/community/query.db`  | Path to built-in system prompts DB                                            |
-| `COMMUNITY_DATABASE` |          | `web/database/community/shared.db` | Path to shared prompts DB                                                     |
-| `FEEDBACK_DATABASE`  |          | `web/database/feedback.db`         | Path to feedback DB                                                           |
+| Variable | Required | Default | Description |
+|----------|----------|---------|-------------|
+| `GENAI_API_KEY` | ✅ | - | Google AI Studio API key(s), comma-separated |
+| `GENAI_MODEL_NAME` | ❌ | `gemini-2.5-flash` | AI model override (e.g., `gemini-2.5-pro`) |
+| `SECRET_KEY` | ❌ | auto-generated | Flask session secret |
+| `USER_DATABASE` | ❌ | `web/database/user.db` | User database path |
+| `PROMPT_DATABASE` | ❌ | `web/database/prompt_data.db` | Personal prompts database path |
+| `QUERY_DATABASE` | ❌ | `web/database/community/query.db` | System prompts database path |
+| `COMMUNITY_DATABASE` | ❌ | `web/database/community/shared.db` | Community prompts database path |
+| `FEEDBACK_DATABASE` | ❌ | `web/database/feedback.db` | Feedback database path |
 
-## Security
+## Security & Deployment
 
-- CSRF: All POST endpoints require a CSRF token. The server sets a `csrf_token` cookie; the frontend sends it via `X-CSRFToken`.
-- Sanitization: Rendered results are sanitized with DOMPurify before display.
-- Sessions: Use a strong `SECRET_KEY` in production; prefer HTTPS with Secure cookies.
+### Security Features
 
-## Deployment notes
+- **CSRF Protection** - All POST endpoints require CSRF tokens
+- **Content Sanitization** - DOMPurify sanitization for all rendered content
+- **Session Management** - Enhanced session handling with proper revocation
+- **Input Validation** - Comprehensive input validation and error handling
 
-- This repository’s Flask server runs in debug in development. For production, use a WSGI server (e.g., `gunicorn`) and set a proper `SECRET_KEY`.
-- Ensure your environment has the required `GENAI_API_KEY` set and outbound access to Google AI APIs.
+### Production Deployment
 
-## demo
+**Requirements**
+- Use a WSGI server (e.g., `gunicorn`) instead of Flask development server
+- Set a strong `SECRET_KEY` environment variable
+- Ensure HTTPS with Secure cookies
+- Configure proper `GENAI_API_KEY` with outbound access to Google AI APIs
 
-here some of the screenshot of the app looks like:
+**Recommended Setup**
+```bash
+# Install production dependencies
+pip install gunicorn
 
-![landing page](img/3.png)
-![home page](img/4.png)
-![my library](img/5.png)
-![prompt trial](img/6.png)
-![advance generator](img/9.png)
+# Run with gunicorn
+gunicorn -w 4 -b 0.0.0.0:5000 web.app:app
+```
 
-## Thanks And Support
+## Screenshots
 
-You can support me by buymeacoffee if u like to.
+### Application Interface
+
+![Landing Page](img/3.png)
+*Landing page with feature overview and navigation*
+
+![Home Dashboard](img/4.png)
+*Main dashboard with quick access to all features*
+
+![Personal Library](img/5.png)
+*Personal prompt library with version control*
+
+![Prompt Generation](img/6.png)
+*Basic prompt generation interface*
+
+![Advanced Generator](img/9.png)
+*Advanced generation with detailed parameters*
+
+## Support
+
+If you find Prompt Sanctuary useful, consider supporting the project:
 
 [![Buy Me A Coffee](https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png)](https://www.buymeacoffee.com/azzar)
+
+Your support helps maintain and improve the application for the community.
