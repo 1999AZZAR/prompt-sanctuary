@@ -14,3 +14,8 @@ web/database/community/shared.db
 *.db-shm
 *.db-wal
 *.log
+backups/*.db*
+backups/*.db-shm
+backups/*.db-wal
+backups/*.log
+backups/*.db

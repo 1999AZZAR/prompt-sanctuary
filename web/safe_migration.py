@@ -558,6 +558,98 @@ class DatabaseMigrator:
             logger.error(f"Failed to initialize achievements: {e}")
             return False
     
+    def enable_foreign_keys(self, db_path: str, dry_run: bool = False) -> bool:
+        """Enable foreign key constraints on a database."""
+        if dry_run:
+            logger.info(f"[DRY RUN] Would enable foreign keys for {db_path}")
+            return True
+        
+        try:
+            with get_db_connection(db_path) as conn:
+                cursor = conn.cursor()
+                cursor.execute("PRAGMA foreign_keys = ON")
+                conn.commit()
+                
+                # Verify foreign keys are enabled
+                cursor.execute("PRAGMA foreign_keys")
+                result = cursor.fetchone()
+                if result and result[0]:
+                    logger.info(f"Enabled foreign keys for {db_path}")
+                    self.migrations_performed.append(f"Enabled foreign keys for {os.path.basename(db_path)}")
+                    return True
+                else:
+                    logger.warning(f"Failed to enable foreign keys for {db_path}")
+                    return False
+        except Exception as e:
+            logger.error(f"Failed to enable foreign keys for {db_path}: {e}")
+            return False
+    
+    def validate_foreign_keys(self, db_path: str, dry_run: bool = False) -> bool:
+        """Validate foreign key constraints in a database."""
+        if dry_run:
+            logger.info(f"[DRY RUN] Would validate foreign keys for {db_path}")
+            return True
+        
+        try:
+            with get_db_connection(db_path) as conn:
+                cursor = conn.cursor()
+                cursor.execute("PRAGMA foreign_key_check")
+                violations = cursor.fetchall()
+                
+                if violations:
+                    logger.warning(f"Foreign key violations found in {db_path}: {len(violations)} violations")
+                    for violation in violations:
+                        logger.warning(f"  Table: {violation[0]}, Row: {violation[1]}, Parent: {violation[2]}, FKey: {violation[3]}")
+                    return False
+                else:
+                    logger.info(f"Foreign key validation passed for {db_path}")
+                    return True
+        except Exception as e:
+            logger.error(f"Failed to validate foreign keys for {db_path}: {e}")
+            return False
+    
+    def fix_orphaned_point_transactions(self, db_path: str, dry_run: bool = False) -> bool:
+        """Fix orphaned point transactions that reference non-existent users."""
+        # Only run this on user database
+        if 'user.db' not in db_path:
+            return True
+        
+        if dry_run:
+            logger.info(f"[DRY RUN] Would check for orphaned point transactions in {db_path}")
+            return True
+        
+        try:
+            with get_db_connection(db_path) as conn:
+                cursor = conn.cursor()
+                
+                # Check for orphaned point transactions
+                cursor.execute("""
+                    SELECT pt.id, pt.username 
+                    FROM point_transactions pt 
+                    LEFT JOIN users u ON pt.username = u.username 
+                    WHERE u.username IS NULL
+                """)
+                orphaned = cursor.fetchall()
+                
+                if orphaned:
+                    logger.warning(f"Found {len(orphaned)} orphaned point transactions in {db_path}")
+                    logger.info("Removing orphaned point transactions...")
+                    
+                    for transaction_id, username in orphaned:
+                        logger.info(f"  Removing transaction {transaction_id} for non-existent user '{username}'")
+                        cursor.execute("DELETE FROM point_transactions WHERE id = ?", (transaction_id,))
+                    
+                    conn.commit()
+                    logger.info(f"Removed {len(orphaned)} orphaned point transactions")
+                    self.migrations_performed.append(f"Removed {len(orphaned)} orphaned point transactions")
+                else:
+                    logger.info(f"No orphaned point transactions found in {db_path}")
+                
+                return True
+        except Exception as e:
+            logger.error(f"Failed to fix orphaned point transactions for {db_path}: {e}")
+            return False
+    
     def migrate_database(self, db_path: str, dry_run: bool = False) -> bool:
         """Perform complete migration of a database."""
         logger.info(f"Starting migration of {db_path}")
@@ -581,11 +673,18 @@ class DatabaseMigrator:
                 if not self.force:
                     return False
         
-        # Enable WAL mode
+        # Enable WAL mode and foreign keys
         if not dry_run:
             enable_wal_mode(db_path)
         
         success = True
+        
+        # Fix orphaned point transactions before enabling foreign keys
+        if 'user.db' in db_path:
+            success &= self.fix_orphaned_point_transactions(db_path, dry_run)
+        
+        # Enable foreign key constraints
+        success &= self.enable_foreign_keys(db_path, dry_run)
         
         # Migrate all tables based on database type
         if 'user.db' in db_path:
@@ -621,6 +720,12 @@ class DatabaseMigrator:
             success &= self.migrate_prompt_versions_table(db_path, dry_run)
             success &= self.migrate_point_transactions_table(db_path, dry_run)
             success &= self.migrate_point_history_table(db_path, dry_run)
+        
+        # Validate foreign key constraints after migration
+        if success and not dry_run:
+            fk_valid = self.validate_foreign_keys(db_path, dry_run)
+            if not fk_valid:
+                logger.warning(f"Foreign key validation failed for {db_path}, but migration completed")
         
         if success:
             logger.info(f"Migration completed successfully for {db_path}")
@@ -714,6 +819,53 @@ class DatabaseMigrator:
         
         return success
     
+    def fix_foreign_key_issues(self, dry_run: bool = False) -> bool:
+        """Fix foreign key issues in all databases."""
+        logger.info("Starting foreign key fix for all databases")
+        
+        # Define database paths
+        base_dir = os.path.dirname(__file__)
+        databases = {
+            'user': os.path.join(base_dir, 'database', 'user.db'),
+            'prompt': os.path.join(base_dir, 'database', 'prompt_data.db'),
+            'community': os.path.join(base_dir, 'database', 'community', 'shared.db'),
+            'query': os.path.join(base_dir, 'database', 'community', 'query.db'),
+            'feedback': os.path.join(base_dir, 'database', 'feedback.db')
+        }
+        
+        success = True
+        
+        for db_name, db_path in databases.items():
+            if not os.path.exists(db_path):
+                logger.info(f"Database {db_name} does not exist, skipping: {db_path}")
+                continue
+            
+            logger.info(f"Fixing foreign keys for {db_name} database: {db_path}")
+            
+            # Create backup unless in dry run mode
+            if not dry_run:
+                try:
+                    self.backup_database(db_path)
+                except Exception as e:
+                    logger.error(f"Backup failed: {e}")
+                    if not self.force:
+                        continue
+            
+            # Fix orphaned point transactions (only for user database)
+            if 'user.db' in db_path:
+                success &= self.fix_orphaned_point_transactions(db_path, dry_run)
+            
+            # Enable foreign key constraints
+            success &= self.enable_foreign_keys(db_path, dry_run)
+            
+            # Validate foreign key constraints
+            if success and not dry_run:
+                fk_valid = self.validate_foreign_keys(db_path, dry_run)
+                if not fk_valid:
+                    logger.warning(f"Foreign key validation failed for {db_name} database")
+        
+        return success
+    
     def print_summary(self):
         """Print migration summary."""
         print("\n" + "="*60)
@@ -747,6 +899,7 @@ Examples:
   python safe_migration.py --force            # Force migration even if backup fails
   python safe_migration.py --rebuild          # Completely rebuild all databases
   python safe_migration.py --rebuild --dry-run # Show what rebuild would do
+  python safe_migration.py --fix-foreign-keys # Fix foreign key issues only
   python safe_migration.py --backup-dir ./my_backups  # Custom backup directory
         """
     )
@@ -773,6 +926,12 @@ Examples:
         '--backup-dir', 
         default='./backups',
         help='Directory to store backups (default: ./backups)'
+    )
+    
+    parser.add_argument(
+        '--fix-foreign-keys', 
+        action='store_true',
+        help='Fix foreign key issues and enable constraints'
     )
     
     args = parser.parse_args()
@@ -805,10 +964,13 @@ Examples:
     migrator = DatabaseMigrator(backup_dir=args.backup_dir, force=args.force)
     
     try:
-        # Run migration or rebuild
+        # Run migration, rebuild, or foreign key fix
         if args.rebuild:
             success = migrator.rebuild_all_databases(dry_run=args.dry_run)
             operation = "rebuild"
+        elif args.fix_foreign_keys:
+            success = migrator.fix_foreign_key_issues(dry_run=args.dry_run)
+            operation = "foreign key fix"
         else:
             success = migrator.migrate_all_databases(dry_run=args.dry_run)
             operation = "migration"

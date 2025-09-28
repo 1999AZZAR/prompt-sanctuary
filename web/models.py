@@ -962,7 +962,7 @@ def check_and_award_achievements(user_db, username: str, prompt_db: str, communi
                 cursor = conn.cursor()
 
                 # Get user's current stats
-                stats = get_user_stats(username, prompt_db, community_db)
+                stats = get_user_stats(username, user_db, prompt_db, community_db)
 
                 # Get user's unlocked achievements
                 cursor.execute("SELECT achievement_id FROM user_achievements WHERE username = ?", (username,))
@@ -1034,7 +1034,7 @@ def check_and_award_achievements(user_db, username: str, prompt_db: str, communi
                 return [], 0  # Return empty results on failure
 
 
-def get_user_stats(username: str, prompt_db: str, community_db: str):
+def get_user_stats(username: str, user_db: str, prompt_db: str, community_db: str):
     """Get user's statistics for achievement checking."""
     stats = {
         'prompts_generated': 0,
@@ -1091,22 +1091,46 @@ def get_user_stats(username: str, prompt_db: str, community_db: str):
         stats['prompts_shared'] = cursor.fetchone()[0]
 
     # Get user rank (count of users created before this user)
+    # Since we have separate databases, we need to collect usernames from each database
+    all_usernames = set()
+    
+    # Get usernames from prompt_versions
     with get_db_connection(prompt_db) as conn:
         cursor = conn.cursor()
-        cursor.execute("""
-            SELECT COUNT(*) FROM users
-            WHERE username IN (
-                SELECT DISTINCT username FROM prompt_versions
-                UNION
-                SELECT DISTINCT owner FROM shared
-                UNION
-                SELECT DISTINCT username FROM user_logins
-            ) AND username != ?
-        """, (username,))
-        stats['user_rank'] = cursor.fetchone()[0]
+        cursor.execute("SELECT DISTINCT username FROM prompt_versions")
+        for row in cursor.fetchall():
+            all_usernames.add(row[0])
+    
+    # Get usernames from shared
+    with get_db_connection(community_db) as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT DISTINCT owner FROM shared")
+        for row in cursor.fetchall():
+            all_usernames.add(row[0])
+    
+    # Get usernames from user_logins
+    with get_db_connection(user_db) as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT DISTINCT username FROM user_logins")
+        for row in cursor.fetchall():
+            all_usernames.add(row[0])
+    
+    # Count users in the users table that are in our collected usernames (excluding current user)
+    user_rank = 0
+    if all_usernames:
+        with get_db_connection(user_db) as conn:
+            cursor = conn.cursor()
+            placeholders = ','.join('?' for _ in all_usernames)
+            cursor.execute(f"""
+                SELECT COUNT(*) FROM users
+                WHERE username IN ({placeholders}) AND username != ?
+            """, list(all_usernames) + [username])
+            user_rank = cursor.fetchone()[0]
+    
+    stats['user_rank'] = user_rank
 
     # Get total logins
-    with get_db_connection(prompt_db) as conn:
+    with get_db_connection(user_db) as conn:
         cursor = conn.cursor()
         cursor.execute("SELECT COUNT(*) FROM user_logins WHERE username = ?", (username,))
         stats['total_logins'] = cursor.fetchone()[0]
