@@ -1,50 +1,47 @@
 # Prompt Refinement Feature
 
-This document describes the new prompt refinement functionality that helps users optimize their prompts for better AI responses.
+The prompt refinement feature provides intelligent AI-powered suggestions to optimize prompts for better AI responses through automatic length detection and smart refinement capabilities.
 
 ## Overview
 
-The prompt refinement feature automatically analyzes prompt length and provides intelligent suggestions to either shorten or elaborate prompts based on their current length and content quality.
+This feature automatically analyzes prompt length and provides intelligent suggestions to either shorten or elaborate prompts based on their current length and content quality. It helps users create more effective prompts that generate better AI responses.
 
-## Features
+## Key Features
 
-### 🔍 **Automatic Length Detection**
+### Automatic Length Detection
+
 - **Short prompts** (< 50 characters): Shows "Elaborate" button to add more details
 - **Medium prompts** (50-200 characters): Shows both "Shorten" and "Elaborate" options
 - **Long prompts** (> 200 characters): Shows "Shorten" button to make more concise
 - **Very long prompts** (> 400 characters): Shows warning and "Shorten" button
 
-### 🎯 **Smart Refinement**
+### Smart Refinement Options
+
 - **Shorten**: Uses AI to make prompts more concise while preserving essential meaning
 - **Elaborate**: Uses AI to add details, context, and specificity to improve clarity
 - **Real-time feedback**: Shows character count and length suggestions
 
-### 💡 **Intelligent AI Processing**
+### Intelligent AI Processing
+
 - Context-aware refinement based on prompt type and content
 - Preserves core meaning while optimizing structure
 - Provides immediate feedback on refinement results
 
 ## Implementation Details
 
-### Frontend Components
+### Supported Input Fields
 
-#### UI Elements
-- **Refinement buttons**: Appear dynamically based on prompt length
-- **Character counter**: Real-time feedback on prompt length
-- **Status indicators**: Success/error/loading states
-- **Responsive design**: Works across all device sizes
+The refinement feature works across multiple input fields:
 
-#### Supported Input Fields
 1. **Basic Text Prompt** (`user_input_text`)
 2. **Image Prompt Text** (`user_input_image`)
 3. **Advanced Use Case** (`text_parameter0`)
 4. **Advanced Knowledge Base** (`text_parameter3`)
 5. **Advanced Image Input** (`image_gen_parameter0`)
 
-### Backend Implementation
+### API Integration
 
-#### API Endpoint
-- **Route**: `/refine_prompt`
+- **Endpoint**: `/refine_prompt`
 - **Method**: POST
 - **Authentication**: Required (login)
 - **Cost**: 0.5 points (if user doesn't have API key)
@@ -109,7 +106,8 @@ Provide only the elaborated version, no explanations."
 
 ## Technical Architecture
 
-### JavaScript Class Structure
+### JavaScript Implementation
+
 ```javascript
 class PromptRefinement {
   - thresholds: Length thresholds for different actions
@@ -122,15 +120,9 @@ class PromptRefinement {
 }
 ```
 
-### CSS Styling
-- **Responsive buttons**: Scale with input field size
-- **Smooth transitions**: Animated state changes
-- **Color coding**: Intuitive visual feedback
-- **Accessibility**: Proper ARIA labels and keyboard navigation
+### Configuration
 
-## Configuration
-
-### Thresholds (Configurable)
+#### Thresholds (Configurable)
 ```javascript
 thresholds: {
   short: 50,      // Show "Elaborate" button if < 50 chars
@@ -139,7 +131,7 @@ thresholds: {
 }
 ```
 
-### Cost Settings
+#### Cost Settings
 - **Refinement cost**: 0.5 points per refinement
 - **Free for API key users**: No point deduction
 - **Point validation**: Checks balance before processing
