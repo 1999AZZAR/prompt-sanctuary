@@ -295,3 +295,239 @@ msgstr ""
 #: web/templates/prompts/generator/advance.html:411
 msgid "Result Section (hidden by default, shown only when a prompt is generated)"
 msgstr ""
+
+#: web/templates/base.html:103
+msgid "Prompt Refinement"
+msgstr ""
+
+#: web/templates/index.html:51
+msgid "Feature 3: Prompt Refinement"
+msgstr ""
+
+#: web/templates/index.html:57
+msgid "Optimize and improve your prompts with AI-powered refinement. Features include:"
+msgstr ""
+
+#: web/templates/index.html:60
+msgid "Refine prompts from multiple sources."
+msgstr ""
+
+#: web/templates/index.html:61
+msgid "Quick actions: shorten, elaborate, improve, fix grammar."
+msgstr ""
+
+#: web/templates/index.html:62
+msgid "Custom refinement instructions."
+msgstr ""
+
+#: web/templates/index.html:63
+msgid "AI-powered smart titles for saved prompts."
+msgstr ""
+
+#: web/templates/index.html:67
+msgid "Refine Your Prompts"
+msgstr ""
+
+#: web/templates/index.html:71
+msgid "Feature 4: Community Prompts"
+msgstr ""
+
+#: web/templates/landing.html:51
+msgid "Feature 4: Prompt Refinement"
+msgstr ""
+
+#: web/templates/landing.html:55
+msgid "Transform and optimize your prompts with AI-powered refinement. Choose from multiple sources, apply smart improvements, and generate intelligent titles for better prompt management and effectiveness."
+msgstr ""
+
+#: web/templates/landing.html:59
+msgid "Refine Your Prompts"
+msgstr ""
+
+#: web/templates/prompts/generator/refinement.html:7
+msgid "Prompt Refinement"
+msgstr ""
+
+#: web/templates/prompts/generator/refinement.html:9
+msgid "Refine and improve your prompts with custom instructions or choose from quick actions."
+msgstr ""
+
+#: web/templates/prompts/generator/refinement.html:12
+msgid "Cost: 0.5 points per refinement"
+msgstr ""
+
+#: web/templates/prompts/generator/refinement.html:22
+msgid "Step 1: Choose Your Prompt Source"
+msgstr ""
+
+#: web/templates/prompts/generator/refinement.html:28
+msgid "Manual Input"
+msgstr ""
+
+#: web/templates/prompts/generator/refinement.html:30
+msgid "Type or paste your own prompt"
+msgstr ""
+
+#: web/templates/prompts/generator/refinement.html:37
+msgid "Saved Prompts"
+msgstr ""
+
+#: web/templates/prompts/generator/refinement.html:39
+msgid "Choose from your saved prompts"
+msgstr ""
+
+#: web/templates/prompts/generator/refinement.html:45
+msgid "Community"
+msgstr ""
+
+#: web/templates/prompts/generator/refinement.html:47
+msgid "Browse community prompts"
+msgstr ""
+
+#: web/templates/prompts/generator/refinement.html:53
+msgid "Your Prompt:"
+msgstr ""
+
+#: web/templates/prompts/generator/refinement.html:56
+msgid "Enter your prompt here..."
+msgstr ""
+
+#: web/templates/prompts/generator/refinement.html:81
+msgid "No saved prompts yet."
+msgstr ""
+
+#: web/templates/prompts/generator/refinement.html:83
+msgid "Save some prompts first to refine them!"
+msgstr ""
+
+#: web/templates/prompts/generator/refinement.html:115
+msgid "No community prompts available."
+msgstr ""
+
+#: web/templates/prompts/generator/refinement.html:117
+msgid "Check back later for shared prompts!"
+msgstr ""
+
+#: web/templates/prompts/generator/refinement.html:140
+msgid "Step 2: Choose How to Refine"
+msgstr ""
+
+#: web/templates/prompts/generator/refinement.html:146
+msgid "Quick Actions"
+msgstr ""
+
+#: web/templates/prompts/generator/refinement.html:149
+msgid "Shorten"
+msgstr ""
+
+#: web/templates/prompts/generator/refinement.html:152
+msgid "Make the prompt more concise"
+msgstr ""
+
+#: web/templates/prompts/generator/refinement.html:156
+msgid "Elaborate"
+msgstr ""
+
+#: web/templates/prompts/generator/refinement.html:159
+msgid "Add more details and context"
+msgstr ""
+
+#: web/templates/prompts/generator/refinement.html:164
+msgid "Improve"
+msgstr ""
+
+#: web/templates/prompts/generator/refinement.html:167
+msgid "Enhance clarity and effectiveness"
+msgstr ""
+
+#: web/templates/prompts/generator/refinement.html:172
+msgid "Fix Grammar"
+msgstr ""
+
+#: web/templates/prompts/generator/refinement.html:175
+msgid "Correct grammar and spelling"
+msgstr ""
+
+#: web/templates/prompts/generator/refinement.html:182
+msgid "Custom Instructions"
+msgstr ""
+
+#: web/templates/prompts/generator/refinement.html:185
+msgid "Tell me how to refine your prompt:"
+msgstr ""
+
+#: web/templates/prompts/generator/refinement.html:188
+msgid "Example: Make it more professional, add technical details, change the tone to be more friendly, focus on specific aspects..."
+msgstr ""
+
+#: web/templates/prompts/generator/refinement.html:191
+msgid "Tips:"
+msgstr ""
+
+#: web/templates/prompts/generator/refinement.html:193
+msgid "Be specific about what you want to change"
+msgstr ""
+
+#: web/templates/prompts/generator/refinement.html:194
+msgid "Mention tone, style, or format preferences"
+msgstr ""
+
+#: web/templates/prompts/generator/refinement.html:195
+msgid "Specify target audience or use case"
+msgstr ""
+
+#: web/templates/prompts/generator/refinement.html:220
+msgid "Refine Prompt"
+msgstr ""
+
+#: web/templates/prompts/generator/refinement.html:232
+msgid "Refined Prompt"
+msgstr ""
+
+#: web/templates/prompts/generator/refinement.html:240
+msgid "Copy Refined Prompt"
+msgstr ""
+
+#: web/templates/prompts/generator/refinement.html:243
+msgid "Save as New Prompt"
+msgstr ""
+
+#: web/templates/prompts/generator/refinement.html:246
+msgid "Refine Again"
+msgstr ""
+
+#: web/templates/prompts/generator/refinement.html:257
+msgid "Refining prompt..."
+msgstr ""
+
+#: web/templates/prompts/generator/basic.html:17
+msgid "Generated Prompt"
+msgstr ""
+
+#: web/templates/prompts/generator/basic.html:25
+msgid "Copy Prompt"
+msgstr ""
+
+#: web/templates/prompts/generator/basic.html:28
+msgid "Save to Library"
+msgstr ""
+
+#: web/templates/prompts/generator/basic.html:31
+msgid "Generate Again"
+msgstr ""
+
+#: web/templates/prompts/generator/advance.html:17
+msgid "Generated Prompt"
+msgstr ""
+
+#: web/templates/prompts/generator/advance.html:25
+msgid "Copy Prompt"
+msgstr ""
+
+#: web/templates/prompts/generator/advance.html:28
+msgid "Save to Library"
+msgstr ""
+
+#: web/templates/prompts/generator/advance.html:31
+msgid "Generate Again"
+msgstr ""

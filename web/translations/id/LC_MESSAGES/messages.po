@@ -879,3 +879,239 @@ msgstr "Bagian Pemuatan"
 msgid "Result Section (hidden by default, shown only when a prompt is generated)"
 msgstr "Bagian Hasil (tersembunyi secara default, ditampilkan hanya saat prompt dihasilkan)"
 
+#: web/templates/base.html:103
+msgid "Prompt Refinement"
+msgstr "Penyempurnaan Prompt"
+
+#: web/templates/index.html:51
+msgid "Feature 3: Prompt Refinement"
+msgstr "Fitur 3: Penyempurnaan Prompt"
+
+#: web/templates/index.html:57
+msgid "Optimize and improve your prompts with AI-powered refinement. Features include:"
+msgstr "Optimalkan dan tingkatkan prompt Anda dengan penyempurnaan bertenaga AI. Fitur meliputi:"
+
+#: web/templates/index.html:60
+msgid "Refine prompts from multiple sources."
+msgstr "Sempurnakan prompt dari berbagai sumber."
+
+#: web/templates/index.html:61
+msgid "Quick actions: shorten, elaborate, improve, fix grammar."
+msgstr "Aksi cepat: persingkat, jelaskan, tingkatkan, perbaiki tata bahasa."
+
+#: web/templates/index.html:62
+msgid "Custom refinement instructions."
+msgstr "Instruksi penyempurnaan kustom."
+
+#: web/templates/index.html:63
+msgid "AI-powered smart titles for saved prompts."
+msgstr "Judul pintar bertenaga AI untuk prompt tersimpan."
+
+#: web/templates/index.html:67
+msgid "Refine Your Prompts"
+msgstr "Sempurnakan Prompt Anda"
+
+#: web/templates/index.html:71
+msgid "Feature 4: Community Prompts"
+msgstr "Fitur 4: Prompt Komunitas"
+
+#: web/templates/landing.html:51
+msgid "Feature 4: Prompt Refinement"
+msgstr "Fitur 4: Penyempurnaan Prompt"
+
+#: web/templates/landing.html:55
+msgid "Transform and optimize your prompts with AI-powered refinement. Choose from multiple sources, apply smart improvements, and generate intelligent titles for better prompt management and effectiveness."
+msgstr "Ubah dan optimalkan prompt Anda dengan penyempurnaan bertenaga AI. Pilih dari berbagai sumber, terapkan peningkatan pintar, dan hasilkan judul cerdas untuk manajemen prompt yang lebih baik dan efektivitas."
+
+#: web/templates/landing.html:59
+msgid "Refine Your Prompts"
+msgstr "Sempurnakan Prompt Anda"
+
+#: web/templates/prompts/generator/refinement.html:7
+msgid "Prompt Refinement"
+msgstr "Penyempurnaan Prompt"
+
+#: web/templates/prompts/generator/refinement.html:9
+msgid "Refine and improve your prompts with custom instructions or choose from quick actions."
+msgstr "Sempurnakan dan tingkatkan prompt Anda dengan instruksi kustom atau pilih dari aksi cepat."
+
+#: web/templates/prompts/generator/refinement.html:12
+msgid "Cost: 0.5 points per refinement"
+msgstr "Biaya: 0.5 poin per penyempurnaan"
+
+#: web/templates/prompts/generator/refinement.html:22
+msgid "Step 1: Choose Your Prompt Source"
+msgstr "Langkah 1: Pilih Sumber Prompt Anda"
+
+#: web/templates/prompts/generator/refinement.html:28
+msgid "Manual Input"
+msgstr "Input Manual"
+
+#: web/templates/prompts/generator/refinement.html:30
+msgid "Type or paste your own prompt"
+msgstr "Ketik atau tempel prompt Anda sendiri"
+
+#: web/templates/prompts/generator/refinement.html:37
+msgid "Saved Prompts"
+msgstr "Prompt Tersimpan"
+
+#: web/templates/prompts/generator/refinement.html:39
+msgid "Choose from your saved prompts"
+msgstr "Pilih dari prompt tersimpan Anda"
+
+#: web/templates/prompts/generator/refinement.html:45
+msgid "Community"
+msgstr "Komunitas"
+
+#: web/templates/prompts/generator/refinement.html:47
+msgid "Browse community prompts"
+msgstr "Jelajahi prompt komunitas"
+
+#: web/templates/prompts/generator/refinement.html:53
+msgid "Your Prompt:"
+msgstr "Prompt Anda:"
+
+#: web/templates/prompts/generator/refinement.html:56
+msgid "Enter your prompt here..."
+msgstr "Masukkan prompt Anda di sini..."
+
+#: web/templates/prompts/generator/refinement.html:81
+msgid "No saved prompts yet."
+msgstr "Belum ada prompt tersimpan."
+
+#: web/templates/prompts/generator/refinement.html:83
+msgid "Save some prompts first to refine them!"
+msgstr "Simpan beberapa prompt terlebih dahulu untuk menyempurnakannya!"
+
+#: web/templates/prompts/generator/refinement.html:115
+msgid "No community prompts available."
+msgstr "Tidak ada prompt komunitas yang tersedia."
+
+#: web/templates/prompts/generator/refinement.html:117
+msgid "Check back later for shared prompts!"
+msgstr "Cek kembali nanti untuk prompt yang dibagikan!"
+
+#: web/templates/prompts/generator/refinement.html:140
+msgid "Step 2: Choose How to Refine"
+msgstr "Langkah 2: Pilih Cara Menyempurnakan"
+
+#: web/templates/prompts/generator/refinement.html:146
+msgid "Quick Actions"
+msgstr "Aksi Cepat"
+
+#: web/templates/prompts/generator/refinement.html:149
+msgid "Shorten"
+msgstr "Persingkat"
+
+#: web/templates/prompts/generator/refinement.html:152
+msgid "Make the prompt more concise"
+msgstr "Buat prompt lebih ringkas"
+
+#: web/templates/prompts/generator/refinement.html:156
+msgid "Elaborate"
+msgstr "Jelaskan"
+
+#: web/templates/prompts/generator/refinement.html:159
+msgid "Add more details and context"
+msgstr "Tambahkan lebih banyak detail dan konteks"
+
+#: web/templates/prompts/generator/refinement.html:164
+msgid "Improve"
+msgstr "Tingkatkan"
+
+#: web/templates/prompts/generator/refinement.html:167
+msgid "Enhance clarity and effectiveness"
+msgstr "Tingkatkan kejelasan dan efektivitas"
+
+#: web/templates/prompts/generator/refinement.html:172
+msgid "Fix Grammar"
+msgstr "Perbaiki Tata Bahasa"
+
+#: web/templates/prompts/generator/refinement.html:175
+msgid "Correct grammar and spelling"
+msgstr "Perbaiki tata bahasa dan ejaan"
+
+#: web/templates/prompts/generator/refinement.html:182
+msgid "Custom Instructions"
+msgstr "Instruksi Kustom"
+
+#: web/templates/prompts/generator/refinement.html:185
+msgid "Tell me how to refine your prompt:"
+msgstr "Beritahu saya cara menyempurnakan prompt Anda:"
+
+#: web/templates/prompts/generator/refinement.html:188
+msgid "Example: Make it more professional, add technical details, change the tone to be more friendly, focus on specific aspects..."
+msgstr "Contoh: Buat lebih profesional, tambahkan detail teknis, ubah nada menjadi lebih ramah, fokus pada aspek spesifik..."
+
+#: web/templates/prompts/generator/refinement.html:191
+msgid "Tips:"
+msgstr "Tips:"
+
+#: web/templates/prompts/generator/refinement.html:193
+msgid "Be specific about what you want to change"
+msgstr "Jadilah spesifik tentang apa yang ingin Anda ubah"
+
+#: web/templates/prompts/generator/refinement.html:194
+msgid "Mention tone, style, or format preferences"
+msgstr "Sebutkan preferensi nada, gaya, atau format"
+
+#: web/templates/prompts/generator/refinement.html:195
+msgid "Specify target audience or use case"
+msgstr "Tentukan target audiens atau kasus penggunaan"
+
+#: web/templates/prompts/generator/refinement.html:220
+msgid "Refine Prompt"
+msgstr "Sempurnakan Prompt"
+
+#: web/templates/prompts/generator/refinement.html:232
+msgid "Refined Prompt"
+msgstr "Prompt yang Disempurnakan"
+
+#: web/templates/prompts/generator/refinement.html:240
+msgid "Copy Refined Prompt"
+msgstr "Salin Prompt yang Disempurnakan"
+
+#: web/templates/prompts/generator/refinement.html:243
+msgid "Save as New Prompt"
+msgstr "Simpan sebagai Prompt Baru"
+
+#: web/templates/prompts/generator/refinement.html:246
+msgid "Refine Again"
+msgstr "Sempurnakan Lagi"
+
+#: web/templates/prompts/generator/refinement.html:257
+msgid "Refining prompt..."
+msgstr "Menyempurnakan prompt..."
+
+#: web/templates/prompts/generator/basic.html:17
+msgid "Generated Prompt"
+msgstr "Prompt yang Dihasilkan"
+
+#: web/templates/prompts/generator/basic.html:25
+msgid "Copy Prompt"
+msgstr "Salin Prompt"
+
+#: web/templates/prompts/generator/basic.html:28
+msgid "Save to Library"
+msgstr "Simpan ke Perpustakaan"
+
+#: web/templates/prompts/generator/basic.html:31
+msgid "Generate Again"
+msgstr "Hasilkan Lagi"
+
+#: web/templates/prompts/generator/advance.html:17
+msgid "Generated Prompt"
+msgstr "Prompt yang Dihasilkan"
+
+#: web/templates/prompts/generator/advance.html:25
+msgid "Copy Prompt"
+msgstr "Salin Prompt"
+
+#: web/templates/prompts/generator/advance.html:28
+msgid "Save to Library"
+msgstr "Simpan ke Perpustakaan"
+
+#: web/templates/prompts/generator/advance.html:31
+msgid "Generate Again"
+msgstr "Hasilkan Lagi"
+
