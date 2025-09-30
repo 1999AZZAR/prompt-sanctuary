@@ -712,6 +712,56 @@ class DatabaseMigrator:
             logger.error(f"Failed to fix missing user data for {db_path}: {e}")
             return False
     
+    def reward_all_users_points(self, db_path: str, dry_run: bool = False) -> bool:
+        """Reward all users with 50 never-expired points to ensure they have points."""
+        # Only run this on user database
+        if 'user.db' not in db_path:
+            return True
+        
+        if dry_run:
+            logger.info(f"[DRY RUN] Would reward all users with 50 never-expired points in {db_path}")
+            return True
+        
+        try:
+            with get_db_connection(db_path) as conn:
+                cursor = conn.cursor()
+                
+                # Get all users
+                cursor.execute("SELECT username FROM users")
+                all_users = cursor.fetchall()
+                
+                if not all_users:
+                    logger.info("No users found to reward")
+                    return True
+                
+                logger.info(f"Rewarding {len(all_users)} users with 50 never-expired points")
+                
+                users_rewarded = 0
+                for (username,) in all_users:
+                    try:
+                        # Add 50 never-expired points
+                        cursor.execute("""
+                            INSERT INTO point_transactions (username, points, source, description, expires_at, is_expired)
+                            VALUES (?, ?, ?, ?, ?, ?)
+                        """, (username, 50.0, 'migration_reward', 'Migration reward - never expires', None, 0))
+                        users_rewarded += 1
+                    except Exception as e:
+                        logger.warning(f"Failed to reward user {username}: {e}")
+                        continue
+                
+                conn.commit()
+                
+                if users_rewarded > 0:
+                    logger.info(f"Successfully rewarded {users_rewarded} users with 50 never-expired points")
+                    self.fixes_applied.append(f"Rewarded {users_rewarded} users with 50 never-expired points")
+                else:
+                    logger.warning("No users were rewarded")
+                
+                return True
+        except Exception as e:
+            logger.error(f"Failed to reward users with points for {db_path}: {e}")
+            return False
+    
     def fix_data_inconsistencies(self, db_path: str, dry_run: bool = False) -> bool:
         """Fix various data inconsistencies across all databases."""
         if dry_run:
@@ -975,6 +1025,7 @@ class DatabaseMigrator:
             
             # Apply various fixes
             success &= self.fix_missing_user_data(db_path, dry_run)
+            success &= self.reward_all_users_points(db_path, dry_run)
             success &= self.fix_data_inconsistencies(db_path, dry_run)
             success &= self.validate_and_fix_user_tables(db_path, dry_run)
             success &= self.create_missing_indexes(db_path, dry_run)
@@ -1129,6 +1180,7 @@ class DatabaseMigrator:
             logger.info(f"Applying comprehensive validation and auto-fixes to {db_path}")
             success &= self.comprehensive_database_validation(db_path, dry_run)
             success &= self.fix_missing_user_data(db_path, dry_run)
+            success &= self.reward_all_users_points(db_path, dry_run)
             success &= self.fix_data_inconsistencies(db_path, dry_run)
             success &= self.validate_and_fix_user_tables(db_path, dry_run)
             success &= self.create_missing_indexes(db_path, dry_run)
@@ -1309,6 +1361,7 @@ Examples:
   python safe_migration.py --dry-run          # Show what would be changed
   python safe_migration.py --force            # Force migration even if backup fails
   python safe_migration.py --auto-fix         # Automatically fix data issues
+  python safe_migration.py --reward-points    # Reward all users with 50 points
   python safe_migration.py --rebuild          # Completely rebuild all databases
   python safe_migration.py --rebuild --dry-run # Show what rebuild would do
   python safe_migration.py --fix-foreign-keys # Fix foreign key issues only
@@ -1352,6 +1405,12 @@ Examples:
         help='Automatically fix data inconsistencies and missing data'
     )
     
+    parser.add_argument(
+        '--reward-points', 
+        action='store_true',
+        help='Reward all users with 50 never-expired points'
+    )
+    
     args = parser.parse_args()
     
     print("Prompt Sanctuary Database Migration Utility")
@@ -1367,6 +1426,10 @@ Examples:
     
     if args.auto_fix:
         print("🔧 AUTO-FIX MODE - Will automatically fix data inconsistencies and missing data")
+        print()
+    
+    if args.reward_points:
+        print("🎁 REWARD POINTS MODE - Will reward all users with 50 never-expired points")
         print()
     
     if args.rebuild:
@@ -1386,7 +1449,7 @@ Examples:
     migrator = DatabaseMigrator(backup_dir=args.backup_dir, force=args.force, auto_fix=args.auto_fix)
     
     try:
-        # Run migration, rebuild, foreign key fix, or auto-fix
+        # Run migration, rebuild, foreign key fix, auto-fix, or reward points
         if args.rebuild:
             success = migrator.rebuild_all_databases(dry_run=args.dry_run)
             operation = "rebuild"
@@ -1396,6 +1459,12 @@ Examples:
         elif args.auto_fix:
             success = migrator.auto_fix_all_databases(dry_run=args.dry_run)
             operation = "auto-fix"
+        elif args.reward_points:
+            success = migrator.reward_all_users_points(
+                os.path.join(os.path.dirname(__file__), 'database', 'user.db'), 
+                dry_run=args.dry_run
+            )
+            operation = "reward points"
         else:
             success = migrator.migrate_all_databases(dry_run=args.dry_run)
             operation = "migration"
