@@ -466,9 +466,72 @@
             });
         }
 
-        function saveRefinedPrompt() {
-            // TODO: Implement save functionality
-            showStatus('Save functionality coming soon!', 'info');
+        async function saveRefinedPrompt() {
+            const refinedText = document.getElementById('refined-prompt-text').textContent;
+            
+            if (!refinedText || !refinedText.trim()) {
+                showStatus('No refined prompt to save.', 'error');
+                return;
+            }
+            
+            // Show loading while generating title and saving
+            showLoading();
+            
+            try {
+                // Ask AI to generate a smart title for this refined prompt
+                const titleResponse = await fetch('/generate_title', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        ...window.CSRF.getFormHeaders()
+                    },
+                    body: new URLSearchParams({
+                        'prompt_text': refinedText.trim(),
+                        'prompt_type': 'refinement'
+                    })
+                });
+                
+                const titleData = await titleResponse.json();
+                let title = 'Refined Prompt';
+                
+                if (titleData.success && titleData.title) {
+                    title = titleData.title;
+                } else {
+                    // Fallback to original title + refinement action if AI title generation fails
+                    const originalTitle = selectedPromptData ? selectedPromptData.title : 'Manual Input';
+                    const action = selectedAction || 'Custom';
+                    title = `${originalTitle} - Refined (${action})`;
+                }
+                
+                // Now save the prompt with the AI-generated title
+                const response = await fetch('/save_prompt', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        ...window.CSRF.getFormHeaders()
+                    },
+                    body: new URLSearchParams({
+                        'title': title,
+                        'prompt': refinedText.trim()
+                    })
+                });
+                
+                const data = await response.json();
+                hideLoading();
+                
+                if (data.success) {
+                    showStatus('Refined prompt saved successfully!', 'success');
+                    
+                    // Update points display (saving costs points)
+                    updateUserPoints();
+                } else {
+                    showStatus(data.message || 'Failed to save prompt.', 'error');
+                }
+            } catch (error) {
+                hideLoading();
+                console.error('Error saving refined prompt:', error);
+                showStatus('Failed to save prompt. Please try again.', 'error');
+            }
         }
 
         function refineAgain() {

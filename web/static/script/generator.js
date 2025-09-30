@@ -8,16 +8,24 @@ function submitFormStream(formId, url) {
 
     var formData = new FormData(formElement);
 
-    var loading = document.getElementById("loading"); 
-    if (loading) loading.classList.remove('hidden');
+    // Use global loading functions if available, otherwise fallback to local logic
+    if (typeof showLoading === 'function') {
+        showLoading();
+    } else {
+        var loading = document.getElementById("loading"); 
+        if (loading) loading.classList.remove('hidden');
+    }
     blurBackground(true);
 
-    // Clear previous response
+    // Clear previous response and show result section
     const resultSection = document.getElementById('resultSection');
-    const responseContainer = document.getElementById('response');
+    let responseContainer = document.getElementById('generated-prompt-text');
+    if (!responseContainer) {
+        responseContainer = document.getElementById('response');
+    }
     if (resultSection && responseContainer) {
         resultSection.classList.remove('hidden');
-        responseContainer.innerHTML = '<div class="streaming-response">Generating response...</div>';
+        responseContainer.textContent = 'Generating response...';
     }
 
     fetch(url, {
@@ -87,7 +95,12 @@ function submitFormStream(formId, url) {
         }
     })
     .finally(() => {
-        if (loading) loading.classList.add('hidden');
+        // Use global loading functions if available, otherwise fallback to local logic
+        if (typeof hideLoading === 'function') {
+            hideLoading();
+        } else {
+            if (loading) loading.classList.add('hidden');
+        }
         blurBackground(false);
         updateUserPoints();
     });
@@ -95,66 +108,35 @@ function submitFormStream(formId, url) {
 
 // Update the display progressively during streaming
 function updateStreamingDisplay(text) {
-    const responseContainer = document.getElementById('response');
+    // Try both old and new element IDs for compatibility
+    let responseContainer = document.getElementById('generated-prompt-text');
+    if (!responseContainer) {
+        responseContainer = document.getElementById('response');
+    }
     if (responseContainer && text.trim()) {
-        const cleanedText = cleanResponse(text);
-        const normalized = normalizeFences(cleanedText);
-        const rendered = marked.parse(normalized, { mangle: false, headerIds: false });
-        const safeHtml = DOMPurify.sanitize(rendered, { USE_PROFILES: { html: true } });
-        responseContainer.innerHTML = `<div class="rendered relative">${safeHtml}</div>`;
-        
-        // Add copy buttons to code blocks
-        responseContainer.querySelectorAll('pre code').forEach((codeEl) => {
-            const pre = codeEl.parentElement;
-            if (!pre.querySelector('.code-copy-btn')) {
-                pre.classList.add('relative');
-                const btn = document.createElement('button');
-                btn.textContent = 'Copy';
-                btn.className = 'code-copy-btn';
-                btn.addEventListener('click', () => {
-                    navigator.clipboard.writeText(codeEl.textContent)
-                        .then(() => showToast('Code copied!', 'success'))
-                        .catch(() => showToast('Copy failed.', 'error'));
-                });
-                pre.appendChild(btn);
-            }
-        });
-        if (window.Prism) Prism.highlightAllUnder(responseContainer);
+        // Use raw text directly like refinement.html (no cleaning)
+        responseContainer.textContent = text;
     }
 }
 
 // Process the complete response after streaming is done
 function processCompleteResponse(text) {
-    const responseContainer = document.getElementById('response');
+    // Try both old and new element IDs for compatibility
+    let responseContainer = document.getElementById('generated-prompt-text');
+    if (!responseContainer) {
+        responseContainer = document.getElementById('response');
+    }
+    
     if (responseContainer && text.trim()) {
-        const cleanedText = cleanResponse(text);
-        const normalized = normalizeFences(cleanedText);
-        const rendered = marked.parse(normalized, { mangle: false, headerIds: false });
-        const safeHtml = DOMPurify.sanitize(rendered, { USE_PROFILES: { html: true } });
-        responseContainer.innerHTML = `<div class="rendered relative">${safeHtml}</div>`;
+        // Use raw text directly like refinement.html (no cleaning)
+        responseContainer.textContent = text;
         
-        // Add copy buttons to code blocks and highlight
-        responseContainer.querySelectorAll('pre code').forEach((codeEl) => {
-            const pre = codeEl.parentElement;
-            pre.classList.add('relative');
-            const btn = document.createElement('button');
-            btn.textContent = 'Copy';
-            btn.className = 'code-copy-btn';
-            btn.addEventListener('click', () => {
-                navigator.clipboard.writeText(codeEl.textContent)
-                    .then(() => showToast('Code copied!', 'success'))
-                    .catch(() => showToast('Copy failed.', 'error'));
-            });
-            pre.appendChild(btn);
-        });
-        if (window.Prism) Prism.highlightAllUnder(responseContainer);
-        
-        // Show refinement buttons after response is complete
-        setTimeout(() => {
-            if (typeof showRefinementButtons === 'function') {
-                showRefinementButtons();
-            }
-        }, 100);
+        // Show the result section
+        const resultSection = document.getElementById('resultSection');
+        if (resultSection) {
+            resultSection.classList.remove('hidden');
+            resultSection.scrollIntoView({ behavior: 'smooth' });
+        }
     }
 }
 
@@ -168,9 +150,13 @@ function submitForm(formId, url) {
 
     var formData = new FormData(formElement); // Get form data
 
-    // showGlobalLoader(); // No longer using global loader for this specific function
-    var loading = document.getElementById("loading"); 
-    if (loading) loading.classList.remove('hidden');
+    // Use global loading functions if available, otherwise fallback to local logic
+    if (typeof showLoading === 'function') {
+        showLoading();
+    } else {
+        var loading = document.getElementById("loading"); 
+        if (loading) loading.classList.remove('hidden');
+    }
     blurBackground(true); // Restore blur for local loader's backdrop effect
 
     fetch(url, {
@@ -202,49 +188,24 @@ function submitForm(formId, url) {
         // Handle successful responses (plain text)
         const result = data ? data.response : text;
 
-        // Clean the response to remove any formatting artifacts
-        const cleanedResult = cleanResponse(result);
-        console.log('Cleaned response from server:', cleanedResult);
+        // Use raw response directly like refinement.html (no intensive cleaning)
+        console.log('Raw response from server:', result);
 
-        // Update result section with safe rendered markdown and code highlight
+        // Update result section with simple text display
         const resultSection = document.getElementById('resultSection');
-        const responseContainer = document.getElementById('response');
+        let responseContainer = document.getElementById('generated-prompt-text');
+        if (!responseContainer) {
+            responseContainer = document.getElementById('response');
+        }
+        
         if (resultSection && responseContainer) {
-            if (cleanedResult && cleanedResult.trim() !== '') {
+            if (result && result.trim() !== '') {
                 resultSection.classList.remove('hidden');
-
-                // Normalize fenced code blocks for Prism
-                const normalized = normalizeFences(cleanedResult);
-                // Render markdown
-                const rendered = marked.parse(normalized, { mangle: false, headerIds: false });
-                const safeHtml = DOMPurify.sanitize(rendered, { USE_PROFILES: { html: true } });
-                responseContainer.innerHTML = `<div class="rendered relative">${safeHtml}</div>`;
-
-                // Add copy buttons to code blocks and highlight
-                responseContainer.querySelectorAll('pre code').forEach((codeEl) => {
-                    const pre = codeEl.parentElement;
-                    pre.classList.add('relative');
-                    const btn = document.createElement('button');
-                    btn.textContent = 'Copy';
-                    btn.className = 'code-copy-btn';
-                    btn.addEventListener('click', () => {
-                        navigator.clipboard.writeText(codeEl.textContent)
-                            .then(() => showToast('Code copied!', 'success'))
-                            .catch(() => showToast('Copy failed.', 'error'));
-                    });
-                    pre.appendChild(btn);
-                });
-                if (window.Prism) Prism.highlightAllUnder(responseContainer);
-                
-                // Show refinement buttons after response is complete
-                setTimeout(() => {
-                    if (typeof showRefinementButtons === 'function') {
-                        showRefinementButtons();
-                    }
-                }, 100);
+                responseContainer.textContent = result.trim();
+                resultSection.scrollIntoView({ behavior: 'smooth' });
             } else {
                 resultSection.classList.add('hidden');
-                responseContainer.innerHTML = '';
+                responseContainer.textContent = '';
             }
         } else {
             console.error('Result section or response paragraph not found in the DOM');
@@ -264,8 +225,12 @@ function submitForm(formId, url) {
         showToast("An error occurred while submitting the form.", 'error');
     })
     .finally(() => {
-        // hideGlobalLoader(); // No longer using global loader here
-        if (loading) loading.classList.add('hidden');
+        // Use global loading functions if available, otherwise fallback to local logic
+        if (typeof hideLoading === 'function') {
+            hideLoading();
+        } else {
+            if (loading) loading.classList.add('hidden');
+        }
         blurBackground(false); // Restore blur removal
         updateUserPoints(); // Update points display after generation
     });

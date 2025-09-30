@@ -102,21 +102,27 @@
         </div>
     </div>
 
-    <!-- {{ _('Result Section (hidden by default, shown only when a prompt is generated)') }} -->
-    <div id="resultSection" class="result mdc-card glass prompt-card p-6 mt-8 hidden" role="region" aria-labelledby="basic-generated-prompt-heading">
-        <h2 id="basic-generated-prompt-heading" class="text-2xl font-bold mb-6">{{ _('Generated Prompt:') }}</h2>
-        <div id="response" class="text-lg text-[var(--md-sys-color-on-surface)] space-y-4" aria-live="polite"></div>
-        <div class="flex flex-wrap gap-4 mt-6">
-            <button onclick="copyToClipboard()" class="bg-[var(--md-sys-color-primary)] text-[var(--md-sys-color-on-primary)] px-6 py-3 rounded-lg hover:bg-[var(--md-sys-color-secondary)] transition duration-200" aria-label="{{ _('Copy generated prompt to clipboard') }}">{{ _('Copy') }}</button>
-            <button id="save-to-library" class="bg-[var(--md-sys-color-secondary)] text-[var(--md-sys-color-on-secondary)] px-6 py-3 rounded-lg hover:opacity-90 transition duration-200" aria-label="{{ _('Save generated prompt to your library') }}">{{ _('Save') }}</button>
-            <button id="shorten-prompt-btn" class="refinement-btn bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-lg transition duration-200 hidden" onclick="refineGeneratedPrompt('shorten')" aria-label="{{ _('Shorten the generated prompt') }}">
-                <i class="fas fa-compress-alt mr-2"></i>{{ _('Shorten') }}
+    <!-- Result Section (hidden by default, shown only when a prompt is generated) -->
+    <div id="resultSection" class="max-w-4xl mx-auto mt-8 mdc-card glass prompt-card p-6 hidden" role="region" aria-labelledby="basic-generated-prompt-heading">
+        <h2 id="basic-generated-prompt-heading" class="text-2xl font-bold mb-6 text-slate-900">
+            <i class="fas fa-star text-blue-500 mr-2"></i>{{ _('Generated Prompt') }}
+        </h2>
+        
+        <div class="p-6 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg border border-blue-200 mb-6">
+            <p id="generated-prompt-text" class="text-slate-700 leading-relaxed whitespace-pre-wrap"></p>
+        </div>
+        
+        <div class="flex flex-wrap gap-4">
+            <button onclick="copyGeneratedPrompt()" class="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg transition duration-200">
+                <i class="fas fa-copy mr-2"></i>{{ _('Copy Prompt') }}
             </button>
-            <button id="elaborate-prompt-btn" class="refinement-btn bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg transition duration-200 hidden" onclick="refineGeneratedPrompt('elaborate')" aria-label="{{ _('Elaborate the generated prompt') }}">
-                <i class="fas fa-expand-alt mr-2"></i>{{ _('Elaborate') }}
+            <button onclick="saveGeneratedPrompt()" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg transition duration-200">
+                <i class="fas fa-save mr-2"></i>{{ _('Save to Library') }}
+            </button>
+            <button onclick="generateAgain()" class="bg-purple-500 hover:bg-purple-600 text-white px-6 py-3 rounded-lg transition duration-200">
+                <i class="fas fa-redo mr-2"></i>{{ _('Generate Again') }}
             </button>
         </div>
-        <div id="refinement-status" class="text-sm mt-3 hidden"></div>
     </div>
 
     <script>
@@ -125,6 +131,95 @@
             const isHidden = helpDiv.classList.toggle('hidden');
             helpDiv.setAttribute('aria-hidden', isHidden);
             document.querySelector(`[aria-controls="${helpId}"]`).setAttribute('aria-expanded', !isHidden);
+        }
+
+        // Loading functions (copied from refinement.html)
+        function showLoading() {
+            document.getElementById('loading').classList.remove('hidden');
+        }
+
+        function hideLoading() {
+            document.getElementById('loading').classList.add('hidden');
+        }
+
+        // Result action functions (copied from refinement.html pattern)
+        function copyGeneratedPrompt() {
+            const generatedText = document.getElementById('generated-prompt-text').textContent;
+            navigator.clipboard.writeText(generatedText).then(() => {
+                showToast('Generated prompt copied to clipboard!', 'success');
+            }).catch(() => {
+                showToast('Failed to copy prompt.', 'error');
+            });
+        }
+
+        async function saveGeneratedPrompt() {
+            const generatedText = document.getElementById('generated-prompt-text').textContent;
+            
+            if (!generatedText || !generatedText.trim()) {
+                showToast('No generated prompt to save.', 'error');
+                return;
+            }
+            
+            // Show loading while generating title and saving
+            showLoading();
+            
+            try {
+                // Ask AI to generate a smart title for this prompt
+                const titleResponse = await fetch('/generate_title', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        ...window.CSRF.getFormHeaders()
+                    },
+                    body: new URLSearchParams({
+                        'prompt_text': generatedText.trim(),
+                        'prompt_type': 'basic'
+                    })
+                });
+                
+                const titleData = await titleResponse.json();
+                let title = 'Generated Prompt';
+                
+                if (titleData.success && titleData.title) {
+                    title = titleData.title;
+                } else {
+                    // Fallback to simple title if AI title generation fails
+                    const promptPreview = generatedText.trim().substring(0, 40);
+                    title = `Basic: ${promptPreview}${generatedText.length > 40 ? '...' : ''}`;
+                }
+                
+                // Now save the prompt with the AI-generated title
+                const response = await fetch('/save_prompt', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        ...window.CSRF.getFormHeaders()
+                    },
+                    body: new URLSearchParams({
+                        'title': title,
+                        'prompt': generatedText.trim()
+                    })
+                });
+                
+                const data = await response.json();
+                hideLoading();
+                
+                if (data.success) {
+                    showToast('Generated prompt saved successfully!', 'success');
+                    updateUserPoints(); // Update points display
+                } else {
+                    showToast(data.message || 'Failed to save prompt.', 'error');
+                }
+            } catch (error) {
+                hideLoading();
+                console.error('Error saving generated prompt:', error);
+                showToast('Failed to save prompt. Please try again.', 'error');
+            }
+        }
+
+        function generateAgain() {
+            document.getElementById('resultSection').classList.add('hidden');
+            document.querySelector('.prompting').scrollIntoView({ behavior: 'smooth' });
         }
     </script>
 {% endblock %}

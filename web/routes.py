@@ -1650,6 +1650,67 @@ Provide only the corrected version, no explanations."""
             current_user_points=current_points
         )
 
+    @main_blueprint.route("/generate_title", methods=["POST"])
+    @required_login
+    def generate_title():
+        """Generate a smart title for a prompt using AI."""
+        if request.method == "POST":
+            prompt_text = request.form.get("prompt_text", "").strip()
+            prompt_type = request.form.get("prompt_type", "basic").strip()
+            username = session["username"]
+
+            if not prompt_text:
+                return jsonify({"success": False, "error": "Prompt text is required."}), 400
+
+            try:
+                # Check if user has enough points (title generation costs 0.2 points)
+                cost = 0.2
+                user_has_api_key = is_api_key_validated(main_blueprint.user_db, username)
+                
+                if not user_has_api_key:
+                    if not deduct_user_points_with_source(main_blueprint.user_db, username, cost, 'title_generation', f'Generated title for {prompt_type} prompt'):
+                        current_points = get_user_points(main_blueprint.user_db, username)
+                        return jsonify({"success": False, "error": f"Insufficient points. You need {cost} points but have {current_points}."}), 402
+
+                # Create title generation prompt based on type
+                title_prompts = {
+                    'basic': "Generate a concise, descriptive title (3-8 words) for this basic prompt. Focus on the main purpose or topic:",
+                    'advanced': "Generate a concise, descriptive title (3-8 words) for this advanced prompt. Focus on the main purpose or topic:",
+                    'advanced_image': "Generate a concise, descriptive title (3-8 words) for this image generation prompt. Focus on the visual content or style:",
+                    'advanced_reverse': "Generate a concise, descriptive title (3-8 words) for this reverse image prompt. Focus on the analysis or description:",
+                    'refinement': "Generate a concise, descriptive title (3-8 words) for this refined prompt. Focus on the improvement or enhancement:"
+                }
+                
+                title_prompt = title_prompts.get(prompt_type, title_prompts['basic'])
+                full_prompt = f"{title_prompt}\n\nPrompt content:\n{prompt_text}\n\nTitle:"
+
+                # Set user API key if available
+                user_api_key = get_user_api_key(main_blueprint.user_db, username)
+                if user_api_key:
+                    model.set_user_api_key(user_api_key)
+
+                # Generate title using AI
+                title = model._generate_content_with_retry(full_prompt, model.get_effective_api_key(), use_streaming=False)
+                
+                if title and title.strip():
+                    # Clean up the title
+                    clean_title = title.strip()
+                    # Remove quotes if present
+                    clean_title = clean_title.strip('"\'')
+                    # Ensure it's not too long
+                    if len(clean_title) > 60:
+                        clean_title = clean_title[:57] + "..."
+                    
+                    return jsonify({"success": True, "title": clean_title})
+                else:
+                    return jsonify({"success": False, "error": "Failed to generate title."}), 500
+
+            except Exception as e:
+                logger.error(f"Error generating title for {username}: {e}")
+                return jsonify({"success": False, "error": "Failed to generate title."}), 500
+
+        return jsonify({"success": False, "error": "Invalid request method."}), 405
+
     @main_blueprint.route("/language/<language>")
     def set_language(language):
         """Set user language preference"""
