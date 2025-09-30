@@ -568,12 +568,6 @@
             // Debug: Log the data received from backend
             console.log('Saved prompts count:', {{ saved_prompts | length }});
             console.log('Community prompts count:', {{ community_prompts | length }});
-            if ({{ saved_prompts | length }} > 0) {
-                console.log('First saved prompt:', {{ saved_prompts[0] | tojson | safe }});
-            }
-            if ({{ community_prompts | length }} > 0) {
-                console.log('First community prompt:', {{ community_prompts[0] | tojson | safe }});
-            }
             
             // Check if a prompt was passed from library page
             const storedPrompt = sessionStorage.getItem('selectedPromptForRefinement');

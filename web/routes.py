@@ -76,6 +76,19 @@ ai = GenerativeAI()
 model = GenerativeModel()
 
 
+def sanitize_for_json(obj):
+    """Sanitize data to ensure it's JSON serializable."""
+    if obj is None:
+        return ''
+    elif isinstance(obj, (str, int, float, bool)):
+        return obj
+    elif isinstance(obj, dict):
+        return {k: sanitize_for_json(v) for k, v in obj.items()}
+    elif isinstance(obj, (list, tuple)):
+        return [sanitize_for_json(item) for item in obj]
+    else:
+        return str(obj) if obj is not None else ''
+
 def create_main_blueprint(
     user_db, prompt_db, query_db, community_db, feedback_db
 ):
@@ -541,12 +554,12 @@ def create_main_blueprint(
         system_prompts = []
         for prompt in raw_system_prompts:
             system_prompts.append({
-                'random_val': prompt[0],
-                'username': prompt[1],
-                'title': prompt[2],  # Note: 'tittle' in DB but using 'title' in template
-                'prompt': prompt[3],
-                'tag': prompt[4],
-                'time': prompt[5],
+                'random_val': prompt[0] or '',
+                'username': prompt[1] or '',
+                'title': prompt[2] or '',  # Note: 'tittle' in DB but using 'title' in template
+                'prompt': prompt[3] or '',
+                'tag': prompt[4] or '',
+                'time': prompt[5] or '',
                 'is_shared': False,  # System prompts are not shared by users
                 'type': 'system'
             })
@@ -554,11 +567,11 @@ def create_main_blueprint(
         # Convert shared prompts to dictionary structure
         shared_prompts = []
         for prompt in raw_shared_prompts:
-            owner = prompt[0]
-            prompt_id = prompt[1]
-            title = prompt[2]
-            content = prompt[3]
-            time = prompt[4]
+            owner = prompt[0] or ''
+            prompt_id = prompt[1] or ''
+            title = prompt[2] or ''
+            content = prompt[3] or ''
+            time = prompt[4] or ''
 
             # Check if current user owns this prompt
             is_user_owned = (owner == username)
@@ -574,10 +587,14 @@ def create_main_blueprint(
                 'is_user_owned': is_user_owned
             })
 
+        # Sanitize data to ensure JSON serialization works
+        sanitized_system_prompts = sanitize_for_json(system_prompts)
+        sanitized_shared_prompts = sanitize_for_json(shared_prompts)
+        
         return render_template(
             "prompts/lib/community.html",
-            system_prompts=system_prompts,
-            shared_prompts=shared_prompts,
+            system_prompts=sanitized_system_prompts,
+            shared_prompts=sanitized_shared_prompts,
             current_user_points=current_points,
         )
 
@@ -1629,11 +1646,11 @@ Provide only the corrected version, no explanations."""
                 
                 for row in community_rows:
                     community_prompts.append({
-                        'prompt_id': row['random_val'],
-                        'title': row['title'],
-                        'prompt': row['prompt'],
-                        'time': row['time'],
-                        'owner': row['owner'],
+                        'prompt_id': row['random_val'] or '',
+                        'title': row['title'] or '',
+                        'prompt': row['prompt'] or '',
+                        'time': row['time'] or '',
+                        'owner': row['owner'] or '',
                         'source': 'community'
                     })
 
@@ -1643,10 +1660,14 @@ Provide only the corrected version, no explanations."""
             saved_prompts = []
             community_prompts = []
 
+        # Sanitize data to ensure JSON serialization works
+        sanitized_saved_prompts = sanitize_for_json(saved_prompts)
+        sanitized_community_prompts = sanitize_for_json(community_prompts)
+        
         return render_template(
             "prompts/generator/refinement.html",
-            saved_prompts=saved_prompts,
-            community_prompts=community_prompts,
+            saved_prompts=sanitized_saved_prompts,
+            community_prompts=sanitized_community_prompts,
             current_user_points=current_points
         )
 
