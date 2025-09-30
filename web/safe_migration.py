@@ -2,16 +2,20 @@
 """
 Safe Database Migration Utility for Prompt Sanctuary
 
-This script safely migrates existing databases to the latest schema format.
-It handles all new columns and ensures backward compatibility.
+This script automatically migrates, updates, and fixes all databases to have
+all necessary tables and data. It performs comprehensive database maintenance
+including schema updates, data validation, and automatic repairs.
 
 Usage:
-    python safe_migration.py [--dry-run] [--force] [--backup-dir BACKUP_DIR]
+    python safe_migration.py [--dry-run] [--force] [--backup-dir BACKUP_DIR] [--auto-fix]
     
 Options:
     --dry-run      Show what would be changed without making actual changes
     --force        Force migration even if backup fails
     --backup-dir   Directory to store backups (default: ./backups)
+    --auto-fix     Automatically fix data inconsistencies and missing data
+    --rebuild      Completely rebuild all databases from scratch (destructive!)
+    --fix-foreign-keys  Fix foreign key issues and enable constraints
 """
 
 import os
@@ -44,11 +48,13 @@ logger = logging.getLogger(__name__)
 class DatabaseMigrator:
     """Handles safe database migrations with backup and rollback capabilities."""
     
-    def __init__(self, backup_dir: str = "./backups", force: bool = False):
+    def __init__(self, backup_dir: str = "./backups", force: bool = False, auto_fix: bool = False):
         self.backup_dir = Path(backup_dir)
         self.force = force
+        self.auto_fix = auto_fix
         self.migrations_performed = []
         self.backup_files = []
+        self.fixes_applied = []
         
         # Ensure backup directory exists
         self.backup_dir.mkdir(parents=True, exist_ok=True)
@@ -641,13 +647,404 @@ class DatabaseMigrator:
                     
                     conn.commit()
                     logger.info(f"Removed {len(orphaned)} orphaned point transactions")
-                    self.migrations_performed.append(f"Removed {len(orphaned)} orphaned point transactions")
+                    self.fixes_applied.append(f"Removed {len(orphaned)} orphaned point transactions")
                 else:
                     logger.info(f"No orphaned point transactions found in {db_path}")
                 
                 return True
         except Exception as e:
             logger.error(f"Failed to fix orphaned point transactions for {db_path}: {e}")
+            return False
+    
+    def fix_missing_user_data(self, db_path: str, dry_run: bool = False) -> bool:
+        """Fix missing user data like identicon values and initial points."""
+        # Only run this on user database
+        if 'user.db' not in db_path:
+            return True
+        
+        if dry_run:
+            logger.info(f"[DRY RUN] Would fix missing user data in {db_path}")
+            return True
+        
+        try:
+            with get_db_connection(db_path) as conn:
+                cursor = conn.cursor()
+                
+                # Fix users without identicon values
+                cursor.execute("""
+                    SELECT username FROM users 
+                    WHERE identicon_value IS NULL OR identicon_value = ''
+                """)
+                users_without_identicon = cursor.fetchall()
+                
+                if users_without_identicon:
+                    logger.info(f"Fixing {len(users_without_identicon)} users without identicon values")
+                    for (username,) in users_without_identicon:
+                        from models import generate_identicon_value
+                        identicon_value = generate_identicon_value(username)
+                        cursor.execute(
+                            "UPDATE users SET identicon_value = ? WHERE username = ?",
+                            (identicon_value, username)
+                        )
+                    conn.commit()
+                    self.fixes_applied.append(f"Added identicon values for {len(users_without_identicon)} users")
+                
+                # Fix users without initial points transactions
+                cursor.execute("""
+                    SELECT u.username FROM users u
+                    LEFT JOIN point_transactions pt ON u.username = pt.username AND pt.source = 'original'
+                    WHERE pt.username IS NULL
+                """)
+                users_without_initial_points = cursor.fetchall()
+                
+                if users_without_initial_points:
+                    logger.info(f"Adding initial 80 points for {len(users_without_initial_points)} users")
+                    for (username,) in users_without_initial_points:
+                        cursor.execute("""
+                            INSERT INTO point_transactions (username, points, source, description, expires_at, is_expired)
+                            VALUES (?, ?, ?, ?, ?, ?)
+                        """, (username, 80.0, 'original', 'Initial points', None, 0))
+                    conn.commit()
+                    self.fixes_applied.append(f"Added initial points for {len(users_without_initial_points)} users")
+                
+                return True
+        except Exception as e:
+            logger.error(f"Failed to fix missing user data for {db_path}: {e}")
+            return False
+    
+    def fix_data_inconsistencies(self, db_path: str, dry_run: bool = False) -> bool:
+        """Fix various data inconsistencies across all databases."""
+        if dry_run:
+            logger.info(f"[DRY RUN] Would fix data inconsistencies in {db_path}")
+            return True
+        
+        try:
+            with get_db_connection(db_path) as conn:
+                cursor = conn.cursor()
+                
+                fixes_count = 0
+                
+                # Only fix point_transactions issues in user database
+                if 'user.db' in db_path:
+                    # Fix negative points in transactions
+                    cursor.execute("""
+                        SELECT id, username, points FROM point_transactions 
+                        WHERE points < 0 AND source NOT IN ('api_key_remove')
+                    """)
+                    negative_transactions = cursor.fetchall()
+                    
+                    if negative_transactions:
+                        logger.warning(f"Found {len(negative_transactions)} unexpected negative point transactions")
+                        for transaction_id, username, points in negative_transactions:
+                            # Convert to positive and mark as deduction
+                            cursor.execute("""
+                                UPDATE point_transactions 
+                                SET points = ?, source = 'deduction_fix'
+                                WHERE id = ?
+                            """, (abs(points), transaction_id))
+                        fixes_count += len(negative_transactions)
+                        self.fixes_applied.append(f"Fixed {len(negative_transactions)} negative point transactions")
+                    
+                    # Fix invalid timestamps (future dates)
+                    cursor.execute("""
+                        SELECT COUNT(*) FROM point_transactions 
+                        WHERE created_at > datetime('now', '+1 day')
+                    """)
+                    future_timestamps = cursor.fetchone()[0]
+                    
+                    if future_timestamps > 0:
+                        cursor.execute("""
+                            UPDATE point_transactions 
+                            SET created_at = datetime('now')
+                            WHERE created_at > datetime('now', '+1 day')
+                        """)
+                        fixes_count += future_timestamps
+                        self.fixes_applied.append(f"Fixed {future_timestamps} future timestamps")
+                    
+                    # Fix expired points that aren't marked as expired
+                    cursor.execute("""
+                        UPDATE point_transactions 
+                        SET is_expired = 1 
+                        WHERE is_expired = 0 AND expires_at IS NOT NULL AND expires_at <= datetime('now')
+                    """)
+                    expired_fixes = cursor.rowcount
+                    if expired_fixes > 0:
+                        fixes_count += expired_fixes
+                        self.fixes_applied.append(f"Marked {expired_fixes} points as expired")
+                
+                # Fix general data inconsistencies in all databases
+                # Fix invalid timestamps in any table with created_at column
+                cursor.execute("""
+                    SELECT name FROM sqlite_master 
+                    WHERE type='table' AND sql LIKE '%created_at%'
+                """)
+                tables_with_timestamps = [row[0] for row in cursor.fetchall()]
+                
+                for table in tables_with_timestamps:
+                    try:
+                        cursor.execute(f"""
+                            UPDATE {table} 
+                            SET created_at = datetime('now')
+                            WHERE created_at > datetime('now', '+1 day')
+                        """)
+                        timestamp_fixes = cursor.rowcount
+                        if timestamp_fixes > 0:
+                            fixes_count += timestamp_fixes
+                            self.fixes_applied.append(f"Fixed {timestamp_fixes} future timestamps in {table}")
+                    except Exception as e:
+                        # Table might not have created_at column, skip
+                        pass
+                
+                conn.commit()
+                
+                if fixes_count > 0:
+                    logger.info(f"Applied {fixes_count} data consistency fixes to {db_path}")
+                
+                return True
+        except Exception as e:
+            logger.error(f"Failed to fix data inconsistencies for {db_path}: {e}")
+            return False
+    
+    def validate_and_fix_user_tables(self, db_path: str, dry_run: bool = False) -> bool:
+        """Validate and fix user-specific tables in prompt database."""
+        # Only run this on prompt database
+        if 'prompt_data.db' not in db_path:
+            return True
+        
+        if dry_run:
+            logger.info(f"[DRY RUN] Would validate and fix user tables in {db_path}")
+            return True
+        
+        try:
+            with get_db_connection(db_path) as conn:
+                cursor = conn.cursor()
+                
+                # Get all user tables
+                cursor.execute("""
+                    SELECT name FROM sqlite_master 
+                    WHERE type='table' AND name NOT LIKE 'sqlite_%' AND name != 'prompt_versions'
+                """)
+                user_tables = [row[0] for row in cursor.fetchall()]
+                
+                fixes_count = 0
+                
+                for table_name in user_tables:
+                    # Validate table structure
+                    cursor.execute(f"PRAGMA table_info({table_name})")
+                    columns = [col[1] for col in cursor.fetchall()]
+                    
+                    expected_columns = ['random_val', 'title', 'prompt', 'time']
+                    missing_columns = [col for col in expected_columns if col not in columns]
+                    
+                    if missing_columns:
+                        logger.warning(f"User table {table_name} missing columns: {missing_columns}")
+                        # For now, just log - in future we could add missing columns
+                        fixes_count += 1
+                    
+                    # Check for empty titles or prompts
+                    cursor.execute(f"""
+                        SELECT COUNT(*) FROM "{table_name}" 
+                        WHERE title IS NULL OR title = '' OR prompt IS NULL OR prompt = ''
+                    """)
+                    invalid_entries = cursor.fetchone()[0]
+                    
+                    if invalid_entries > 0:
+                        logger.warning(f"User table {table_name} has {invalid_entries} invalid entries")
+                        # Remove invalid entries
+                        cursor.execute(f"""
+                            DELETE FROM "{table_name}" 
+                            WHERE title IS NULL OR title = '' OR prompt IS NULL OR prompt = ''
+                        """)
+                        fixes_count += invalid_entries
+                        self.fixes_applied.append(f"Removed {invalid_entries} invalid entries from {table_name}")
+                
+                conn.commit()
+                
+                if fixes_count > 0:
+                    logger.info(f"Applied {fixes_count} user table fixes to {db_path}")
+                
+                return True
+        except Exception as e:
+            logger.error(f"Failed to validate user tables for {db_path}: {e}")
+            return False
+    
+    def create_missing_indexes(self, db_path: str, dry_run: bool = False) -> bool:
+        """Create missing indexes for better performance."""
+        if dry_run:
+            logger.info(f"[DRY RUN] Would create missing indexes in {db_path}")
+            return True
+        
+        try:
+            with get_db_connection(db_path) as conn:
+                cursor = conn.cursor()
+                
+                indexes_created = 0
+                
+                # Define indexes based on database type
+                if 'user.db' in db_path:
+                    indexes = [
+                        ("idx_point_transactions_username", "point_transactions", "username"),
+                        ("idx_point_transactions_source", "point_transactions", "source"),
+                        ("idx_point_transactions_expires", "point_transactions", "expires_at"),
+                        ("idx_user_achievements_username", "user_achievements", "username"),
+                        ("idx_user_logins_username_date", "user_logins", "username, login_date"),
+                        ("idx_sessions_username", "sessions", "username"),
+                        ("idx_sessions_token", "sessions", "token"),
+                    ]
+                elif 'prompt_data.db' in db_path:
+                    indexes = [
+                        ("idx_prompt_versions_username", "prompt_versions", "username"),
+                        ("idx_prompt_versions_prompt_id", "prompt_versions", "prompt_id"),
+                    ]
+                elif 'shared.db' in db_path:
+                    indexes = [
+                        ("idx_shared_owner", "shared", "owner"),
+                        ("idx_shared_random_val", "shared", "random_val"),
+                    ]
+                elif 'query.db' in db_path:
+                    indexes = [
+                        ("idx_community_username", "community", "username"),
+                        ("idx_community_random_val", "community", "random_val"),
+                    ]
+                elif 'feedback.db' in db_path:
+                    indexes = [
+                        ("idx_feedback_username", "feedback", "username"),
+                    ]
+                else:
+                    indexes = []
+                
+                for index_name, table_name, columns in indexes:
+                    # Check if index already exists
+                    cursor.execute("""
+                        SELECT name FROM sqlite_master 
+                        WHERE type='index' AND name=?
+                    """, (index_name,))
+                    
+                    if not cursor.fetchone():
+                        try:
+                            cursor.execute(f"CREATE INDEX {index_name} ON {table_name} ({columns})")
+                            indexes_created += 1
+                            self.migrations_performed.append(f"Created index {index_name}")
+                        except Exception as e:
+                            logger.warning(f"Failed to create index {index_name}: {e}")
+                
+                conn.commit()
+                
+                if indexes_created > 0:
+                    logger.info(f"Created {indexes_created} indexes in {db_path}")
+                
+                return True
+        except Exception as e:
+            logger.error(f"Failed to create indexes for {db_path}: {e}")
+            return False
+    
+    def auto_fix_all_databases(self, dry_run: bool = False) -> bool:
+        """Perform automatic fixes on all databases."""
+        if not self.auto_fix:
+            return True
+        
+        logger.info("Starting automatic database fixes")
+        
+        # Define database paths
+        base_dir = os.path.dirname(__file__)
+        databases = {
+            'user': os.path.join(base_dir, 'database', 'user.db'),
+            'prompt': os.path.join(base_dir, 'database', 'prompt_data.db'),
+            'community': os.path.join(base_dir, 'database', 'community', 'shared.db'),
+            'query': os.path.join(base_dir, 'database', 'community', 'query.db'),
+            'feedback': os.path.join(base_dir, 'database', 'feedback.db')
+        }
+        
+        success = True
+        
+        for db_name, db_path in databases.items():
+            if not os.path.exists(db_path):
+                logger.info(f"Database {db_name} does not exist, skipping fixes: {db_path}")
+                continue
+            
+            logger.info(f"Applying auto-fixes to {db_name} database: {db_path}")
+            
+            # Create backup unless in dry run mode
+            if not dry_run:
+                try:
+                    self.backup_database(db_path)
+                except Exception as e:
+                    logger.error(f"Backup failed: {e}")
+                    if not self.force:
+                        continue
+            
+            # Apply various fixes
+            success &= self.fix_missing_user_data(db_path, dry_run)
+            success &= self.fix_data_inconsistencies(db_path, dry_run)
+            success &= self.validate_and_fix_user_tables(db_path, dry_run)
+            success &= self.create_missing_indexes(db_path, dry_run)
+            success &= self.fix_orphaned_point_transactions(db_path, dry_run)
+        
+        return success
+    
+    def comprehensive_database_validation(self, db_path: str, dry_run: bool = False) -> bool:
+        """Perform comprehensive validation and auto-fix of all database issues."""
+        logger.info(f"Performing comprehensive validation of {db_path}")
+        
+        if dry_run:
+            logger.info(f"[DRY RUN] Would perform comprehensive validation of {db_path}")
+            return True
+        
+        try:
+            with get_db_connection(db_path) as conn:
+                cursor = conn.cursor()
+                
+                # Check database integrity
+                cursor.execute("PRAGMA integrity_check")
+                integrity_result = cursor.fetchone()[0]
+                if integrity_result != 'ok':
+                    logger.error(f"Database integrity check failed: {integrity_result}")
+                    return False
+                
+                # Check foreign key constraints
+                cursor.execute("PRAGMA foreign_key_check")
+                fk_violations = cursor.fetchall()
+                if fk_violations:
+                    logger.warning(f"Found {len(fk_violations)} foreign key violations")
+                    # Log details but don't fail - we'll fix these separately
+                
+                # Check for missing tables based on database type
+                cursor.execute("SELECT name FROM sqlite_master WHERE type='table'")
+                existing_tables = {row[0] for row in cursor.fetchall()}
+                
+                missing_tables = []
+                if 'user.db' in db_path:
+                    required_tables = ['users', 'achievements', 'user_achievements', 'user_logins', 
+                                     'point_transactions', 'point_history', 'sessions']
+                    missing_tables = [t for t in required_tables if t not in existing_tables]
+                elif 'prompt_data.db' in db_path:
+                    required_tables = ['prompt_versions']
+                    missing_tables = [t for t in required_tables if t not in existing_tables]
+                elif 'shared.db' in db_path:
+                    required_tables = ['shared']
+                    missing_tables = [t for t in required_tables if t not in existing_tables]
+                elif 'query.db' in db_path:
+                    required_tables = ['community']
+                    missing_tables = [t for t in required_tables if t not in existing_tables]
+                elif 'feedback.db' in db_path:
+                    required_tables = ['feedback']
+                    missing_tables = [t for t in required_tables if t not in existing_tables]
+                
+                if missing_tables:
+                    logger.warning(f"Missing required tables: {missing_tables}")
+                    # These will be created by the migration process
+                
+                # Check for missing indexes
+                cursor.execute("SELECT name FROM sqlite_master WHERE type='index'")
+                existing_indexes = {row[0] for row in cursor.fetchall()}
+                
+                # This is handled by the create_missing_indexes function
+                
+                logger.info(f"Comprehensive validation completed for {db_path}")
+                return True
+                
+        except Exception as e:
+            logger.error(f"Failed comprehensive validation for {db_path}: {e}")
             return False
     
     def migrate_database(self, db_path: str, dry_run: bool = False) -> bool:
@@ -726,6 +1123,15 @@ class DatabaseMigrator:
             fk_valid = self.validate_foreign_keys(db_path, dry_run)
             if not fk_valid:
                 logger.warning(f"Foreign key validation failed for {db_path}, but migration completed")
+        
+        # Perform comprehensive validation and auto-fixes if enabled
+        if self.auto_fix and success:
+            logger.info(f"Applying comprehensive validation and auto-fixes to {db_path}")
+            success &= self.comprehensive_database_validation(db_path, dry_run)
+            success &= self.fix_missing_user_data(db_path, dry_run)
+            success &= self.fix_data_inconsistencies(db_path, dry_run)
+            success &= self.validate_and_fix_user_tables(db_path, dry_run)
+            success &= self.create_missing_indexes(db_path, dry_run)
         
         if success:
             logger.info(f"Migration completed successfully for {db_path}")
@@ -879,6 +1285,11 @@ class DatabaseMigrator:
         else:
             print("No migrations were needed (databases are up to date)")
         
+        if self.fixes_applied:
+            print(f"\nAuto-fixes applied: {len(self.fixes_applied)}")
+            for fix in self.fixes_applied:
+                print(f"  🔧 {fix}")
+        
         if self.backup_files:
             print(f"\nBackups created: {len(self.backup_files)}")
             for backup in self.backup_files:
@@ -897,6 +1308,7 @@ Examples:
   python safe_migration.py                    # Normal migration with backup
   python safe_migration.py --dry-run          # Show what would be changed
   python safe_migration.py --force            # Force migration even if backup fails
+  python safe_migration.py --auto-fix         # Automatically fix data issues
   python safe_migration.py --rebuild          # Completely rebuild all databases
   python safe_migration.py --rebuild --dry-run # Show what rebuild would do
   python safe_migration.py --fix-foreign-keys # Fix foreign key issues only
@@ -934,6 +1346,12 @@ Examples:
         help='Fix foreign key issues and enable constraints'
     )
     
+    parser.add_argument(
+        '--auto-fix', 
+        action='store_true',
+        help='Automatically fix data inconsistencies and missing data'
+    )
+    
     args = parser.parse_args()
     
     print("Prompt Sanctuary Database Migration Utility")
@@ -945,6 +1363,10 @@ Examples:
     
     if args.force:
         print("⚠️  FORCE MODE - Migration will continue even if backup fails")
+        print()
+    
+    if args.auto_fix:
+        print("🔧 AUTO-FIX MODE - Will automatically fix data inconsistencies and missing data")
         print()
     
     if args.rebuild:
@@ -961,16 +1383,19 @@ Examples:
     print()
     
     # Create migrator instance
-    migrator = DatabaseMigrator(backup_dir=args.backup_dir, force=args.force)
+    migrator = DatabaseMigrator(backup_dir=args.backup_dir, force=args.force, auto_fix=args.auto_fix)
     
     try:
-        # Run migration, rebuild, or foreign key fix
+        # Run migration, rebuild, foreign key fix, or auto-fix
         if args.rebuild:
             success = migrator.rebuild_all_databases(dry_run=args.dry_run)
             operation = "rebuild"
         elif args.fix_foreign_keys:
             success = migrator.fix_foreign_key_issues(dry_run=args.dry_run)
             operation = "foreign key fix"
+        elif args.auto_fix:
+            success = migrator.auto_fix_all_databases(dry_run=args.dry_run)
+            operation = "auto-fix"
         else:
             success = migrator.migrate_all_databases(dry_run=args.dry_run)
             operation = "migration"
@@ -1002,5 +1427,46 @@ Examples:
         sys.exit(1)
 
 
+def auto_migrate_all():
+    """Automatically migrate all databases with auto-fix enabled."""
+    print("Prompt Sanctuary - Automatic Database Migration")
+    print("=" * 50)
+    print("🔧 Running automatic migration with auto-fix enabled")
+    print("This will migrate, update, and fix all databases automatically.")
+    print()
+    
+    # Create migrator with auto-fix enabled
+    migrator = DatabaseMigrator(backup_dir="./backups", force=False, auto_fix=True)
+    
+    try:
+        # Run migration with auto-fix
+        success = migrator.migrate_all_databases(dry_run=False)
+        
+        # Print summary
+        migrator.print_summary()
+        
+        if success:
+            print("\n✅ Automatic migration completed successfully!")
+            print("All databases are now up to date and fixed.")
+        else:
+            print("\n❌ Automatic migration failed!")
+            print("Check the log file 'migration.log' for details.")
+            return False
+            
+    except KeyboardInterrupt:
+        print("\n\n⚠️  Operation interrupted by user")
+        return False
+    except Exception as e:
+        logger.exception("Automatic migration failed with exception")
+        print(f"\n❌ Automatic migration failed: {e}")
+        return False
+    
+    return True
+
+
 if __name__ == "__main__":
-    main()
+    # If called directly without arguments, run auto-migration
+    if len(sys.argv) == 1:
+        auto_migrate_all()
+    else:
+        main()

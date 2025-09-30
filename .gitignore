@@ -1,21 +1,145 @@
+# Project-specific directories
 other/
 reverseimage/
 sanctuary/
+
+# Database files and backups
 web/database/*.db
-web/.env
-web/get_model.py
-.fuse_*
-web/static/image/*.*
-web/__pycache__/
-monospace.json
-.vscode/
-web/database/community/shared.db
-.venv/
+web/database/*.db-shm
+web/database/*.db-wal
+web/database/community/*.db-shm
+web/database/community/*.db-wal
+
+# Exception: Keep community query.db tracked
+!web/database/community/query.db
+
+# Database backup files (all formats and locations)
+backups/
+web/backups/
+**/backups/
+*.db
 *.db-shm
 *.db-wal
+*_backup_*.db
+*_backup_*.db-shm
+*_backup_*.db-wal
+
+# Environment and configuration files
+web/.env
+.env
+.env.local
+.env.production
+.env.development
+
+# Python cache and compiled files
+__pycache__/
+web/__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Log files
 *.log
-backups/*.db*
-backups/*.db-shm
-backups/*.db-wal
-backups/*.log
-backups/*.db
+logs/
+web/logs/
+migration.log
+*.log.*
+
+# Temporary files
+.fuse_*
+*.tmp
+*.temp
+.tmp/
+temp/
+
+# Static files (images, uploads, etc.)
+web/static/image/*.*
+web/static/uploads/
+uploads/
+static/uploads/
+
+# Configuration files
+monospace.json
+config.json
+settings.json
+
+# API keys and sensitive files
+web/get_model.py
+api_keys.txt
+secrets.txt
+*.key
+*.pem
+
+# Coverage reports
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# pyenv
+.python-version
+
+# Celery
+celerybeat-schedule
+celerybeat.pid
+
+# SageMath parsed files
+*.sage.py
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
