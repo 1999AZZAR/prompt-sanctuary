@@ -772,6 +772,7 @@ def create_main_blueprint(
             current_token=session.get("session_token"),
             identicon_value=identicon_value,
             current_points=current_points,
+            current_user_points=current_points,  # Add this for base.html compatibility
             user_achievements=user_achievements,
             api_key_status=api_key_status,
         )
@@ -1438,19 +1439,24 @@ def create_main_blueprint(
     @main_blueprint.route("/refine_prompt", methods=["POST"])
     @required_login
     def refine_prompt():
-        """Refine a prompt by shortening or elaborating it using AI."""
+        """Refine a prompt using AI with various actions and custom instructions."""
         if not validate_csrf_token():
             return jsonify({"success": False, "error": "CSRF token validation failed."}), 400
         
         username = session["username"]
-        text = request.form.get("text", "").strip()
+        text = request.form.get("prompt_text", "").strip()
         action = request.form.get("action", "").strip().lower()
+        custom_instructions = request.form.get("custom_instructions", "").strip()
         
         if not text:
-            return jsonify({"success": False, "error": "No text provided."}), 400
+            return jsonify({"success": False, "error": "No prompt text provided."}), 400
         
-        if action not in ["shorten", "elaborate"]:
-            return jsonify({"success": False, "error": "Invalid action. Use 'shorten' or 'elaborate'."}), 400
+        # Validate action or custom instructions
+        if not action and not custom_instructions:
+            return jsonify({"success": False, "error": "Please provide either an action or custom instructions."}), 400
+        
+        if action and action not in ["shorten", "elaborate", "improve", "fix", "custom"]:
+            return jsonify({"success": False, "error": "Invalid action. Use 'shorten', 'elaborate', 'improve', 'fix', or 'custom'."}), 400
         
         # Check if user has a validated API key
         user_has_api_key = is_api_key_validated(main_blueprint.user_db, username)
@@ -1458,7 +1464,8 @@ def create_main_blueprint(
         # Only deduct points if user doesn't have their own API key
         if not user_has_api_key:
             cost = 0.5  # Refinement cost
-            if not deduct_user_points_with_source(main_blueprint.user_db, username, cost, 'prompt_refinement', f'Refined prompt ({action})'):
+            action_description = action if action != 'custom' else 'custom refinement'
+            if not deduct_user_points_with_source(main_blueprint.user_db, username, cost, 'prompt_refinement', f'Refined prompt ({action_description})'):
                 current_points = get_user_points(main_blueprint.user_db, username)
                 return jsonify({"success": False, "error": f"Insufficient points. You need {cost} points but have {current_points}."}), 402
         
@@ -1472,31 +1479,176 @@ def create_main_blueprint(
             else:
                 model.clear_user_api_key()
             
-            # Generate refinement prompt based on action
-            if action == "shorten":
-                refinement_prompt = f"""Please shorten the following text while keeping the essential meaning and key information. Make it more concise and to the point:
+            # Generate refinement prompt based on action or custom instructions
+            if custom_instructions:
+                refinement_prompt = f"""Please refine the following text according to these specific instructions: "{custom_instructions}"
+
+Original text:
+"{text}"
+
+Provide only the refined version, no explanations."""
+            else:
+                if action == "shorten":
+                    refinement_prompt = f"""Please shorten the following text while keeping the essential meaning and key information. Make it more concise and to the point:
 
 "{text}"
 
 Provide only the shortened version, no explanations."""
-            else:  # elaborate
-                refinement_prompt = f"""Please elaborate on the following text by adding more details, context, and specificity while maintaining the core meaning:
+                elif action == "elaborate":
+                    refinement_prompt = f"""Please elaborate on the following text by adding more details, context, and specificity while maintaining the core meaning:
 
 "{text}"
 
 Provide only the elaborated version, no explanations."""
+                elif action == "improve":
+                    refinement_prompt = f"""Please improve the following text to make it clearer, more effective, and better structured while maintaining its core meaning:
+
+"{text}"
+
+Provide only the improved version, no explanations."""
+                elif action == "fix":
+                    refinement_prompt = f"""Please fix any grammar, spelling, and language issues in the following text while maintaining its meaning and style:
+
+"{text}"
+
+Provide only the corrected version, no explanations."""
             
             # Use the AI model to refine the prompt
             refined_text = model._generate_content_with_retry(refinement_prompt, model.get_effective_api_key(), use_streaming=False)
             
             if refined_text and refined_text.strip():
-                return refined_text.strip()
+                return jsonify({"success": True, "response": refined_text.strip()})
             else:
                 return jsonify({"success": False, "error": "Failed to refine prompt."}), 500
                 
         except Exception as e:
             logger.exception("Error refining prompt")
             return jsonify({"success": False, "error": f"Error refining prompt: {str(e)}"}), 500
+
+    @main_blueprint.route("/debug/refinement")
+    @required_login
+    def debug_refinement():
+        """Debug route to test database connections for refinement."""
+        username = session["username"]
+        
+        debug_info = {
+            'username': username,
+            'prompt_db_path': main_blueprint.prompt_db,
+            'community_db_path': main_blueprint.community_db,
+            'prompt_db_exists': os.path.exists(main_blueprint.prompt_db),
+            'community_db_exists': os.path.exists(main_blueprint.community_db),
+            'saved_prompts_count': 0,
+            'community_prompts_count': 0,
+            'saved_prompts': [],
+            'community_prompts': [],
+            'errors': []
+        }
+        
+        try:
+            # Test user's saved prompts
+            with get_db_connection(main_blueprint.prompt_db) as conn:
+                cursor = conn.cursor()
+                cursor.execute(f"SELECT * FROM \"{username}\" ORDER BY time DESC LIMIT 50")
+                saved_rows = cursor.fetchall()
+                debug_info['saved_prompts_count'] = len(saved_rows)
+                
+                for row in saved_rows:
+                    debug_info['saved_prompts'].append({
+                        'prompt_id': row['random_val'],
+                        'title': row['title'],
+                        'prompt': row['prompt'][:100] + '...' if len(row['prompt']) > 100 else row['prompt'],
+                        'time': row['time'],
+                        'source': 'personal'
+                    })
+        except Exception as e:
+            debug_info['errors'].append(f"Saved prompts error: {str(e)}")
+
+        try:
+            # Test community prompts
+            with get_db_connection(main_blueprint.community_db) as conn:
+                cursor = conn.cursor()
+                cursor.execute("SELECT * FROM shared ORDER BY time DESC LIMIT 50")
+                community_rows = cursor.fetchall()
+                debug_info['community_prompts_count'] = len(community_rows)
+                
+                for row in community_rows:
+                    debug_info['community_prompts'].append({
+                        'prompt_id': row['random_val'],
+                        'title': row['title'],
+                        'prompt': row['prompt'][:100] + '...' if len(row['prompt']) > 100 else row['prompt'],
+                        'time': row['time'],
+                        'owner': row['owner'],
+                        'source': 'community'
+                    })
+        except Exception as e:
+            debug_info['errors'].append(f"Community prompts error: {str(e)}")
+
+        return jsonify(debug_info)
+
+    @main_blueprint.route("/refinement")
+    @required_login
+    def refinement():
+        """Prompt refinement page - allows users to refine existing prompts."""
+        username = session["username"]
+        try:
+            current_points = get_user_points(main_blueprint.user_db, username)
+        except Exception:
+            current_points = 80.0  # Default fallback
+
+        try:
+            # Get user's saved prompts
+            saved_prompts = []
+            logger.info(f"Loading saved prompts for user: {username}")
+            logger.info(f"Prompt database path: {main_blueprint.prompt_db}")
+            
+            with get_db_connection(main_blueprint.prompt_db) as conn:
+                cursor = conn.cursor()
+                cursor.execute(f"SELECT * FROM \"{username}\" ORDER BY time DESC LIMIT 50")
+                saved_rows = cursor.fetchall()
+                logger.info(f"Found {len(saved_rows)} saved prompts for user {username}")
+                
+                for row in saved_rows:
+                    saved_prompts.append({
+                        'prompt_id': row['random_val'],
+                        'title': row['title'],
+                        'prompt': row['prompt'],
+                        'time': row['time'],
+                        'source': 'personal'
+                    })
+
+            # Get community prompts
+            community_prompts = []
+            logger.info(f"Loading community prompts")
+            logger.info(f"Community database path: {main_blueprint.community_db}")
+            
+            with get_db_connection(main_blueprint.community_db) as conn:
+                cursor = conn.cursor()
+                cursor.execute("SELECT * FROM shared ORDER BY time DESC LIMIT 50")
+                community_rows = cursor.fetchall()
+                logger.info(f"Found {len(community_rows)} community prompts")
+                
+                for row in community_rows:
+                    community_prompts.append({
+                        'prompt_id': row['random_val'],
+                        'title': row['title'],
+                        'prompt': row['prompt'],
+                        'time': row['time'],
+                        'owner': row['owner'],
+                        'source': 'community'
+                    })
+
+        except Exception as e:
+            logger.exception("Failed to load prompts for refinement")
+            logger.error(f"Error details: {str(e)}")
+            saved_prompts = []
+            community_prompts = []
+
+        return render_template(
+            "prompts/generator/refinement.html",
+            saved_prompts=saved_prompts,
+            community_prompts=community_prompts,
+            current_user_points=current_points
+        )
 
     @main_blueprint.route("/language/<language>")
     def set_language(language):

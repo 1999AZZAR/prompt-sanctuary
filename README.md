@@ -298,27 +298,27 @@ python safe_migration.py --force
 ### Installation Steps
 
 1. **Clone and setup environment**
-   ```bash
+```bash
    git clone https://github.com/1999AZZAR/prompt-sanctuary.git
    cd prompt-sanctuary
-   python -m venv .venv
+python -m venv .venv
    source .venv/bin/activate  # Windows: .venv\Scripts\activate
-   pip install -r requirements.txt
-   ```
+pip install -r requirements.txt
+```
 
 2. **Configure environment variables**
-   ```bash
+```bash
    # Create .env file
    GENAI_API_KEY=your_api_key_here,optional_second_key
-   
+
    # Optional configurations
-   # GENAI_MODEL_NAME=gemini-2.5-pro
+# GENAI_MODEL_NAME=gemini-2.5-pro
    # SECRET_KEY=your-secret-key
-   ```
+```
 
 3. **Start the application**
-   ```bash
-   python web/app.py
+```bash
+python web/app.py
    ```
    
    Application will be available at `http://127.0.0.1:5000`

@@ -139,8 +139,8 @@
 
 **API Key Management**
 
-- Personal API key validation with real-time Gemini API testing
-- API key pool system with LRU rotation and fair compensation (0.5 points per use)
+  - Personal API key validation with real-time Gemini API testing
+  - API key pool system with LRU rotation and fair compensation (0.5 points per use)
 - 100-point reward system for API key validation and removal balancing
 - System-wide pooling with automatic refresh and usage tracking
 

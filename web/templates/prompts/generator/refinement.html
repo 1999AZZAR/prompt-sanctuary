@@ -1,0 +1,568 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <!-- Hero Section -->
+    <div class="hero text-center mb-12 cursor-pointer" onclick="toggleSidePanel()" role="region" aria-labelledby="refinement-page-heading">
+        <div class="flex items-center justify-center mb-4 space-x-2">
+            <h1 id="refinement-page-heading" class="text-5xl font-bold text-slate-900"><i class="fas fa-magic mr-2"></i>{{ _('Prompt Refinement') }}</h1>
+        </div>
+        <p class="text-lg text-slate-600">{{ _('Refine and improve your prompts with custom instructions or choose from quick actions.') }}</p>
+        <div class="mt-4 inline-flex items-center space-x-2 bg-blue-50 px-4 py-2 rounded-full">
+            <i class="fas fa-coins text-blue-500"></i>
+            <span class="text-sm font-medium text-slate-700">{{ _('Cost: 0.5 points per refinement') }}</span>
+        </div>
+    </div>
+
+    <!-- Main Refinement Form -->
+    <div class="max-w-4xl mx-auto">
+        <form id="refinement-form" class="space-y-8">
+            <!-- Prompt Source Selection -->
+            <div class="mdc-card glass prompt-card p-6">
+                <h2 class="text-2xl font-bold mb-6 text-slate-900">
+                    <i class="fas fa-file-text text-blue-500 mr-2"></i>{{ _('Step 1: Choose Your Prompt Source') }}
+                </h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                    <button type="button" id="source-manual" class="source-btn p-4 border-2 border-slate-200 rounded-lg hover:border-blue-300 transition-colors text-left" onclick="selectSource('manual')">
+                        <div class="flex items-center mb-2">
+                            <i class="fas fa-edit text-blue-500 mr-2"></i>
+                            <span class="font-medium">{{ _('Manual Input') }}</span>
+                        </div>
+                        <p class="text-sm text-slate-600">{{ _('Type or paste your own prompt') }}</p>
+                    </button>
+                    
+                    <button type="button" id="source-saved" class="source-btn p-4 border-2 border-slate-200 rounded-lg hover:border-green-300 transition-colors text-left" onclick="selectSource('saved')">
+                        <div class="flex items-center mb-2">
+                            <i class="fas fa-bookmark text-green-500 mr-2"></i>
+                            <span class="font-medium">{{ _('Saved Prompts') }}</span>
+                        </div>
+                        <p class="text-sm text-slate-600">{{ _('Choose from your saved prompts') }}</p>
+                    </button>
+                    
+                    <button type="button" id="source-community" class="source-btn p-4 border-2 border-slate-200 rounded-lg hover:border-purple-300 transition-colors text-left" onclick="selectSource('community')">
+                        <div class="flex items-center mb-2">
+                            <i class="fas fa-users text-purple-500 mr-2"></i>
+                            <span class="font-medium">{{ _('Community') }}</span>
+                        </div>
+                        <p class="text-sm text-slate-600">{{ _('Browse community prompts') }}</p>
+                    </button>
+                </div>
+
+                <!-- Manual Input Section -->
+                <div id="manual-input-section" class="hidden">
+                    <label for="prompt-text" class="block text-sm font-medium text-slate-700 mb-2">{{ _('Your Prompt:') }}</label>
+                    <textarea id="prompt-text" name="prompt_text" rows="6" 
+                              class="w-full p-4 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                              placeholder="{{ _('Enter your prompt here...') }}"></textarea>
+                </div>
+
+                <!-- Saved Prompts Section -->
+                <div id="saved-prompts-section" class="hidden">
+                    {% if saved_prompts %}
+                    <div class="space-y-3 max-h-64 overflow-y-auto">
+                        {% for prompt in saved_prompts %}
+                        <div class="prompt-option p-3 bg-slate-50 rounded-lg border border-slate-200 hover:border-green-300 transition-colors cursor-pointer" 
+                             data-prompt-id="{{ prompt.prompt_id }}"
+                             data-prompt-title="{{ prompt.title }}"
+                             data-prompt-text="{{ prompt.prompt }}"
+                             data-prompt-source="saved">
+                            <div class="flex justify-between items-start">
+                                <div class="flex-1 min-w-0">
+                                    <h4 class="font-medium text-slate-900 truncate">{{ prompt.title }}</h4>
+                                    <p class="text-sm text-slate-600 mt-1 line-clamp-2">{{ prompt.prompt[:100] }}{% if prompt.prompt|length > 100 %}...{% endif %}</p>
+                                    <p class="text-xs text-slate-500 mt-2">{{ prompt.time }}</p>
+                                </div>
+                                <i class="fas fa-arrow-right text-green-500 ml-3"></i>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="text-center py-8">
+                        <i class="fas fa-bookmark text-slate-300 text-3xl mb-3"></i>
+                        <p class="text-slate-500">{{ _('No saved prompts yet.') }}</p>
+                        <p class="text-slate-400 text-sm mt-1">{{ _('Save some prompts first to refine them!') }}</p>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Community Prompts Section -->
+                <div id="community-prompts-section" class="hidden">
+                    {% if community_prompts %}
+                    <div class="space-y-3 max-h-64 overflow-y-auto">
+                        {% for prompt in community_prompts %}
+                        <div class="prompt-option p-3 bg-slate-50 rounded-lg border border-slate-200 hover:border-purple-300 transition-colors cursor-pointer" 
+                             data-prompt-id="{{ prompt.prompt_id }}"
+                             data-prompt-title="{{ prompt.title }}"
+                             data-prompt-text="{{ prompt.prompt }}"
+                             data-prompt-owner="{{ prompt.owner }}"
+                             data-prompt-source="community">
+                            <div class="flex justify-between items-start">
+                                <div class="flex-1 min-w-0">
+                                    <h4 class="font-medium text-slate-900 truncate">{{ prompt.title }}</h4>
+                                    <p class="text-sm text-slate-600 mt-1 line-clamp-2">{{ prompt.prompt[:100] }}{% if prompt.prompt|length > 100 %}...{% endif %}</p>
+                                    <div class="flex items-center justify-between mt-2">
+                                        <p class="text-xs text-slate-500">{{ prompt.time }}</p>
+                                        <p class="text-xs text-purple-600">by {{ prompt.owner }}</p>
+                                    </div>
+                                </div>
+                                <i class="fas fa-arrow-right text-purple-500 ml-3"></i>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="text-center py-8">
+                        <i class="fas fa-users text-slate-300 text-3xl mb-3"></i>
+                        <p class="text-slate-500">{{ _('No community prompts available.') }}</p>
+                        <p class="text-slate-400 text-sm mt-1">{{ _('Check back later for shared prompts!') }}</p>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Selected Prompt Display -->
+                <div id="selected-prompt-display" class="hidden mt-4">
+                    <div class="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="font-medium text-slate-900" id="selected-prompt-title"></h4>
+                            <button type="button" onclick="clearSelectedPrompt()" class="text-slate-500 hover:text-slate-700">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <p id="selected-prompt-text" class="text-slate-700 text-sm"></p>
+                        <p id="selected-prompt-source" class="text-xs text-slate-500 mt-2"></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Refinement Instructions -->
+            <div class="mdc-card glass prompt-card p-6">
+                <h2 class="text-2xl font-bold mb-6 text-slate-900">
+                    <i class="fas fa-cogs text-orange-500 mr-2"></i>{{ _('Step 2: Choose How to Refine') }}
+                </h2>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <!-- Quick Actions -->
+                    <div class="space-y-4">
+                        <h3 class="text-lg font-semibold text-slate-900">{{ _('Quick Actions') }}</h3>
+                        
+                        <button type="button" class="quick-action-btn w-full p-4 bg-orange-50 border border-orange-200 rounded-lg hover:bg-orange-100 transition-colors text-left" onclick="setQuickAction('shorten')">
+                            <div class="flex items-center mb-2">
+                                <i class="fas fa-compress-alt text-orange-500 mr-2"></i>
+                                <span class="font-medium">{{ _('Shorten') }}</span>
+                            </div>
+                            <p class="text-sm text-slate-600">{{ _('Make the prompt more concise') }}</p>
+                        </button>
+                        
+                        <button type="button" class="quick-action-btn w-full p-4 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors text-left" onclick="setQuickAction('elaborate')">
+                            <div class="flex items-center mb-2">
+                                <i class="fas fa-expand-alt text-blue-500 mr-2"></i>
+                                <span class="font-medium">{{ _('Elaborate') }}</span>
+                            </div>
+                            <p class="text-sm text-slate-600">{{ _('Add more details and context') }}</p>
+                        </button>
+                        
+                        <button type="button" class="quick-action-btn w-full p-4 bg-green-50 border border-green-200 rounded-lg hover:bg-green-100 transition-colors text-left" onclick="setQuickAction('improve')">
+                            <div class="flex items-center mb-2">
+                                <i class="fas fa-magic text-green-500 mr-2"></i>
+                                <span class="font-medium">{{ _('Improve') }}</span>
+                            </div>
+                            <p class="text-sm text-slate-600">{{ _('Enhance clarity and effectiveness') }}</p>
+                        </button>
+                        
+                        <button type="button" class="quick-action-btn w-full p-4 bg-purple-50 border border-purple-200 rounded-lg hover:bg-purple-100 transition-colors text-left" onclick="setQuickAction('fix')">
+                            <div class="flex items-center mb-2">
+                                <i class="fas fa-wrench text-purple-500 mr-2"></i>
+                                <span class="font-medium">{{ _('Fix Grammar') }}</span>
+                            </div>
+                            <p class="text-sm text-slate-600">{{ _('Correct grammar and spelling') }}</p>
+                        </button>
+                    </div>
+
+                    <!-- Custom Instructions -->
+                    <div class="space-y-4">
+                        <h3 class="text-lg font-semibold text-slate-900">{{ _('Custom Instructions') }}</h3>
+                        
+                        <label for="custom-instructions" class="block text-sm font-medium text-slate-700 mb-2">{{ _('Tell me how to refine your prompt:') }}</label>
+                        <textarea id="custom-instructions" name="custom_instructions" rows="4"
+                                  class="w-full p-4 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                                  placeholder="{{ _('Example: Make it more professional, add technical details, change the tone to be more friendly, focus on specific aspects...') }}"></textarea>
+                        
+                        <div class="text-sm text-slate-500">
+                            <p><strong>{{ _('Tips:') }}</strong></p>
+                            <ul class="list-disc list-inside mt-1 space-y-1">
+                                <li>{{ _('Be specific about what you want to change') }}</li>
+                                <li>{{ _('Mention tone, style, or format preferences') }}</li>
+                                <li>{{ _('Specify target audience or use case') }}</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Selected Action Display -->
+                <div id="selected-action-display" class="hidden mt-4">
+                    <div class="p-4 bg-orange-50 rounded-lg border border-orange-200">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h4 class="font-medium text-slate-900" id="selected-action-title"></h4>
+                                <p id="selected-action-description" class="text-sm text-slate-600 mt-1"></p>
+                            </div>
+                            <button type="button" onclick="clearSelectedAction()" class="text-slate-500 hover:text-slate-700">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Refine Button -->
+            <div class="text-center">
+                <button type="submit" id="refine-btn" 
+                        class="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                        disabled>
+                    <i class="fas fa-magic mr-2"></i>{{ _('Refine Prompt') }}
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Refined Result Section -->
+    <div id="refined-result" class="max-w-4xl mx-auto mt-8 mdc-card glass prompt-card p-6 hidden" role="region" aria-labelledby="refined-result-heading">
+        <h2 id="refined-result-heading" class="text-2xl font-bold mb-6 text-slate-900">
+            <i class="fas fa-star text-yellow-500 mr-2"></i>{{ _('Refined Prompt') }}
+        </h2>
+        
+        <div class="p-6 bg-gradient-to-br from-yellow-50 to-amber-50 rounded-lg border border-yellow-200 mb-6">
+            <p id="refined-prompt-text" class="text-slate-700 leading-relaxed whitespace-pre-wrap"></p>
+        </div>
+        
+        <div class="flex flex-wrap gap-4">
+            <button onclick="copyRefinedPrompt()" class="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg transition duration-200">
+                <i class="fas fa-copy mr-2"></i>{{ _('Copy Refined Prompt') }}
+            </button>
+            <button onclick="saveRefinedPrompt()" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg transition duration-200">
+                <i class="fas fa-save mr-2"></i>{{ _('Save as New Prompt') }}
+            </button>
+            <button onclick="refineAgain()" class="bg-purple-500 hover:bg-purple-600 text-white px-6 py-3 rounded-lg transition duration-200">
+                <i class="fas fa-redo mr-2"></i>{{ _('Refine Again') }}
+            </button>
+        </div>
+    </div>
+
+    <!-- Loading Section -->
+    <div id="loading" class="loading hidden fixed inset-0 flex items-center justify-center z-50" role="alert" aria-live="assertive">
+        <div class="glass absolute inset-0 z-0"></div>
+        <div class="glass p-8 rounded-lg z-10 flex flex-col items-center justify-center">
+            <div class="loader-modern"><div class="ring"></div><div class="ring ring2"></div><div class="pulse"></div></div>
+            <h1 class="text-center mt-4 text-[var(--md-sys-color-on-surface)]">{{ _('Refining prompt...') }}</h1>
+        </div>
+    </div>
+
+    <!-- Status Messages -->
+    <div id="status-messages" class="fixed top-5 right-5 z-50 space-y-2"></div>
+
+    <script>
+        let selectedPromptData = null;
+        let selectedAction = null;
+        let currentSource = null;
+
+        // Source selection functions
+        function selectSource(source) {
+            currentSource = source;
+            
+            // Reset all source buttons
+            document.querySelectorAll('.source-btn').forEach(btn => {
+                btn.classList.remove('border-blue-500', 'border-green-500', 'border-purple-500', 'bg-blue-50', 'bg-green-50', 'bg-purple-50');
+                btn.classList.add('border-slate-200');
+            });
+            
+            // Hide all sections
+            document.getElementById('manual-input-section').classList.add('hidden');
+            document.getElementById('saved-prompts-section').classList.add('hidden');
+            document.getElementById('community-prompts-section').classList.add('hidden');
+            
+            // Show selected section and style button
+            if (source === 'manual') {
+                document.getElementById('manual-input-section').classList.remove('hidden');
+                document.getElementById('source-manual').classList.add('border-blue-500', 'bg-blue-50');
+            } else if (source === 'saved') {
+                document.getElementById('saved-prompts-section').classList.remove('hidden');
+                document.getElementById('source-saved').classList.add('border-green-500', 'bg-green-50');
+            } else if (source === 'community') {
+                document.getElementById('community-prompts-section').classList.remove('hidden');
+                document.getElementById('source-community').classList.add('border-purple-500', 'bg-purple-50');
+            }
+            
+            clearSelectedPrompt();
+            updateRefineButton();
+        }
+
+        // Prompt selection functions
+        function selectSavedPrompt(promptId, title, text) {
+            console.log('selectSavedPrompt called with:', { promptId, title, text });
+            selectedPromptData = {
+                id: promptId,
+                title: title,
+                text: text,
+                source: 'saved'
+            };
+            showSelectedPrompt(title, text, 'Saved Prompt');
+        }
+
+        function selectCommunityPrompt(promptId, title, text, owner) {
+            selectedPromptData = {
+                id: promptId,
+                title: title,
+                text: text,
+                source: 'community',
+                owner: owner
+            };
+            showSelectedPrompt(title, text, `Community Prompt by ${owner}`);
+        }
+
+        function showSelectedPrompt(title, text, source) {
+            console.log('showSelectedPrompt called with:', { title, text, source });
+            document.getElementById('selected-prompt-title').textContent = title;
+            document.getElementById('selected-prompt-text').textContent = text;
+            document.getElementById('selected-prompt-source').textContent = source;
+            document.getElementById('selected-prompt-display').classList.remove('hidden');
+            updateRefineButton();
+        }
+
+        function clearSelectedPrompt() {
+            selectedPromptData = null;
+            document.getElementById('selected-prompt-display').classList.add('hidden');
+            document.getElementById('prompt-text').value = '';
+            updateRefineButton();
+        }
+
+        // Action selection functions
+        function setQuickAction(action) {
+            selectedAction = action;
+            
+            // Reset all quick action buttons
+            document.querySelectorAll('.quick-action-btn').forEach(btn => {
+                btn.classList.remove('border-orange-500', 'border-blue-500', 'border-green-500', 'border-purple-500', 'bg-orange-100', 'bg-blue-100', 'bg-green-100', 'bg-purple-100');
+                btn.classList.add('border-orange-200', 'border-blue-200', 'border-green-200', 'border-purple-200', 'bg-orange-50', 'bg-blue-50', 'bg-green-50', 'bg-purple-50');
+            });
+            
+            // Clear custom instructions
+            document.getElementById('custom-instructions').value = '';
+            
+            // Show selected action
+            const actions = {
+                'shorten': { title: 'Shorten Prompt', description: 'Make the prompt more concise while keeping essential information' },
+                'elaborate': { title: 'Elaborate Prompt', description: 'Add more details, context, and specificity' },
+                'improve': { title: 'Improve Prompt', description: 'Enhance clarity, effectiveness, and overall quality' },
+                'fix': { title: 'Fix Grammar', description: 'Correct grammar, spelling, and language issues' }
+            };
+            
+            const actionData = actions[action];
+            document.getElementById('selected-action-title').textContent = actionData.title;
+            document.getElementById('selected-action-description').textContent = actionData.description;
+            document.getElementById('selected-action-display').classList.remove('hidden');
+            
+            // Style the selected button
+            const btn = event.target.closest('.quick-action-btn');
+            if (action === 'shorten' || action === 'fix') {
+                btn.classList.add('border-orange-500', 'bg-orange-100');
+            } else if (action === 'elaborate') {
+                btn.classList.add('border-blue-500', 'bg-blue-100');
+            } else if (action === 'improve') {
+                btn.classList.add('border-green-500', 'bg-green-100');
+            }
+            
+            updateRefineButton();
+        }
+
+        function clearSelectedAction() {
+            selectedAction = null;
+            document.getElementById('selected-action-display').classList.add('hidden');
+            document.querySelectorAll('.quick-action-btn').forEach(btn => {
+                btn.classList.remove('border-orange-500', 'border-blue-500', 'border-green-500', 'border-purple-500', 'bg-orange-100', 'bg-blue-100', 'bg-green-100', 'bg-purple-100');
+            });
+            updateRefineButton();
+        }
+
+        // Update refine button state
+        function updateRefineButton() {
+            const hasPrompt = selectedPromptData || (currentSource === 'manual' && document.getElementById('prompt-text').value.trim());
+            const hasAction = selectedAction || document.getElementById('custom-instructions').value.trim();
+            
+            document.getElementById('refine-btn').disabled = !hasPrompt || !hasAction;
+        }
+
+        // Form submission
+        document.getElementById('refinement-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // Get prompt text
+            let promptText = '';
+            if (selectedPromptData) {
+                promptText = selectedPromptData.text;
+            } else if (currentSource === 'manual') {
+                promptText = document.getElementById('prompt-text').value.trim();
+            }
+            
+            if (!promptText) {
+                showStatus('Please select or enter a prompt.', 'error');
+                return;
+            }
+            
+            // Get refinement action
+            let action = selectedAction || 'custom';
+            let customInstructions = document.getElementById('custom-instructions').value.trim();
+            
+            if (!selectedAction && !customInstructions) {
+                showStatus('Please choose a refinement action or enter custom instructions.', 'error');
+                return;
+            }
+            
+            // Show loading
+            showLoading();
+            
+            try {
+                const response = await fetch('/refine_prompt', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        ...window.CSRF.getFormHeaders()
+                    },
+                    body: new URLSearchParams({
+                        'prompt_text': promptText,
+                        'action': action,
+                        'custom_instructions': customInstructions
+                    })
+                });
+
+                const data = await response.json();
+                hideLoading();
+
+                if (data.success) {
+                    // Show refined result
+                    document.getElementById('refined-prompt-text').textContent = data.response;
+                    document.getElementById('refined-result').classList.remove('hidden');
+                    document.getElementById('refined-result').scrollIntoView({ behavior: 'smooth' });
+                    
+                    showStatus('Prompt refined successfully!', 'success');
+                    updateUserPoints(); // Update points display
+                } else {
+                    showStatus(data.error || 'Refinement failed.', 'error');
+                }
+            } catch (error) {
+                hideLoading();
+                console.error('Refinement error:', error);
+                showStatus('Failed to refine prompt. Please try again.', 'error');
+            }
+        });
+
+        // Result actions
+        function copyRefinedPrompt() {
+            const refinedText = document.getElementById('refined-prompt-text').textContent;
+            navigator.clipboard.writeText(refinedText).then(() => {
+                showStatus('Refined prompt copied to clipboard!', 'success');
+            }).catch(() => {
+                showStatus('Failed to copy prompt.', 'error');
+            });
+        }
+
+        function saveRefinedPrompt() {
+            // TODO: Implement save functionality
+            showStatus('Save functionality coming soon!', 'info');
+        }
+
+        function refineAgain() {
+            document.getElementById('refined-result').classList.add('hidden');
+            document.getElementById('refinement-form').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Utility functions
+        function showLoading() {
+            document.getElementById('loading').classList.remove('hidden');
+        }
+
+        function hideLoading() {
+            document.getElementById('loading').classList.add('hidden');
+        }
+
+        function showStatus(message, type) {
+            const statusDiv = document.getElementById('status-messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `p-4 rounded-lg shadow-lg max-w-sm ${type === 'success' ? 'bg-green-100 text-green-800 border border-green-200' : type === 'error' ? 'bg-red-100 text-red-800 border border-red-200' : 'bg-blue-100 text-blue-800 border border-blue-200'}`;
+            messageDiv.textContent = message;
+            
+            statusDiv.appendChild(messageDiv);
+            
+            setTimeout(() => {
+                messageDiv.remove();
+            }, 5000);
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Refinement page loaded');
+            
+            // Debug: Log the data received from backend
+            console.log('Saved prompts count:', {{ saved_prompts | length }});
+            console.log('Community prompts count:', {{ community_prompts | length }});
+            if ({{ saved_prompts | length }} > 0) {
+                console.log('First saved prompt:', {{ saved_prompts[0] | tojson | safe }});
+            }
+            if ({{ community_prompts | length }} > 0) {
+                console.log('First community prompt:', {{ community_prompts[0] | tojson | safe }});
+            }
+            
+            // Check if a prompt was passed from library page
+            const storedPrompt = sessionStorage.getItem('selectedPromptForRefinement');
+            if (storedPrompt) {
+                try {
+                    const promptData = JSON.parse(storedPrompt);
+                    console.log('Auto-selecting prompt from library:', promptData);
+                    
+                    // Auto-select the appropriate source and prompt
+                    if (promptData.source === 'personal') {
+                        selectSource('saved');
+                        selectSavedPrompt(promptData.id, promptData.title, promptData.text);
+                    } else if (promptData.source === 'community') {
+                        selectSource('community');
+                        selectCommunityPrompt(promptData.id, promptData.title, promptData.text, promptData.owner || 'Unknown');
+                    }
+                    
+                    sessionStorage.removeItem('selectedPromptForRefinement');
+                } catch (error) {
+                    console.error('Error parsing stored prompt data:', error);
+                }
+            }
+            
+            // Add event listeners for manual input
+            document.getElementById('prompt-text').addEventListener('input', updateRefineButton);
+            document.getElementById('custom-instructions').addEventListener('input', function() {
+                if (this.value.trim()) {
+                    selectedAction = null;
+                    clearSelectedAction();
+                }
+                updateRefineButton();
+            });
+            
+            // Add event listeners for prompt options
+            document.addEventListener('click', function(e) {
+                const promptOption = e.target.closest('.prompt-option');
+                if (promptOption) {
+                    const promptId = promptOption.dataset.promptId;
+                    const title = promptOption.dataset.promptTitle;
+                    const text = promptOption.dataset.promptText;
+                    const source = promptOption.dataset.promptSource;
+                    
+                    console.log('Prompt option clicked:', { promptId, title, text, source });
+                    
+                    if (source === 'saved') {
+                        selectSavedPrompt(promptId, title, text);
+                    } else if (source === 'community') {
+                        const owner = promptOption.dataset.promptOwner;
+                        selectCommunityPrompt(promptId, title, text, owner);
+                    }
+                }
+            });
+        });
+    </script>
+{% endblock %}

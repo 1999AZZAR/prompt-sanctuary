@@ -19,7 +19,7 @@
       <div class="text-center">
         <div class="inline-flex items-center justify-center space-x-2 bg-yellow-50 px-4 py-2 rounded-full cursor-pointer hover:bg-yellow-100 transition-colors" id="points-display" onclick="showPointHistory()">
           <i class="fas fa-coins text-yellow-500"></i>
-          <span class="text-sm font-medium text-slate-900">{{ "%.1f"|format(current_points or 80.0) }} {{ _('pts') }}</span>
+          <span class="text-sm font-medium text-slate-900">{{ "%.1f"|format(current_user_points or 80.0) }} {{ _('pts') }}</span>
         </div>
         <p class="text-xs text-slate-500 mt-1">{{ _('Available Points') }} <span class="text-xs text-blue-500">({{ _('Click to view history') }})</span></p>
       </div>
