@@ -42,6 +42,8 @@ Prompt Sanctuary combines the best features from three previous projects into a 
 - **Version Control** - Automatic snapshots and version history for saved prompts
 - **Advanced Editing** - Rollback functionality and prompt evolution tracking
 - **Community Integration** - Enhanced sharing and feedback systems
+- **AI-Powered Titles** - Smart title generation for saved prompts
+- **Prompt Refinement** - Dedicated refinement interface with multiple sources
 
 ### Economy & Gamification
 - **Point System** - Comprehensive economy with points, achievements, and rewards
@@ -108,14 +110,12 @@ Prompt Sanctuary combines the best features from three previous projects into a 
 **Prompt Generation Costs**
 | Prompt Type | Cost (Points) |
 |-------------|---------------|
-| Basic Text | 1.5 |
-| Basic Random | 0.8 |
-| Basic Image | 1.5 |
-| Basic Random Image | 0.8 |
-| Basic Reverse Image | 2.0 |
-| Advanced Text | 1.9 |
-| Advanced Image | 1.9 |
-| Advanced Reverse Image | 2.5 |
+| Basic Text | 1.0 |
+| Advanced Text | 1.0 |
+| Advanced Image | 1.0 |
+| Advanced Reverse Image | 1.0 |
+| Prompt Refinement | 0.5 |
+| AI Title Generation | 0.2 |
 
 **Achievement System**
 - **Automatic Unlocking**: Based on user activity patterns
@@ -222,6 +222,7 @@ python safe_migration.py --force
 - **Home Dashboard** (`/home`) - Main application interface and starting point
 - **Basic Generator** (`/generate`) - Simple content generation with text input and options
 - **Advanced Generator** (`/advance`) - Advanced content generation with detailed parameters
+- **Prompt Refinement** (`/refinement`) - AI-powered prompt optimization from multiple sources
 - **Community Library** (`/library`) - Browse shared prompts and templates
 - **Personal Library** (`/mylib`) - Manage your saved prompts with version history
 
@@ -266,6 +267,8 @@ python safe_migration.py --force
 | `/generate/trandom` | POST | Generate random text | ✅ |
 | `/advance/generate` | POST | Advanced text generation | ✅ |
 | `/advance/igenerate` | POST | Advanced image prompt generation | ✅ |
+| `/refine_prompt` | POST | Refine existing prompts | ✅ |
+| `/generate_title` | POST | Generate AI-powered titles | ✅ |
 
 **Prompt Management**
 | Path | Method | Description | Auth |

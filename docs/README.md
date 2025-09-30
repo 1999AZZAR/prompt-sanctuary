@@ -16,6 +16,7 @@ Complete guides for users to get the most out of Prompt Sanctuary.
 Detailed documentation of all platform features.
 
 - **[Prompt Refinement](features/prompt-refinement.md)** - AI-powered prompt optimization
+- **[AI Title Generation](features/ai-title-generation.md)** - Smart title generation for saved prompts
 - **[Economy System](features/economy-system.md)** - Points, achievements, and rewards
 - **[API Key Management](features/api-key-management.md)** - Personal and pooled API keys
 - **[Version Control](features/version-control.md)** - Prompt versioning and history
@@ -83,6 +84,8 @@ Documentation for developers working on Prompt Sanctuary.
 - **Personal Library**: Save and organize your custom prompts
 - **Community Sharing**: Share prompts with the community
 - **Advanced Search**: Find prompts by tags, content, and metadata
+- **AI Title Generation**: Smart, context-aware titles for saved prompts
+- **Prompt Refinement**: Dedicated interface for optimizing prompts
 
 ### 🌐 Multilingual Support
 - **Dual Languages**: English and Indonesian support

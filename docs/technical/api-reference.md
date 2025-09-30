@@ -476,18 +476,43 @@ GET /language/en
 POST /refine_prompt
 Content-Type: application/x-www-form-urlencoded
 
-text=Original prompt text&action=shorten&csrf_token=token
+prompt_text=Original prompt text&action=shorten&custom_instructions=Optional custom instructions&csrf_token=token
 ```
 
 **Response:**
 ```json
 {
     "success": true,
-    "result": "Refined prompt text here...",
+    "response": "Refined prompt text here...",
     "points_used": 0.5,
     "remaining_points": 93.0
 }
 ```
+
+### Generate AI Title
+```http
+POST /generate_title
+Content-Type: application/x-www-form-urlencoded
+
+prompt_text=Prompt content&prompt_type=basic&csrf_token=token
+```
+
+**Response:**
+```json
+{
+    "success": true,
+    "title": "Smart AI-Generated Title",
+    "points_used": 0.2,
+    "remaining_points": 92.8
+}
+```
+
+**Supported prompt types:**
+- `basic` - Basic text prompts
+- `advanced` - Advanced text prompts  
+- `advanced_image` - Image generation prompts
+- `advanced_reverse` - Reverse image prompts
+- `refinement` - Refined prompts
 
 ## Error Responses
 

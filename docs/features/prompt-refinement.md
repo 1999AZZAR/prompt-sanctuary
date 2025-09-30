@@ -1,43 +1,45 @@
 # Prompt Refinement Feature
 
-The prompt refinement feature provides intelligent AI-powered suggestions to optimize prompts for better AI responses through automatic length detection and smart refinement capabilities.
+The prompt refinement feature provides a comprehensive AI-powered interface for optimizing prompts from multiple sources, including personal library, community prompts, and manual input.
 
 ## Overview
 
-This feature automatically analyzes prompt length and provides intelligent suggestions to either shorten or elaborate prompts based on their current length and content quality. It helps users create more effective prompts that generate better AI responses.
+This feature offers a dedicated refinement interface (`/refinement`) where users can select prompts from various sources and apply intelligent AI-powered refinements using quick actions or custom instructions. It helps users create more effective prompts that generate better AI responses.
 
 ## Key Features
 
-### Automatic Length Detection
+### Multi-Source Prompt Selection
 
-- **Short prompts** (< 50 characters): Shows "Elaborate" button to add more details
-- **Medium prompts** (50-200 characters): Shows both "Shorten" and "Elaborate" options
-- **Long prompts** (> 200 characters): Shows "Shorten" button to make more concise
-- **Very long prompts** (> 400 characters): Shows warning and "Shorten" button
+- **Manual Input**: Type or paste prompts directly
+- **Saved Prompts**: Choose from your personal library
+- **Community Prompts**: Select from community-shared prompts
+- **Easy Navigation**: Seamless switching between prompt sources
 
-### Smart Refinement Options
+### Smart Refinement Actions
 
-- **Shorten**: Uses AI to make prompts more concise while preserving essential meaning
-- **Elaborate**: Uses AI to add details, context, and specificity to improve clarity
-- **Real-time feedback**: Shows character count and length suggestions
+- **Shorten**: Makes prompts more concise while preserving essential meaning
+- **Elaborate**: Adds details, context, and specificity to improve clarity
+- **Improve**: Enhances overall prompt quality and effectiveness
+- **Fix Grammar**: Corrects grammar, spelling, and language issues
+- **Custom Instructions**: Specify exactly how to refine your prompt
 
 ### Intelligent AI Processing
 
 - Context-aware refinement based on prompt type and content
 - Preserves core meaning while optimizing structure
 - Provides immediate feedback on refinement results
+- AI-powered title generation for saved refined prompts
 
 ## Implementation Details
 
-### Supported Input Fields
+### Dedicated Refinement Interface
 
-The refinement feature works across multiple input fields:
+The refinement feature provides a comprehensive interface at `/refinement` with:
 
-1. **Basic Text Prompt** (`user_input_text`)
-2. **Image Prompt Text** (`user_input_image`)
-3. **Advanced Use Case** (`text_parameter0`)
-4. **Advanced Knowledge Base** (`text_parameter3`)
-5. **Advanced Image Input** (`image_gen_parameter0`)
+1. **Prompt Source Selection**: Choose between manual input, saved prompts, or community prompts
+2. **Refinement Action Selection**: Pick from quick actions or provide custom instructions
+3. **Real-time Preview**: See selected prompt and action before refining
+4. **Result Management**: Copy, save, or refine again with the results
 
 ### API Integration
 
@@ -49,8 +51,9 @@ The refinement feature works across multiple input fields:
 #### Request Format
 ```javascript
 {
-  text: "Original prompt text",
-  action: "shorten" | "elaborate"
+  prompt_text: "Original prompt text",
+  action: "shorten" | "elaborate" | "improve" | "fix" | "custom",
+  custom_instructions: "Optional custom refinement instructions"
 }
 ```
 
@@ -80,29 +83,57 @@ while maintaining the core meaning:
 Provide only the elaborated version, no explanations."
 ```
 
+#### Improve Prompt
+```
+"Please improve the following prompt to make it more effective, clear, and likely to produce better AI responses. 
+Enhance clarity, specificity, and overall quality:
+
+'{original_text}'
+
+Provide only the improved version, no explanations."
+```
+
+#### Fix Grammar
+```
+"Please fix the grammar, spelling, and language issues in the following text while keeping the original meaning intact:
+
+'{original_text}'
+
+Provide only the corrected version, no explanations."
+```
+
+#### Custom Instructions
+```
+"Please refine the following text according to these specific instructions: '{custom_instructions}'
+
+Original text:
+'{original_text}'
+
+Provide only the refined version, no explanations."
+```
+
 ## User Experience
 
-### Visual Indicators
+### Interface Design
 
-#### Character Count Colors
-- **Green**: Good length (50-200 characters)
-- **Blue**: Too short - suggests elaboration
-- **Yellow**: Long - suggests shortening
-- **Orange**: Very long - strongly suggests shortening
+#### Prompt Source Selection
+- **Visual Cards**: Clear visual distinction between source types
+- **Active States**: Highlighted selected source with color coding
+- **Preview**: Shows selected prompt with source information
 
-#### Button States
-- **Hidden**: No text or optimal length
-- **Elaborate**: Blue button for short prompts
-- **Shorten**: Orange button for long prompts
-- **Both**: When user can choose either direction
+#### Refinement Actions
+- **Quick Actions**: Color-coded buttons for common refinements
+- **Custom Input**: Text area for specific instructions
+- **Action Preview**: Shows selected action before refining
 
 ### Interaction Flow
 
-1. **User types prompt** → Character count updates in real-time
-2. **Length thresholds crossed** → Appropriate buttons appear
-3. **User clicks refine button** → Loading state shows
-4. **AI processes prompt** → Refined text replaces original
-5. **Success feedback** → User sees improved prompt
+1. **Select Prompt Source** → Choose manual input, saved prompt, or community prompt
+2. **Select or Enter Prompt** → Prompt appears in preview area
+3. **Choose Refinement Action** → Pick quick action or enter custom instructions
+4. **Click Refine** → Loading state shows during AI processing
+5. **Review Result** → Refined prompt displayed with action buttons
+6. **Save or Copy** → Save with AI-generated title or copy to clipboard
 
 ## Technical Architecture
 
@@ -133,7 +164,8 @@ thresholds: {
 
 #### Cost Settings
 - **Refinement cost**: 0.5 points per refinement
-- **Free for API key users**: No point deduction
+- **Title generation cost**: 0.2 points per AI-generated title
+- **Free for API key users**: No point deduction for generation or titles
 - **Point validation**: Checks balance before processing
 
 ## Benefits

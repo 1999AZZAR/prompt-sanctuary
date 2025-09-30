@@ -68,18 +68,25 @@ Access your profile by clicking your username in the sidebar or navigating to th
 
 ### Prompt Refinement
 
-#### Automatic Suggestions
-The system analyzes your prompt length and suggests improvements:
-- **Short Prompts** (< 50 chars): "Elaborate" button to add detail
-- **Medium Prompts** (50-200 chars): Both "Shorten" and "Elaborate" options
-- **Long Prompts** (> 200 chars): "Shorten" button for conciseness
-- **Very Long** (> 400 chars): Warning with shortening suggestion
+#### Dedicated Refinement Interface
+Access the comprehensive refinement tool at `/refinement` to optimize prompts from multiple sources:
 
-#### Refinement Process
-1. Click the suggested refinement button
-2. AI processes your prompt automatically
-3. Review the refined version
-4. Accept or make further adjustments
+1. **Select Prompt Source**:
+   - **Manual Input**: Type or paste prompts directly
+   - **Saved Prompts**: Choose from your personal library
+   - **Community Prompts**: Select from community-shared prompts
+
+2. **Choose Refinement Action**:
+   - **Shorten**: Make prompts more concise while preserving meaning
+   - **Elaborate**: Add details, context, and specificity
+   - **Improve**: Enhance overall prompt quality and effectiveness
+   - **Fix Grammar**: Correct grammar, spelling, and language issues
+   - **Custom Instructions**: Specify exactly how to refine your prompt
+
+3. **Review and Save Results**:
+   - Copy refined prompts to clipboard
+   - Save with AI-generated smart titles
+   - Refine again with different actions
 
 ## Personal Library
 
@@ -181,11 +188,12 @@ The system analyzes your prompt length and suggests improvements:
 - **Community Sharing**: Points for helpful contributions
 
 #### Spending Points
-- **Basic Text Generation**: 1.5 points
-- **Basic Random**: 0.8 points
-- **Advanced Text**: 1.9 points
-- **Advanced Image**: 1.9 points
+- **Basic Text Generation**: 1.0 points
+- **Advanced Text Generation**: 1.0 points
+- **Advanced Image Generation**: 1.0 points
+- **Advanced Reverse Image**: 1.0 points
 - **Prompt Refinement**: 0.5 points
+- **AI Title Generation**: 0.2 points
 
 #### Point Management
 - **Balance Tracking**: Monitor your current points
@@ -226,7 +234,7 @@ The system analyzes your prompt length and suggests improvements:
 5. Earn 100 bonus points for successful validation
 
 #### Benefits of Personal API Keys
-- **No Point Costs**: Generate prompts without spending points
+- **No Point Costs**: Generate prompts, refine prompts, and create titles without spending points
 - **Unlimited Usage**: No daily limits or restrictions
 - **Priority Access**: Faster response times
 - **Community Contribution**: Help other users when your key is used
