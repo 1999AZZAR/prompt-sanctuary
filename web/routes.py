@@ -1743,4 +1743,14 @@ Provide only the corrected version, no explanations."""
         flash(_("Language changed to %(language)s", language=LANGUAGES[language]), "success")
         return redirect(request.referrer or url_for('main.home'))
 
+    @main_blueprint.route("/src/main.tsx")
+    def handle_missing_main_tsx():
+        """Handle requests for missing main.tsx file - return 404 with proper headers"""
+        return "File not found", 404, {'Content-Type': 'text/plain'}
+
+    @main_blueprint.route("/src/<path:filename>")
+    def handle_missing_src_files(filename):
+        """Handle requests for missing files in src/ directory - return 404 with proper headers"""
+        return "File not found", 404, {'Content-Type': 'text/plain'}
+
     return main_blueprint
