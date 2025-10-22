@@ -99,15 +99,24 @@
                             <p class="text-xs text-slate-500 mt-1">{{ _('Your API key will be encrypted and stored securely.') }}</p>
                         </div>
                         
-                        <div class="flex space-x-3">
-                            <button type="submit" class="btn bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition-colors flex items-center space-x-2" id="validate-btn">
-                                <i class="fas fa-check"></i>
-                                <span>{{ _('Validate API Key') }}</span>
-                            </button>
-                            <button type="button" class="btn bg-slate-500 text-white px-6 py-3 rounded-lg hover:bg-slate-600 transition-colors flex items-center space-x-2" id="test-btn">
-                                <i class="fas fa-vial"></i>
-                                <span>{{ _('Test Connection') }}</span>
-                            </button>
+                        <div class="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3">
+                            <div class="flex space-x-3">
+                                <button type="submit" class="btn bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition-colors flex items-center space-x-2" id="validate-btn">
+                                    <i class="fas fa-check"></i>
+                                    <span>{{ _('Validate API Key') }}</span>
+                                </button>
+                                <button type="button" class="btn bg-slate-500 text-white px-6 py-3 rounded-lg hover:bg-slate-600 transition-colors flex items-center space-x-2" id="test-btn">
+                                    <i class="fas fa-vial"></i>
+                                    <span>{{ _('Test Connection') }}</span>
+                                </button>
+                            </div>
+                            <div class="flex items-center space-x-2 text-slate-500">
+                                <span class="text-sm">{{ _('or') }}</span>
+                                <button type="button" class="btn bg-slate-100 text-slate-600 px-6 py-3 rounded-lg hover:bg-slate-200 transition-colors flex items-center space-x-2 border border-slate-300" id="skip-btn">
+                                    <i class="fas fa-clock"></i>
+                                    <span>{{ _('Set Later') }}</span>
+                                </button>
+                            </div>
                         </div>
                     </form>
                 </div>
@@ -166,6 +175,21 @@
                     </div>
                 </div>
 
+                <!-- Skip Notice -->
+                <div class="mdc-card glass prompt-card p-6 bg-yellow-50 border border-yellow-200">
+                    <div class="flex items-center space-x-3 mb-3">
+                        <i class="fas fa-info-circle text-yellow-500 text-xl"></i>
+                        <h3 class="text-lg font-semibold text-yellow-800">{{ _('Skip Setup') }}</h3>
+                    </div>
+                    <div class="space-y-3 text-sm text-yellow-700">
+                        <p>{{ _('You can skip API key setup for now and set it up later from your profile page.') }}</p>
+                        <div class="bg-yellow-100 rounded-lg p-3">
+                            <p class="font-medium mb-1">{{ _('Note:') }}</p>
+                            <p>{{ _('Without an API key, you won\'t be able to use AI-powered features like prompt generation and refinement.') }}</p>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Security Info -->
                 <div class="mdc-card glass prompt-card p-6 bg-green-50 border border-green-200">
                     <div class="flex items-center space-x-3 mb-3">
@@ -206,6 +230,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('api-key-form');
     const validateBtn = document.getElementById('validate-btn');
     const testBtn = document.getElementById('test-btn');
+    const skipBtn = document.getElementById('skip-btn');
     const apiKeyInput = document.getElementById('api_key_input');
     const validationResults = document.getElementById('validation-results');
     const validationStatus = document.getElementById('validation-status');
@@ -222,6 +247,11 @@ document.addEventListener('DOMContentLoaded', function() {
         testApiKey();
     });
 
+    // Skip button
+    skipBtn.addEventListener('click', function() {
+        skipApiKeySetup();
+    });
+
     async function validateApiKey() {
         const apiKey = apiKeyInput.value.trim();
         
@@ -231,7 +261,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         if (!apiKey.startsWith('AI') || apiKey.length < 20) {
-            showError('{{ _("Invalid API key format. Keys should start with \"AI\" and be at least 20 characters long.") }}');
+            showError('{{ _("Invalid API key format. Keys should start with AI and be at least 20 characters long.") }}');
             return;
         }
 
@@ -373,20 +403,28 @@ document.addEventListener('DOMContentLoaded', function() {
                     <ul class="space-y-1 text-sm">
                         <li class="flex items-center space-x-2">
                             <i class="fas fa-${info.is_valid ? 'check' : 'times'} text-${info.is_valid ? 'green' : 'red'}-500"></i>
-                            <span>{{ _("API Key Valid:") }} ${info.is_valid ? '{{ _("Yes") }}' : '{{ _("No") }}'}</span>
+                            <span>{{ _("API Key Valid:") }} ${info.is_valid ? 'Yes' : 'No'}</span>
                         </li>
                         <li class="flex items-center space-x-2">
                             <i class="fas fa-${info.has_quota ? 'check' : 'times'} text-${info.has_quota ? 'green' : 'red'}-500"></i>
-                            <span>{{ _("Quota Available:") }} ${info.has_quota ? '{{ _("Yes") }}' : '{{ _("No") }}'}</span>
+                            <span>{{ _("Quota Available:") }} ${info.has_quota ? 'Yes' : 'No'}</span>
                         </li>
                         <li class="flex items-center space-x-2">
                             <i class="fas fa-${info.model_available ? 'check' : 'times'} text-${info.model_available ? 'green' : 'red'}-500"></i>
-                            <span>{{ _("Model Access:") }} ${info.model_available ? '{{ _("Yes") }}' : '{{ _("No") }}'}</span>
+                            <span>{{ _("Model Access:") }} ${info.model_available ? 'Yes' : 'No'}</span>
                         </li>
                     </ul>
                 </div>
             </div>
         `;
+    }
+
+    function skipApiKeySetup() {
+        // Show confirmation dialog
+        if (confirm('{{ _("Are you sure you want to skip API key setup? You will not be able to use AI features until you set up your API key.") }}')) {
+            // Redirect to home page (for logged-in users)
+            window.location.href = '/home';
+        }
     }
 });
 </script>

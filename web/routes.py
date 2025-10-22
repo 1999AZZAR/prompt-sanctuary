@@ -10,15 +10,29 @@ from flask import (
     Response,
     stream_template,
 )
+from functools import wraps
 
 def check_api_key_required(user_db_path, username):
     """Check if user has a valid API key, return True if API key setup is required."""
     return not is_api_key_validated(user_db_path, username)
+
+def require_api_key(f):
+    """Decorator to require valid API key for routes that need AI functionality."""
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'username' not in session:
+            return redirect(url_for('main.login'))
+        
+        username = session['username']
+        if check_api_key_required(main_blueprint.user_db, username):
+            return redirect(url_for('main.api_key_setup'))
+        
+        return f(*args, **kwargs)
+    return decorated_function
 from utils import validate_csrf_token
 from flask_babel import _, gettext
 from werkzeug.exceptions import BadRequestKeyError
 from werkzeug.security import generate_password_hash, check_password_hash
-from functools import wraps
 import os
 import sys
 # Add current directory to path for imports
@@ -264,6 +278,10 @@ def create_main_blueprint(
                 # Session created successfully (no point system)
             except Exception:
                 logger.exception("Failed to create session record")
+
+            # Check if API key is required and redirect if not set
+            if check_api_key_required(main_blueprint.user_db, username):
+                response_data["redirect"] = url_for("main.api_key_setup")
 
             return jsonify(response_data)
 
@@ -812,11 +830,13 @@ def create_main_blueprint(
 
     @main_blueprint.route("/generate")
     @required_login
+    @require_api_key
     def generate():
         return render_template("prompts/generator/basic.html")
 
     @main_blueprint.route("/generate/tprompt", methods=["POST"])
     @required_login
+    @require_api_key
     def process():
         """Generate a text prompt using user input. Validates input and returns model response."""
         user_input = request.form.get("user_input", "").strip()
@@ -851,6 +871,7 @@ def create_main_blueprint(
 
     @main_blueprint.route("/generate/tprompt/stream", methods=["POST"])
     @required_login
+    @require_api_key
     def process_stream():
         """Generate a text prompt using streaming response."""
         user_input = request.form.get("user_input", "").strip()
@@ -1014,6 +1035,7 @@ def create_main_blueprint(
 
     @main_blueprint.route("/advance/generate", methods=["POST"])
     @required_login
+    @require_api_key
     def generate_advance_response():
         try:
             username = session["username"]
@@ -1549,6 +1571,7 @@ Provide only the corrected version, no explanations."""
 
     @main_blueprint.route("/generate_title", methods=["POST"])
     @required_login
+    @require_api_key
     def generate_title():
         """Generate a smart title for a prompt using AI."""
         if request.method == "POST":

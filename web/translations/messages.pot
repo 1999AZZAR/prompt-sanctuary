@@ -52,6 +52,27 @@ msgstr ""
 msgid "API Key Status"
 msgstr ""
 
+msgid "Set Later"
+msgstr ""
+
+msgid "or"
+msgstr ""
+
+msgid "Are you sure you want to skip API key setup? You won't be able to use AI features until you set up your API key."
+msgstr ""
+
+msgid "Skip Setup"
+msgstr ""
+
+msgid "You can skip API key setup for now and set it up later from your profile page."
+msgstr ""
+
+msgid "Note:"
+msgstr ""
+
+msgid "Without an API key, you won't be able to use AI-powered features like prompt generation and refinement."
+msgstr ""
+
 #: web/templates/account/profile.html:174
 msgid "Gemini API Key"
 msgstr ""

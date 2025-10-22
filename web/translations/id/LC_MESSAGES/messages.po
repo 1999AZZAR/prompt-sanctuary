@@ -53,6 +53,27 @@ msgstr "Prompt Dasar"
 msgid "API Key Status"
 msgstr "Status Kunci API"
 
+msgid "Set Later"
+msgstr "Atur Nanti"
+
+msgid "or"
+msgstr "atau"
+
+msgid "Are you sure you want to skip API key setup? You won't be able to use AI features until you set up your API key."
+msgstr "Apakah Anda yakin ingin melewati pengaturan kunci API? Anda tidak akan dapat menggunakan fitur AI sampai Anda mengatur kunci API Anda."
+
+msgid "Skip Setup"
+msgstr "Lewati Pengaturan"
+
+msgid "You can skip API key setup for now and set it up later from your profile page."
+msgstr "Anda dapat melewati pengaturan kunci API untuk sementara dan mengaturnya nanti dari halaman profil Anda."
+
+msgid "Note:"
+msgstr "Catatan:"
+
+msgid "Without an API key, you won't be able to use AI-powered features like prompt generation and refinement."
+msgstr "Tanpa kunci API, Anda tidak akan dapat menggunakan fitur bertenaga AI seperti pembuatan dan penyempurnaan prompt."
+
 #: web/templates/account/profile.html:174
 msgid "Gemini API Key"
 msgstr "Kunci API Gemini"

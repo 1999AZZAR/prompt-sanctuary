@@ -53,6 +53,27 @@ msgstr "Basic Prompt"
 msgid "API Key Status"
 msgstr "API Key Status"
 
+msgid "Set Later"
+msgstr "Set Later"
+
+msgid "or"
+msgstr "or"
+
+msgid "Are you sure you want to skip API key setup? You won't be able to use AI features until you set up your API key."
+msgstr "Are you sure you want to skip API key setup? You won't be able to use AI features until you set up your API key."
+
+msgid "Skip Setup"
+msgstr "Skip Setup"
+
+msgid "You can skip API key setup for now and set it up later from your profile page."
+msgstr "You can skip API key setup for now and set it up later from your profile page."
+
+msgid "Note:"
+msgstr "Note:"
+
+msgid "Without an API key, you won't be able to use AI-powered features like prompt generation and refinement."
+msgstr "Without an API key, you won't be able to use AI-powered features like prompt generation and refinement."
+
 #: web/templates/account/profile.html:174
 msgid "Gemini API Key"
 msgstr "Gemini API Key"
