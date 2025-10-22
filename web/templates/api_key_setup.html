@@ -1,0 +1,308 @@
+{% extends "base.html" %}
+
+{% block title %}API Key Setup - Prompt Sanctuary{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-key mr-2"></i>
+                        API Key Setup Required
+                    </h4>
+                </div>
+                <div class="card-body">
+                    {% if not api_key_validated %}
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle mr-2"></i>
+                        <strong>API Key Required:</strong> You need to set up your Gemini API key to use Prompt Sanctuary.
+                    </div>
+                    {% endif %}
+
+                    <!-- Step 1: Get API Key -->
+                    <div class="setup-step mb-4">
+                        <h5 class="text-primary">
+                            <span class="badge badge-primary mr-2">1</span>
+                            Get Your Gemini API Key
+                        </h5>
+                        <div class="step-content">
+                            <p>First, you need to get a Gemini API key from Google AI Studio:</p>
+                            <ol>
+                                <li>Visit <a href="https://aistudio.google.com/" target="_blank" class="text-primary">Google AI Studio</a></li>
+                                <li>Sign in with your Google account</li>
+                                <li>Click "Get API Key" in the sidebar</li>
+                                <li>Create a new project or select existing one</li>
+                                <li>Copy your API key (starts with "AI")</li>
+                            </ol>
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle mr-2"></i>
+                                <strong>Important:</strong> You'll need to set up billing in Google Cloud Console for the API to work properly.
+                                <a href="https://console.cloud.google.com/billing" target="_blank" class="text-primary">Set up billing here</a>.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Enter API Key -->
+                    <div class="setup-step mb-4">
+                        <h5 class="text-primary">
+                            <span class="badge badge-primary mr-2">2</span>
+                            Enter Your API Key
+                        </h5>
+                        <div class="step-content">
+                            <form id="api-key-form" method="POST" action="/api_key/validate">
+                                <div class="form-group">
+                                    <label for="api_key_input">Gemini API Key</label>
+                                    <input type="password" 
+                                           class="form-control" 
+                                           id="api_key_input" 
+                                           name="api_key" 
+                                           placeholder="AI..." 
+                                           required
+                                           minlength="20">
+                                    <small class="form-text text-muted">
+                                        Your API key will be encrypted and stored securely.
+                                    </small>
+                                </div>
+                                <div class="form-group">
+                                    <button type="submit" class="btn btn-primary" id="validate-btn">
+                                        <i class="fas fa-check mr-2"></i>
+                                        Validate API Key
+                                    </button>
+                                    <button type="button" class="btn btn-outline-secondary ml-2" id="test-btn">
+                                        <i class="fas fa-vial mr-2"></i>
+                                        Test Connection
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Step 3: Validation Results -->
+                    <div class="setup-step mb-4" id="validation-results" style="display: none;">
+                        <h5 class="text-primary">
+                            <span class="badge badge-primary mr-2">3</span>
+                            Validation Results
+                        </h5>
+                        <div class="step-content">
+                            <div id="validation-status"></div>
+                        </div>
+                    </div>
+
+                    <!-- Help Section -->
+                    <div class="setup-step">
+                        <h5 class="text-primary">
+                            <i class="fas fa-question-circle mr-2"></i>
+                            Need Help?
+                        </h5>
+                        <div class="step-content">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h6>Common Issues:</h6>
+                                    <ul class="list-unstyled">
+                                        <li><i class="fas fa-check text-success mr-2"></i> Make sure key starts with "AI"</li>
+                                        <li><i class="fas fa-check text-success mr-2"></i> Check for extra spaces</li>
+                                        <li><i class="fas fa-check text-success mr-2"></i> Ensure billing is set up</li>
+                                        <li><i class="fas fa-check text-success mr-2"></i> Try a different browser</li>
+                                    </ul>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6>Resources:</h6>
+                                    <ul class="list-unstyled">
+                                        <li><a href="/docs/api-key-setup" class="text-primary">Detailed Setup Guide</a></li>
+                                        <li><a href="https://aistudio.google.com/" target="_blank" class="text-primary">Google AI Studio</a></li>
+                                        <li><a href="https://console.cloud.google.com/billing" target="_blank" class="text-primary">Google Cloud Billing</a></li>
+                                        <li><a href="/support" class="text-primary">Contact Support</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Loading Modal -->
+<div class="modal fade" id="loadingModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-body text-center">
+                <div class="spinner-border text-primary mb-3" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+                <h5>Validating API Key...</h5>
+                <p class="text-muted">This may take a few seconds</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('api-key-form');
+    const validateBtn = document.getElementById('validate-btn');
+    const testBtn = document.getElementById('test-btn');
+    const apiKeyInput = document.getElementById('api_key_input');
+    const validationResults = document.getElementById('validation-results');
+    const validationStatus = document.getElementById('validation-status');
+
+    // Form submission
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        validateApiKey();
+    });
+
+    // Test button
+    testBtn.addEventListener('click', function() {
+        testApiKey();
+    });
+
+    async function validateApiKey() {
+        const apiKey = apiKeyInput.value.trim();
+        
+        if (!apiKey) {
+            showError('Please enter your API key');
+            return;
+        }
+
+        if (!apiKey.startsWith('AI') || apiKey.length < 20) {
+            showError('Invalid API key format. Keys should start with "AI" and be at least 20 characters long.');
+            return;
+        }
+
+        // Show loading
+        showLoading();
+        
+        try {
+            const formData = new FormData();
+            formData.append('api_key', apiKey);
+            
+            const response = await fetch('/api_key/validate', {
+                method: 'POST',
+                body: formData
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                showSuccess(data.message);
+                // Redirect to main app after successful validation
+                setTimeout(() => {
+                    window.location.href = '/';
+                }, 2000);
+            } else {
+                showError(data.error || 'Validation failed');
+            }
+        } catch (error) {
+            console.error('Error validating API key:', error);
+            showError('Failed to validate API key. Please try again.');
+        } finally {
+            hideLoading();
+        }
+    }
+
+    async function testApiKey() {
+        const apiKey = apiKeyInput.value.trim();
+        
+        if (!apiKey) {
+            showError('Please enter your API key first');
+            return;
+        }
+
+        showLoading();
+        
+        try {
+            const formData = new FormData();
+            formData.append('api_key', apiKey);
+            
+            const response = await fetch('/api_key/test', {
+                method: 'POST',
+                body: formData
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                showTestResults(data.info);
+            } else {
+                showError(data.error || 'Test failed');
+            }
+        } catch (error) {
+            console.error('Error testing API key:', error);
+            showError('Failed to test API key. Please try again.');
+        } finally {
+            hideLoading();
+        }
+    }
+
+    function showLoading() {
+        $('#loadingModal').modal('show');
+        validateBtn.disabled = true;
+        testBtn.disabled = true;
+    }
+
+    function hideLoading() {
+        $('#loadingModal').modal('hide');
+        validateBtn.disabled = false;
+        testBtn.disabled = false;
+    }
+
+    function showSuccess(message) {
+        validationResults.style.display = 'block';
+        validationStatus.innerHTML = `
+            <div class="alert alert-success">
+                <i class="fas fa-check-circle mr-2"></i>
+                <strong>Success!</strong> ${message}
+            </div>
+        `;
+    }
+
+    function showError(message) {
+        validationResults.style.display = 'block';
+        validationStatus.innerHTML = `
+            <div class="alert alert-danger">
+                <i class="fas fa-exclamation-circle mr-2"></i>
+                <strong>Error:</strong> ${message}
+            </div>
+        `;
+    }
+
+    function showTestResults(info) {
+        validationResults.style.display = 'block';
+        
+        let statusClass = 'alert-danger';
+        let statusIcon = 'fas fa-times-circle';
+        let statusText = 'Test Failed';
+        
+        if (info.is_valid && info.has_quota && info.model_available) {
+            statusClass = 'alert-success';
+            statusIcon = 'fas fa-check-circle';
+            statusText = 'API Key Ready';
+        } else if (info.is_valid && info.has_quota) {
+            statusClass = 'alert-warning';
+            statusIcon = 'fas fa-exclamation-triangle';
+            statusText = 'Partial Success';
+        }
+        
+        validationStatus.innerHTML = `
+            <div class="alert ${statusClass}">
+                <i class="${statusIcon} mr-2"></i>
+                <strong>${statusText}</strong>
+                ${info.error_message ? `<br>${info.error_message}` : ''}
+            </div>
+            <div class="mt-3">
+                <h6>Test Results:</h6>
+                <ul class="list-unstyled">
+                    <li><i class="fas fa-${info.is_valid ? 'check' : 'times'} text-${info.is_valid ? 'success' : 'danger'} mr-2"></i> API Key Valid: ${info.is_valid ? 'Yes' : 'No'}</li>
+                    <li><i class="fas fa-${info.has_quota ? 'check' : 'times'} text-${info.has_quota ? 'success' : 'danger'} mr-2"></i> Quota Available: ${info.has_quota ? 'Yes' : 'No'}</li>
+                    <li><i class="fas fa-${info.model_available ? 'check' : 'times'} text-${info.model_available ? 'success' : 'danger'} mr-2"></i> Model Access: ${info.model_available ? 'Yes' : 'No'}</li>
+                </ul>
+            </div>
+        `;
+    }
+});
+</script>
+{% endblock %}

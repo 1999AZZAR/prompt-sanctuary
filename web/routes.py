@@ -10,6 +10,10 @@ from flask import (
     Response,
     stream_template,
 )
+
+def check_api_key_required(user_db_path, username):
+    """Check if user has a valid API key, return True if API key setup is required."""
+    return not is_api_key_validated(user_db_path, username)
 from utils import validate_csrf_token
 from flask_babel import _, gettext
 from werkzeug.exceptions import BadRequestKeyError
@@ -38,17 +42,6 @@ from models import (
     get_user_identicon_value,
     set_user_identicon_value,
     generate_identicon_value,
-    get_user_points,
-    deduct_user_points,
-    add_user_points,
-    add_user_points_with_source,
-    deduct_user_points_with_source,
-    expire_user_points,
-    get_point_history,
-    initialize_achievements,
-    check_and_award_achievements,
-    get_user_achievements,
-    process_daily_login_bonus,
     get_prompt_sharing_status,
     get_user_api_key,
     set_user_api_key,
@@ -191,7 +184,7 @@ def create_main_blueprint(
                         return jsonify({"success": False, "error": "Email is already in use."}), 409
 
                 hashed_password = generate_password_hash(password)
-                cursor.execute("INSERT INTO users (username, password, email, points) VALUES (?, ?, ?, 80.0)", (username, hashed_password, email))
+                cursor.execute("INSERT INTO users (username, password, email, gemini_api_key, api_key_validated) VALUES (?, ?, ?, '', 0)", (username, hashed_password, email))
                 conn.commit()
                 create_user_table_if_not_exists(username, main_blueprint.prompt_db)
         except Exception as e:
@@ -246,32 +239,9 @@ def create_main_blueprint(
 
             try:
                 create_session_record(main_blueprint.user_db, username, token, ua, ip)
-
-                # Initialize achievements system if not already done
-                initialize_achievements(main_blueprint.user_db)
-
-                # Process daily login bonus with retry logic
-                try:
-                    daily_bonus = process_daily_login_bonus(main_blueprint.user_db, username)
-                    if daily_bonus > 0:
-                        response_data["daily_bonus"] = daily_bonus
-                except Exception as e:
-                    logger.exception("Failed to process daily login bonus, continuing without it")
-                    daily_bonus = 0
-
-                # Check for new achievements and get notifications
-                try:
-                    newly_unlocked, achievement_points = check_and_award_achievements(
-                        main_blueprint.user_db, username, main_blueprint.prompt_db, main_blueprint.community_db
-                    )
-                    if newly_unlocked:
-                        response_data["new_achievements"] = newly_unlocked
-                        response_data["achievement_points"] = achievement_points
-                except Exception as e:
-                    logger.exception("Failed to check achievements, continuing without them")
-
+                # Session created successfully (no point system)
             except Exception:
-                logger.exception("Failed to create session record or process login bonuses")
+                logger.exception("Failed to create session record")
 
             return jsonify(response_data)
 
@@ -292,25 +262,12 @@ def create_main_blueprint(
     @main_blueprint.route("/home")
     @required_login
     def home():
-        username = session["username"]
-        try:
-            current_points = get_user_points(main_blueprint.user_db, username)
-        except Exception:
-            current_points = 80.0  # Default fallback
-        return render_template("index.html", current_user_points=current_points)
+        return render_template("index.html")
 
     @main_blueprint.route("/mylib")
     @required_login
     def mylib():
         username = session["username"]
-        try:
-            current_points = get_user_points(main_blueprint.user_db, username)
-        except Exception:
-            current_points = 80.0  # Default fallback
-
-        conn = get_db_connection(main_blueprint.prompt_db)
-        cursor = conn.cursor()
-
         create_user_table_if_not_exists(username, main_blueprint.prompt_db)
 
         table_name = f'"{username}"'
@@ -346,7 +303,7 @@ def create_main_blueprint(
             }
             saved_prompts.append(enhanced_prompt)
 
-        return render_template("prompts/lib/personal.html", saved_prompts=saved_prompts, title="My Library", current_user_points=current_points)
+        return render_template("prompts/lib/personal.html", saved_prompts=saved_prompts, title="My Library")
 
     @main_blueprint.route("/save_edit", methods=["POST"])
     @required_login
@@ -478,8 +435,7 @@ def create_main_blueprint(
                     )
                     conn.commit()
 
-            # Reward user with 1 point for sharing (only for new shares, not updates)
-            add_user_points_with_source(main_blueprint.user_db, owner, 1.0, 'prompt_share', 'Shared prompt to community')
+            # Prompt shared successfully (no point system)
         except Exception as e:
             logger.exception("Error sharing prompt")
             return jsonify({"success": False, "error": "Internal server error."}), 500
@@ -502,8 +458,7 @@ def create_main_blueprint(
                 )
                 conn.commit()
 
-            # Deduct 1 point for unsharing
-            deduct_user_points_with_source(main_blueprint.user_db, owner, 1.0, 'prompt_unshare', 'Unshared prompt from community')
+            # Prompt unshared successfully (no point system)
         except Exception as e:
             logger.exception("Error unsharing prompt")
             return jsonify({"success": False, "error": "Internal server error."}), 500
@@ -526,10 +481,6 @@ def create_main_blueprint(
     @required_login
     def library():
         username = session["username"]
-        try:
-            current_points = get_user_points(main_blueprint.user_db, username)
-        except Exception:
-            current_points = 80.0  # Default fallback
 
         try:
             with get_db_connection(main_blueprint.query_db) as conn:
@@ -595,7 +546,6 @@ def create_main_blueprint(
             "prompts/lib/community.html",
             system_prompts=sanitized_system_prompts,
             shared_prompts=sanitized_shared_prompts,
-            current_user_points=current_points,
         )
 
     @main_blueprint.route("/profile", methods=["GET", "POST"])
@@ -745,21 +695,9 @@ def create_main_blueprint(
         except Exception:
             logger.exception("Failed to get or set user identicon value")
 
-        # Get user points (check and expire points first)
-        current_points = None
-        try:
-            # Check and expire points before getting current total
-            expire_user_points(main_blueprint.user_db, username)
-            current_points = get_user_points(main_blueprint.user_db, username)
-        except Exception:
-            logger.exception("Failed to get user points")
+        # No point system - API key system only
 
-        # Get user achievements
-        user_achievements = []
-        try:
-            user_achievements = get_user_achievements(main_blueprint.user_db, username)
-        except Exception:
-            logger.exception("Failed to get user achievements")
+        # No achievement system - API key system only
 
         # Get API key status
         api_key_status = {
@@ -788,9 +726,6 @@ def create_main_blueprint(
             email=email_value,
             current_token=session.get("session_token"),
             identicon_value=identicon_value,
-            current_points=current_points,
-            current_user_points=current_points,  # Add this for base.html compatibility
-            user_achievements=user_achievements,
             api_key_status=api_key_status,
         )
 
@@ -845,15 +780,18 @@ def create_main_blueprint(
             logger.exception("Failed to list sessions")
             return jsonify({"success": False}), 500
 
+    @main_blueprint.route("/api_key_setup")
+    @required_login
+    def api_key_setup():
+        """API key setup page for users without valid API keys."""
+        username = session["username"]
+        is_validated = is_api_key_validated(main_blueprint.user_db, username)
+        return render_template("api_key_setup.html", api_key_validated=is_validated)
+
     @main_blueprint.route("/generate")
     @required_login
     def generate():
-        username = session["username"]
-        try:
-            current_points = get_user_points(main_blueprint.user_db, username)
-        except Exception:
-            current_points = 80.0  # Default fallback
-        return render_template("prompts/generator/basic.html", current_user_points=current_points)
+        return render_template("prompts/generator/basic.html")
 
     @main_blueprint.route("/generate/tprompt", methods=["POST"])
     @required_login
@@ -869,23 +807,19 @@ def create_main_blueprint(
             return jsonify({"success": False, "error": "Input is too long (max 500 characters)."}), 400
 
         # Check if user has a validated API key
-        user_has_api_key = is_api_key_validated(main_blueprint.user_db, username)
-        
-        # Only deduct points if user doesn't have their own API key
-        if not user_has_api_key:
-            if not deduct_user_points_with_source(main_blueprint.user_db, username, cost, 'prompt_generation', 'Generated basic prompt'):
-                current_points = get_user_points(main_blueprint.user_db, username)
-                return jsonify({"success": False, "error": f"Insufficient points. You need {cost} points but have {current_points}."}), 402
+        if check_api_key_required(main_blueprint.user_db, username):
+            return jsonify({
+                "success": False, 
+                "error": "API key required. Please set up your Gemini API key first.",
+                "redirect": url_for("main.api_key_setup")
+            }), 403
 
         try:
-            # Set user API key if available
+            # Set user API key
             user_api_key = get_user_api_key(main_blueprint.user_db, username)
             model.set_current_user(username)
             model.set_user_db_path(main_blueprint.user_db)
-            if user_api_key:
-                model.set_user_api_key(user_api_key)
-            else:
-                model.clear_user_api_key()
+            model.set_user_api_key(user_api_key)
             
             response_text = model.generate_response("./instruction/basic1.txt", user_input, use_streaming=model.streaming_enabled)
             return response_text
@@ -907,23 +841,19 @@ def create_main_blueprint(
             return jsonify({"success": False, "error": "Input is too long (max 500 characters)."}), 400
 
         # Check if user has a validated API key
-        user_has_api_key = is_api_key_validated(main_blueprint.user_db, username)
-        
-        # Only deduct points if user doesn't have their own API key
-        if not user_has_api_key:
-            if not deduct_user_points_with_source(main_blueprint.user_db, username, cost, 'prompt_generation', 'Generated basic prompt'):
-                current_points = get_user_points(main_blueprint.user_db, username)
-                return jsonify({"success": False, "error": f"Insufficient points. You need {cost} points but have {current_points}."}), 402
+        if check_api_key_required(main_blueprint.user_db, username):
+            return jsonify({
+                "success": False, 
+                "error": "API key required. Please set up your Gemini API key first.",
+                "redirect": url_for("main.api_key_setup")
+            }), 403
 
         try:
-            # Set user API key if available
+            # Set user API key
             user_api_key = get_user_api_key(main_blueprint.user_db, username)
             model.set_current_user(username)
             model.set_user_db_path(main_blueprint.user_db)
-            if user_api_key:
-                model.set_user_api_key(user_api_key)
-            else:
-                model.clear_user_api_key()
+            model.set_user_api_key(user_api_key)
             
             def generate():
                 try:
@@ -947,23 +877,19 @@ def create_main_blueprint(
         cost = 0.8  # Basic random prompt cost
 
         # Check if user has a validated API key
-        user_has_api_key = is_api_key_validated(main_blueprint.user_db, username)
-        
-        # Only deduct points if user doesn't have their own API key
-        if not user_has_api_key:
-            if not deduct_user_points_with_source(main_blueprint.user_db, username, cost, 'prompt_generation', 'Generated basic prompt'):
-                current_points = get_user_points(main_blueprint.user_db, username)
-                return jsonify({"success": False, "error": f"Insufficient points. You need {cost} points but have {current_points}."}), 402
+        if check_api_key_required(main_blueprint.user_db, username):
+            return jsonify({
+                "success": False, 
+                "error": "API key required. Please set up your Gemini API key first.",
+                "redirect": url_for("main.api_key_setup")
+            }), 403
 
         try:
-            # Set user API key if available
+            # Set user API key
             user_api_key = get_user_api_key(main_blueprint.user_db, username)
             model.set_current_user(username)
             model.set_user_db_path(main_blueprint.user_db)
-            if user_api_key:
-                model.set_user_api_key(user_api_key)
-            else:
-                model.clear_user_api_key()
+            model.set_user_api_key(user_api_key)
             
             response_text = model.generate_random("./instruction/basic2.txt", use_streaming=model.streaming_enabled)
             return response_text
@@ -979,23 +905,19 @@ def create_main_blueprint(
         cost = 1.5  # Basic image prompt cost
 
         # Check if user has a validated API key
-        user_has_api_key = is_api_key_validated(main_blueprint.user_db, username)
-        
-        # Only deduct points if user doesn't have their own API key
-        if not user_has_api_key:
-            if not deduct_user_points_with_source(main_blueprint.user_db, username, cost, 'prompt_generation', 'Generated basic prompt'):
-                current_points = get_user_points(main_blueprint.user_db, username)
-                return jsonify({"success": False, "error": f"Insufficient points. You need {cost} points but have {current_points}."}), 402
+        if check_api_key_required(main_blueprint.user_db, username):
+            return jsonify({
+                "success": False, 
+                "error": "API key required. Please set up your Gemini API key first.",
+                "redirect": url_for("main.api_key_setup")
+            }), 403
 
         try:
-            # Set user API key if available
+            # Set user API key
             user_api_key = get_user_api_key(main_blueprint.user_db, username)
             model.set_current_user(username)
             model.set_user_db_path(main_blueprint.user_db)
-            if user_api_key:
-                model.set_user_api_key(user_api_key)
-            else:
-                model.clear_user_api_key()
+            model.set_user_api_key(user_api_key)
             
             response_text = model.generate_imgdescription(
                 "./instruction/image_styles.txt", user_input, use_streaming=model.streaming_enabled
@@ -1012,23 +934,19 @@ def create_main_blueprint(
         cost = 0.8  # Basic random image prompt cost
 
         # Check if user has a validated API key
-        user_has_api_key = is_api_key_validated(main_blueprint.user_db, username)
-        
-        # Only deduct points if user doesn't have their own API key
-        if not user_has_api_key:
-            if not deduct_user_points_with_source(main_blueprint.user_db, username, cost, 'prompt_generation', 'Generated basic prompt'):
-                current_points = get_user_points(main_blueprint.user_db, username)
-                return jsonify({"success": False, "error": f"Insufficient points. You need {cost} points but have {current_points}."}), 402
+        if check_api_key_required(main_blueprint.user_db, username):
+            return jsonify({
+                "success": False, 
+                "error": "API key required. Please set up your Gemini API key first.",
+                "redirect": url_for("main.api_key_setup")
+            }), 403
 
         try:
-            # Set user API key if available
+            # Set user API key
             user_api_key = get_user_api_key(main_blueprint.user_db, username)
             model.set_current_user(username)
             model.set_user_db_path(main_blueprint.user_db)
-            if user_api_key:
-                model.set_user_api_key(user_api_key)
-            else:
-                model.clear_user_api_key()
+            model.set_user_api_key(user_api_key)
             
             response_text = model.generate_vrandom("./instruction/image_styles.txt", use_streaming=model.streaming_enabled)
             return response_text
@@ -1046,11 +964,7 @@ def create_main_blueprint(
             # Check if user has a validated API key
             user_has_api_key = is_api_key_validated(main_blueprint.user_db, username)
             
-            # Only deduct points if user doesn't have their own API key
-            if not user_has_api_key:
-                if not deduct_user_points_with_source(main_blueprint.user_db, username, cost, 'advance_generation', 'Generated advance prompt'):
-                    current_points = get_user_points(main_blueprint.user_db, username)
-                    return jsonify({"success": False, "error": f"Insufficient points. You need {cost} points but have {current_points}."}), 402
+            # API key system - no point deduction needed
 
             # Set user API key if available
             user_api_key = get_user_api_key(main_blueprint.user_db, username)
@@ -1074,12 +988,7 @@ def create_main_blueprint(
     @main_blueprint.route("/advance")
     @required_login
     def advance():
-        username = session["username"]
-        try:
-            current_points = get_user_points(main_blueprint.user_db, username)
-        except Exception:
-            current_points = 80.0  # Default fallback
-        return render_template("prompts/generator/advance.html", current_user_points=current_points)
+        return render_template("prompts/generator/advance.html")
 
     @main_blueprint.route("/advance/generate", methods=["POST"])
     @required_login
@@ -1093,11 +1002,7 @@ def create_main_blueprint(
             # Check if user has a validated API key
             user_has_api_key = is_api_key_validated(main_blueprint.user_db, username)
             
-            # Only deduct points if user doesn't have their own API key
-            if not user_has_api_key:
-                if not deduct_user_points_with_source(main_blueprint.user_db, username, cost, 'advance_generation', 'Generated advance prompt'):
-                    current_points = get_user_points(main_blueprint.user_db, username)
-                    return jsonify({"success": False, "error": f"Insufficient points. You need {cost} points but have {current_points}."}), 402
+            # API key system - no point deduction needed
 
             parameters = [request.form[f"parameter{i}"] for i in range(4)]
             response_text = ai.response(*parameters, "./instruction/advance1.txt")
@@ -1118,11 +1023,7 @@ def create_main_blueprint(
             # Check if user has a validated API key
             user_has_api_key = is_api_key_validated(main_blueprint.user_db, username)
             
-            # Only deduct points if user doesn't have their own API key
-            if not user_has_api_key:
-                if not deduct_user_points_with_source(main_blueprint.user_db, username, cost, 'advance_generation', 'Generated advance prompt'):
-                    current_points = get_user_points(main_blueprint.user_db, username)
-                    return jsonify({"success": False, "error": f"Insufficient points. You need {cost} points but have {current_points}."}), 402
+            # API key system - no point deduction needed
 
             parameters = [request.form[f"parameter{i}"] for i in range(4)]
             response_text = ai.response(*parameters, "./instruction/advance2.txt")
@@ -1141,11 +1042,7 @@ def create_main_blueprint(
             # Check if user has a validated API key
             user_has_api_key = is_api_key_validated(main_blueprint.user_db, username)
             
-            # Only deduct points if user doesn't have their own API key
-            if not user_has_api_key:
-                if not deduct_user_points_with_source(main_blueprint.user_db, username, cost, 'advance_generation', 'Generated advance prompt'):
-                    current_points = get_user_points(main_blueprint.user_db, username)
-                    return jsonify({"success": False, "error": f"Insufficient points. You need {cost} points but have {current_points}."}), 402
+            # API key system - no point deduction needed
 
             # Set user API key if available
             user_api_key = get_user_api_key(main_blueprint.user_db, username)
@@ -1270,17 +1167,6 @@ def create_main_blueprint(
             return jsonify({"success": False, "error": "Feedback not found"}), 404
         return jsonify({"id": feedback_id, "username": row[0], "feedback": row[1]})
 
-    @main_blueprint.route("/get_user_points")
-    @required_login
-    def get_user_points_route():
-        """Get current user points for AJAX requests."""
-        try:
-            username = session["username"]
-            points = get_user_points(main_blueprint.user_db, username)
-            return jsonify({"success": True, "points": points})
-        except Exception as e:
-            logger.exception("Error getting user points")
-            return jsonify({"success": False, "error": "Internal server error."}), 500
 
     @main_blueprint.route("/api_key/validate", methods=["POST"])
     @required_login
@@ -1311,20 +1197,11 @@ def create_main_blueprint(
                 # Mark as validated
                 set_api_key_validated(main_blueprint.user_db, username, True)
                 
-                # Award 100 points for API key validation (will be capped at 500)
-                add_user_points_with_source(main_blueprint.user_db, username, 100.0, 'api_key_add', 'Added and validated Gemini API key')
-                
-                # Check for achievements
-                newly_unlocked, achievement_points = check_and_award_achievements(
-                    main_blueprint.user_db, username, main_blueprint.prompt_db, main_blueprint.community_db
-                )
+                # API key validated successfully (no point system)
                 
                 response_data = {
                     "success": True, 
-                    "message": "API key validated successfully! You earned 100 points.",
-                    "points_awarded": 100.0,
-                    "new_achievements": newly_unlocked,
-                    "achievement_points": achievement_points
+                    "message": "API key validated successfully!"
                 }
             else:
                 response_data = {
@@ -1348,22 +1225,13 @@ def create_main_blueprint(
         username = session["username"]
         
         try:
-            # Check if user has enough points to remove API key (costs 100 points)
-            current_points = get_user_points(main_blueprint.user_db, username)
-            removal_cost = 100.0
-            
-            if current_points < removal_cost:
-                return jsonify({"success": False, "error": f"Insufficient points. Removing API key costs {removal_cost} points but you have {current_points}."}), 402
-            
-            # Deduct 100 points for removing API key
-            if not deduct_user_points_with_source(main_blueprint.user_db, username, removal_cost, 'api_key_remove', 'Removed Gemini API key'):
-                return jsonify({"success": False, "error": "Failed to deduct points for API key removal."}), 500
+            # API key removal (no point system)
             
             # Clear the API key and validation status
             set_user_api_key(main_blueprint.user_db, username, "")
             set_api_key_validated(main_blueprint.user_db, username, False)
             
-            return jsonify({"success": True, "message": f"API key removed successfully. {removal_cost} points deducted."})
+            return jsonify({"success": True, "message": "API key removed successfully."})
             
         except Exception as e:
             logger.exception("Error removing API key")
@@ -1390,46 +1258,6 @@ def create_main_blueprint(
             logger.exception("Error getting API key status")
             return jsonify({"success": False, "error": "Internal server error."}), 500
 
-    @main_blueprint.route("/points/history")
-    @required_login
-    def point_history():
-        """Get user's point transaction history."""
-        username = session["username"]
-        
-        try:
-            # Check and expire points first
-            expire_user_points(main_blueprint.user_db, username)
-            
-            # Get point history
-            history = get_point_history(main_blueprint.user_db, username, limit=100)
-            
-            # Format history for JSON response
-            formatted_history = []
-            for record in history:
-                points, source, description, created_at, expires_at, is_expired, action, points_before, points_after = record
-                
-                formatted_record = {
-                    'points': points,
-                    'source': source,
-                    'description': description or '',
-                    'created_at': created_at,
-                    'expires_at': expires_at,
-                    'is_expired': bool(is_expired),
-                    'action': action or '',
-                    'points_before': points_before,
-                    'points_after': points_after
-                }
-                formatted_history.append(formatted_record)
-            
-            return jsonify({
-                "success": True,
-                "history": formatted_history,
-                "current_points": get_user_points(main_blueprint.user_db, username)
-            })
-            
-        except Exception as e:
-            logger.exception("Error getting point history")
-            return jsonify({"success": False, "error": "Internal server error."}), 500
 
     @main_blueprint.route("/api_key/pool_stats")
     @required_login
@@ -1478,13 +1306,7 @@ def create_main_blueprint(
         # Check if user has a validated API key
         user_has_api_key = is_api_key_validated(main_blueprint.user_db, username)
         
-        # Only deduct points if user doesn't have their own API key
-        if not user_has_api_key:
-            cost = 0.5  # Refinement cost
-            action_description = action if action != 'custom' else 'custom refinement'
-            if not deduct_user_points_with_source(main_blueprint.user_db, username, cost, 'prompt_refinement', f'Refined prompt ({action_description})'):
-                current_points = get_user_points(main_blueprint.user_db, username)
-                return jsonify({"success": False, "error": f"Insufficient points. You need {cost} points but have {current_points}."}), 402
+        # API key system - no point deduction needed
         
         try:
             # Set user API key if available
@@ -1608,11 +1430,6 @@ Provide only the corrected version, no explanations."""
         """Prompt refinement page - allows users to refine existing prompts."""
         username = session["username"]
         try:
-            current_points = get_user_points(main_blueprint.user_db, username)
-        except Exception:
-            current_points = 80.0  # Default fallback
-
-        try:
             # Get user's saved prompts
             saved_prompts = []
             logger.info(f"Loading saved prompts for user: {username}")
@@ -1668,7 +1485,7 @@ Provide only the corrected version, no explanations."""
             "prompts/generator/refinement.html",
             saved_prompts=sanitized_saved_prompts,
             community_prompts=sanitized_community_prompts,
-            current_user_points=current_points
+            # No point system - API key system only
         )
 
     @main_blueprint.route("/generate_title", methods=["POST"])
@@ -1684,14 +1501,11 @@ Provide only the corrected version, no explanations."""
                 return jsonify({"success": False, "error": "Prompt text is required."}), 400
 
             try:
-                # Check if user has enough points (title generation costs 0.2 points)
+                # API key system - no point deduction needed
                 cost = 0.2
                 user_has_api_key = is_api_key_validated(main_blueprint.user_db, username)
                 
-                if not user_has_api_key:
-                    if not deduct_user_points_with_source(main_blueprint.user_db, username, cost, 'title_generation', f'Generated title for {prompt_type} prompt'):
-                        current_points = get_user_points(main_blueprint.user_db, username)
-                        return jsonify({"success": False, "error": f"Insufficient points. You need {cost} points but have {current_points}."}), 402
+                # API key system - no point deduction needed
 
                 # Create title generation prompt based on type
                 title_prompts = {

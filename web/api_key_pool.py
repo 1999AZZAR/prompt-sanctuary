@@ -142,24 +142,18 @@ class ApiKeyPool:
         logger.info(f"Selected API key for user {selected_key.username} (usage #{selected_key.usage_count})")
         return selected_key
     
-    def award_compensation(self, username: str, amount: float = None):
-        """Award compensation points to a user whose API key was used."""
-        if amount is None:
-            amount = self.compensation_rate
-            
+    def track_api_usage(self, username: str):
+        """Track API usage for a user (no compensation system)."""
         try:
-            from models import add_user_points_with_source
-            add_user_points_with_source(self.user_db_path, username, amount, 'api_key_usage', f'Compensation for API key usage by system')
-            
-            # Update the key's compensation tracking
+            # Update the key's usage tracking
             key_info = next((k for k in self.api_keys if k.username == username), None)
             if key_info:
-                key_info.total_compensation += amount
+                key_info.usage_count += 1
             
-            logger.info(f"Awarded {amount} points compensation to {username}")
+            logger.info(f"Tracked API usage for {username}")
             
         except Exception as e:
-            logger.exception(f"Failed to award compensation to {username}: {e}")
+            logger.exception(f"Failed to track API usage for {username}: {e}")
     
     def get_pool_stats(self) -> Dict:
         """Get statistics about the API key pool."""
@@ -249,7 +243,7 @@ def use_system_api_key(user_db_path: str, exclude_user: Optional[str] = None) ->
         
         if key_info:
             # Award compensation to the user
-            pool.award_compensation(key_info.username)
+            pool.track_api_usage(key_info.username)
             return key_info.api_key, key_info.username
         
         return None, None

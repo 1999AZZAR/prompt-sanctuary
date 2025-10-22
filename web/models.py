@@ -3,8 +3,7 @@ import secrets
 import time
 import re
 import logging
-import random
-from datetime import datetime, timedelta
+from datetime import datetime
 from sqlite3 import connect, OperationalError, Row
 
 DATABASE_NAME = 'database/prompts.db'
@@ -13,19 +12,8 @@ SHARED_PROMPTS_TABLE = 'shared_prompts'
 # Initialize logging
 logger = logging.getLogger(__name__)
 
-# Point expiration periods (in days)
-POINT_EXPIRATION = {
-    'daily_login': (17, 30),  # Random between 17-30 days
-    'achievement': 45,         # 45 days
-    'api_key_add': 80,         # 80 days
-    'api_key_usage': 95,       # 95 days
-    'prompt_share': 30,        # 30 days
-    'prompt_unshare': 30,      # 30 days (same as share)
-    'prompt_generation': 15,   # 15 days for basic prompt generation
-    'advance_generation': 20,  # 20 days for advance prompt generation
-    'api_key_remove': None,    # Removal cost doesn't expire (it's a penalty)
-    'original': None          # Original 80 points never expire
-}
+# API Key validation constants
+API_KEY_REQUIRED = True
 
 def get_db_connection(db_path):
     """Get a connection to the SQLite database with integrity enforced.
@@ -77,57 +65,19 @@ def create_tables(user_db, prompt_db, community_db, feedback_db):
             """CREATE TABLE IF NOT EXISTS users (
                 username TEXT PRIMARY KEY,
                 password TEXT NOT NULL,
-                points REAL DEFAULT 80.0,
-                gemini_api_key TEXT,
-                api_key_validated INTEGER DEFAULT 0
+                email TEXT,
+                identicon_value TEXT,
+                gemini_api_key TEXT NOT NULL DEFAULT '',
+                api_key_validated INTEGER NOT NULL DEFAULT 0
             );""",
-            """CREATE TABLE IF NOT EXISTS achievements (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                name TEXT UNIQUE NOT NULL,
-                description TEXT NOT NULL,
-                icon TEXT NOT NULL,
-                points_reward REAL NOT NULL,
-                category TEXT NOT NULL,
-                condition_type TEXT NOT NULL,
-                condition_value INTEGER,
-                hidden INTEGER DEFAULT 0
-            );""",
-            """CREATE TABLE IF NOT EXISTS user_achievements (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
+            """CREATE TABLE IF NOT EXISTS sessions (
+                token TEXT PRIMARY KEY,
                 username TEXT NOT NULL,
-                achievement_id INTEGER NOT NULL,
-                unlocked_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (achievement_id) REFERENCES achievements(id),
-                UNIQUE(username, achievement_id)
-            );""",
-            """CREATE TABLE IF NOT EXISTS user_logins (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                username TEXT NOT NULL,
-                login_date DATE NOT NULL,
-                points_awarded REAL DEFAULT 0,
-                UNIQUE(username, login_date)
-            );""",
-            """CREATE TABLE IF NOT EXISTS point_transactions (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                username TEXT NOT NULL,
-                points REAL NOT NULL,
-                source TEXT NOT NULL,
-                description TEXT,
+                user_agent TEXT,
+                ip TEXT,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                expires_at TIMESTAMP,
-                is_expired INTEGER DEFAULT 0,
-                FOREIGN KEY (username) REFERENCES users(username)
-            );""",
-            """CREATE TABLE IF NOT EXISTS point_history (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                username TEXT NOT NULL,
-                transaction_id INTEGER NOT NULL,
-                action TEXT NOT NULL,
-                points_before REAL NOT NULL,
-                points_after REAL NOT NULL,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (username) REFERENCES users(username),
-                FOREIGN KEY (transaction_id) REFERENCES point_transactions(id)
+                last_active TIMESTAMP,
+                revoked INTEGER DEFAULT 0
             );""",
         ],
         prompt_db: [
@@ -313,16 +263,26 @@ def ensure_users_schema(user_db):
         if "identicon_value" not in cols:
             cursor.execute("ALTER TABLE users ADD COLUMN identicon_value TEXT")
             conn.commit()
-        if "points" not in cols:
-            cursor.execute("ALTER TABLE users ADD COLUMN points REAL DEFAULT 80.0")
-            conn.commit()
         if "gemini_api_key" not in cols:
-            cursor.execute("ALTER TABLE users ADD COLUMN gemini_api_key TEXT")
+            cursor.execute("ALTER TABLE users ADD COLUMN gemini_api_key TEXT NOT NULL DEFAULT ''")
             conn.commit()
         if "api_key_validated" not in cols:
-            cursor.execute("ALTER TABLE users ADD COLUMN api_key_validated INTEGER DEFAULT 0")
+            cursor.execute("ALTER TABLE users ADD COLUMN api_key_validated INTEGER NOT NULL DEFAULT 0")
             conn.commit()
         # Create unique index on email if not exists (allows multiple NULLs in SQLite)
+        # First, clean up any duplicate emails by setting them to NULL
+        cursor.execute("""
+            UPDATE users 
+            SET email = NULL 
+            WHERE email IN (
+                SELECT email FROM users 
+                WHERE email IS NOT NULL 
+                GROUP BY email 
+                HAVING COUNT(*) > 1
+            )
+        """)
+        conn.commit()
+        
         cursor.execute(
             """
             CREATE UNIQUE INDEX IF NOT EXISTS idx_users_email_unique
@@ -613,204 +573,18 @@ def save_prompt_to_db(username, random_val, title, prompt_text, prompt_db):
     return random_val
 
 
-def get_user_points(user_db, username: str) -> float:
-    """Get the current effective points for a user (excluding expired points)."""
-    max_retries = 3
-    for attempt in range(max_retries):
-        try:
-            with get_db_connection(user_db) as conn:
-                cursor = conn.cursor()
-                
-                # Get current effective points from transactions
-                cursor.execute("""
-                    SELECT COALESCE(SUM(points), 0) 
-                    FROM point_transactions 
-                    WHERE username = ? AND is_expired = 0 AND (expires_at IS NULL OR expires_at > datetime('now'))
-                """, (username,))
-                result = cursor.fetchone()
-                
-                if result:
-                    return result[0]
-                else:
-                    # If no transactions exist, return default 80 points
-                    return 80.0
-                    
-        except Exception as e:
-            logger.warning(f"Attempt {attempt + 1}/{max_retries} failed to get user points: {e}")
-            if attempt < max_retries - 1:
-                time.sleep(0.1 * (attempt + 1))
-                continue
-            else:
-                logger.exception("Failed to get user points after all retries")
-                return 80.0
-
-
-def calculate_expiration_date(source: str) -> datetime:
-    """Calculate expiration date for a given point source."""
-    if source == 'original':
-        return None  # Original points never expire
-    
-    expiration_config = POINT_EXPIRATION.get(source)
-    if not expiration_config:
-        return None
-    
-    if isinstance(expiration_config, tuple):
-        # Random range (e.g., daily_login: (17, 30))
-        min_days, max_days = expiration_config
-        days = random.randint(min_days, max_days)
-    else:
-        # Fixed days
-        days = expiration_config
-    
-    return datetime.now() + timedelta(days=days)
-
-
-def add_user_points_with_source(user_db, username: str, points: float, source: str, description: str = None):
-    """Add points to a user with source tracking and expiration."""
-    max_retries = 5
-    for attempt in range(max_retries):
-        try:
-            with get_db_connection(user_db) as conn:
-                conn.execute("BEGIN IMMEDIATE")
-                cursor = conn.cursor()
-                
-                # Check if user has initial points transaction
-                cursor.execute("SELECT COUNT(*) FROM point_transactions WHERE username = ? AND source = 'original'", (username,))
-                has_initial = cursor.fetchone()[0] > 0
-                
-                # Add initial 80 points if user doesn't have them
-                if not has_initial:
-                    cursor.execute("""
-                        INSERT INTO point_transactions (username, points, source, description, expires_at, is_expired)
-                        VALUES (?, ?, ?, ?, ?, ?)
-                    """, (username, 80.0, 'original', 'Initial points', None, 0))
-                
-                # Calculate expiration date
-                expires_at = calculate_expiration_date(source)
-                
-                # Add new points transaction
-                cursor.execute("""
-                    INSERT INTO point_transactions (username, points, source, description, expires_at, is_expired)
-                    VALUES (?, ?, ?, ?, ?, ?)
-                """, (username, points, source, description, expires_at, 0))
-                
-                # Get transaction ID for history
-                transaction_id = cursor.lastrowid
-                
-                # Get points before and after
-                points_before = get_user_points(user_db, username) - points
-                points_after = min(points_before + points, 500.0)  # Cap at 500
-                
-                # Record in history
-                cursor.execute("""
-                    INSERT INTO point_history (username, transaction_id, action, points_before, points_after)
-                    VALUES (?, ?, ?, ?, ?)
-                """, (username, transaction_id, 'add', points_before, points_after))
-                
-                conn.commit()
-                return True
-                
-        except Exception as e:
-            logger.warning(f"Attempt {attempt + 1}/{max_retries} failed to add user points: {e}")
-            if attempt < max_retries - 1:
-                delay = 0.1 * (2 ** attempt) + (0.05 * attempt)
-                time.sleep(delay)
-                continue
-            else:
-                logger.exception("Failed to add user points after all retries")
-                raise e
-
-
-def deduct_user_points_with_source(user_db, username: str, cost: float, source: str, description: str = None) -> bool:
-    """Deduct points from a user with source tracking."""
-    max_retries = 5
-    for attempt in range(max_retries):
-        try:
-            with get_db_connection(user_db) as conn:
-                conn.execute("BEGIN IMMEDIATE")
-                cursor = conn.cursor()
-                
-                current_points = get_user_points(user_db, username)
-                if current_points < cost:
-                    return False
-                
-                # Add deduction transaction
-                cursor.execute("""
-                    INSERT INTO point_transactions (username, points, source, description, expires_at, is_expired)
-                    VALUES (?, ?, ?, ?, ?, ?)
-                """, (username, -cost, source, description, None, 0))
-                
-                # Get transaction ID for history
-                transaction_id = cursor.lastrowid
-                
-                # Record in history
-                points_after = current_points - cost
-                cursor.execute("""
-                    INSERT INTO point_history (username, transaction_id, action, points_before, points_after)
-                    VALUES (?, ?, ?, ?, ?)
-                """, (username, transaction_id, 'deduct', current_points, points_after))
-                
-                conn.commit()
-                return True
-                
-        except Exception as e:
-            logger.warning(f"Attempt {attempt + 1}/{max_retries} failed to deduct user points: {e}")
-            if attempt < max_retries - 1:
-                delay = 0.1 * (2 ** attempt) + (0.05 * attempt)
-                time.sleep(delay)
-                continue
-            else:
-                logger.exception("Failed to deduct user points after all retries")
-                raise e
-
-
-def expire_user_points(user_db, username: str):
-    """Mark expired points as expired for a user."""
-    try:
-        with get_db_connection(user_db) as conn:
-            cursor = conn.cursor()
-            cursor.execute("""
-                UPDATE point_transactions 
-                SET is_expired = 1 
-                WHERE username = ? AND is_expired = 0 AND expires_at IS NOT NULL AND expires_at <= datetime('now')
-            """, (username,))
-            conn.commit()
-    except Exception as e:
-        logger.exception(f"Failed to expire points for user {username}: {e}")
-
-
-def get_point_history(user_db, username: str, limit: int = 50) -> list:
-    """Get point transaction history for a user."""
-    try:
-        with get_db_connection(user_db) as conn:
-            cursor = conn.cursor()
-            cursor.execute("""
-                SELECT pt.points, pt.source, pt.description, pt.created_at, pt.expires_at, pt.is_expired,
-                       ph.action, ph.points_before, ph.points_after
-                FROM point_transactions pt
-                LEFT JOIN point_history ph ON pt.id = ph.transaction_id
-                WHERE pt.username = ?
-                ORDER BY pt.created_at DESC
-                LIMIT ?
-            """, (username, limit))
-            rows = cursor.fetchall()
-            
-            # Convert sqlite3.Row objects to tuples for consistent handling
-            return [tuple(row) for row in rows]
-    except Exception as e:
-        logger.exception(f"Failed to get point history for user {username}: {e}")
-        return []
-
-
-# Legacy functions for backward compatibility
-def add_user_points(user_db, username: str, points: float):
-    """Legacy function - adds points with 'legacy' source."""
-    return add_user_points_with_source(user_db, username, points, 'legacy', 'Legacy point addition')
-
-
-def deduct_user_points(user_db, username: str, cost: float) -> bool:
-    """Legacy function - deducts points with 'legacy' source."""
-    return deduct_user_points_with_source(user_db, username, cost, 'legacy', 'Legacy point deduction')
+def check_api_key_required(user_db, username: str) -> bool:
+    """Check if user has a valid API key. Returns True if API key is required but missing."""
+    with get_db_connection(user_db) as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT gemini_api_key, api_key_validated FROM users WHERE username = ?", (username,))
+        row = cursor.fetchone()
+        
+        if not row:
+            return True  # User not found, API key required
+        
+        api_key, validated = row
+        return not api_key or not validated
 
 
 def get_prompt_sharing_status(username: str, prompt_id: str, title: str, prompt_content: str, prompt_db: str, community_db: str):
@@ -853,499 +627,6 @@ def get_prompt_sharing_status(username: str, prompt_id: str, title: str, prompt_
         'shared_title': shared_title,
         'shared_content': shared_content
     }
-
-
-def initialize_achievements(user_db):
-    """Initialize the achievements table with default achievements."""
-    achievements = [
-        # Welcome achievements
-        ("Welcome!", "Create your first account", "fas fa-star", 10, "welcome", "first_login", 1, 0),
-        ("First Steps", "Generate your first prompt", "fas fa-baby", 5, "generation", "prompts_generated", 1, 0),
-        ("Collector", "Save your first prompt", "fas fa-bookmark", 5, "collection", "prompts_saved", 1, 0),
-        ("Community Member", "Share your first prompt", "fas fa-users", 10, "social", "prompts_shared", 1, 0),
-
-        # Progress achievements
-        ("Getting Started", "Generate 10 prompts", "fas fa-seedling", 15, "generation", "prompts_generated", 10, 0),
-        ("Dedicated", "Generate 50 prompts", "fas fa-fire", 25, "generation", "prompts_generated", 50, 0),
-        ("Prompt Master", "Generate 100 prompts", "fas fa-crown", 50, "generation", "prompts_generated", 100, 0),
-        ("Legendary Creator", "Generate 500 prompts", "fas fa-gem", 100, "generation", "prompts_generated", 500, 0),
-
-        ("Archivist", "Save 10 prompts", "fas fa-archive", 15, "collection", "prompts_saved", 10, 0),
-        ("Librarian", "Save 50 prompts", "fas fa-library", 25, "collection", "prompts_saved", 50, 0),
-        ("Master Archivist", "Save 100 prompts", "fas fa-university", 50, "collection", "prompts_saved", 100, 0),
-
-        ("Contributor", "Share 5 prompts", "fas fa-handshake", 20, "social", "prompts_shared", 5, 0),
-        ("Community Leader", "Share 25 prompts", "fas fa-crown", 40, "social", "prompts_shared", 25, 0),
-        ("Legendary Contributor", "Share 50 prompts", "fas fa-trophy", 75, "social", "prompts_shared", 50, 0),
-
-        # Special achievements
-        ("Explorer", "Try all prompt types", "fas fa-compass", 25, "special", "prompt_types_used", 6, 0),
-        ("Profile Complete", "Complete your profile", "fas fa-user-check", 15, "profile", "profile_completed", 1, 0),
-        ("Daily Visitor", "Login for 7 consecutive days", "fas fa-calendar-check", 30, "streak", "login_streak", 7, 0),
-        ("Weekly Warrior", "Login for 30 consecutive days", "fas fa-shield-alt", 75, "streak", "login_streak", 30, 0),
-        ("Monthly Master", "Login for 100 consecutive days", "fas fa-star-shield", 150, "streak", "login_streak", 100, 0),
-
-        # Quality achievements
-        ("Feedback Guru", "Give feedback on 5 prompts", "fas fa-comments", 15, "quality", "feedback_given", 5, 0),
-        ("Quality Contributor", "Receive 10 positive ratings", "fas fa-thumbs-up", 20, "quality", "positive_ratings", 10, 0),
-        ("Critic", "Give detailed feedback on 25 prompts", "fas fa-search", 30, "quality", "detailed_feedback", 25, 0),
-        ("Quality Master", "Receive 50 positive ratings", "fas fa-star", 50, "quality", "positive_ratings", 50, 0),
-
-        # Diversity achievements
-        ("Style Explorer", "Try 5 different prompt styles", "fas fa-palette", 20, "diversity", "styles_tried", 5, 0),
-        ("Technique Master", "Use 10 different prompt techniques", "fas fa-tools", 25, "diversity", "techniques_used", 10, 0),
-        ("Category Collector", "Create prompts in 8 different categories", "fas fa-folder-open", 30, "diversity", "categories_used", 8, 0),
-        ("Format Specialist", "Use 6 different prompt formats", "fas fa-file-alt", 25, "diversity", "formats_used", 6, 0),
-
-        # Advanced features achievements
-        ("Version Controller", "Create 10 different versions of a prompt", "fas fa-code-branch", 20, "advanced", "versions_created", 10, 0),
-        ("Template Creator", "Create 5 custom prompt templates", "fas fa-file-code", 25, "advanced", "templates_created", 5, 0),
-        ("Batch Processor", "Generate prompts in batch mode", "fas fa-layer-group", 15, "advanced", "batch_processing_used", 1, 0),
-        ("Parameter Expert", "Use advanced parameters 25 times", "fas fa-sliders-h", 30, "advanced", "advanced_params_used", 25, 0),
-
-        # Community engagement achievements
-        ("Helpful Member", "Help 5 other users", "fas fa-hands-helping", 25, "community", "users_helped", 5, 0),
-        ("Mentor", "Provide guidance to 15 users", "fas fa-chalkboard-teacher", 40, "community", "users_helped", 15, 0),
-        ("Community Helper", "Participate in community discussions", "fas fa-users-cog", 20, "community", "community_participation", 1, 0),
-        ("Collaborator", "Work on shared projects with others", "fas fa-handshake", 35, "community", "collaborations", 3, 0),
-
-        # Consistency achievements
-        ("Steady Progress", "Login for 50 days total", "fas fa-route", 30, "consistency", "total_logins", 50, 0),
-        ("Reliable User", "Login for 100 days total", "fas fa-shield-check", 50, "consistency", "total_logins", 100, 0),
-        ("Dedicated Member", "Maintain a 30-day login streak", "fas fa-calendar-star", 75, "consistency", "login_streak", 30, 0),
-        ("Loyal User", "Login for 200 days total", "fas fa-heart", 100, "consistency", "total_logins", 200, 0),
-
-        # Exploration achievements
-        ("Feature Explorer", "Try all main features", "fas fa-binoculars", 25, "exploration", "features_used", 10, 0),
-        ("Settings Expert", "Customize all profile settings", "fas fa-cog", 15, "exploration", "settings_customized", 1, 0),
-        ("Tool Master", "Use all available tools", "fas fa-toolbox", 30, "exploration", "tools_used", 8, 0),
-        ("Discovery Seeker", "Find and use hidden features", "fas fa-lightbulb", 20, "exploration", "hidden_features_used", 5, 0),
-
-        # Additional achievements
-        ("Power User", "Generate 1000 prompts", "fas fa-bolt", 200, "generation", "prompts_generated", 1000, 0),
-        ("Library Master", "Save 250 prompts", "fas fa-book-reader", 75, "collection", "prompts_saved", 250, 0),
-        ("Community Legend", "Share 100 prompts", "fas fa-crown", 150, "social", "prompts_shared", 100, 0),
-        ("Year Round User", "Login for 365 consecutive days", "fas fa-calendar-alt", 200, "streak", "login_streak", 365, 0),
-        ("Perfectionist", "Create 50 prompt versions", "fas fa-check-double", 40, "advanced", "versions_created", 50, 0),
-        ("Innovation Leader", "Create 20 custom templates", "fas fa-lightbulb", 60, "advanced", "templates_created", 20, 0),
-        ("Community Champion", "Help 50 other users", "fas fa-trophy", 100, "community", "users_helped", 50, 0),
-        ("Feature Pioneer", "Try 20 different features", "fas fa-flag", 50, "exploration", "features_used", 20, 0),
-
-        # Hidden achievements
-        ("Early Adopter", "Be among the first 100 users", "fas fa-rocket", 100, "special", "user_rank", 100, 1),
-        ("Reverse Engineer", "Use reverse image prompts", "fas fa-magic", 15, "special", "reverse_image_used", 1, 0),
-        ("Advanced User", "Use advanced prompts", "fas fa-graduation-cap", 20, "special", "advanced_prompts_used", 1, 0),
-        ("API Key Provider", "Add and validate your own Gemini API key", "fas fa-key", 100, "special", "api_key_validated", 1, 0),
-    ]
-
-    with get_db_connection(user_db) as conn:
-        cursor = conn.cursor()
-
-        for achievement in achievements:
-            try:
-                cursor.execute("""
-                    INSERT OR IGNORE INTO achievements (name, description, icon, points_reward, category, condition_type, condition_value, hidden)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-                """, achievement)
-            except Exception as e:
-                print(f"Error inserting achievement {achievement[0]}: {e}")
-
-        conn.commit()
-
-
-def check_and_award_achievements(user_db, username: str, prompt_db: str, community_db: str):
-    """Check if user has earned any new achievements and award them."""
-    max_retries = 3
-    for attempt in range(max_retries):
-        try:
-            with get_db_connection(user_db) as conn:
-                cursor = conn.cursor()
-
-                # Get user's current stats
-                stats = get_user_stats(username, user_db, prompt_db, community_db)
-
-                # Get user's unlocked achievements
-                cursor.execute("SELECT achievement_id FROM user_achievements WHERE username = ?", (username,))
-                unlocked = {row[0] for row in cursor.fetchall()}
-
-                # Check each achievement
-                cursor.execute("SELECT * FROM achievements WHERE hidden = 0 OR id IN (SELECT achievement_id FROM user_achievements WHERE username = ?)", (username,))
-                all_achievements = cursor.fetchall()
-
-                newly_unlocked = []
-                total_points_earned = 0
-
-                for achievement in all_achievements:
-                    achievement_id = achievement[0]
-                    if achievement_id in unlocked:
-                        continue
-
-                    condition_type = achievement[6]  # condition_type column
-                    condition_value = achievement[7]  # condition_value column
-
-                    if check_achievement_condition(stats, condition_type, condition_value):
-                        # Award achievement
-                        cursor.execute(
-                            "INSERT INTO user_achievements (username, achievement_id) VALUES (?, ?)",
-                            (username, achievement_id)
-                        )
-                        newly_unlocked.append(achievement[1])  # name
-                        total_points_earned += achievement[4]  # points_reward
-
-                if newly_unlocked:
-                    # Add achievement points using the new system
-                    try:
-                        # Calculate expiration date for achievement points
-                        expires_at = calculate_expiration_date('achievement')
-                        
-                        # Add points transaction
-                        cursor.execute("""
-                            INSERT INTO point_transactions (username, points, source, description, expires_at, is_expired)
-                            VALUES (?, ?, ?, ?, ?, ?)
-                        """, (username, total_points_earned, 'achievement', f'Achievement rewards: {", ".join(newly_unlocked)}', expires_at, 0))
-                        
-                        # Get transaction ID for history
-                        transaction_id = cursor.lastrowid
-                        
-                        # Get points before and after
-                        current_points = get_user_points(user_db, username)
-                        points_before = current_points - total_points_earned
-                        points_after = min(current_points, 500.0)  # Cap at 500
-                        
-                        # Record in history
-                        cursor.execute("""
-                            INSERT INTO point_history (username, transaction_id, action, points_before, points_after)
-                            VALUES (?, ?, ?, ?, ?)
-                        """, (username, transaction_id, 'add', points_before, points_after))
-                        
-                    except Exception as e:
-                        logger.exception("Failed to add achievement points")
-                        # Don't fail the entire operation if points update fails
-
-                conn.commit()
-                return newly_unlocked, total_points_earned
-
-        except Exception as e:
-            if attempt < max_retries - 1:
-                time.sleep(0.1 * (attempt + 1))
-                continue
-            else:
-                logger.exception("Failed to check achievements after retries")
-                return [], 0  # Return empty results on failure
-
-
-def get_user_stats(username: str, user_db: str, prompt_db: str, community_db: str):
-    """Get user's statistics for achievement checking."""
-    stats = {
-        'prompts_generated': 0,
-        'prompts_saved': 0,
-        'prompts_shared': 0,
-        'prompt_types_used': set(),
-        'login_streak': 0,
-        'profile_completed': 0,
-        'user_rank': 0,
-        'reverse_image_used': 0,
-        'advanced_prompts_used': 0,
-        'api_key_validated': 0,
-        # Quality stats
-        'feedback_given': 0,
-        'positive_ratings': 0,
-        'detailed_feedback': 0,
-        # Diversity stats
-        'styles_tried': set(),
-        'techniques_used': set(),
-        'categories_used': set(),
-        'formats_used': set(),
-        # Advanced features stats
-        'versions_created': 0,
-        'templates_created': 0,
-        'batch_processing_used': 0,
-        'advanced_params_used': 0,
-        # Community stats
-        'users_helped': 0,
-        'community_participation': 0,
-        'collaborations': 0,
-        # Consistency stats
-        'total_logins': 0,
-        # Exploration stats
-        'features_used': set(),
-        'settings_customized': 0,
-        'tools_used': set(),
-        'hidden_features_used': set()
-    }
-
-    # Get prompts generated (from prompt_versions)
-    with get_db_connection(prompt_db) as conn:
-        cursor = conn.cursor()
-        cursor.execute("SELECT COUNT(*) FROM prompt_versions WHERE username = ?", (username,))
-        stats['prompts_generated'] = cursor.fetchone()[0]
-
-        # Get prompts saved (from user's personal table)
-        cursor.execute(f"SELECT COUNT(*) FROM \"{username}\"")
-        stats['prompts_saved'] = cursor.fetchone()[0]
-
-    # Get prompts shared
-    with get_db_connection(community_db) as conn:
-        cursor = conn.cursor()
-        cursor.execute("SELECT COUNT(*) FROM shared WHERE owner = ?", (username,))
-        stats['prompts_shared'] = cursor.fetchone()[0]
-
-    # Get user rank (count of users created before this user)
-    # Since we have separate databases, we need to collect usernames from each database
-    all_usernames = set()
-    
-    # Get usernames from prompt_versions
-    with get_db_connection(prompt_db) as conn:
-        cursor = conn.cursor()
-        cursor.execute("SELECT DISTINCT username FROM prompt_versions")
-        for row in cursor.fetchall():
-            all_usernames.add(row[0])
-    
-    # Get usernames from shared
-    with get_db_connection(community_db) as conn:
-        cursor = conn.cursor()
-        cursor.execute("SELECT DISTINCT owner FROM shared")
-        for row in cursor.fetchall():
-            all_usernames.add(row[0])
-    
-    # Get usernames from user_logins
-    with get_db_connection(user_db) as conn:
-        cursor = conn.cursor()
-        cursor.execute("SELECT DISTINCT username FROM user_logins")
-        for row in cursor.fetchall():
-            all_usernames.add(row[0])
-    
-    # Count users in the users table that are in our collected usernames (excluding current user)
-    user_rank = 0
-    if all_usernames:
-        with get_db_connection(user_db) as conn:
-            cursor = conn.cursor()
-            placeholders = ','.join('?' for _ in all_usernames)
-            cursor.execute(f"""
-                SELECT COUNT(*) FROM users
-                WHERE username IN ({placeholders}) AND username != ?
-            """, list(all_usernames) + [username])
-            user_rank = cursor.fetchone()[0]
-    
-    stats['user_rank'] = user_rank
-
-    # Get total logins
-    with get_db_connection(user_db) as conn:
-        cursor = conn.cursor()
-        cursor.execute("SELECT COUNT(*) FROM user_logins WHERE username = ?", (username,))
-        stats['total_logins'] = cursor.fetchone()[0]
-
-    # Get API key validation status
-    with get_db_connection(user_db) as conn:
-        cursor = conn.cursor()
-        cursor.execute("SELECT api_key_validated FROM users WHERE username = ?", (username,))
-        row = cursor.fetchone()
-        stats['api_key_validated'] = 1 if row and row[0] else 0
-
-    # Convert sets to lengths for achievement checking
-    stats['styles_tried'] = len(stats['styles_tried'])
-    stats['techniques_used'] = len(stats['techniques_used'])
-    stats['categories_used'] = len(stats['categories_used'])
-    stats['formats_used'] = len(stats['formats_used'])
-    stats['features_used'] = len(stats['features_used'])
-    stats['tools_used'] = len(stats['tools_used'])
-    stats['hidden_features_used'] = len(stats['hidden_features_used'])
-
-    return stats
-
-
-def check_achievement_condition(stats, condition_type: str, condition_value: int):
-    """Check if a specific achievement condition is met."""
-    if condition_type == "prompts_generated":
-        return stats['prompts_generated'] >= condition_value
-    elif condition_type == "prompts_saved":
-        return stats['prompts_saved'] >= condition_value
-    elif condition_type == "prompts_shared":
-        return stats['prompts_shared'] >= condition_value
-    elif condition_type == "prompt_types_used":
-        return len(stats['prompt_types_used']) >= condition_value
-    elif condition_type == "login_streak":
-        return stats['login_streak'] >= condition_value
-    elif condition_type == "profile_completed":
-        return stats['profile_completed'] >= condition_value
-    elif condition_type == "user_rank":
-        return stats['user_rank'] < condition_value  # Lower rank number means earlier user
-    elif condition_type == "first_login":
-        return True  # Always true for welcome achievements
-    elif condition_type == "reverse_image_used":
-        return stats['reverse_image_used'] >= condition_value
-    elif condition_type == "advanced_prompts_used":
-        return stats['advanced_prompts_used'] >= condition_value
-    # Quality conditions
-    elif condition_type == "feedback_given":
-        return stats['feedback_given'] >= condition_value
-    elif condition_type == "positive_ratings":
-        return stats['positive_ratings'] >= condition_value
-    elif condition_type == "detailed_feedback":
-        return stats['detailed_feedback'] >= condition_value
-    # Diversity conditions
-    elif condition_type == "styles_tried":
-        return stats['styles_tried'] >= condition_value
-    elif condition_type == "techniques_used":
-        return stats['techniques_used'] >= condition_value
-    elif condition_type == "categories_used":
-        return stats['categories_used'] >= condition_value
-    elif condition_type == "formats_used":
-        return stats['formats_used'] >= condition_value
-    # Advanced features conditions
-    elif condition_type == "versions_created":
-        return stats['versions_created'] >= condition_value
-    elif condition_type == "templates_created":
-        return stats['templates_created'] >= condition_value
-    elif condition_type == "batch_processing_used":
-        return stats['batch_processing_used'] >= condition_value
-    elif condition_type == "advanced_params_used":
-        return stats['advanced_params_used'] >= condition_value
-    # Community conditions
-    elif condition_type == "users_helped":
-        return stats['users_helped'] >= condition_value
-    elif condition_type == "community_participation":
-        return stats['community_participation'] >= condition_value
-    elif condition_type == "collaborations":
-        return stats['collaborations'] >= condition_value
-    # Consistency conditions
-    elif condition_type == "total_logins":
-        return stats['total_logins'] >= condition_value
-    # Exploration conditions
-    elif condition_type == "features_used":
-        return stats['features_used'] >= condition_value
-    elif condition_type == "settings_customized":
-        return stats['settings_customized'] >= condition_value
-    elif condition_type == "tools_used":
-        return stats['tools_used'] >= condition_value
-    elif condition_type == "hidden_features_used":
-        return stats['hidden_features_used'] >= condition_value
-    elif condition_type == "api_key_validated":
-        return stats['api_key_validated'] >= condition_value
-
-    return False
-
-
-def get_user_achievements(user_db, username: str):
-    """Get all achievements for a user."""
-    with get_db_connection(user_db) as conn:
-        cursor = conn.cursor()
-        cursor.execute("""
-            SELECT a.id, a.name, a.description, a.icon, a.points_reward, a.category,
-                   ua.unlocked_at
-            FROM achievements a
-            JOIN user_achievements ua ON a.id = ua.achievement_id
-            WHERE ua.username = ?
-            ORDER BY ua.unlocked_at DESC
-        """, (username,))
-        return cursor.fetchall()
-
-
-def process_daily_login_bonus(user_db, username: str):
-    """Process daily login bonus for a user. Returns points awarded."""
-    import random
-    import time
-    from datetime import datetime, date
-
-    today = date.today()
-    yesterday = today.replace(day=today.day - 1) if today.day > 1 else today.replace(month=today.month - 1, day=31)
-
-    # Retry logic for database operations
-    max_retries = 3
-    for attempt in range(max_retries):
-        try:
-            with get_db_connection(user_db) as conn:
-                # Use immediate transaction for better concurrency
-                conn.execute("BEGIN IMMEDIATE")
-                cursor = conn.cursor()
-
-                # Check if user already got bonus today
-                cursor.execute("SELECT points_awarded FROM user_logins WHERE username = ? AND login_date = ?", (username, today))
-                today_login = cursor.fetchone()
-
-                if today_login:
-                    conn.commit()
-                    return 0  # Already got bonus today
-
-                # Check yesterday's login to calculate streak
-                cursor.execute("SELECT points_awarded FROM user_logins WHERE username = ? AND login_date = ?", (username, yesterday))
-                yesterday_login = cursor.fetchone()
-
-                # Calculate streak
-                streak = 1
-                if yesterday_login:
-                    # Get current streak from yesterday's record
-                    cursor.execute("""
-                        SELECT login_date FROM user_logins
-                        WHERE username = ?
-                        ORDER BY login_date DESC
-                        LIMIT 2
-                    """, (username,))
-                    recent_logins = cursor.fetchall()
-
-                    if len(recent_logins) == 2:
-                        from datetime import timedelta
-                        date1 = recent_logins[0][0]
-                        date2 = recent_logins[1][0]
-                        if isinstance(date1, str):
-                            date1 = datetime.strptime(date1, '%Y-%m-%d').date()
-                        if isinstance(date2, str):
-                            date2 = datetime.strptime(date2, '%Y-%m-%d').date()
-
-                        if (date1 - date2).days == 1:
-                            streak = 2  # At least 2 days in a row
-
-                # Generate random bonus points (5-12)
-                bonus_points = random.randint(5, 12)
-
-                # Insert today's login record
-                cursor.execute(
-                    "INSERT OR REPLACE INTO user_logins (username, login_date, points_awarded) VALUES (?, ?, ?)",
-                    (username, today, bonus_points)
-                )
-
-                # Add points using the new system with source tracking
-                try:
-                    # Calculate expiration date for daily login points
-                    expires_at = calculate_expiration_date('daily_login')
-                    
-                    # Add points transaction
-                    cursor.execute("""
-                        INSERT INTO point_transactions (username, points, source, description, expires_at, is_expired)
-                        VALUES (?, ?, ?, ?, ?, ?)
-                    """, (username, bonus_points, 'daily_login', f'Daily login bonus (streak: {streak})', expires_at, 0))
-                    
-                    # Get transaction ID for history
-                    transaction_id = cursor.lastrowid
-                    
-                    # Get points before and after
-                    current_points = get_user_points(user_db, username)
-                    points_before = current_points - bonus_points
-                    points_after = min(current_points, 500.0)  # Cap at 500
-                    
-                    # Record in history
-                    cursor.execute("""
-                        INSERT INTO point_history (username, transaction_id, action, points_before, points_after)
-                        VALUES (?, ?, ?, ?, ?)
-                    """, (username, transaction_id, 'add', points_before, points_after))
-                    
-                except Exception as e:
-                    # If updating points fails, try to rollback the login record
-                    cursor.execute("DELETE FROM user_logins WHERE username = ? AND login_date = ?", (username, today))
-                    conn.rollback()
-                    raise e
-
-                conn.commit()
-                return bonus_points
-
-        except Exception as e:
-            if attempt < max_retries - 1:
-                # Wait before retrying
-                time.sleep(0.1 * (attempt + 1))
-                continue
-            else:
-                logger.exception("Failed to process daily login bonus after retries")
-                return 0  # Return 0 if all retries fail
 
 
 def get_user_api_key(user_db, username: str) -> str | None:

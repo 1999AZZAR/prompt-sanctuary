@@ -20,7 +20,7 @@ class PromptRefinement {
         const responseDiv = document.getElementById('response');
         
         if (!resultSection || !responseDiv) {
-            console.log('Result section or response div not found');
+            // Result section or response div not found (normal for pages without refinement)
             return;
         }
         
@@ -39,7 +39,7 @@ class PromptRefinement {
         const elaborateBtn = document.getElementById('elaborate-prompt-btn');
         
         if (!shortenBtn || !elaborateBtn) {
-            console.log('Refinement buttons not found');
+            // Refinement buttons not found (normal for pages without refinement)
             return;
         }
         

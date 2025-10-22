@@ -102,7 +102,7 @@ function submitFormStream(formId, url) {
             if (loading) loading.classList.add('hidden');
         }
         blurBackground(false);
-        updateUserPoints();
+        // Generation completed successfully
     });
 }
 
@@ -177,7 +177,7 @@ function submitForm(formId, url) {
         // Handle error responses (JSON format)
         if (data && !data.success) {
             if (response.status === 402) {
-                showToast("Insufficient points! Visit your profile to see your current balance.", 'warning');
+                showToast("API key required! Please add your Gemini API key to continue.", 'warning');
                 return;
             } else {
                 showToast(data.error || "An error occurred while generating the response.", 'error');
@@ -232,7 +232,7 @@ function submitForm(formId, url) {
             if (loading) loading.classList.add('hidden');
         }
         blurBackground(false); // Restore blur removal
-        updateUserPoints(); // Update points display after generation
+        // Generation completed successfully
     });
 }
 
@@ -319,23 +319,38 @@ function escapeHtml(str) {
         .replace(/'/g, '&#039;');
 }
 
-// Function to update user points display
-function updateUserPoints() {
-    fetch('/get_user_points', {
+// Function to check API key status
+function checkApiKeyStatus() {
+    fetch('/api_key/status', {
         method: 'GET',
         headers: window.CSRF.getFormHeaders()
     })
-    .then(response => response.json())
+    .then(response => {
+        if (response.ok) {
+            const contentType = response.headers.get('content-type');
+            if (contentType && contentType.includes('application/json')) {
+                return response.json();
+            } else {
+                // If not JSON, user might not be logged in
+                return null;
+            }
+        } else {
+            // If not authenticated, don't show error
+            return null;
+        }
+    })
     .then(data => {
-        if (data.success && data.points !== undefined) {
-            const pointsElement = document.getElementById('user-points');
-            if (pointsElement) {
-                pointsElement.textContent = parseFloat(data.points).toFixed(1);
+        if (data && data.success) {
+            const apiKeyElement = document.getElementById('api-key-status');
+            if (apiKeyElement) {
+                apiKeyElement.textContent = data.is_validated ? 'Validated' : 'Not Set';
+                apiKeyElement.className = data.is_validated ? 'text-green-600' : 'text-red-600';
             }
         }
     })
     .catch(error => {
-        console.error('Error updating user points:', error);
+        // Silently handle errors - user might not be logged in
+        console.debug('API key status check failed (user might not be logged in):', error);
     });
 }
 
@@ -343,6 +358,11 @@ function updateUserPoints() {
 function previewImage() {
     var input = document.querySelector('input[name="image"]');
     var preview = document.getElementById('preview-image');
+    
+    if (!input || !preview) {
+        console.debug('Image input or preview element not found in the DOM');
+        return;
+    }
     var container = document.getElementById('preview-container');
 
     if (input && preview) {
@@ -401,57 +421,57 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Handle form submission for text prompt
     var textPromptForm = document.getElementById('text-prompt-form');
-    if (textPromptForm) {
+    if (!textPromptForm) {
+        console.debug('Text prompt form not found in the DOM');
+    } else {
         textPromptForm.addEventListener('submit', function(event) {
             event.preventDefault(); // Prevent default form submission behavior
             submitFormStream('text-prompt-form', '/generate/tprompt/stream'); // Submit form with streaming
         });
-    } else {
-        console.error('Text prompt form not found in the DOM');
     }
 
     // Handle form submission for random text prompt
     var randomTextPromptForm = document.getElementById('random-text-prompt-form');
-    if (randomTextPromptForm) {
+    if (!randomTextPromptForm) {
+        console.debug('Random text prompt form not found in the DOM');
+    } else {
         randomTextPromptForm.addEventListener('submit', function(event) {
             event.preventDefault(); // Prevent default form submission behavior
             submitForm('random-text-prompt-form', '/generate/trandom'); // Submit form asynchronously
         });
-    } else {
-        console.error('Random text prompt form not found in the DOM');
     }
 
     // Handle form submission for advanced text prompt
     var aTextPromptForm = document.getElementById('a-text-prompt-form');
-    if (aTextPromptForm) {
+    if (!aTextPromptForm) {
+        // Advanced text prompt form not found in the DOM (normal for basic pages)
+    } else {
         aTextPromptForm.addEventListener('submit', function(event) {
             event.preventDefault(); // Prevent default form submission behavior
             submitForm('a-text-prompt-form', '/advance/generate'); // Submit form asynchronously
         });
-    } else {
-        console.error('Advanced text prompt form not found in the DOM');
     }
 
     // Handle form submission for advanced image prompt
     var aImagePromptForm = document.getElementById('a-image-prompt-form');
-    if (aImagePromptForm) {
+    if (!aImagePromptForm) {
+        // Advanced image prompt form not found in the DOM (normal for basic pages)
+    } else {
         aImagePromptForm.addEventListener('submit', function(event) {
             event.preventDefault(); // Prevent default form submission behavior
             submitForm('a-image-prompt-form', '/advance/igenerate'); // Submit form asynchronously
         });
-    } else {
-        console.error('Advanced image prompt form not found in the DOM');
     }
 
     // Handle form submission for advanced reverse image prompt
     var aReverseImageForm = document.getElementById('a-reverse-image-form');
-    if (aReverseImageForm) {
+    if (!aReverseImageForm) {
+        // Advanced reverse image form not found in the DOM (normal for basic pages)
+    } else {
         aReverseImageForm.addEventListener('submit', function(event) {
             event.preventDefault(); // Prevent default form submission behavior
             submitForm('a-reverse-image-form', '/advance/image'); // Submit form asynchronously
         });
-    } else {
-        console.error('Advanced reverse image form not found in the DOM');
     }
 
     // Handle form submission for image prompt

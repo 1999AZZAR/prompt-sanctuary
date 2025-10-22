@@ -95,7 +95,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <i class="fas fa-key text-slate-500"></i>
                     <div class="flex-1">
                         <span class="text-sm font-medium text-slate-700">No API Key Set</span>
-                        <p class="text-xs text-slate-600">Add your Gemini API key to avoid point consumption</p>
+                        <p class="text-xs text-slate-600">Add your Gemini API key to use the service</p>
                     </div>
                 </div>
             `;
@@ -131,15 +131,9 @@ document.addEventListener('DOMContentLoaded', function() {
             if (data.success) {
                 showSuccess(data.message);
                 
-                // Show points awarded if applicable
-                if (data.points_awarded) {
-                    showNotification(`+${data.points_awarded} points awarded!`, 'success');
-                }
+                // API key validated successfully
 
-                // Show achievements if any
-                if (data.new_achievements && data.new_achievements.length > 0) {
-                    showNotification(`New achievement unlocked: ${data.new_achievements.join(', ')}`, 'achievement');
-                }
+                // API key validated successfully
 
                 // Reload status and pool stats
                 await loadApiKeyStatus();
@@ -176,14 +170,14 @@ document.addEventListener('DOMContentLoaded', function() {
     function updatePoolStatsDisplay(userStats, poolStats) {
         // Update user statistics
         const userUsageCount = document.getElementById('user-usage-count');
-        const userCompensation = document.getElementById('user-compensation');
+        const userApiUsage = document.getElementById('user-api-usage');
         
         if (userStats.has_key) {
             userUsageCount.textContent = userStats.usage_count || 0;
-            userCompensation.textContent = `${userStats.total_compensation || 0} pts`;
+            userApiUsage.textContent = `${userStats.api_usage || 0} requests`;
         } else {
             userUsageCount.textContent = 'N/A';
-            userCompensation.textContent = 'N/A';
+            userApiUsage.textContent = 'N/A';
         }
 
         // Update pool statistics
@@ -197,7 +191,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     async function removeApiKey() {
-        if (!confirm('Are you sure you want to remove your API key? You will start consuming points again.')) {
+        if (!confirm('Are you sure you want to remove your API key? You will not be able to use the service without it.')) {
             return;
         }
 
@@ -249,7 +243,7 @@ document.addEventListener('DOMContentLoaded', function() {
         } else if (type === 'error') {
             notification.className += ' bg-red-500 text-white';
             notification.innerHTML = `<i class="fas fa-exclamation-circle mr-2"></i>${message}`;
-        } else if (type === 'achievement') {
+        } else if (type === 'success') {
             notification.className += ' bg-yellow-500 text-white';
             notification.innerHTML = `<i class="fas fa-trophy mr-2"></i>${message}`;
         }

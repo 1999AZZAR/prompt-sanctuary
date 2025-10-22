@@ -216,7 +216,7 @@ class DatabaseMigrator:
             return False
     
     def migrate_users_table(self, db_path: str, dry_run: bool = False) -> bool:
-        """Migrate the users table to include new API key columns."""
+        """Migrate the users table to remove point system and make API keys mandatory."""
         logger.info(f"Migrating users table in {db_path}")
         
         # Check if users table exists
@@ -225,99 +225,208 @@ class DatabaseMigrator:
             return True  # This is not an error for databases that don't need users table
         
         try:
-            # Add gemini_api_key column
-            self.add_column_if_not_exists(
-                db_path, 'users', 'gemini_api_key', 'TEXT', dry_run
-            )
-            
-            # Add api_key_validated column
-            self.add_column_if_not_exists(
-                db_path, 'users', 'api_key_validated', 'INTEGER DEFAULT 0', dry_run
-            )
-            
-            # Add email column if missing (for older databases)
-            self.add_column_if_not_exists(
-                db_path, 'users', 'email', 'TEXT', dry_run
-            )
-            
-            # Add identicon_value column if missing
-            self.add_column_if_not_exists(
-                db_path, 'users', 'identicon_value', 'TEXT', dry_run
-            )
-            
-            # Add points column if missing (shouldn't happen, but just in case)
-            self.add_column_if_not_exists(
-                db_path, 'users', 'points', 'REAL DEFAULT 80.0', dry_run
-            )
-            
-            # Create unique index on email
-            self.create_index_if_not_exists(
-                db_path, 'idx_users_email_unique',
-                'ON users(email) WHERE email IS NOT NULL', dry_run
-            )
-            
-            return True
+            with get_db_connection(db_path) as conn:
+                cursor = conn.cursor()
+                
+                # Check if point system tables exist, if not, migration may have already been completed
+                cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='point_transactions'")
+                if not cursor.fetchone():
+                    logger.info("Point system tables not found, migration may have already been completed")
+                    return True
+                
+                # 1. Update users table schema
+                logger.info("Updating users table schema...")
+                
+                # Disable foreign key constraints temporarily
+                cursor.execute("PRAGMA foreign_keys=OFF")
+                conn.commit()
+                
+                # Drop existing users_new table if it exists
+                cursor.execute("DROP TABLE IF EXISTS users_new")
+                
+                # Make gemini_api_key and api_key_validated NOT NULL with defaults
+                cursor.execute("""
+                    CREATE TABLE users_new (
+                        username TEXT PRIMARY KEY,
+                        password TEXT NOT NULL,
+                        email TEXT,
+                        identicon_value TEXT,
+                        gemini_api_key TEXT NOT NULL DEFAULT '',
+                        api_key_validated INTEGER NOT NULL DEFAULT 0
+                    )
+                """)
+                
+                # Copy existing data, handling NULL values
+                cursor.execute("""
+                    INSERT INTO users_new (username, password, email, identicon_value, gemini_api_key, api_key_validated)
+                    SELECT 
+                        username, 
+                        password, 
+                        COALESCE(email, '') as email,
+                        COALESCE(identicon_value, '') as identicon_value,
+                        COALESCE(gemini_api_key, '') as gemini_api_key,
+                        COALESCE(api_key_validated, 0) as api_key_validated
+                    FROM users
+                """)
+                
+                # Drop old table and rename new one
+                cursor.execute("DROP TABLE users")
+                cursor.execute("ALTER TABLE users_new RENAME TO users")
+                
+                # Re-enable foreign key constraints
+                cursor.execute("PRAGMA foreign_keys=ON")
+                conn.commit()
+                
+                # 2. Remove point-related tables
+                logger.info("Removing point-related tables...")
+                
+                tables_to_remove = [
+                    "point_transactions",
+                    "point_history",
+                    "user_logins",
+                    "achievements",
+                    "user_achievements",
+                ]
+                
+                for table in tables_to_remove:
+                    cursor.execute(f"DROP TABLE IF EXISTS {table}")
+                    logger.info(f"Removed table: {table}")
+                conn.commit()
+
+                # Ensure sessions table exists and is correct (it's not point-related but good to check)
+                cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='sessions'")
+                if not cursor.fetchone():
+                    cursor.execute(
+                        """
+                        CREATE TABLE IF NOT EXISTS sessions (
+                            token TEXT PRIMARY KEY,
+                            username TEXT NOT NULL,
+                            user_agent TEXT,
+                            ip TEXT,
+                            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                            last_active TIMESTAMP,
+                            revoked INTEGER DEFAULT 0
+                        );
+                        """
+                    )
+                    conn.commit()
+                    logger.info("Created sessions table.")
+                else:
+                    logger.info("Sessions table already exists")
+
+                logger.info("User database migration completed successfully")
+                return True
             
         except Exception as e:
             logger.error(f"Failed to migrate users table: {e}")
             return False
     
-    def migrate_achievements_table(self, db_path: str, dry_run: bool = False) -> bool:
-        """Migrate the achievements table."""
-        logger.info(f"Migrating achievements table in {db_path}")
+    def migrate_api_key_system(self, db_path: str, dry_run: bool = False) -> bool:
+        """Migrate to API key system - remove point system and make API keys mandatory."""
+        logger.info(f"Migrating to API key system in {db_path}")
+        
+        # Only run this on user database
+        if 'user.db' not in db_path:
+            logger.info(f"Skipping API key migration for non-user database: {db_path}")
+            return True
         
         try:
-            # Create achievements table
-            achievements_table = """
-            (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                name TEXT UNIQUE NOT NULL,
-                description TEXT NOT NULL,
-                icon TEXT NOT NULL,
-                points_reward REAL NOT NULL,
-                category TEXT NOT NULL,
-                condition_type TEXT NOT NULL,
-                condition_value INTEGER,
-                hidden INTEGER DEFAULT 0
-            )
-            """
-            
-            self.create_table_if_not_exists(
-                db_path, 'achievements', achievements_table, dry_run
-            )
-            
-            return True
-            
+            with get_db_connection(db_path) as conn:
+                cursor = conn.cursor()
+                
+                # Check if point system tables exist, if not, migration may have already been completed
+                cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='point_transactions'")
+                if not cursor.fetchone():
+                    logger.info("Point system tables not found, API key migration may have already been completed")
+                    return True
+                
+                # 1. Update users table schema
+                logger.info("Updating users table schema...")
+                
+                # Disable foreign key constraints temporarily
+                cursor.execute("PRAGMA foreign_keys=OFF")
+                conn.commit()
+                
+                # Drop existing users_new table if it exists
+                cursor.execute("DROP TABLE IF EXISTS users_new")
+                
+                # Make gemini_api_key and api_key_validated NOT NULL with defaults
+                cursor.execute("""
+                    CREATE TABLE users_new (
+                        username TEXT PRIMARY KEY,
+                        password TEXT NOT NULL,
+                        email TEXT,
+                        identicon_value TEXT,
+                        gemini_api_key TEXT NOT NULL DEFAULT '',
+                        api_key_validated INTEGER NOT NULL DEFAULT 0
+                    )
+                """)
+                
+                # Copy existing data, handling NULL values
+                cursor.execute("""
+                    INSERT INTO users_new (username, password, email, identicon_value, gemini_api_key, api_key_validated)
+                    SELECT 
+                        username, 
+                        password, 
+                        COALESCE(email, '') as email,
+                        COALESCE(identicon_value, '') as identicon_value,
+                        COALESCE(gemini_api_key, '') as gemini_api_key,
+                        COALESCE(api_key_validated, 0) as api_key_validated
+                    FROM users
+                """)
+                
+                # Drop old table and rename new one
+                cursor.execute("DROP TABLE users")
+                cursor.execute("ALTER TABLE users_new RENAME TO users")
+                
+                # Re-enable foreign key constraints
+                cursor.execute("PRAGMA foreign_keys=ON")
+                conn.commit()
+                
+                # 2. Remove point-related tables
+                logger.info("Removing point-related tables...")
+                
+                tables_to_remove = [
+                    "point_transactions",
+                    "point_history",
+                    "user_logins",
+                    "achievements",
+                    "user_achievements",
+                ]
+                
+                for table in tables_to_remove:
+                    cursor.execute(f"DROP TABLE IF EXISTS {table}")
+                    logger.info(f"Removed table: {table}")
+                conn.commit()
+
+                # Ensure sessions table exists and is correct
+                cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='sessions'")
+                if not cursor.fetchone():
+                    cursor.execute(
+                        """
+                        CREATE TABLE IF NOT EXISTS sessions (
+                            token TEXT PRIMARY KEY,
+                            username TEXT NOT NULL,
+                            user_agent TEXT,
+                            ip TEXT,
+                            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                            last_active TIMESTAMP,
+                            revoked INTEGER DEFAULT 0
+                        );
+                        """
+                    )
+                    conn.commit()
+                    logger.info("Created sessions table.")
+                else:
+                    logger.info("Sessions table already exists")
+
+                logger.info("API key system migration completed successfully")
+                return True
+                
         except Exception as e:
-            logger.error(f"Failed to migrate achievements table: {e}")
+            logger.error(f"Failed to migrate to API key system: {e}")
             return False
     
-    def migrate_user_achievements_table(self, db_path: str, dry_run: bool = False) -> bool:
-        """Migrate the user_achievements table."""
-        logger.info(f"Migrating user_achievements table in {db_path}")
-        
-        try:
-            # Create user_achievements table
-            user_achievements_table = """
-            (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                username TEXT NOT NULL,
-                achievement_id INTEGER NOT NULL,
-                unlocked_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (achievement_id) REFERENCES achievements(id),
-                UNIQUE(username, achievement_id)
-            )
-            """
-            
-            self.create_table_if_not_exists(
-                db_path, 'user_achievements', user_achievements_table, dry_run
-            )
-            
-            return True
-            
-        except Exception as e:
-            logger.error(f"Failed to migrate user_achievements table: {e}")
-            return False
     
     def migrate_user_logins_table(self, db_path: str, dry_run: bool = False) -> bool:
         """Migrate the user_logins table."""
@@ -472,97 +581,8 @@ class DatabaseMigrator:
             logger.error(f"Failed to migrate prompt_versions table: {e}")
             return False
     
-    def migrate_point_transactions_table(self, db_path: str, dry_run: bool = False) -> bool:
-        """Migrate the point_transactions table."""
-        logger.info(f"Migrating point_transactions table in {db_path}")
-        
-        # Only migrate this table in user database
-        if 'user.db' not in db_path:
-            logger.info(f"Skipping point_transactions table for non-user database: {db_path}")
-            return True
-        
-        try:
-            # Create point_transactions table
-            point_transactions_table = """
-            (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                username TEXT NOT NULL,
-                points REAL NOT NULL,
-                source TEXT NOT NULL,
-                description TEXT,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                expires_at TIMESTAMP,
-                is_expired INTEGER DEFAULT 0,
-                FOREIGN KEY (username) REFERENCES users(username)
-            )
-            """
-            
-            self.create_table_if_not_exists(
-                db_path, 'point_transactions', point_transactions_table, dry_run
-            )
-            
-            return True
-            
-        except Exception as e:
-            logger.error(f"Failed to migrate point_transactions table: {e}")
-            return False
     
-    def migrate_point_history_table(self, db_path: str, dry_run: bool = False) -> bool:
-        """Migrate the point_history table."""
-        logger.info(f"Migrating point_history table in {db_path}")
-        
-        # Only migrate this table in user database
-        if 'user.db' not in db_path:
-            logger.info(f"Skipping point_history table for non-user database: {db_path}")
-            return True
-        
-        try:
-            # Create point_history table
-            point_history_table = """
-            (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                username TEXT NOT NULL,
-                transaction_id INTEGER NOT NULL,
-                action TEXT NOT NULL,
-                points_before REAL NOT NULL,
-                points_after REAL NOT NULL,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (username) REFERENCES users(username),
-                FOREIGN KEY (transaction_id) REFERENCES point_transactions(id)
-            )
-            """
-            
-            self.create_table_if_not_exists(
-                db_path, 'point_history', point_history_table, dry_run
-            )
-            
-            return True
-            
-        except Exception as e:
-            logger.error(f"Failed to migrate point_history table: {e}")
-            return False
     
-    def initialize_achievements(self, db_path: str, dry_run: bool = False) -> bool:
-        """Initialize achievements table with default achievements."""
-        logger.info(f"Initializing achievements in {db_path}")
-        
-        # Only initialize achievements in user database
-        if 'user.db' not in db_path:
-            logger.info(f"Skipping achievements initialization for non-user database: {db_path}")
-            return True
-        
-        if dry_run:
-            logger.info(f"[DRY RUN] Would initialize achievements table with default data")
-            return True
-        
-        try:
-            from models import initialize_achievements
-            initialize_achievements(db_path)
-            logger.info(f"Successfully initialized achievements table")
-            return True
-        except Exception as e:
-            logger.error(f"Failed to initialize achievements: {e}")
-            return False
     
     def enable_foreign_keys(self, db_path: str, dry_run: bool = False) -> bool:
         """Enable foreign key constraints on a database."""
@@ -614,47 +634,6 @@ class DatabaseMigrator:
             logger.error(f"Failed to validate foreign keys for {db_path}: {e}")
             return False
     
-    def fix_orphaned_point_transactions(self, db_path: str, dry_run: bool = False) -> bool:
-        """Fix orphaned point transactions that reference non-existent users."""
-        # Only run this on user database
-        if 'user.db' not in db_path:
-            return True
-        
-        if dry_run:
-            logger.info(f"[DRY RUN] Would check for orphaned point transactions in {db_path}")
-            return True
-        
-        try:
-            with get_db_connection(db_path) as conn:
-                cursor = conn.cursor()
-                
-                # Check for orphaned point transactions
-                cursor.execute("""
-                    SELECT pt.id, pt.username 
-                    FROM point_transactions pt 
-                    LEFT JOIN users u ON pt.username = u.username 
-                    WHERE u.username IS NULL
-                """)
-                orphaned = cursor.fetchall()
-                
-                if orphaned:
-                    logger.warning(f"Found {len(orphaned)} orphaned point transactions in {db_path}")
-                    logger.info("Removing orphaned point transactions...")
-                    
-                    for transaction_id, username in orphaned:
-                        logger.info(f"  Removing transaction {transaction_id} for non-existent user '{username}'")
-                        cursor.execute("DELETE FROM point_transactions WHERE id = ?", (transaction_id,))
-                    
-                    conn.commit()
-                    logger.info(f"Removed {len(orphaned)} orphaned point transactions")
-                    self.fixes_applied.append(f"Removed {len(orphaned)} orphaned point transactions")
-                else:
-                    logger.info(f"No orphaned point transactions found in {db_path}")
-                
-                return True
-        except Exception as e:
-            logger.error(f"Failed to fix orphaned point transactions for {db_path}: {e}")
-            return False
     
     def fix_missing_user_data(self, db_path: str, dry_run: bool = False) -> bool:
         """Fix missing user data like identicon values and initial points."""
@@ -712,55 +691,6 @@ class DatabaseMigrator:
             logger.error(f"Failed to fix missing user data for {db_path}: {e}")
             return False
     
-    def reward_all_users_points(self, db_path: str, dry_run: bool = False) -> bool:
-        """Reward all users with 50 never-expired points to ensure they have points."""
-        # Only run this on user database
-        if 'user.db' not in db_path:
-            return True
-        
-        if dry_run:
-            logger.info(f"[DRY RUN] Would reward all users with 50 never-expired points in {db_path}")
-            return True
-        
-        try:
-            with get_db_connection(db_path) as conn:
-                cursor = conn.cursor()
-                
-                # Get all users
-                cursor.execute("SELECT username FROM users")
-                all_users = cursor.fetchall()
-                
-                if not all_users:
-                    logger.info("No users found to reward")
-                    return True
-                
-                logger.info(f"Rewarding {len(all_users)} users with 50 never-expired points")
-                
-                users_rewarded = 0
-                for (username,) in all_users:
-                    try:
-                        # Add 50 never-expired points
-                        cursor.execute("""
-                            INSERT INTO point_transactions (username, points, source, description, expires_at, is_expired)
-                            VALUES (?, ?, ?, ?, ?, ?)
-                        """, (username, 50.0, 'migration_reward', 'Migration reward - never expires', None, 0))
-                        users_rewarded += 1
-                    except Exception as e:
-                        logger.warning(f"Failed to reward user {username}: {e}")
-                        continue
-                
-                conn.commit()
-                
-                if users_rewarded > 0:
-                    logger.info(f"Successfully rewarded {users_rewarded} users with 50 never-expired points")
-                    self.fixes_applied.append(f"Rewarded {users_rewarded} users with 50 never-expired points")
-                else:
-                    logger.warning("No users were rewarded")
-                
-                return True
-        except Exception as e:
-            logger.error(f"Failed to reward users with points for {db_path}: {e}")
-            return False
     
     def fix_data_inconsistencies(self, db_path: str, dry_run: bool = False) -> bool:
         """Fix various data inconsistencies across all databases."""
@@ -933,11 +863,6 @@ class DatabaseMigrator:
                 # Define indexes based on database type
                 if 'user.db' in db_path:
                     indexes = [
-                        ("idx_point_transactions_username", "point_transactions", "username"),
-                        ("idx_point_transactions_source", "point_transactions", "source"),
-                        ("idx_point_transactions_expires", "point_transactions", "expires_at"),
-                        ("idx_user_achievements_username", "user_achievements", "username"),
-                        ("idx_user_logins_username_date", "user_logins", "username, login_date"),
                         ("idx_sessions_username", "sessions", "username"),
                         ("idx_sessions_token", "sessions", "token"),
                     ]
@@ -1024,12 +949,7 @@ class DatabaseMigrator:
                         continue
             
             # Apply various fixes
-            success &= self.fix_missing_user_data(db_path, dry_run)
-            success &= self.reward_all_users_points(db_path, dry_run)
-            success &= self.fix_data_inconsistencies(db_path, dry_run)
-            success &= self.validate_and_fix_user_tables(db_path, dry_run)
             success &= self.create_missing_indexes(db_path, dry_run)
-            success &= self.fix_orphaned_point_transactions(db_path, dry_run)
         
         return success
     
@@ -1065,8 +985,7 @@ class DatabaseMigrator:
                 
                 missing_tables = []
                 if 'user.db' in db_path:
-                    required_tables = ['users', 'achievements', 'user_achievements', 'user_logins', 
-                                     'point_transactions', 'point_history', 'sessions']
+                    required_tables = ['users', 'sessions']
                     missing_tables = [t for t in required_tables if t not in existing_tables]
                 elif 'prompt_data.db' in db_path:
                     required_tables = ['prompt_versions']
@@ -1127,25 +1046,15 @@ class DatabaseMigrator:
         
         success = True
         
-        # Fix orphaned point transactions before enabling foreign keys
-        if 'user.db' in db_path:
-            success &= self.fix_orphaned_point_transactions(db_path, dry_run)
+        # Skip point system fixes since we're migrating to API key system
         
         # Enable foreign key constraints
         success &= self.enable_foreign_keys(db_path, dry_run)
         
         # Migrate all tables based on database type
         if 'user.db' in db_path:
-            # User database migrations
-            success &= self.migrate_users_table(db_path, dry_run)
-            success &= self.migrate_achievements_table(db_path, dry_run)
-            success &= self.migrate_user_achievements_table(db_path, dry_run)
-            success &= self.migrate_user_logins_table(db_path, dry_run)
-            success &= self.migrate_sessions_table(db_path, dry_run)
-            success &= self.migrate_point_transactions_table(db_path, dry_run)
-            success &= self.migrate_point_history_table(db_path, dry_run)
-            # Initialize achievements after table creation
-            success &= self.initialize_achievements(db_path, dry_run)
+            # User database migrations - migrate to API key system
+            success &= self.migrate_api_key_system(db_path, dry_run)
         elif 'prompt_data.db' in db_path:
             # Prompt database migrations
             success &= self.migrate_prompt_versions_table(db_path, dry_run)
@@ -1159,15 +1068,11 @@ class DatabaseMigrator:
             logger.warning(f"Unknown database type for {db_path}, attempting all migrations")
             # Try all migrations for unknown database types
             success &= self.migrate_users_table(db_path, dry_run)
-            success &= self.migrate_achievements_table(db_path, dry_run)
-            success &= self.migrate_user_achievements_table(db_path, dry_run)
             success &= self.migrate_user_logins_table(db_path, dry_run)
             success &= self.migrate_sessions_table(db_path, dry_run)
             success &= self.migrate_community_tables(db_path, dry_run)
             success &= self.migrate_feedback_table(db_path, dry_run)
             success &= self.migrate_prompt_versions_table(db_path, dry_run)
-            success &= self.migrate_point_transactions_table(db_path, dry_run)
-            success &= self.migrate_point_history_table(db_path, dry_run)
         
         # Validate foreign key constraints after migration
         if success and not dry_run:
@@ -1179,10 +1084,6 @@ class DatabaseMigrator:
         if self.auto_fix and success:
             logger.info(f"Applying comprehensive validation and auto-fixes to {db_path}")
             success &= self.comprehensive_database_validation(db_path, dry_run)
-            success &= self.fix_missing_user_data(db_path, dry_run)
-            success &= self.reward_all_users_points(db_path, dry_run)
-            success &= self.fix_data_inconsistencies(db_path, dry_run)
-            success &= self.validate_and_fix_user_tables(db_path, dry_run)
             success &= self.create_missing_indexes(db_path, dry_run)
         
         if success:

@@ -9,6 +9,7 @@ web/database/*.db-shm
 web/database/*.db-wal
 web/database/community/*.db-shm
 web/database/community/*.db-wal
+*.db.*
 
 # Exception: Keep community query.db tracked
 !web/database/community/query.db

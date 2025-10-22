@@ -7,7 +7,7 @@
 </div>
 
 
-<!-- Points and Profile Overview Section -->
+<!-- Profile Overview Section -->
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8 profile-grid">
   <!-- Profile Overview Card -->
   <div class="lg:col-span-1">
@@ -17,11 +17,11 @@
       </div>
       <h3 class="text-xl font-semibold text-slate-900 mb-1">{{ session.username }}</h3>
       <div class="text-center">
-        <div class="inline-flex items-center justify-center space-x-2 bg-yellow-50 px-4 py-2 rounded-full cursor-pointer hover:bg-yellow-100 transition-colors" id="points-display" onclick="showPointHistory()">
-          <i class="fas fa-coins text-yellow-500"></i>
-          <span class="text-sm font-medium text-slate-900">{{ "%.1f"|format(current_user_points or 80.0) }} {{ _('pts') }}</span>
+        <div class="inline-flex items-center justify-center space-x-2 bg-green-50 px-4 py-2 rounded-full cursor-pointer hover:bg-green-100 transition-colors" id="api-key-display">
+          <i class="fas fa-key text-green-500"></i>
+          <span class="text-sm font-medium text-slate-900" id="api-key-status-text">{{ _('Checking...') }}</span>
         </div>
-        <p class="text-xs text-slate-500 mt-1">{{ _('Available Points') }} <span class="text-xs text-blue-500">({{ _('Click to view history') }})</span></p>
+        <p class="text-xs text-slate-500 mt-1">{{ _('API Key Status') }}</p>
       </div>
     </div>
   </div>
@@ -36,12 +36,6 @@
         <div class="text-xs text-slate-600 uppercase tracking-wide">{{ _('Total Prompts') }}</div>
       </div>
 
-      <!-- Achievements -->
-      <div class="mdc-card glass prompt-card p-4 text-center flex flex-col justify-center">
-        <i class="fas fa-trophy text-yellow-500 text-2xl mb-2"></i>
-        <div class="text-2xl font-bold text-slate-900">{{ user_achievements|length }}</div>
-        <div class="text-xs text-slate-600 uppercase tracking-wide">{{ _('Achievements') }}</div>
-      </div>
 
       <!-- Sessions -->
       <div class="mdc-card glass prompt-card p-4 text-center flex flex-col justify-center">
@@ -179,7 +173,7 @@
             <i class="fas fa-key text-purple-500"></i>
             <span>{{ _('Gemini API Key') }}</span>
           </h3>
-          <p class="text-xs text-slate-500 mb-4">{{ _('Use your own API key to avoid point consumption and earn 100 points!') }}</p>
+          <p class="text-xs text-slate-500 mb-4">{{ _('Use your own API key to access all features!') }}</p>
           
           <div id="api-key-status" class="mb-4">
             <div class="flex items-center space-x-2 p-3 bg-slate-50 rounded-lg">
@@ -219,7 +213,7 @@
           <i class="fas fa-chart-line text-green-500"></i>
           <span>{{ _('API Key Pool Statistics') }}</span>
         </h2>
-        <p class="text-xs text-slate-500 mb-4">{{ _('See how your API key is being used by the system and earn compensation!') }}</p>
+        <p class="text-xs text-slate-500 mb-4">{{ _('See how your API key is being used by the system!') }}</p>
         
         <div id="api-pool-stats" class="space-y-3">
           <div class="grid grid-cols-2 gap-4">
@@ -228,8 +222,8 @@
               <div id="user-usage-count" class="text-lg font-semibold text-slate-900">-</div>
             </div>
             <div class="p-3 bg-slate-50 rounded-lg">
-              <div class="text-sm text-slate-600">{{ _('Total Compensation') }}</div>
-              <div id="user-compensation" class="text-lg font-semibold text-green-600">-</div>
+              <div class="text-sm text-slate-600">{{ _('API Key Usage') }}</div>
+              <div id="user-api-usage" class="text-lg font-semibold text-green-600">-</div>
             </div>
           </div>
           
@@ -253,7 +247,7 @@
           
           <div class="text-xs text-slate-500">
             <i class="fas fa-info-circle mr-1"></i>
-            {{ _('You earn 0.5 points each time the system uses your API key for other users.') }}
+            {{ _('Your API key is used securely and only for your own requests.') }}
           </div>
         </div>
       </div>
@@ -343,99 +337,31 @@
   </div>
 </div>
 
-<!-- Achievements Section (Full Width) -->
+<!-- Additional Features Section (Full Width) -->
 <div class="mt-8">
-  <div class="mdc-card glass prompt-card">
-    <div class="p-6">
-      <h2 class="text-xl font-semibold text-slate-900 mb-6 flex items-center space-x-2">
-        <i class="fas fa-trophy text-yellow-500"></i>
-        <span>{{ _('Achievements') }}</span>
-        <span class="text-sm font-normal text-slate-500">({{ user_achievements|length }} {{ _('unlocked') }})</span>
-      </h2>
-
-      {% if user_achievements %}
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {% for achievement in user_achievements %}
-        <div class="bg-gradient-to-br from-yellow-50 to-amber-50 p-4 rounded-lg border border-yellow-200 hover:shadow-md transition-shadow">
-          <div class="flex items-start space-x-3">
-            <div class="flex-shrink-0">
-              <div class="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center">
-                <i class="{{ achievement[3] }} text-yellow-600"></i>
-              </div>
-            </div>
-            <div class="flex-grow min-w-0">
-              <h4 class="font-semibold text-slate-900 mb-1">{{ achievement[1] }}</h4>
-              <p class="text-sm text-slate-600 mb-2">{{ achievement[2] }}</p>
-              <div class="flex items-center justify-between">
-                <span class="text-xs bg-yellow-200 text-yellow-800 px-2 py-1 rounded-full">{{ achievement[5] }}</span>
-                <span class="text-xs text-slate-500">+{{ achievement[4] }} pts</span>
-              </div>
-              <p class="text-xs text-slate-500 mt-1">{{ _('Unlocked') }} {{ achievement[6] }}</p>
-            </div>
-          </div>
-        </div>
-        {% endfor %}
-      </div>
-      {% else %}
-      <div class="text-center py-12">
-        <i class="fas fa-medal text-slate-300 text-4xl mb-4"></i>
-        <p class="text-slate-500 mb-2">{{ _('No achievements yet!') }}</p>
-        <p class="text-slate-400 text-sm">{{ _('Start generating and sharing prompts to earn your first achievement!') }}</p>
-      </div>
-      {% endif %}
-    </div>
-  </div>
 </div>
-<!-- Point History Modal -->
-<div id="point-history-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
-  <div class="flex items-center justify-center min-h-screen p-4">
-    <div class="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[80vh] overflow-hidden">
-      <div class="flex items-center justify-between p-6 border-b border-gray-200">
-        <h3 class="text-xl font-semibold text-gray-900 flex items-center space-x-2">
-          <i class="fas fa-history text-blue-500"></i>
-          <span>{{ _('Point History') }}</span>
-        </h3>
-        <button onclick="hidePointHistory()" class="text-gray-400 hover:text-gray-600 transition-colors">
-          <i class="fas fa-times text-xl"></i>
-        </button>
-      </div>
-      
-      <div class="p-6 overflow-y-auto max-h-[60vh]">
-        <div id="point-history-content" class="space-y-4">
-          <!-- Loading state -->
-          <div id="point-history-loading" class="text-center py-8">
-            <i class="fas fa-spinner fa-spin text-2xl text-gray-400 mb-2"></i>
-            <p class="text-gray-500">{{ _('Loading point history...') }}</p>
-          </div>
-          
-          <!-- History items will be populated here -->
-          <div id="point-history-items" class="hidden">
-            <!-- History items will be dynamically added here -->
-          </div>
-          
-          <!-- Empty state -->
-          <div id="point-history-empty" class="hidden text-center py-8">
-            <i class="fas fa-coins text-4xl text-gray-300 mb-4"></i>
-            <p class="text-gray-500">{{ _('No point history available yet.') }}</p>
-          </div>
-        </div>
-      </div>
-      
-      <div class="flex items-center justify-between p-6 border-t border-gray-200 bg-gray-50">
-        <div class="text-sm text-gray-600">
-          <i class="fas fa-info-circle mr-1"></i>
-          {{ _('Points expire based on their source. Original points never expire.') }}
-        </div>
-        <button onclick="hidePointHistory()" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors">
-          {{ _('Close') }}
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
+<!-- API Key Status Check Script -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Check API key status on page load
+    fetch('/api_key/status')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const statusElement = document.getElementById('api-key-status-text');
+                if (statusElement) {
+                    statusElement.textContent = data.is_validated ? 'Validated' : 'Not Set';
+                    statusElement.className = data.is_validated ? 'text-green-600' : 'text-red-600';
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Error checking API key status:', error);
+        });
+});
+</script>
 
 <script defer src="{{ url_for('static', filename='script/personal.js') }}"></script>
 <script defer src="{{ url_for('static', filename='script/community.js') }}"></script>
 <script defer src="{{ url_for('static', filename='script/api_key_manager.js') }}"></script>
-<script defer src="{{ url_for('static', filename='script/point_history.js') }}"></script>
 {% endblock %}

@@ -51,14 +51,19 @@ function handleFormSubmission(form, action) {
                 return Promise.reject(data); // Propagate error
             });
         }
-        return response.json();
+        // Check if response is JSON
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+            return response.json();
+        } else {
+            // If not JSON, it might be HTML (redirect)
+            throw new Error('Invalid response format');
+        }
     })
     .then(data => {
         if (data.success) {
-            // Check for achievements and daily bonus
-            if (data.daily_bonus || data.new_achievements) {
-                showLoginRewards(data);
-            }
+            // Show welcome message
+            showLoginRewards(data);
             handleSuccess(data.redirect);
         } else {
             hideLoadingAnimation(form);
@@ -178,26 +183,9 @@ function showLoadingAnimation(form) {
     form.classList.add("hidden");
 }
 
-// Function to show login rewards (achievements and daily bonus)
+// Function to show login success message
 function showLoginRewards(data) {
     let message = "Welcome back! ";
-
-    if (data.daily_bonus > 0) {
-        message += `You earned ${data.daily_bonus} points for your daily login! `;
-    }
-
-    if (data.new_achievements && data.new_achievements.length > 0) {
-        if (data.new_achievements.length === 1) {
-            message += `You unlocked a new achievement: ${data.new_achievements[0]}! `;
-        } else {
-            message += `You unlocked ${data.new_achievements.length} new achievements! `;
-        }
-
-        if (data.achievement_points > 0) {
-            message += `You earned ${data.achievement_points} achievement points!`;
-        }
-    }
-
     showToast(message, 'success');
 }
 
@@ -207,34 +195,46 @@ document.addEventListener("DOMContentLoaded", function () {
     const signupForm = document.getElementById("signupForm");
 
     // Toggle signup form
-    document.getElementById("signupLink").addEventListener("click", function (event) {
-        event.preventDefault();
-        toggleForms();
-        resetLoginForm();
-    });
+    const signupLink = document.getElementById("signupLink");
+    if (signupLink) {
+        signupLink.addEventListener("click", function (event) {
+            event.preventDefault();
+            toggleForms();
+            resetLoginForm();
+        });
+    }
 
     // Toggle login form
-    document.getElementById("loginLink").addEventListener("click", function (event) {
-        event.preventDefault();
-        toggleForms();
-        resetSignupForm();
-    });
+    const loginLink = document.getElementById("loginLink");
+    if (loginLink) {
+        loginLink.addEventListener("click", function (event) {
+            event.preventDefault();
+            toggleForms();
+            resetSignupForm();
+        });
+    }
 
     // Reset login form
     function resetLoginForm() {
-        document.getElementById("usernameLogin").value = "";
-        document.getElementById("passwordLogin").value = "";
-        clearFormError(loginForm);
+        const usernameLogin = document.getElementById("usernameLogin");
+        const passwordLogin = document.getElementById("passwordLogin");
+        if (usernameLogin) usernameLogin.value = "";
+        if (passwordLogin) passwordLogin.value = "";
+        if (loginForm) clearFormError(loginForm);
     }
 
     // Reset signup form
     function resetSignupForm() {
-        document.getElementById("usernameSignup").value = "";
-        document.getElementById("passwordSignup").value = "";
-        document.getElementById("confirmPassword").value = "";
+        const usernameSignup = document.getElementById("usernameSignup");
+        const passwordSignup = document.getElementById("passwordSignup");
+        const confirmPassword = document.getElementById("confirmPassword");
         const emailEl = document.getElementById("emailSignup");
+        
+        if (usernameSignup) usernameSignup.value = "";
+        if (passwordSignup) passwordSignup.value = "";
+        if (confirmPassword) confirmPassword.value = "";
         if (emailEl) emailEl.value = "";
-        clearFormError(signupForm);
+        if (signupForm) clearFormError(signupForm);
     }
 
     // Login form submission

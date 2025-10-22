@@ -8,8 +8,8 @@
         </div>
         <p class="text-lg text-slate-600">{{ _('Refine and improve your prompts with custom instructions or choose from quick actions.') }}</p>
         <div class="mt-4 inline-flex items-center space-x-2 bg-blue-50 px-4 py-2 rounded-full">
-            <i class="fas fa-coins text-blue-500"></i>
-            <span class="text-sm font-medium text-slate-700">{{ _('Cost: 0.5 points per refinement') }}</span>
+            <i class="fas fa-key text-blue-500"></i>
+            <span class="text-sm font-medium text-slate-700">{{ _('Uses your API key for refinement') }}</span>
         </div>
     </div>
 
@@ -445,7 +445,7 @@
                     document.getElementById('refined-result').scrollIntoView({ behavior: 'smooth' });
                     
                     showStatus('Prompt refined successfully!', 'success');
-                    updateUserPoints(); // Update points display
+                    // Refinement completed successfully
                 } else {
                     showStatus(data.error || 'Refinement failed.', 'error');
                 }
@@ -522,8 +522,7 @@
                 if (data.success) {
                     showStatus('Refined prompt saved successfully!', 'success');
                     
-                    // Update points display (saving costs points)
-                    updateUserPoints();
+                    // Prompt saved successfully
                 } else {
                     showStatus(data.message || 'Failed to save prompt.', 'error');
                 }

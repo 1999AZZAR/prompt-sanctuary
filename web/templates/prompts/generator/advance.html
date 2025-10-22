@@ -559,7 +559,7 @@
                 
                 if (data.success) {
                     showToast('Generated prompt saved successfully!', 'success');
-                    updateUserPoints(); // Update points display
+                    // Generation completed successfully
                 } else {
                     showToast(data.message || 'Failed to save prompt.', 'error');
                 }

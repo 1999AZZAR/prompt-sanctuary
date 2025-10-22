@@ -50,10 +50,10 @@
 
     <!-- JavaScript -->
     <script defer src="{{ url_for('static', filename='script/feedback.js') }}"></script>
-    <script defer src="{{ url_for('static', filename='script/generator.js') }}"></script>
+    <script defer src="{{ url_for('static', filename='script/generator.js') }}?v={{ range(1000, 9999) | random }}"></script>
     <script defer src="{{ url_for('static', filename='script/prompt_refinement.js') }}"></script>
     <script defer src="{{ url_for('static', filename='script/sidebar.js') }}"></script>
-    <script defer src="{{ url_for('static', filename='script/login.js') }}"></script>
+    <script defer src="{{ url_for('static', filename='script/login.js') }}?v={{ range(1000, 9999) | random }}"></script>
     <script defer src="{{ url_for('static', filename='script/notifications.js') }}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.8/clipboard.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2/dist/fuse.min.js"></script>
@@ -118,22 +118,14 @@
             </ul>
         </div>
 
-        <!-- Points Display -->
+        <!-- API Key Status Display -->
         <div class="p-4 border-t border-white/30">
           <div class="text-center">
             <div class="flex items-center justify-center space-x-2 mb-2">
-              <i class="fas fa-coins text-yellow-500"></i>
-              <span class="text-sm font-medium text-slate-700">{{ _('Points') }}</span>
+              <i class="fas fa-key text-green-500"></i>
+              <span class="text-sm font-medium text-slate-700">{{ _('API Key') }}</span>
             </div>
-            <div class="text-lg font-bold text-slate-900" id="user-points">{{ "%.1f"|format(current_user_points or 80.0) }}</div>
-            
-            <!-- API Key Status Indicator -->
-            <div id="api-key-indicator" class="mt-2 text-xs" style="display: none;">
-              <div class="inline-flex items-center space-x-1 px-2 py-1 bg-green-100 text-green-700 rounded-full">
-                <i class="fas fa-key"></i>
-                <span>{{ _('Using Own API Key') }}</span>
-              </div>
-            </div>
+            <div class="text-lg font-bold text-slate-900" id="api-key-status">{{ _('Checking...') }}</div>
           </div>
         </div>
 
@@ -199,12 +191,41 @@
 
     <!-- Identicon functionality -->
     <script>
+      // Global error handler for jdenticon
+      window.addEventListener('error', function(event) {
+        if (event.error && event.error.message && event.error.message.includes('getAttribute')) {
+          console.debug('Jdenticon error caught and handled:', event.error.message);
+          event.preventDefault();
+          return false;
+        }
+      });
+
       // Initialize identicons when DOM is loaded
       document.addEventListener('DOMContentLoaded', function() {
-        // Update all identicons on the page
-        jdenticon.update();
-
-
+        // Wait a bit for all elements to be fully rendered
+        setTimeout(function() {
+          try {
+            if (typeof jdenticon !== 'undefined' && jdenticon.update) {
+              // Check if there are any SVG elements that need jdenticon
+              const svgElements = document.querySelectorAll('svg[data-jdenticon-value]');
+              if (svgElements.length > 0) {
+                // Additional safety check - ensure all SVG elements are properly initialized
+                let allElementsReady = true;
+                svgElements.forEach(function(svg) {
+                  if (!svg.getAttribute || !svg.getAttribute('data-jdenticon-value')) {
+                    allElementsReady = false;
+                  }
+                });
+                
+                if (allElementsReady) {
+                  jdenticon.update();
+                }
+              }
+            }
+          } catch (error) {
+            console.debug('Jdenticon update failed:', error);
+          }
+        }, 100);
       });
     </script>
 
@@ -214,34 +235,49 @@
     <!-- API Key Status Indicator -->
     <script defer src="{{ url_for('static', filename='script/api_key_indicator.js') }}"></script>
     
-    <!-- Global Point Synchronization -->
+    <!-- Global API Key Status Check -->
     <script>
-        // Global function to update user points display
-        window.updateUserPoints = function() {
-            fetch('/get_user_points', {
+        // Global function to update API key status display
+        window.checkApiKeyStatus = function() {
+            fetch('/api_key/status', {
                 method: 'GET',
                 headers: window.CSRF.getFormHeaders()
             })
-            .then(response => response.json())
+            .then(response => {
+                if (response.ok) {
+                    const contentType = response.headers.get('content-type');
+                    if (contentType && contentType.includes('application/json')) {
+                        return response.json();
+                    } else {
+                        // If not JSON, user might not be logged in
+                        return null;
+                    }
+                } else {
+                    // If not authenticated, don't show error
+                    return null;
+                }
+            })
             .then(data => {
-                if (data.success && data.points !== undefined) {
-                    const pointsElement = document.getElementById('user-points');
-                    if (pointsElement) {
-                        pointsElement.textContent = parseFloat(data.points).toFixed(1);
+                if (data && data.success) {
+                    const apiKeyElement = document.getElementById('api-key-status');
+                    if (apiKeyElement) {
+                        apiKeyElement.textContent = data.is_validated ? 'Validated' : 'Not Set';
+                        apiKeyElement.className = data.is_validated ? 'text-green-600' : 'text-red-600';
                     }
                 }
             })
             .catch(error => {
-                console.error('Error updating user points:', error);
+                // Silently handle errors - user might not be logged in
+                console.debug('API key status check failed (user might not be logged in):', error);
             });
         };
         
-        // Update points on page load to ensure synchronization
+        // Update API key status on page load
         document.addEventListener('DOMContentLoaded', function() {
             // Small delay to ensure CSRF is loaded
             setTimeout(() => {
                 if (window.CSRF) {
-                    window.updateUserPoints();
+                    window.checkApiKeyStatus();
                 }
             }, 100);
         });
