@@ -13,7 +13,7 @@
   <div class="lg:col-span-1">
     <div class="mdc-card glass prompt-card p-6 text-center">
       <div class="relative inline-block mb-4">
-        <svg width="100" height="100" data-jdenticon-value="{{ identicon_value or session.username }}" class="rounded-full border-3 border-white shadow-lg mx-auto"></svg>
+        <svg width="100" height="100" data-jdenticon-value="{{ identicon_value or session.username }}" class="rounded-full border-3 border-white shadow-lg mx-auto" id="profile-identicon"></svg>
       </div>
       <h3 class="text-xl font-semibold text-slate-900 mb-1">{{ session.username }}</h3>
       <div class="text-center">
@@ -343,21 +343,91 @@
 <!-- API Key Status Check Script -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Check API key status on page load
-    fetch('/api_key/status')
-        .then(response => response.json())
+    // Wait for CSRF to be available
+    setTimeout(function() {
+        // Check API key status on page load
+        fetch('/api_key/status', {
+            method: 'GET',
+            headers: window.CSRF ? window.CSRF.getFormHeaders() : {}
+        })
+        .then(response => {
+            if (response.ok) {
+                const contentType = response.headers.get('content-type');
+                if (contentType && contentType.includes('application/json')) {
+                    return response.json();
+                } else {
+                    throw new Error('Invalid response format');
+                }
+            } else {
+                throw new Error('API key status check failed');
+            }
+        })
         .then(data => {
-            if (data.success) {
+            console.debug('API key status response:', data);
+            if (data && data.success) {
                 const statusElement = document.getElementById('api-key-status-text');
                 if (statusElement) {
                     statusElement.textContent = data.is_validated ? 'Validated' : 'Not Set';
                     statusElement.className = data.is_validated ? 'text-green-600' : 'text-red-600';
+                    console.debug('API key status updated:', data.is_validated ? 'Validated' : 'Not Set');
+                } else {
+                    console.debug('API key status element not found');
                 }
+            } else {
+                console.debug('API key status response not successful:', data);
             }
         })
         .catch(error => {
-            console.error('Error checking API key status:', error);
+            console.debug('API key status check failed:', error);
+            // Try using the global API key status check as fallback
+            if (window.checkApiKeyStatus) {
+                console.debug('Using global API key status check as fallback');
+                window.checkApiKeyStatus();
+            } else {
+                // Set default status if check fails
+                const statusElement = document.getElementById('api-key-status-text');
+                if (statusElement) {
+                    statusElement.textContent = 'Error';
+                    statusElement.className = 'text-red-600';
+                }
+            }
         });
+    }, 100); // Small delay to ensure CSRF is loaded
+});
+
+// Safe jdenticon initialization for profile page
+document.addEventListener('DOMContentLoaded', function() {
+    // Wait for jdenticon library to load
+    setTimeout(function() {
+        try {
+            // Use the profile-specific handler if available
+            if (window.safeProfileJdenticonUpdate) {
+                window.safeProfileJdenticonUpdate();
+            } else {
+                // Fallback to general safe handler
+                const profileIdenticon = document.getElementById('profile-identicon');
+                if (profileIdenticon && typeof jdenticon !== 'undefined' && jdenticon.update) {
+                    // Ensure the element has the required attributes
+                    if (profileIdenticon.getAttribute('data-jdenticon-value')) {
+                        try {
+                            jdenticon.update(profileIdenticon);
+                        } catch (error) {
+                            console.debug('Profile jdenticon update failed:', error);
+                            // If jdenticon fails, replace with a simple colored circle
+                            profileIdenticon.innerHTML = '<circle cx="50" cy="50" r="40" fill="#3b82f6"/>';
+                        }
+                    }
+                }
+            }
+        } catch (error) {
+            console.debug('Profile jdenticon initialization failed:', error);
+            // If jdenticon completely fails, replace with a simple colored circle
+            const profileIdenticon = document.getElementById('profile-identicon');
+            if (profileIdenticon) {
+                profileIdenticon.innerHTML = '<circle cx="50" cy="50" r="40" fill="#3b82f6"/>';
+            }
+        }
+    }, 300); // Increased timeout for profile page
 });
 </script>
 

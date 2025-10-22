@@ -185,7 +185,11 @@ function showLoadingAnimation(form) {
 
 // Function to show login success message
 function showLoginRewards(data) {
-    let message = "Welcome back! ";
+    // Check if this is a signup or login by looking at the current form
+    const signupForm = document.getElementById("signupForm");
+    const isSignup = signupForm && !signupForm.classList.contains("hidden");
+    
+    let message = isSignup ? "Welcome! Account created successfully!" : "Welcome back!";
     showToast(message, 'success');
 }
 

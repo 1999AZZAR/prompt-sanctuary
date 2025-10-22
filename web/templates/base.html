@@ -70,7 +70,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/styles.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/loader.css') }}">
     <!-- MDC Web CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/material-components-web@14.0.0/dist/material-components-web.min.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <style>
       /* Safe fallback in case Tailwind fails to load */
@@ -184,7 +184,7 @@
 
     <div id="toast-container" class="fixed top-5 right-5 z-50 space-y-2"></div>
     <!-- MDC Web JS -->
-    <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
+    <script src="https://unpkg.com/material-components-web@14.0.0/dist/material-components-web.min.js"></script>
     <script>
       mdc.autoInit();
     </script>
@@ -193,8 +193,24 @@
     <script>
       // Global error handler for jdenticon
       window.addEventListener('error', function(event) {
-        if (event.error && event.error.message && event.error.message.includes('getAttribute')) {
+        if (event.error && event.error.message && 
+            (event.error.message.includes('getAttribute') || 
+             event.error.message.includes('jdenticon') ||
+             event.error.message.includes('t is undefined') ||
+             event.error.message.includes('can\'t access property'))) {
           console.debug('Jdenticon error caught and handled:', event.error.message);
+          event.preventDefault();
+          return false;
+        }
+      });
+
+      // Additional unhandled promise rejection handler
+      window.addEventListener('unhandledrejection', function(event) {
+        if (event.reason && event.reason.message && 
+            (event.reason.message.includes('getAttribute') || 
+             event.reason.message.includes('jdenticon') ||
+             event.reason.message.includes('t is undefined'))) {
+          console.debug('Jdenticon promise rejection caught and handled:', event.reason.message);
           event.preventDefault();
           return false;
         }
@@ -205,28 +221,112 @@
         // Wait a bit for all elements to be fully rendered
         setTimeout(function() {
           try {
-            if (typeof jdenticon !== 'undefined' && jdenticon.update) {
-              // Check if there are any SVG elements that need jdenticon
-              const svgElements = document.querySelectorAll('svg[data-jdenticon-value]');
-              if (svgElements.length > 0) {
-                // Additional safety check - ensure all SVG elements are properly initialized
-                let allElementsReady = true;
-                svgElements.forEach(function(svg) {
-                  if (!svg.getAttribute || !svg.getAttribute('data-jdenticon-value')) {
-                    allElementsReady = false;
-                  }
-                });
-                
-                if (allElementsReady) {
-                  jdenticon.update();
-                }
+            // Check if jdenticon is available
+            if (typeof jdenticon === 'undefined' || !jdenticon || !jdenticon.update) {
+              console.debug('Jdenticon library not available');
+              return;
+            }
+
+            // Check if there are any SVG elements that need jdenticon
+            const svgElements = document.querySelectorAll('svg[data-jdenticon-value]');
+            if (svgElements.length === 0) {
+              console.debug('No jdenticon SVG elements found');
+              return;
+            }
+
+            // Additional safety check - ensure all SVG elements are properly initialized
+            let allElementsReady = true;
+            svgElements.forEach(function(svg) {
+              if (!svg || !svg.getAttribute || !svg.getAttribute('data-jdenticon-value')) {
+                allElementsReady = false;
               }
+            });
+            
+            if (allElementsReady) {
+              // Wrap jdenticon.update in additional try-catch
+              try {
+                jdenticon.update();
+                console.debug('Jdenticon updated successfully');
+              } catch (updateError) {
+                console.debug('Jdenticon update failed:', updateError);
+              }
+            } else {
+              console.debug('Not all jdenticon elements are ready');
             }
           } catch (error) {
-            console.debug('Jdenticon update failed:', error);
+            console.debug('Jdenticon initialization failed:', error);
           }
-        }, 100);
+        }, 200); // Increased timeout to ensure DOM is fully ready
       });
+
+      // Additional safety: Override jdenticon.update if it exists
+      if (typeof jdenticon !== 'undefined' && jdenticon.update) {
+        const originalUpdate = jdenticon.update;
+        jdenticon.update = function() {
+          try {
+            // Check if we have valid SVG elements before updating
+            const svgElements = document.querySelectorAll('svg[data-jdenticon-value]');
+            if (svgElements.length === 0) {
+              console.debug('No jdenticon elements to update');
+              return false;
+            }
+            
+            // Validate each element before updating
+            for (let i = 0; i < svgElements.length; i++) {
+              const svg = svgElements[i];
+              if (!svg || !svg.getAttribute || !svg.getAttribute('data-jdenticon-value')) {
+                console.debug('Invalid jdenticon element found, skipping update');
+                return false;
+              }
+            }
+            
+            return originalUpdate.apply(this, arguments);
+          } catch (error) {
+            console.debug('Jdenticon update intercepted error:', error);
+            return false;
+          }
+        };
+      }
+
+      // Safe jdenticon update function
+      window.safeJdenticonUpdate = function() {
+        try {
+          if (typeof jdenticon !== 'undefined' && jdenticon.update) {
+            const svgElements = document.querySelectorAll('svg[data-jdenticon-value]');
+            if (svgElements.length > 0) {
+              // Double-check all elements are valid
+              let allValid = true;
+              svgElements.forEach(function(svg) {
+                if (!svg || !svg.getAttribute || !svg.getAttribute('data-jdenticon-value')) {
+                  allValid = false;
+                }
+              });
+              
+              if (allValid) {
+                jdenticon.update();
+              }
+            }
+          }
+        } catch (error) {
+          console.debug('Safe jdenticon update failed:', error);
+        }
+      };
+
+      // Profile-specific jdenticon handler
+      window.safeProfileJdenticonUpdate = function() {
+        try {
+          const profileIdenticon = document.getElementById('profile-identicon');
+          if (profileIdenticon && typeof jdenticon !== 'undefined' && jdenticon.update) {
+            // Ensure the element is properly set up
+            if (profileIdenticon.getAttribute('data-jdenticon-value')) {
+              // Use individual element update instead of global update
+              jdenticon.update(profileIdenticon);
+            }
+          }
+        } catch (error) {
+          console.debug('Profile jdenticon update failed:', error);
+        }
+      };
     </script>
 
     <!-- Azzar AI Chat Widget -->
@@ -259,10 +359,18 @@
             })
             .then(data => {
                 if (data && data.success) {
+                    // Update sidebar API key status
                     const apiKeyElement = document.getElementById('api-key-status');
                     if (apiKeyElement) {
                         apiKeyElement.textContent = data.is_validated ? 'Validated' : 'Not Set';
                         apiKeyElement.className = data.is_validated ? 'text-green-600' : 'text-red-600';
+                    }
+                    
+                    // Update profile page API key status
+                    const profileApiKeyElement = document.getElementById('api-key-status-text');
+                    if (profileApiKeyElement) {
+                        profileApiKeyElement.textContent = data.is_validated ? 'Validated' : 'Not Set';
+                        profileApiKeyElement.className = data.is_validated ? 'text-green-600' : 'text-red-600';
                     }
                 }
             })

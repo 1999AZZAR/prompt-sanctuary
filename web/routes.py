@@ -191,7 +191,29 @@ def create_main_blueprint(
             logger.exception("Signup error")
             return jsonify({"success": False, "error": "Internal server error."}), 500
 
-        return jsonify({"success": True, "redirect": url_for("main.home")})
+        # Automatically log in the user after successful signup
+        session["username"] = username
+        # Create a session token for optional session management and revocation
+        token = secrets.token_urlsafe(24)
+        session["session_token"] = token
+        ua = request.headers.get("User-Agent")
+        ip = request.headers.get("X-Forwarded-For", request.remote_addr)
+
+        # Prepare default response data
+        response_data = {"success": True, "redirect": url_for("main.home")}
+
+        try:
+            create_session_record(main_blueprint.user_db, username, token, ua, ip)
+        except Exception as e:
+            logger.exception("Error creating session record")
+            # Log the error but don't prevent signup if session record fails
+            pass
+
+        # Check if API key is required and redirect if not set
+        if check_api_key_required(main_blueprint.user_db, username):
+            response_data["redirect"] = url_for("main.api_key_setup")
+
+        return jsonify(response_data)
 
     @main_blueprint.route("/login", methods=["GET", "POST"])
     def login():
@@ -1213,6 +1235,43 @@ def create_main_blueprint(
             
         except Exception as e:
             logger.exception("Error validating API key")
+            return jsonify({"success": False, "error": "Internal server error."}), 500
+
+    @main_blueprint.route("/api_key/test", methods=["POST"])
+    @required_login
+    def test_api_key():
+        """Test user's Gemini API key without saving it."""
+        if not validate_csrf_token():
+            return jsonify({"success": False, "error": "CSRF token validation failed."}), 400
+        
+        api_key = request.form.get("api_key", "").strip()
+        
+        if not api_key:
+            return jsonify({"success": False, "error": "API key is required."}), 400
+        
+        try:
+            # Test the API key
+            is_valid, message = validate_gemini_api_key(api_key)
+            
+            if not is_valid:
+                return jsonify({"success": False, "error": message}), 400
+            
+            # Get additional info about the API key
+            from api_key_validator import get_api_key_info
+            info = get_api_key_info(api_key)
+            
+            return jsonify({
+                "success": True, 
+                "info": {
+                    "is_valid": True,
+                    "has_quota": info.get("has_quota", False),
+                    "model_available": info.get("model_available", False),
+                    "error_message": None
+                }
+            })
+            
+        except Exception as e:
+            logger.exception("Error testing API key")
             return jsonify({"success": False, "error": "Internal server error."}), 500
 
     @main_blueprint.route("/api_key/remove", methods=["POST"])

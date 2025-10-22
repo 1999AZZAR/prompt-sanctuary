@@ -1,124 +1,191 @@
 {% extends "base.html" %}
 
-{% block title %}API Key Setup - Prompt Sanctuary{% endblock %}
+{% block title %}{{ _('API Key Setup') }} - Prompt Sanctuary{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header bg-primary text-white">
-                    <h4 class="mb-0">
-                        <i class="fas fa-key mr-2"></i>
-                        API Key Setup Required
-                    </h4>
+<div class="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 py-8">
+    <div class="container mx-auto px-4 max-w-4xl">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <div class="inline-flex items-center justify-center w-16 h-16 bg-red-100 rounded-full mb-4">
+                <i class="fas fa-key text-red-500 text-2xl"></i>
+            </div>
+            <h1 class="text-3xl font-bold text-slate-900 mb-2">{{ _('API Key Required') }}</h1>
+            <p class="text-slate-600 text-lg">{{ _('Set up your Gemini API key to access all features') }}</p>
+        </div>
+
+        <!-- Main Content -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Left Column - Setup Steps -->
+            <div class="lg:col-span-2 space-y-6">
+                <!-- Warning Alert -->
+                {% if not api_key_validated %}
+                <div class="mdc-card glass prompt-card p-6 border-l-4 border-red-500 bg-red-50">
+                    <div class="flex items-start space-x-3">
+                        <i class="fas fa-exclamation-triangle text-red-500 text-xl mt-1"></i>
+                        <div>
+                            <h3 class="text-lg font-semibold text-red-800 mb-2">{{ _('API Key Required') }}</h3>
+                            <p class="text-red-700">{{ _('You need to set up your Gemini API key to use Prompt Sanctuary.') }}</p>
+                        </div>
+                    </div>
                 </div>
-                <div class="card-body">
-                    {% if not api_key_validated %}
-                    <div class="alert alert-warning">
-                        <i class="fas fa-exclamation-triangle mr-2"></i>
-                        <strong>API Key Required:</strong> You need to set up your Gemini API key to use Prompt Sanctuary.
-                    </div>
-                    {% endif %}
+                {% endif %}
 
-                    <!-- Step 1: Get API Key -->
-                    <div class="setup-step mb-4">
-                        <h5 class="text-primary">
-                            <span class="badge badge-primary mr-2">1</span>
-                            Get Your Gemini API Key
-                        </h5>
-                        <div class="step-content">
-                            <p>First, you need to get a Gemini API key from Google AI Studio:</p>
-                            <ol>
-                                <li>Visit <a href="https://aistudio.google.com/" target="_blank" class="text-primary">Google AI Studio</a></li>
-                                <li>Sign in with your Google account</li>
-                                <li>Click "Get API Key" in the sidebar</li>
-                                <li>Create a new project or select existing one</li>
-                                <li>Copy your API key (starts with "AI")</li>
-                            </ol>
-                            <div class="alert alert-info">
-                                <i class="fas fa-info-circle mr-2"></i>
-                                <strong>Important:</strong> You'll need to set up billing in Google Cloud Console for the API to work properly.
-                                <a href="https://console.cloud.google.com/billing" target="_blank" class="text-primary">Set up billing here</a>.
+                <!-- Step 1: Get API Key -->
+                <div class="mdc-card glass prompt-card p-6">
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div class="w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center font-bold text-sm">1</div>
+                        <h3 class="text-xl font-semibold text-slate-900">{{ _('Get Your Gemini API Key') }}</h3>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <p class="text-slate-600">{{ _('First, you need to get a Gemini API key from Google AI Studio:') }}</p>
+                        
+                        <div class="bg-slate-50 rounded-lg p-4 space-y-3">
+                            <div class="flex items-start space-x-3">
+                                <span class="w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-sm font-bold">1</span>
+                                <div>
+                                    <p class="text-slate-700">{{ _('Visit') }} <a href="https://aistudio.google.com/" target="_blank" class="text-blue-600 hover:text-blue-700 underline font-medium">Google AI Studio</a></p>
+                                </div>
+                            </div>
+                            <div class="flex items-start space-x-3">
+                                <span class="w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-sm font-bold">2</span>
+                                <p class="text-slate-700">{{ _('Sign in with your Google account') }}</p>
+                            </div>
+                            <div class="flex items-start space-x-3">
+                                <span class="w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-sm font-bold">3</span>
+                                <p class="text-slate-700">{{ _('Click "Get API Key" in the sidebar') }}</p>
+                            </div>
+                            <div class="flex items-start space-x-3">
+                                <span class="w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-sm font-bold">4</span>
+                                <p class="text-slate-700">{{ _('Create a new project or select existing one') }}</p>
+                            </div>
+                            <div class="flex items-start space-x-3">
+                                <span class="w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-sm font-bold">5</span>
+                                <p class="text-slate-700">{{ _('Copy your API key (starts with "AI")') }}</p>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Step 2: Enter API Key -->
-                    <div class="setup-step mb-4">
-                        <h5 class="text-primary">
-                            <span class="badge badge-primary mr-2">2</span>
-                            Enter Your API Key
-                        </h5>
-                        <div class="step-content">
-                            <form id="api-key-form" method="POST" action="/api_key/validate">
-                                <div class="form-group">
-                                    <label for="api_key_input">Gemini API Key</label>
-                                    <input type="password" 
-                                           class="form-control" 
-                                           id="api_key_input" 
-                                           name="api_key" 
-                                           placeholder="AI..." 
-                                           required
-                                           minlength="20">
-                                    <small class="form-text text-muted">
-                                        Your API key will be encrypted and stored securely.
-                                    </small>
-                                </div>
-                                <div class="form-group">
-                                    <button type="submit" class="btn btn-primary" id="validate-btn">
-                                        <i class="fas fa-check mr-2"></i>
-                                        Validate API Key
-                                    </button>
-                                    <button type="button" class="btn btn-outline-secondary ml-2" id="test-btn">
-                                        <i class="fas fa-vial mr-2"></i>
-                                        Test Connection
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-
-                    <!-- Step 3: Validation Results -->
-                    <div class="setup-step mb-4" id="validation-results" style="display: none;">
-                        <h5 class="text-primary">
-                            <span class="badge badge-primary mr-2">3</span>
-                            Validation Results
-                        </h5>
-                        <div class="step-content">
-                            <div id="validation-status"></div>
-                        </div>
-                    </div>
-
-                    <!-- Help Section -->
-                    <div class="setup-step">
-                        <h5 class="text-primary">
-                            <i class="fas fa-question-circle mr-2"></i>
-                            Need Help?
-                        </h5>
-                        <div class="step-content">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <h6>Common Issues:</h6>
-                                    <ul class="list-unstyled">
-                                        <li><i class="fas fa-check text-success mr-2"></i> Make sure key starts with "AI"</li>
-                                        <li><i class="fas fa-check text-success mr-2"></i> Check for extra spaces</li>
-                                        <li><i class="fas fa-check text-success mr-2"></i> Ensure billing is set up</li>
-                                        <li><i class="fas fa-check text-success mr-2"></i> Try a different browser</li>
-                                    </ul>
-                                </div>
-                                <div class="col-md-6">
-                                    <h6>Resources:</h6>
-                                    <ul class="list-unstyled">
-                                        <li><a href="/docs/api-key-setup" class="text-primary">Detailed Setup Guide</a></li>
-                                        <li><a href="https://aistudio.google.com/" target="_blank" class="text-primary">Google AI Studio</a></li>
-                                        <li><a href="https://console.cloud.google.com/billing" target="_blank" class="text-primary">Google Cloud Billing</a></li>
-                                        <li><a href="/support" class="text-primary">Contact Support</a></li>
-                                    </ul>
+                        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                            <div class="flex items-start space-x-3">
+                                <i class="fas fa-info-circle text-blue-500 text-lg mt-1"></i>
+                                <div>
+                                    <p class="text-blue-800 font-medium mb-2">{{ _('Important:') }}</p>
+                                    <p class="text-blue-700 text-sm">{{ _('You\'ll need to set up billing in Google Cloud Console for the API to work properly.') }} <a href="https://console.cloud.google.com/billing" target="_blank" class="text-blue-600 hover:text-blue-700 underline font-medium">{{ _('Set up billing here') }}</a>.</p>
                                 </div>
                             </div>
                         </div>
                     </div>
+                </div>
+
+                <!-- Step 2: Enter API Key -->
+                <div class="mdc-card glass prompt-card p-6">
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div class="w-8 h-8 bg-green-500 text-white rounded-full flex items-center justify-center font-bold text-sm">2</div>
+                        <h3 class="text-xl font-semibold text-slate-900">{{ _('Enter Your API Key') }}</h3>
+                    </div>
+                    
+                    <form id="api-key-form" method="POST" action="/api_key/validate" class="space-y-4">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <div>
+                            <label for="api_key_input" class="block text-sm font-medium text-slate-700 mb-2">{{ _('Gemini API Key') }}</label>
+                            <input type="password" 
+                                   id="api_key_input" 
+                                   name="api_key" 
+                                   placeholder="AI..." 
+                                   required
+                                   minlength="20"
+                                   class="w-full p-3 rounded-lg bg-slate-50 border border-slate-200 text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <p class="text-xs text-slate-500 mt-1">{{ _('Your API key will be encrypted and stored securely.') }}</p>
+                        </div>
+                        
+                        <div class="flex space-x-3">
+                            <button type="submit" class="btn bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition-colors flex items-center space-x-2" id="validate-btn">
+                                <i class="fas fa-check"></i>
+                                <span>{{ _('Validate API Key') }}</span>
+                            </button>
+                            <button type="button" class="btn bg-slate-500 text-white px-6 py-3 rounded-lg hover:bg-slate-600 transition-colors flex items-center space-x-2" id="test-btn">
+                                <i class="fas fa-vial"></i>
+                                <span>{{ _('Test Connection') }}</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Step 3: Validation Results -->
+                <div class="mdc-card glass prompt-card p-6" id="validation-results" style="display: none;">
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div class="w-8 h-8 bg-purple-500 text-white rounded-full flex items-center justify-center font-bold text-sm">3</div>
+                        <h3 class="text-xl font-semibold text-slate-900">{{ _('Validation Results') }}</h3>
+                    </div>
+                    <div id="validation-status"></div>
+                </div>
+            </div>
+
+            <!-- Right Column - Help & Resources -->
+            <div class="space-y-6">
+                <!-- Help Section -->
+                <div class="mdc-card glass prompt-card p-6">
+                    <div class="flex items-center space-x-3 mb-4">
+                        <i class="fas fa-question-circle text-blue-500 text-xl"></i>
+                        <h3 class="text-lg font-semibold text-slate-900">{{ _('Need Help?') }}</h3>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <h4 class="font-medium text-slate-700 mb-3">{{ _('Common Issues:') }}</h4>
+                            <ul class="space-y-2">
+                                <li class="flex items-center space-x-2 text-sm text-slate-600">
+                                    <i class="fas fa-check text-green-500"></i>
+                                    <span>{{ _('Make sure key starts with "AI"') }}</span>
+                                </li>
+                                <li class="flex items-center space-x-2 text-sm text-slate-600">
+                                    <i class="fas fa-check text-green-500"></i>
+                                    <span>{{ _('Check for extra spaces') }}</span>
+                                </li>
+                                <li class="flex items-center space-x-2 text-sm text-slate-600">
+                                    <i class="fas fa-check text-green-500"></i>
+                                    <span>{{ _('Ensure billing is set up') }}</span>
+                                </li>
+                                <li class="flex items-center space-x-2 text-sm text-slate-600">
+                                    <i class="fas fa-check text-green-500"></i>
+                                    <span>{{ _('Try a different browser') }}</span>
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <div>
+                            <h4 class="font-medium text-slate-700 mb-3">{{ _('Resources:') }}</h4>
+                            <ul class="space-y-2">
+                                <li><a href="/docs/api-key-setup" class="text-blue-600 hover:text-blue-700 text-sm">{{ _('Detailed Setup Guide') }}</a></li>
+                                <li><a href="https://aistudio.google.com/" target="_blank" class="text-blue-600 hover:text-blue-700 text-sm">{{ _('Google AI Studio') }}</a></li>
+                                <li><a href="https://console.cloud.google.com/billing" target="_blank" class="text-blue-600 hover:text-blue-700 text-sm">{{ _('Google Cloud Billing') }}</a></li>
+                                <li><a href="/support" class="text-blue-600 hover:text-blue-700 text-sm">{{ _('Contact Support') }}</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Security Info -->
+                <div class="mdc-card glass prompt-card p-6 bg-green-50 border border-green-200">
+                    <div class="flex items-center space-x-3 mb-3">
+                        <i class="fas fa-shield-alt text-green-500 text-xl"></i>
+                        <h3 class="text-lg font-semibold text-green-800">{{ _('Security') }}</h3>
+                    </div>
+                    <ul class="space-y-2 text-sm text-green-700">
+                        <li class="flex items-start space-x-2">
+                            <i class="fas fa-lock text-green-500 mt-1"></i>
+                            <span>{{ _('Your API key is encrypted before storage') }}</span>
+                        </li>
+                        <li class="flex items-start space-x-2">
+                            <i class="fas fa-user-shield text-green-500 mt-1"></i>
+                            <span>{{ _('Only you can access your API key') }}</span>
+                        </li>
+                        <li class="flex items-start space-x-2">
+                            <i class="fas fa-eye-slash text-green-500 mt-1"></i>
+                            <span>{{ _('API key is never displayed in plain text') }}</span>
+                        </li>
+                    </ul>
                 </div>
             </div>
         </div>
@@ -126,17 +193,11 @@
 </div>
 
 <!-- Loading Modal -->
-<div class="modal fade" id="loadingModal" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-body text-center">
-                <div class="spinner-border text-primary mb-3" role="status">
-                    <span class="sr-only">Loading...</span>
-                </div>
-                <h5>Validating API Key...</h5>
-                <p class="text-muted">This may take a few seconds</p>
-            </div>
-        </div>
+<div id="loadingModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" style="display: none;">
+    <div class="bg-white rounded-lg p-8 max-w-sm w-full mx-4 text-center">
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+        <h3 class="text-lg font-semibold text-slate-900 mb-2">{{ _('Validating API Key...') }}</h3>
+        <p class="text-slate-600">{{ _('This may take a few seconds') }}</p>
     </div>
 </div>
 
@@ -148,6 +209,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const apiKeyInput = document.getElementById('api_key_input');
     const validationResults = document.getElementById('validation-results');
     const validationStatus = document.getElementById('validation-status');
+    const loadingModal = document.getElementById('loadingModal');
 
     // Form submission
     form.addEventListener('submit', function(e) {
@@ -164,12 +226,12 @@ document.addEventListener('DOMContentLoaded', function() {
         const apiKey = apiKeyInput.value.trim();
         
         if (!apiKey) {
-            showError('Please enter your API key');
+            showError('{{ _("Please enter your API key") }}');
             return;
         }
 
         if (!apiKey.startsWith('AI') || apiKey.length < 20) {
-            showError('Invalid API key format. Keys should start with "AI" and be at least 20 characters long.');
+            showError('{{ _("Invalid API key format. Keys should start with \"AI\" and be at least 20 characters long.") }}');
             return;
         }
 
@@ -179,6 +241,7 @@ document.addEventListener('DOMContentLoaded', function() {
         try {
             const formData = new FormData();
             formData.append('api_key', apiKey);
+            formData.append('csrf_token', document.querySelector('input[name="csrf_token"]').value);
             
             const response = await fetch('/api_key/validate', {
                 method: 'POST',
@@ -194,11 +257,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     window.location.href = '/';
                 }, 2000);
             } else {
-                showError(data.error || 'Validation failed');
+                showError(data.error || '{{ _("Validation failed") }}');
             }
         } catch (error) {
             console.error('Error validating API key:', error);
-            showError('Failed to validate API key. Please try again.');
+            showError('{{ _("Failed to validate API key. Please try again.") }}');
         } finally {
             hideLoading();
         }
@@ -208,7 +271,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const apiKey = apiKeyInput.value.trim();
         
         if (!apiKey) {
-            showError('Please enter your API key first');
+            showError('{{ _("Please enter your API key first") }}');
             return;
         }
 
@@ -217,6 +280,7 @@ document.addEventListener('DOMContentLoaded', function() {
         try {
             const formData = new FormData();
             formData.append('api_key', apiKey);
+            formData.append('csrf_token', document.querySelector('input[name="csrf_token"]').value);
             
             const response = await fetch('/api_key/test', {
                 method: 'POST',
@@ -228,24 +292,24 @@ document.addEventListener('DOMContentLoaded', function() {
             if (data.success) {
                 showTestResults(data.info);
             } else {
-                showError(data.error || 'Test failed');
+                showError(data.error || '{{ _("Test failed") }}');
             }
         } catch (error) {
             console.error('Error testing API key:', error);
-            showError('Failed to test API key. Please try again.');
+            showError('{{ _("Failed to test API key. Please try again.") }}');
         } finally {
             hideLoading();
         }
     }
 
     function showLoading() {
-        $('#loadingModal').modal('show');
+        loadingModal.style.display = 'flex';
         validateBtn.disabled = true;
         testBtn.disabled = true;
     }
 
     function hideLoading() {
-        $('#loadingModal').modal('hide');
+        loadingModal.style.display = 'none';
         validateBtn.disabled = false;
         testBtn.disabled = false;
     }
@@ -253,9 +317,14 @@ document.addEventListener('DOMContentLoaded', function() {
     function showSuccess(message) {
         validationResults.style.display = 'block';
         validationStatus.innerHTML = `
-            <div class="alert alert-success">
-                <i class="fas fa-check-circle mr-2"></i>
-                <strong>Success!</strong> ${message}
+            <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                <div class="flex items-center space-x-3">
+                    <i class="fas fa-check-circle text-green-500 text-xl"></i>
+                    <div>
+                        <h4 class="font-semibold text-green-800">{{ _("Success!") }}</h4>
+                        <p class="text-green-700">${message}</p>
+                    </div>
+                </div>
             </div>
         `;
     }
@@ -263,9 +332,14 @@ document.addEventListener('DOMContentLoaded', function() {
     function showError(message) {
         validationResults.style.display = 'block';
         validationStatus.innerHTML = `
-            <div class="alert alert-danger">
-                <i class="fas fa-exclamation-circle mr-2"></i>
-                <strong>Error:</strong> ${message}
+            <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+                <div class="flex items-center space-x-3">
+                    <i class="fas fa-exclamation-circle text-red-500 text-xl"></i>
+                    <div>
+                        <h4 class="font-semibold text-red-800">{{ _("Error:") }}</h4>
+                        <p class="text-red-700">${message}</p>
+                    </div>
+                </div>
             </div>
         `;
     }
@@ -273,33 +347,44 @@ document.addEventListener('DOMContentLoaded', function() {
     function showTestResults(info) {
         validationResults.style.display = 'block';
         
-        let statusClass = 'alert-danger';
-        let statusIcon = 'fas fa-times-circle';
-        let statusText = 'Test Failed';
+        let statusClass = 'bg-red-50 border-red-200';
+        let statusIcon = 'fas fa-times-circle text-red-500';
+        let statusText = '{{ _("Test Failed") }}';
         
         if (info.is_valid && info.has_quota && info.model_available) {
-            statusClass = 'alert-success';
-            statusIcon = 'fas fa-check-circle';
-            statusText = 'API Key Ready';
+            statusClass = 'bg-green-50 border-green-200';
+            statusIcon = 'fas fa-check-circle text-green-500';
+            statusText = '{{ _("API Key Ready") }}';
         } else if (info.is_valid && info.has_quota) {
-            statusClass = 'alert-warning';
-            statusIcon = 'fas fa-exclamation-triangle';
-            statusText = 'Partial Success';
+            statusClass = 'bg-yellow-50 border-yellow-200';
+            statusIcon = 'fas fa-exclamation-triangle text-yellow-500';
+            statusText = '{{ _("Partial Success") }}';
         }
         
         validationStatus.innerHTML = `
-            <div class="alert ${statusClass}">
-                <i class="${statusIcon} mr-2"></i>
-                <strong>${statusText}</strong>
-                ${info.error_message ? `<br>${info.error_message}` : ''}
-            </div>
-            <div class="mt-3">
-                <h6>Test Results:</h6>
-                <ul class="list-unstyled">
-                    <li><i class="fas fa-${info.is_valid ? 'check' : 'times'} text-${info.is_valid ? 'success' : 'danger'} mr-2"></i> API Key Valid: ${info.is_valid ? 'Yes' : 'No'}</li>
-                    <li><i class="fas fa-${info.has_quota ? 'check' : 'times'} text-${info.has_quota ? 'success' : 'danger'} mr-2"></i> Quota Available: ${info.has_quota ? 'Yes' : 'No'}</li>
-                    <li><i class="fas fa-${info.model_available ? 'check' : 'times'} text-${info.model_available ? 'success' : 'danger'} mr-2"></i> Model Access: ${info.model_available ? 'Yes' : 'No'}</li>
-                </ul>
+            <div class="${statusClass} border rounded-lg p-4">
+                <div class="flex items-center space-x-3 mb-3">
+                    <i class="${statusIcon} text-xl"></i>
+                    <h4 class="font-semibold">${statusText}</h4>
+                </div>
+                ${info.error_message ? `<p class="text-sm mb-3">${info.error_message}</p>` : ''}
+                <div class="space-y-2">
+                    <h5 class="font-medium text-sm">{{ _("Test Results:") }}</h5>
+                    <ul class="space-y-1 text-sm">
+                        <li class="flex items-center space-x-2">
+                            <i class="fas fa-${info.is_valid ? 'check' : 'times'} text-${info.is_valid ? 'green' : 'red'}-500"></i>
+                            <span>{{ _("API Key Valid:") }} ${info.is_valid ? '{{ _("Yes") }}' : '{{ _("No") }}'}</span>
+                        </li>
+                        <li class="flex items-center space-x-2">
+                            <i class="fas fa-${info.has_quota ? 'check' : 'times'} text-${info.has_quota ? 'green' : 'red'}-500"></i>
+                            <span>{{ _("Quota Available:") }} ${info.has_quota ? '{{ _("Yes") }}' : '{{ _("No") }}'}</span>
+                        </li>
+                        <li class="flex items-center space-x-2">
+                            <i class="fas fa-${info.model_available ? 'check' : 'times'} text-${info.model_available ? 'green' : 'red'}-500"></i>
+                            <span>{{ _("Model Access:") }} ${info.model_available ? '{{ _("Yes") }}' : '{{ _("No") }}'}</span>
+                        </li>
+                    </ul>
+                </div>
             </div>
         `;
     }
