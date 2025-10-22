@@ -33,6 +33,18 @@ msgstr "Prompt Sanctuary"
 msgid "Your AI-powered prompt creation studio."
 msgstr "Studio pembuatan prompt bertenaga AI Anda."
 
+#: web/templates/landing.html:10
+msgid "Session Revoked"
+msgstr "Sesi Dicabut"
+
+#: web/templates/landing.html:11
+msgid "You were logged out because you logged in from another device. For security, only one active session is allowed per account."
+msgstr "Anda telah keluar karena Anda masuk dari perangkat lain. Untuk keamanan, hanya satu sesi aktif yang diizinkan per akun."
+
+#: web/templates/api_key_setup.html:425
+msgid "Skip API Key Setup"
+msgstr "Lewati Pengaturan Kunci API"
+
 #: web/templates/base.html:88 web/templates/base.html:103
 msgid "Home"
 msgstr "Beranda"

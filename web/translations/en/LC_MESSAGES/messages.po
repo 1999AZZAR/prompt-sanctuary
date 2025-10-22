@@ -33,6 +33,18 @@ msgstr "Prompt Sanctuary"
 msgid "Your AI-powered prompt creation studio."
 msgstr "Your AI-powered prompt creation studio."
 
+#: web/templates/landing.html:10
+msgid "Session Revoked"
+msgstr "Session Revoked"
+
+#: web/templates/landing.html:11
+msgid "You were logged out because you logged in from another device. For security, only one active session is allowed per account."
+msgstr "You were logged out because you logged in from another device. For security, only one active session is allowed per account."
+
+#: web/templates/api_key_setup.html:425
+msgid "Skip API Key Setup"
+msgstr "Skip API Key Setup"
+
 #: web/templates/base.html:88 web/templates/base.html:103
 msgid "Home"
 msgstr "Home"

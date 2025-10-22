@@ -420,11 +420,21 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function skipApiKeySetup() {
-        // Show confirmation dialog
-        if (confirm('{{ _("Are you sure you want to skip API key setup? You will not be able to use AI features until you set up your API key.") }}')) {
-            // Redirect to home page (for logged-in users)
-            window.location.href = '/home';
-        }
+        // Show styled confirmation popup
+        showAppPopup(
+            '{{ _("Skip API Key Setup") }}',
+            '{{ _("Are you sure you want to skip API key setup? You will not be able to use AI features until you set up your API key.") }}',
+            {
+                type: 'confirmation',
+                onConfirm: function() {
+                    // Redirect to home page (for logged-in users)
+                    window.location.href = '/home';
+                },
+                onCancel: function() {
+                    // User cancelled, do nothing
+                }
+            }
+        );
     }
 });
 </script>

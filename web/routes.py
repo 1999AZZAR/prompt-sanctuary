@@ -119,6 +119,8 @@ def create_main_blueprint(
             token = session.get("session_token")
             if token and not is_session_valid(main_blueprint.user_db, token, session["username"]):
                 session.clear()
+                # Add session revoked flag to indicate why user was logged out
+                session["session_revoked"] = True
                 return redirect(url_for("main.index"))
             elif token:
                 try:
@@ -153,7 +155,9 @@ def create_main_blueprint(
 
     @main_blueprint.route("/")
     def index():
-        return render_template("landing.html")
+        # Check if user was logged out due to session revocation
+        session_revoked = session.pop("session_revoked", False)
+        return render_template("landing.html", session_revoked=session_revoked)
 
     @main_blueprint.route("/signup", methods=["GET", "POST"])
     def signup():
@@ -218,6 +222,10 @@ def create_main_blueprint(
 
         try:
             create_session_record(main_blueprint.user_db, username, token, ua, ip)
+            # Revoke all other sessions for single-device security
+            revoked_count = revoke_other_sessions(main_blueprint.user_db, username, token)
+            if revoked_count > 0:
+                logger.info(f"Revoked {revoked_count} other sessions for user {username}")
         except Exception as e:
             logger.exception("Error creating session record")
             # Log the error but don't prevent signup if session record fails
@@ -275,6 +283,10 @@ def create_main_blueprint(
 
             try:
                 create_session_record(main_blueprint.user_db, username, token, ua, ip)
+                # Revoke all other sessions for single-device security
+                revoked_count = revoke_other_sessions(main_blueprint.user_db, username, token)
+                if revoked_count > 0:
+                    logger.info(f"Revoked {revoked_count} other sessions for user {username}")
                 # Session created successfully (no point system)
             except Exception:
                 logger.exception("Failed to create session record")
