@@ -49,6 +49,358 @@ msgstr "Community Prompt"
 msgid "Basic Prompt"
 msgstr "Basic Prompt"
 
+#: web/templates/account/profile.html:24
+msgid "API Key Status"
+msgstr "API Key Status"
+
+#: web/templates/account/profile.html:174
+msgid "Gemini API Key"
+msgstr "Gemini API Key"
+
+#: web/templates/account/profile.html:176
+msgid "Use your own API key to access all features!"
+msgstr "Use your own API key to access all features!"
+
+#: web/templates/account/profile.html:181
+msgid "Loading API key status..."
+msgstr "Loading API key status..."
+
+#: web/templates/account/profile.html:189
+msgid "Enter your Gemini API key"
+msgstr "Enter your Gemini API key"
+
+#: web/templates/account/profile.html:201
+msgid "Get your API key from"
+msgstr "Get your API key from"
+
+#: web/templates/account/profile.html:214
+msgid "API Key Pool Statistics"
+msgstr "API Key Pool Statistics"
+
+#: web/templates/account/profile.html:216
+msgid "See how your API key is being used by the system!"
+msgstr "See how your API key is being used by the system!"
+
+#: web/templates/account/profile.html:225
+msgid "API Key Usage"
+msgstr "API Key Usage"
+
+#: web/templates/account/profile.html:234
+msgid "Active Keys"
+msgstr "Active Keys"
+
+#: web/templates/account/profile.html:242
+msgid "Avg per Key"
+msgstr "Avg per Key"
+
+#: web/templates/account/profile.html:250
+msgid "Your API key is used securely and only for your own requests."
+msgstr "Your API key is used securely and only for your own requests."
+
+#: web/templates/prompts/generator/refinement.html:12
+msgid "Uses your API key for refinement"
+msgstr "Uses your API key for refinement"
+
+#: web/templates/base.html:126
+msgid "API Key"
+msgstr "API Key"
+
+#: web/routes.py:813 web/routes.py:847 web/routes.py:883 web/routes.py:911 web/routes.py:940
+msgid "API key required. Please set up your Gemini API key first."
+msgstr "API key required. Please set up your Gemini API key first."
+
+#: web/static/script/generator.js:180
+msgid "API key required! Please add your Gemini API key to continue."
+msgstr "API key required! Please add your Gemini API key to continue."
+
+#: web/static/script/generator.js:494
+msgid "Nothing to save! Generate a prompt first."
+msgstr "Nothing to save! Generate a prompt first."
+
+#: web/static/script/generator.js:551
+msgid "Response copied to clipboard!"
+msgstr "Response copied to clipboard!"
+
+#: web/static/script/generator.js:553
+msgid "Failed to copy response."
+msgstr "Failed to copy response."
+
+#: web/static/script/generator.js:559
+msgid "Failed to copy response: content not found."
+msgstr "Failed to copy response: content not found."
+
+#: web/static/script/generator.js:588
+msgid "Title cannot be empty."
+msgstr "Title cannot be empty."
+
+#: web/static/script/generator.js:631
+msgid "Prompt saved successfully!"
+msgstr "Prompt saved successfully!"
+
+#: web/static/script/generator.js:633
+msgid "Failed to save prompt."
+msgstr "Failed to save prompt."
+
+#: web/static/script/generator.js:638
+msgid "An error occurred while saving the prompt. Check console for details."
+msgstr "An error occurred while saving the prompt. Check console for details."
+
+#: web/static/script/prompt_refinement.js:126
+msgid "No generated prompt to refine."
+msgstr "No generated prompt to refine."
+
+#: web/static/script/prompt_refinement.js:133
+msgid "No prompt text found to refine."
+msgstr "No prompt text found to refine."
+
+#: web/static/script/prompt_refinement.js:152
+msgid "Prompt %(action)sed successfully!"
+msgstr "Prompt %(action)sed successfully!"
+
+#: web/static/script/prompt_refinement.js:158
+msgid "Refinement completed but no changes were made."
+msgstr "Refinement completed but no changes were made."
+
+#: web/static/script/prompt_refinement.js:163
+msgid "Failed to refine prompt. Please try again."
+msgstr "Failed to refine prompt. Please try again."
+
+#: web/static/script/generator.js:92
+msgid "An error occurred while generating the response."
+msgstr "An error occurred while generating the response."
+
+#: web/static/script/generator.js:183
+msgid "An error occurred while generating the response."
+msgstr "An error occurred while generating the response."
+
+#: web/static/script/generator.js:225
+msgid "An error occurred while submitting the form."
+msgstr "An error occurred while submitting the form."
+
+#: web/static/script/login.js:83
+msgid "A network error occurred. Please try again."
+msgstr "A network error occurred. Please try again."
+
+#: web/static/script/login.js:189
+msgid "Welcome back!"
+msgstr "Welcome back!"
+
+#: web/templates/prompts/generator/basic.html:149
+msgid "Generated prompt copied to clipboard!"
+msgstr "Generated prompt copied to clipboard!"
+
+#: web/templates/prompts/generator/basic.html:151
+msgid "Failed to copy prompt."
+msgstr "Failed to copy prompt."
+
+#: web/templates/prompts/generator/basic.html:159
+msgid "No generated prompt to save."
+msgstr "No generated prompt to save."
+
+#: web/templates/prompts/generator/basic.html:208
+msgid "Generated prompt saved successfully!"
+msgstr "Generated prompt saved successfully!"
+
+#: web/templates/prompts/generator/basic.html:211
+msgid "Failed to save prompt."
+msgstr "Failed to save prompt."
+
+#: web/templates/prompts/generator/basic.html:216
+msgid "Failed to save prompt. Please try again."
+msgstr "Failed to save prompt. Please try again."
+
+#: web/templates/prompts/generator/advance.html:492
+msgid "Generated prompt copied to clipboard!"
+msgstr "Generated prompt copied to clipboard!"
+
+#: web/templates/prompts/generator/advance.html:494
+msgid "Failed to copy prompt."
+msgstr "Failed to copy prompt."
+
+#: web/templates/prompts/generator/advance.html:502
+msgid "No generated prompt to save."
+msgstr "No generated prompt to save."
+
+#: web/templates/prompts/generator/advance.html:561
+msgid "Generated prompt saved successfully!"
+msgstr "Generated prompt saved successfully!"
+
+#: web/templates/prompts/generator/advance.html:564
+msgid "Failed to save prompt."
+msgstr "Failed to save prompt."
+
+#: web/templates/prompts/generator/advance.html:569
+msgid "Failed to save prompt. Please try again."
+msgstr "Failed to save prompt. Please try again."
+
+#: web/static/script/personal.js:25
+msgid "Prompt copied to clipboard!"
+msgstr "Prompt copied to clipboard!"
+
+#: web/static/script/personal.js:29
+msgid "Failed to copy prompt."
+msgstr "Failed to copy prompt."
+
+#: web/static/script/personal.js:77
+msgid "Missing prompt id."
+msgstr "Missing prompt id."
+
+#: web/static/script/personal.js:86
+msgid "No versions found for this prompt."
+msgstr "No versions found for this prompt."
+
+#: web/static/script/personal.js:148
+msgid "Restored this version."
+msgstr "Restored this version."
+
+#: web/static/script/personal.js:151
+msgid "Rollback failed"
+msgstr "Rollback failed"
+
+#: web/static/script/personal.js:158
+msgid "Failed to load history."
+msgstr "Failed to load history."
+
+#: web/static/script/personal.js:205
+msgid "Title cannot be empty."
+msgstr "Title cannot be empty."
+
+#: web/static/script/personal.js:256
+msgid "Prompt updated successfully!"
+msgstr "Prompt updated successfully!"
+
+#: web/static/script/personal.js:260
+msgid "Failed to update prompt."
+msgstr "Failed to update prompt."
+
+#: web/static/script/personal.js:266
+msgid "Error updating prompt: %(error)s"
+msgstr "Error updating prompt: %(error)s"
+
+#: web/static/script/personal.js:328
+msgid "Prompt deleted successfully!"
+msgstr "Prompt deleted successfully!"
+
+#: web/static/script/personal.js:331
+msgid "Failed to delete prompt."
+msgstr "Failed to delete prompt."
+
+#: web/static/script/personal.js:336
+msgid "Error deleting prompt: %(error)s"
+msgstr "Error deleting prompt: %(error)s"
+
+#: web/static/script/personal.js:351
+msgid "Cannot share: critical data missing from button."
+msgstr "Cannot share: critical data missing from button."
+
+#: web/static/script/personal.js:367
+msgid "Cannot unshare: missing prompt ID."
+msgstr "Cannot unshare: missing prompt ID."
+
+#: web/static/script/personal.js:400
+msgid "Prompt is already shared!"
+msgstr "Prompt is already shared!"
+
+#: web/static/script/personal.js:402
+msgid "Shared prompt updated!"
+msgstr "Shared prompt updated!"
+
+#: web/static/script/personal.js:404
+msgid "Prompt shared successfully!"
+msgstr "Prompt shared successfully!"
+
+#: web/static/script/personal.js:407
+msgid "Prompt shared successfully!"
+msgstr "Prompt shared successfully!"
+
+#: web/static/script/personal.js:430
+msgid "Failed to share prompt."
+msgstr "Failed to share prompt."
+
+#: web/static/script/personal.js:435
+msgid "Error sharing prompt: %(error)s"
+msgstr "Error sharing prompt: %(error)s"
+
+#: web/static/script/personal.js:451
+msgid "Prompt unshared successfully!"
+msgstr "Prompt unshared successfully!"
+
+#: web/static/script/personal.js:468
+msgid "Failed to unshare prompt."
+msgstr "Failed to unshare prompt."
+
+#: web/static/script/personal.js:473
+msgid "Error unsharing prompt: %(error)s"
+msgstr "Error unsharing prompt: %(error)s"
+
+#: web/static/script/personal.js:496
+msgid "Prompt updated successfully!"
+msgstr "Prompt updated successfully!"
+
+#: web/static/script/personal.js:505
+msgid "Failed to update prompt."
+msgstr "Failed to update prompt."
+
+#: web/static/script/personal.js:510
+msgid "Error updating prompt: %(error)s"
+msgstr "Error updating prompt: %(error)s"
+
+#: web/static/script/personal.js:524
+msgid "Cannot update: critical data missing from button."
+msgstr "Cannot update: critical data missing from button."
+
+#: web/static/script/community.js:18
+msgid "Prompt copied to clipboard!"
+msgstr "Prompt copied to clipboard!"
+
+#: web/static/script/community.js:23
+msgid "Failed to copy prompt. Please try again."
+msgstr "Failed to copy prompt. Please try again."
+
+#: web/static/script/community.js:88
+msgid "Prompt unshared successfully!"
+msgstr "Prompt unshared successfully!"
+
+#: web/static/script/community.js:92
+msgid "Failed to unshare prompt: %(error)s"
+msgstr "Failed to unshare prompt: %(error)s"
+
+#: web/static/script/community.js:98
+msgid "Error unsharing prompt: %(error)s"
+msgstr "Error unsharing prompt: %(error)s"
+
+#: web/static/script/community.js:136
+msgid "Prompt saved successfully!"
+msgstr "Prompt saved successfully!"
+
+#: web/static/script/community.js:139
+msgid "Failed to save prompt."
+msgstr "Failed to save prompt."
+
+#: web/static/script/community.js:145
+msgid "Failed to save prompt: %(error)s"
+msgstr "Failed to save prompt: %(error)s"
+
+#: web/static/script/notifications.js:183
+msgid "Copied to clipboard!"
+msgstr "Copied to clipboard!"
+
+#: web/static/script/notifications.js:186
+msgid "Failed to copy."
+msgstr "Failed to copy."
+
+#: web/static/script/feedback.js:153
+msgid "An error occurred. Please try again."
+msgstr "An error occurred. Please try again."
+
+#: web/static/script/feedback.js:161
+msgid "Network error (status %(status)s). Please try again."
+msgstr "Network error (status %(status)s). Please try again."
+
+#: web/static/script/feedback.js:163
+msgid "An unexpected error occurred. Please try again."
+msgstr "An unexpected error occurred. Please try again."
+
 #: web/templates/base.html:100 web/templates/base.html:115
 msgid "Advance Prompt"
 msgstr "Advance Prompt"

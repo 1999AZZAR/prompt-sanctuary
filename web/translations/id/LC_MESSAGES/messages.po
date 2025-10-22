@@ -49,6 +49,358 @@ msgstr "Prompt Komunitas"
 msgid "Basic Prompt"
 msgstr "Prompt Dasar"
 
+#: web/templates/account/profile.html:24
+msgid "API Key Status"
+msgstr "Status Kunci API"
+
+#: web/templates/account/profile.html:174
+msgid "Gemini API Key"
+msgstr "Kunci API Gemini"
+
+#: web/templates/account/profile.html:176
+msgid "Use your own API key to access all features!"
+msgstr "Gunakan kunci API Anda sendiri untuk mengakses semua fitur!"
+
+#: web/templates/account/profile.html:181
+msgid "Loading API key status..."
+msgstr "Memuat status kunci API..."
+
+#: web/templates/account/profile.html:189
+msgid "Enter your Gemini API key"
+msgstr "Masukkan kunci API Gemini Anda"
+
+#: web/templates/account/profile.html:201
+msgid "Get your API key from"
+msgstr "Dapatkan kunci API Anda dari"
+
+#: web/templates/account/profile.html:214
+msgid "API Key Pool Statistics"
+msgstr "Statistik Kolam Kunci API"
+
+#: web/templates/account/profile.html:216
+msgid "See how your API key is being used by the system!"
+msgstr "Lihat bagaimana kunci API Anda digunakan oleh sistem!"
+
+#: web/templates/account/profile.html:225
+msgid "API Key Usage"
+msgstr "Penggunaan Kunci API"
+
+#: web/templates/account/profile.html:234
+msgid "Active Keys"
+msgstr "Kunci Aktif"
+
+#: web/templates/account/profile.html:242
+msgid "Avg per Key"
+msgstr "Rata-rata per Kunci"
+
+#: web/templates/account/profile.html:250
+msgid "Your API key is used securely and only for your own requests."
+msgstr "Kunci API Anda digunakan dengan aman dan hanya untuk permintaan Anda sendiri."
+
+#: web/templates/prompts/generator/refinement.html:12
+msgid "Uses your API key for refinement"
+msgstr "Menggunakan kunci API Anda untuk penyempurnaan"
+
+#: web/templates/base.html:126
+msgid "API Key"
+msgstr "Kunci API"
+
+#: web/routes.py:813 web/routes.py:847 web/routes.py:883 web/routes.py:911 web/routes.py:940
+msgid "API key required. Please set up your Gemini API key first."
+msgstr "Kunci API diperlukan. Silakan atur kunci API Gemini Anda terlebih dahulu."
+
+#: web/static/script/generator.js:180
+msgid "API key required! Please add your Gemini API key to continue."
+msgstr "Kunci API diperlukan! Silakan tambahkan kunci API Gemini Anda untuk melanjutkan."
+
+#: web/static/script/generator.js:494
+msgid "Nothing to save! Generate a prompt first."
+msgstr "Tidak ada yang disimpan! Buat prompt terlebih dahulu."
+
+#: web/static/script/generator.js:551
+msgid "Response copied to clipboard!"
+msgstr "Respons disalin ke clipboard!"
+
+#: web/static/script/generator.js:553
+msgid "Failed to copy response."
+msgstr "Gagal menyalin respons."
+
+#: web/static/script/generator.js:559
+msgid "Failed to copy response: content not found."
+msgstr "Gagal menyalin respons: konten tidak ditemukan."
+
+#: web/static/script/generator.js:588
+msgid "Title cannot be empty."
+msgstr "Judul tidak boleh kosong."
+
+#: web/static/script/generator.js:631
+msgid "Prompt saved successfully!"
+msgstr "Prompt berhasil disimpan!"
+
+#: web/static/script/generator.js:633
+msgid "Failed to save prompt."
+msgstr "Gagal menyimpan prompt."
+
+#: web/static/script/generator.js:638
+msgid "An error occurred while saving the prompt. Check console for details."
+msgstr "Terjadi kesalahan saat menyimpan prompt. Periksa konsol untuk detail."
+
+#: web/static/script/prompt_refinement.js:126
+msgid "No generated prompt to refine."
+msgstr "Tidak ada prompt yang dihasilkan untuk disempurnakan."
+
+#: web/static/script/prompt_refinement.js:133
+msgid "No prompt text found to refine."
+msgstr "Tidak ada teks prompt yang ditemukan untuk disempurnakan."
+
+#: web/static/script/prompt_refinement.js:152
+msgid "Prompt %(action)sed successfully!"
+msgstr "Prompt berhasil %(action)s!"
+
+#: web/static/script/prompt_refinement.js:158
+msgid "Refinement completed but no changes were made."
+msgstr "Penyempurnaan selesai tetapi tidak ada perubahan yang dibuat."
+
+#: web/static/script/prompt_refinement.js:163
+msgid "Failed to refine prompt. Please try again."
+msgstr "Gagal menyempurnakan prompt. Silakan coba lagi."
+
+#: web/static/script/generator.js:92
+msgid "An error occurred while generating the response."
+msgstr "Terjadi kesalahan saat menghasilkan respons."
+
+#: web/static/script/generator.js:183
+msgid "An error occurred while generating the response."
+msgstr "Terjadi kesalahan saat menghasilkan respons."
+
+#: web/static/script/generator.js:225
+msgid "An error occurred while submitting the form."
+msgstr "Terjadi kesalahan saat mengirimkan formulir."
+
+#: web/static/script/login.js:83
+msgid "A network error occurred. Please try again."
+msgstr "Terjadi kesalahan jaringan. Silakan coba lagi."
+
+#: web/static/script/login.js:189
+msgid "Welcome back!"
+msgstr "Selamat datang kembali!"
+
+#: web/templates/prompts/generator/basic.html:149
+msgid "Generated prompt copied to clipboard!"
+msgstr "Prompt yang dihasilkan disalin ke clipboard!"
+
+#: web/templates/prompts/generator/basic.html:151
+msgid "Failed to copy prompt."
+msgstr "Gagal menyalin prompt."
+
+#: web/templates/prompts/generator/basic.html:159
+msgid "No generated prompt to save."
+msgstr "Tidak ada prompt yang dihasilkan untuk disimpan."
+
+#: web/templates/prompts/generator/basic.html:208
+msgid "Generated prompt saved successfully!"
+msgstr "Prompt yang dihasilkan berhasil disimpan!"
+
+#: web/templates/prompts/generator/basic.html:211
+msgid "Failed to save prompt."
+msgstr "Gagal menyimpan prompt."
+
+#: web/templates/prompts/generator/basic.html:216
+msgid "Failed to save prompt. Please try again."
+msgstr "Gagal menyimpan prompt. Silakan coba lagi."
+
+#: web/templates/prompts/generator/advance.html:492
+msgid "Generated prompt copied to clipboard!"
+msgstr "Prompt yang dihasilkan disalin ke clipboard!"
+
+#: web/templates/prompts/generator/advance.html:494
+msgid "Failed to copy prompt."
+msgstr "Gagal menyalin prompt."
+
+#: web/templates/prompts/generator/advance.html:502
+msgid "No generated prompt to save."
+msgstr "Tidak ada prompt yang dihasilkan untuk disimpan."
+
+#: web/templates/prompts/generator/advance.html:561
+msgid "Generated prompt saved successfully!"
+msgstr "Prompt yang dihasilkan berhasil disimpan!"
+
+#: web/templates/prompts/generator/advance.html:564
+msgid "Failed to save prompt."
+msgstr "Gagal menyimpan prompt."
+
+#: web/templates/prompts/generator/advance.html:569
+msgid "Failed to save prompt. Please try again."
+msgstr "Gagal menyimpan prompt. Silakan coba lagi."
+
+#: web/static/script/personal.js:25
+msgid "Prompt copied to clipboard!"
+msgstr "Prompt disalin ke clipboard!"
+
+#: web/static/script/personal.js:29
+msgid "Failed to copy prompt."
+msgstr "Gagal menyalin prompt."
+
+#: web/static/script/personal.js:77
+msgid "Missing prompt id."
+msgstr "ID prompt hilang."
+
+#: web/static/script/personal.js:86
+msgid "No versions found for this prompt."
+msgstr "Tidak ada versi yang ditemukan untuk prompt ini."
+
+#: web/static/script/personal.js:148
+msgid "Restored this version."
+msgstr "Versi ini dipulihkan."
+
+#: web/static/script/personal.js:151
+msgid "Rollback failed"
+msgstr "Rollback gagal"
+
+#: web/static/script/personal.js:158
+msgid "Failed to load history."
+msgstr "Gagal memuat riwayat."
+
+#: web/static/script/personal.js:205
+msgid "Title cannot be empty."
+msgstr "Judul tidak boleh kosong."
+
+#: web/static/script/personal.js:256
+msgid "Prompt updated successfully!"
+msgstr "Prompt berhasil diperbarui!"
+
+#: web/static/script/personal.js:260
+msgid "Failed to update prompt."
+msgstr "Gagal memperbarui prompt."
+
+#: web/static/script/personal.js:266
+msgid "Error updating prompt: %(error)s"
+msgstr "Kesalahan memperbarui prompt: %(error)s"
+
+#: web/static/script/personal.js:328
+msgid "Prompt deleted successfully!"
+msgstr "Prompt berhasil dihapus!"
+
+#: web/static/script/personal.js:331
+msgid "Failed to delete prompt."
+msgstr "Gagal menghapus prompt."
+
+#: web/static/script/personal.js:336
+msgid "Error deleting prompt: %(error)s"
+msgstr "Kesalahan menghapus prompt: %(error)s"
+
+#: web/static/script/personal.js:351
+msgid "Cannot share: critical data missing from button."
+msgstr "Tidak dapat berbagi: data penting hilang dari tombol."
+
+#: web/static/script/personal.js:367
+msgid "Cannot unshare: missing prompt ID."
+msgstr "Tidak dapat membatalkan berbagi: ID prompt hilang."
+
+#: web/static/script/personal.js:400
+msgid "Prompt is already shared!"
+msgstr "Prompt sudah dibagikan!"
+
+#: web/static/script/personal.js:402
+msgid "Shared prompt updated!"
+msgstr "Prompt yang dibagikan diperbarui!"
+
+#: web/static/script/personal.js:404
+msgid "Prompt shared successfully!"
+msgstr "Prompt berhasil dibagikan!"
+
+#: web/static/script/personal.js:407
+msgid "Prompt shared successfully!"
+msgstr "Prompt berhasil dibagikan!"
+
+#: web/static/script/personal.js:430
+msgid "Failed to share prompt."
+msgstr "Gagal membagikan prompt."
+
+#: web/static/script/personal.js:435
+msgid "Error sharing prompt: %(error)s"
+msgstr "Kesalahan membagikan prompt: %(error)s"
+
+#: web/static/script/personal.js:451
+msgid "Prompt unshared successfully!"
+msgstr "Prompt berhasil dibatalkan berbagi!"
+
+#: web/static/script/personal.js:468
+msgid "Failed to unshare prompt."
+msgstr "Gagal membatalkan berbagi prompt."
+
+#: web/static/script/personal.js:473
+msgid "Error unsharing prompt: %(error)s"
+msgstr "Kesalahan membatalkan berbagi prompt: %(error)s"
+
+#: web/static/script/personal.js:496
+msgid "Prompt updated successfully!"
+msgstr "Prompt berhasil diperbarui!"
+
+#: web/static/script/personal.js:505
+msgid "Failed to update prompt."
+msgstr "Gagal memperbarui prompt."
+
+#: web/static/script/personal.js:510
+msgid "Error updating prompt: %(error)s"
+msgstr "Kesalahan memperbarui prompt: %(error)s"
+
+#: web/static/script/personal.js:524
+msgid "Cannot update: critical data missing from button."
+msgstr "Tidak dapat memperbarui: data penting hilang dari tombol."
+
+#: web/static/script/community.js:18
+msgid "Prompt copied to clipboard!"
+msgstr "Prompt disalin ke clipboard!"
+
+#: web/static/script/community.js:23
+msgid "Failed to copy prompt. Please try again."
+msgstr "Gagal menyalin prompt. Silakan coba lagi."
+
+#: web/static/script/community.js:88
+msgid "Prompt unshared successfully!"
+msgstr "Prompt berhasil dibatalkan berbagi!"
+
+#: web/static/script/community.js:92
+msgid "Failed to unshare prompt: %(error)s"
+msgstr "Gagal membatalkan berbagi prompt: %(error)s"
+
+#: web/static/script/community.js:98
+msgid "Error unsharing prompt: %(error)s"
+msgstr "Kesalahan membatalkan berbagi prompt: %(error)s"
+
+#: web/static/script/community.js:136
+msgid "Prompt saved successfully!"
+msgstr "Prompt berhasil disimpan!"
+
+#: web/static/script/community.js:139
+msgid "Failed to save prompt."
+msgstr "Gagal menyimpan prompt."
+
+#: web/static/script/community.js:145
+msgid "Failed to save prompt: %(error)s"
+msgstr "Gagal menyimpan prompt: %(error)s"
+
+#: web/static/script/notifications.js:183
+msgid "Copied to clipboard!"
+msgstr "Disalin ke clipboard!"
+
+#: web/static/script/notifications.js:186
+msgid "Failed to copy."
+msgstr "Gagal menyalin."
+
+#: web/static/script/feedback.js:153
+msgid "An error occurred. Please try again."
+msgstr "Terjadi kesalahan. Silakan coba lagi."
+
+#: web/static/script/feedback.js:161
+msgid "Network error (status %(status)s). Please try again."
+msgstr "Kesalahan jaringan (status %(status)s). Silakan coba lagi."
+
+#: web/static/script/feedback.js:163
+msgid "An unexpected error occurred. Please try again."
+msgstr "Terjadi kesalahan yang tidak terduga. Silakan coba lagi."
+
 #: web/templates/base.html:100 web/templates/base.html:115
 msgid "Advance Prompt"
 msgstr "Prompt Lanjutan"
