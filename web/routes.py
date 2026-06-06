@@ -148,6 +148,14 @@ def create_main_blueprint(
     def index():
         return render_template("landing.html")
 
+    @main_blueprint.route("/terms")
+    def terms():
+        return render_template("terms.html")
+
+    @main_blueprint.route("/privacy")
+    def privacy():
+        return render_template("privacy.html")
+
     @main_blueprint.route("/signup", methods=["GET", "POST"])
     def signup():
         """Handle user signup. Validates input and creates a new user if valid."""

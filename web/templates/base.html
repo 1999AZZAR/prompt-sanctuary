@@ -19,11 +19,18 @@
   <script src="{{ url_for('static', filename='script/csrf.js') }}" defer></script>
   {% block head_extra %}{% endblock %}
 </head>
-<body class="{% if session.username %}shell--authed{% else %}shell--public{% endif %}">
+{% set is_legal_page = request.endpoint in ('main.terms', 'main.privacy') %}
+<body class="{% if is_legal_page %}shell--legal{% elif session.username %}shell--authed{% else %}shell--public{% endif %}">
 
   <a href="#main" class="sr-only">Skip to main content</a>
 
-  {% if session.username %}
+  {% if is_legal_page %}
+    {# ============== FULL-PAGE LEGAL (works for authed + unauthed) ============== #}
+    {# public_content block is defined in the else branch below #}
+    {# but we need to render it here. Use a different block name to avoid duplicate definition. #}
+    {% block legal_content %}{% endblock %}
+
+  {% elif session.username %}
     {# ============== AUTHED SHELL ============== #}
     <div class="shell" id="appShell">
 

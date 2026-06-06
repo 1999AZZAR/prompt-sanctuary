@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+{% block title %}Terms of Service · Prompt Sanctuary{% endblock %}
+
+{% block legal_content %}
+<div class="public-page">
+  <header class="public-bar">
+    <a class="brand" href="{{ url_for('main.index') }}">
+      <span class="brand__mark">P</span>
+      <span class="brand__name">Sanctuary</span>
+      <span class="brand__sub">v1</span>
+    </a>
+    <span class="public-bar__spacer"></span>
+    <a href="{{ url_for('main.index') }}"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Back home</a>
+  </header>
+
+  <main class="public-page__main">
+    <div class="container container--narrow">
+      <header style="margin-bottom: var(--p-sp-9);">
+        <span class="eyebrow">Legal · 09</span>
+        <h1 class="t-display-md" style="margin: var(--p-sp-3) 0 var(--p-sp-5); letter-spacing: -0.02em;">Terms of service.</h1>
+        <p class="lede">The rules that govern your use of Prompt Sanctuary. Plain language, no surprises. By creating an account or using the service, you agree to these terms.</p>
+        <div class="prose-meta">
+          <span class="badge"><i class="fa-solid fa-calendar"></i> Last updated 6 June 2026</span>
+          <span class="badge"><i class="fa-solid fa-clock"></i> 6 min read</span>
+          <span class="badge"><i class="fa-solid fa-file-lines"></i> Effective immediately</span>
+        </div>
+      </header>
+
+      <article class="prose">
+
+        <aside class="toc" aria-label="Table of contents">
+          <span class="toc__title">Contents</span>
+          <ol class="toc__list">
+            <li><a href="#section-1"><span class="toc__index">01</span> Acceptance of terms</a></li>
+            <li><a href="#section-2"><span class="toc__index">02</span> The service</a></li>
+            <li><a href="#section-3"><span class="toc__index">03</span> Your account</a></li>
+            <li><a href="#section-4"><span class="toc__index">04</span> Acceptable use</a></li>
+            <li><a href="#section-5"><span class="toc__index">05</span> Content and intellectual property</a></li>
+            <li><a href="#section-6"><span class="toc__index">06</span> Credits and virtual currency</a></li>
+            <li><a href="#section-7"><span class="toc__index">07</span> Third-party services</a></li>
+            <li><a href="#section-8"><span class="toc__index">08</span> Termination</a></li>
+            <li><a href="#section-9"><span class="toc__index">09</span> Disclaimers and liability</a></li>
+            <li><a href="#section-10"><span class="toc__index">10</span> Changes to these terms</a></li>
+            <li><a href="#section-11"><span class="toc__index">11</span> Contact</a></li>
+          </ol>
+        </aside>
+
+        <h2 id="section-1">01 · Acceptance of terms</h2>
+        <p>By accessing or using Prompt Sanctuary at any URL we operate, you agree to be bound by these Terms of Service and our <a href="{{ url_for('main.privacy') }}">Privacy Policy</a>. If you do not agree, do not create an account or use the service.</p>
+        <p>If you are accepting these terms on behalf of an organization, you represent that you have the authority to bind that organization, in which case "you" refers to that organization.</p>
+
+        <h2 id="section-2">02 · The service</h2>
+        <p>Prompt Sanctuary is a prompt engineering workbench. It helps you generate, refine, version, save, and share text prompts for large language models and image generation models. The service offers three main tools:</p>
+        <ul>
+          <li><strong>Generate</strong> — turn a topic or system prompt into a structured prompt.</li>
+          <li><strong>Refine</strong> — improve an existing prompt using a quick action or custom instructions; every refinement is versioned.</li>
+          <li><strong>Library</strong> — save, search, share, and revisit your prompts. Browse prompts shared by the community.</li>
+        </ul>
+        <p>We may add, change, or remove features at any time. We will do our best to give reasonable notice for material changes.</p>
+
+        <h2 id="section-3">03 · Your account</h2>
+        <p>To use most of the service, you must create an account. When you create one, you agree to:</p>
+        <ul>
+          <li>Provide a valid username (3–32 characters, letters, numbers, and underscores only).</li>
+          <li>Provide a password of at least six characters and keep it secret.</li>
+          <li>Provide accurate information if you choose to add an email address.</li>
+          <li>Be at least 13 years old (16 in some jurisdictions). The service is not directed to children.</li>
+        </ul>
+        <p>You are responsible for everything that happens under your account. Notify us immediately at the address below if you suspect unauthorized access. We are not liable for losses caused by unauthorized account use where you failed to protect your credentials.</p>
+
+        <h2 id="section-4">04 · Acceptable use</h2>
+        <p>You agree not to use the service to:</p>
+        <ul>
+          <li>Generate, store, or share content that is illegal, harmful, threatening, harassing, defamatory, or obscene.</li>
+          <li>Attempt to reverse-engineer, decompile, or otherwise extract source code or model weights.</li>
+          <li>Probe, scan, or test the vulnerability of the service or bypass any security measure.</li>
+          <li>Use the service to send unsolicited messages, spam, or to mass-produce content for platform manipulation.</li>
+          <li>Infringe intellectual property rights of others, including generating prompts designed to extract copyrighted material verbatim.</li>
+          <li>Resell, sublicense, or commercially exploit access to the service without our written permission.</li>
+        </ul>
+        <p>We may, at our sole discretion, investigate violations and take action including suspending or terminating your account, removing content, and reporting to law enforcement where required.</p>
+
+        <h2 id="section-5">05 · Content and intellectual property</h2>
+        <h3>Your content</h3>
+        <p>You own the prompts you create, save, and share. By using the service, you grant us a limited, non-exclusive, worldwide license to host, store, transmit, and display that content solely to operate the service for you. This license ends when you delete the content or your account, except where retention is required by law.</p>
+        <h3>Generated content</h3>
+        <p>Output produced by the underlying language model is generated for you. To the extent permitted by law and the upstream provider, you may use generated content for any lawful purpose, including commercial use. You are responsible for reviewing generated content before relying on it.</p>
+        <h3>Our content</h3>
+        <p>The service itself — its design, code, branding, default prompts, and documentation — is owned by us and protected by intellectual property laws. You may not copy or redistribute it without permission.</p>
+        <h3>Shared prompts</h3>
+        <p>When you share a prompt to the community library, you grant every other user a non-exclusive license to view, copy, and modify that prompt for their own use. You can unshare a prompt at any time to revoke that license going forward.</p>
+
+        <h2 id="section-6">06 · Credits and virtual currency</h2>
+        <p>The service uses a virtual currency called <strong>credits</strong>. Credits are used to pay for generation and refinement operations. New accounts receive a starting balance.</p>
+        <ul>
+          <li>Credits have no real-world monetary value and cannot be exchanged for cash.</li>
+          <li>Credits are not transferable between accounts.</li>
+          <li>Some credits expire after a period; the original signup balance does not.</li>
+          <li>If you add your own Google Generative AI API key, generations on your key do not consume credits; in some cases, providing a valid key awards additional credits as a thank-you.</li>
+          <li>If your account is terminated for a violation, unused credits are forfeited.</li>
+        </ul>
+
+        <h2 id="section-7">07 · Third-party services</h2>
+        <p>The service depends on third-party providers. Most importantly, generation and refinement are performed by Google Generative AI models. By using the service, you acknowledge that:</p>
+        <ul>
+          <li>Your prompts and any context you provide are sent to the third-party model provider for processing.</li>
+          <li>Output is returned subject to the provider's terms and content policies, which may change.</li>
+          <li>If you supply your own API key, you are also bound by the provider's terms (e.g., <a href="https://ai.google.dev/terms" target="_blank" rel="noopener">Google's Generative AI terms</a>).</li>
+          <li>We are not responsible for the accuracy, safety, or legality of model output.</li>
+        </ul>
+
+        <h2 id="section-8">08 · Termination</h2>
+        <p>You may terminate your account at any time from your <a href="{{ url_for('main.profile') }}">profile</a>. We may suspend or terminate your access if you violate these terms, if we are required to by law, or if the service is discontinued.</p>
+        <p>On termination, your personal data is deleted within thirty days, except where retention is required by law (for example, transaction records for tax accounting). Backups are purged on their normal rotation cycle.</p>
+
+        <h2 id="section-9">09 · Disclaimers and limitation of liability</h2>
+        <p>To the maximum extent permitted by law, the service is provided "as is" and "as available," without warranties of any kind, express or implied, including but not limited to warranties of merchantability, fitness for a particular purpose, and non-infringement. We do not warrant that the service will be uninterrupted, error-free, or secure.</p>
+        <p>To the maximum extent permitted by law, we will not be liable for any indirect, incidental, special, consequential, or punitive damages, or any loss of profits, revenues, data, or goodwill, arising from or related to your use of the service. Our total liability for any claim will not exceed the amount you paid us in the twelve months preceding the claim, or USD 100, whichever is greater.</p>
+        <p>Some jurisdictions do not allow the limitation of certain damages; in those cases, the limitations above apply to the maximum extent permitted by applicable law.</p>
+
+        <h2 id="section-10">10 · Changes to these terms</h2>
+        <p>We may revise these terms to reflect changes to the service, the law, or our practices. The "Last updated" date at the top will always reflect when the current version took effect. For material changes, we will make reasonable efforts to notify you — for example, by an in-product banner or an email if you have one on file. Continued use of the service after a change constitutes acceptance of the revised terms. If you do not accept the revised terms, you may stop using the service and close your account.</p>
+
+        <h2 id="section-11">11 · Contact</h2>
+        <p>Questions about these terms? Use the in-product feedback form, or write to the address listed on the public repository:</p>
+        <ul>
+          <li>GitHub: <a href="https://github.com/1999AZZAR/prompt-sanctuary" target="_blank" rel="noopener">1999AZZAR/prompt-sanctuary</a></li>
+          <li>In-app: <a href="{{ url_for('main.feedback_list') }}">Feedback log</a></li>
+        </ul>
+
+        <hr>
+
+        <p class="t-body-sm t-muted">This document is provided in good faith and is intended to be a fair, readable summary of the relationship between you and Prompt Sanctuary. It is not legal advice.</p>
+
+      </article>
+    </div>
+  </main>
+
+  <footer class="public-footer">
+    <span class="public-footer__brand">Prompt Sanctuary</span>
+    <p>© 2026</p>
+    <span class="public-footer__spacer"></span>
+    <a href="{{ url_for('main.terms') }}" aria-current="page"><strong>Terms</strong></a>
+    <a href="{{ url_for('main.privacy') }}">Privacy</a>
+    <a href="{{ url_for('main.index') }}">Home</a>
+  </footer>
+</div>
+{% endblock %}

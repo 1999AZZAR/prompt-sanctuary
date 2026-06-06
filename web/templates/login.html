@@ -76,7 +76,7 @@
           <div class="field">
             <label class="checkbox">
               <input type="checkbox" name="accept_terms" value="1">
-              <span>I agree to the <a href="#">terms</a> and <a href="#">privacy policy</a>.</span>
+              <span>I agree to the <a href="{{ url_for('main.terms') }}" target="_blank" rel="noopener">terms of service</a> and <a href="{{ url_for('main.privacy') }}" target="_blank" rel="noopener">privacy policy</a>.</span>
             </label>
           </div>
 

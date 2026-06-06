@@ -1,0 +1,173 @@
+{% extends "base.html" %}
+{% block title %}Privacy Policy · Prompt Sanctuary{% endblock %}
+
+{% block legal_content %}
+<div class="public-page">
+  <header class="public-bar">
+    <a class="brand" href="{{ url_for('main.index') }}">
+      <span class="brand__mark">P</span>
+      <span class="brand__name">Sanctuary</span>
+      <span class="brand__sub">v1</span>
+    </a>
+    <span class="public-bar__spacer"></span>
+    <a href="{{ url_for('main.index') }}"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Back home</a>
+  </header>
+
+  <main class="public-page__main">
+    <div class="container container--narrow">
+      <header style="margin-bottom: var(--p-sp-9);">
+        <span class="eyebrow">Legal · 10</span>
+        <h1 class="t-display-md" style="margin: var(--p-sp-3) 0 var(--p-sp-5); letter-spacing: -0.02em;">Privacy policy.</h1>
+        <p class="lede">What we collect, why, how long we keep it, and how to get it back. The short version: we keep what we need to run the service, nothing more, and you can delete your account at any time.</p>
+        <div class="prose-meta">
+          <span class="badge"><i class="fa-solid fa-calendar"></i> Last updated 6 June 2026</span>
+          <span class="badge"><i class="fa-solid fa-clock"></i> 5 min read</span>
+          <span class="badge"><i class="fa-solid fa-shield-halved"></i> GDPR-aligned</span>
+        </div>
+      </header>
+
+      <article class="prose">
+
+        <aside class="toc" aria-label="Table of contents">
+          <span class="toc__title">Contents</span>
+          <ol class="toc__list">
+            <li><a href="#section-1"><span class="toc__index">01</span> What this policy covers</a></li>
+            <li><a href="#section-2"><span class="toc__index">02</span> What we collect</a></li>
+            <li><a href="#section-3"><span class="toc__index">03</span> How we use it</a></li>
+            <li><a href="#section-4"><span class="toc__index">04</span> Cookies and sessions</a></li>
+            <li><a href="#section-5"><span class="toc__index">05</span> Third-party processors</a></li>
+            <li><a href="#section-6"><span class="toc__index">06</span> How long we keep data</a></li>
+            <li><a href="#section-7"><span class="toc__index">07</span> Your rights</a></li>
+            <li><a href="#section-8"><span class="toc__index">08</span> Security</a></li>
+            <li><a href="#section-9"><span class="toc__index">09</span> International transfers</a></li>
+            <li><a href="#section-10"><span class="toc__index">10</span> Children</a></li>
+            <li><a href="#section-11"><span class="toc__index">11</span> Changes</a></li>
+            <li><a href="#section-12"><span class="toc__index">12</span> Contact</a></li>
+          </ol>
+        </aside>
+
+        <h2 id="section-1">01 · What this policy covers</h2>
+        <p>This policy describes the personal data we collect when you use Prompt Sanctuary, why we collect it, how long we keep it, and the choices you have. It applies to all properties we operate under this brand, including the public site, the in-product pages, and any APIs that talk to the same backend.</p>
+        <p>It does not cover third-party sites we link to. Those sites have their own policies.</p>
+
+        <h2 id="section-2">02 · What we collect</h2>
+        <p>We aim to collect the minimum data needed to run the service. Specifically:</p>
+        <h3>Account data</h3>
+        <ul>
+          <li><strong>Username</strong> — required. Visible in the community library for prompts you share.</li>
+          <li><strong>Email address</strong> — optional. Used only for security alerts (for example, password change notifications). Never shared.</li>
+          <li><strong>Password</strong> — stored as a one-way hash (bcrypt). We cannot recover it for you; if you lose it, you reset it.</li>
+        </ul>
+        <h3>Content data</h3>
+        <ul>
+          <li><strong>Prompts you save</strong> — stored in your personal library, searchable by you, deletable by you.</li>
+          <li><strong>Prompts you share</strong> — also visible in the community library while shared. Unsharing removes them from public view.</li>
+          <li><strong>Refinement history</strong> — every version of a prompt you refine, so you can roll back. Deletable with the prompt.</li>
+        </ul>
+        <h3>Usage data</h3>
+        <ul>
+          <li><strong>Points ledger</strong> — credits earned, spent, and forfeited, with timestamps and the reason. Drives the in-product history view.</li>
+          <li><strong>Achievements</strong> — which achievements you have unlocked, and when.</li>
+          <li><strong>Sessions</strong> — a list of active login sessions (browser, IP, last active time). You can revoke any of them.</li>
+        </ul>
+        <h3>Optional data</h3>
+        <ul>
+          <li><strong>API key</strong> — if you choose to add a Google Generative AI key, it is stored encrypted at rest and used only to make generation requests on your behalf. You can remove it at any time.</li>
+          <li><strong>Feedback messages</strong> — any text you submit through the in-product feedback form, plus your username as attribution.</li>
+        </ul>
+        <h3>Technical data</h3>
+        <ul>
+          <li><strong>Server logs</strong> — standard HTTP request logs (IP, user agent, status code, route) for security and abuse detection. Retained for a rolling 30 days.</li>
+          <li><strong>Rate-limit counters</strong> — temporary counters that prevent abuse; not personally identifying.</li>
+        </ul>
+
+        <h2 id="section-3">03 · How we use it</h2>
+        <p>We use the data we collect only to:</p>
+        <ul>
+          <li>Authenticate you and keep your account secure.</li>
+          <li>Run the generator, refinement, and library features you ask for.</li>
+          <li>Display prompts you choose to share, in the community library.</li>
+          <li>Prevent abuse, debug issues, and keep the service running.</li>
+          <li>Comply with legal obligations.</li>
+        </ul>
+        <p>We do not sell your data. We do not use your prompts to train advertising models. We do not share your data with third parties except as described in section 05 below.</p>
+
+        <h2 id="section-4">04 · Cookies and sessions</h2>
+        <p>The service uses one essential <strong>session cookie</strong> to keep you signed in. It is an HTTP-only, signed cookie scoped to our domain, and it is removed when you sign out. We do not set advertising or cross-site tracking cookies.</p>
+        <p>Some cookies may be set by upstream services such as Google Fonts when the page loads. Those are governed by the upstream provider's policies.</p>
+
+        <h2 id="section-5">05 · Third-party processors</h2>
+        <p>To run the service we share the minimum necessary data with the following processors:</p>
+        <ul>
+          <li><strong>Google Generative AI</strong> — receives the prompts and context you submit when you click Generate or Refine. See <a href="https://ai.google.dev/terms" target="_blank" rel="noopener">Google's Generative AI terms</a> and <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">privacy policy</a>. If you supply your own API key, requests are billed to that key and processed under your account with the provider.</li>
+          <li><strong>Google Fonts</strong> — used to render typography. Receives your IP and user agent for each request.</li>
+          <li><strong>Hosting provider</strong> — the infrastructure we run on. Receives the standard HTTP request data needed to deliver responses.</li>
+        </ul>
+        <p>We do not engage advertising networks, analytics platforms that fingerprint visitors, or social-login services.</p>
+
+        <h2 id="section-6">06 · How long we keep data</h2>
+        <ul>
+          <li><strong>Account data</strong> — kept while your account is active. Deleted within 30 days of account closure, except for records we must keep by law.</li>
+          <li><strong>Prompts and refinement history</strong> — kept while you keep them. Deleting a prompt deletes its history.</li>
+          <li><strong>Points ledger</strong> — kept while your account is active. Useful for showing your history; deleted with the account.</li>
+          <li><strong>Feedback messages</strong> — kept indefinitely in de-identified form to inform product decisions, unless you ask us to remove yours.</li>
+          <li><strong>Server logs</strong> — rolling 30-day retention.</li>
+          <li><strong>Backups</strong> — encrypted daily snapshots kept for 14 days. Personal data in a backup is purged when the backup ages out.</li>
+        </ul>
+
+        <h2 id="section-7">07 · Your rights</h2>
+        <p>You can do all of the following from the in-product profile page, or by contacting us:</p>
+        <ul>
+          <li><strong>Access</strong> — see the data we hold about you.</li>
+          <li><strong>Correct</strong> — change your username or email.</li>
+          <li><strong>Delete</strong> — delete any individual prompt, refinement version, or your entire account.</li>
+          <li><strong>Export</strong> — request a copy of your data in a portable format.</li>
+          <li><strong>Revoke sessions</strong> — sign out active sessions from your profile.</li>
+        </ul>
+        <p>If you are in the EEA, the UK, or California, you have additional rights under local law — including the right to object to processing, restrict processing, and lodge a complaint with your local data protection authority. We honor those rights globally.</p>
+
+        <h2 id="section-8">08 · Security</h2>
+        <p>We protect your data with reasonable technical and organizational measures:</p>
+        <ul>
+          <li>Passwords are hashed with bcrypt.</li>
+          <li>API keys are encrypted at rest.</li>
+          <li>All authenticated routes require a valid session and CSRF token.</li>
+          <li>Database files are protected with file-system permissions inside a container that does not expose its internals to the network.</li>
+          <li>HTTPS is required in production; the development server is for local use only.</li>
+        </ul>
+        <p>No system is perfectly secure. If we ever discover a breach affecting your personal data, we will notify you and the relevant authorities as required by law.</p>
+
+        <h2 id="section-9">09 · International transfers</h2>
+        <p>The service may be operated from a data center in a different country from where you are. By using the service, you understand your data may be transferred to, stored, and processed in that country. Where required, we use standard contractual clauses or rely on the provider's equivalent safeguards.</p>
+
+        <h2 id="section-10">10 · Children</h2>
+        <p>The service is not directed to children under 13 (or under 16 in the EEA / UK). We do not knowingly collect personal data from children. If you believe a child has created an account, contact us and we will close it.</p>
+
+        <h2 id="section-11">11 · Changes</h2>
+        <p>We may revise this policy to reflect changes to the service, the law, or our practices. The "Last updated" date at the top will always reflect when the current version took effect. For material changes, we will make reasonable efforts to notify you. Continued use of the service after a change indicates acceptance of the revised policy.</p>
+
+        <h2 id="section-12">12 · Contact</h2>
+        <p>For any privacy question, request, or complaint, contact us through any of these channels:</p>
+        <ul>
+          <li>GitHub: <a href="https://github.com/1999AZZAR/prompt-sanctuary" target="_blank" rel="noopener">1999AZZAR/prompt-sanctuary</a></li>
+          <li>In-app: <a href="{{ url_for('main.feedback_list') }}">Feedback log</a></li>
+        </ul>
+
+        <hr>
+
+        <p class="t-body-sm t-muted">This document is intended to be readable. If anything is unclear, please tell us — we will rewrite the relevant section.</p>
+
+      </article>
+    </div>
+  </main>
+
+  <footer class="public-footer">
+    <span class="public-footer__brand">Prompt Sanctuary</span>
+    <p>© 2026</p>
+    <span class="public-footer__spacer"></span>
+    <a href="{{ url_for('main.terms') }}">Terms</a>
+    <a href="{{ url_for('main.privacy') }}" aria-current="page"><strong>Privacy</strong></a>
+    <a href="{{ url_for('main.index') }}">Home</a>
+  </footer>
+</div>
+{% endblock %}
