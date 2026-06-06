@@ -8,3 +8,4 @@ google-auth-oauthlib
 pillow
 Flask-WTF
 Flask-Babel
+gunicorn==23.0.0

@@ -1,386 +1,231 @@
-/**
- * Point History Modal Management
- * Handles the display and interaction of the point history modal
- */
+// web/static/script/point_history.js
+(function () {
+    'use strict';
 
-let pointHistoryData = null;
+    var ICON = {
+        original:           'fa-star',
+        daily_login:        'fa-calendar-check',
+        achievement:        'fa-trophy',
+        api_key_add:        'fa-key',
+        api_key_usage:      'fa-coins',
+        prompt_share:       'fa-share-nodes',
+        prompt_unshare:     'fa-share-from-square',
+        prompt_generation:  'fa-wand-magic-sparkles',
+        advance_generation: 'fa-sliders',
+        api_key_remove:     'fa-trash',
+        legacy:             'fa-clock-rotate-left'
+    };
 
-/**
- * Show the point history modal and load data
- */
-function showPointHistory() {
-    const modal = document.getElementById('point-history-modal');
-    if (!modal) return;
-    
-    // Show modal
-    modal.classList.remove('hidden');
-    document.body.style.overflow = 'hidden';
-    
-    // Load point history data
-    loadPointHistory();
-}
+    var DISPLAY_NAME = {
+        original:           'Initial Points',
+        daily_login:        'Daily Login Bonus',
+        achievement:        'Achievement Reward',
+        api_key_add:        'API Key Validation',
+        api_key_usage:      'API Key Usage Compensation',
+        prompt_share:       'Prompt Sharing',
+        prompt_unshare:     'Prompt Unsharing',
+        prompt_generation:  'Prompt Generation',
+        advance_generation: 'Advanced Prompt Generation',
+        api_key_remove:     'API Key Removal',
+        legacy:             'Legacy System'
+    };
 
-/**
- * Hide the point history modal
- */
-function hidePointHistory() {
-    const modal = document.getElementById('point-history-modal');
-    if (!modal) return;
-    
-    modal.classList.add('hidden');
-    document.body.style.overflow = 'auto';
-}
+    var DEFAULT_DESC = {
+        original:           'Initial account points',
+        daily_login:        'Daily login reward',
+        achievement:        'Achievement unlocked',
+        api_key_add:        'API key validated',
+        api_key_usage:      'System used your API key',
+        prompt_share:       'Shared prompt to community',
+        prompt_unshare:     'Unshared prompt',
+        prompt_generation:  'Generated basic prompt',
+        advance_generation: 'Generated advanced prompt',
+        api_key_remove:     'Removed API key',
+        legacy:             'Legacy point operation'
+    };
 
-/**
- * Load point history data from the server
- */
-async function loadPointHistory() {
-    const loadingElement = document.getElementById('point-history-loading');
-    const itemsElement = document.getElementById('point-history-items');
-    const emptyElement = document.getElementById('point-history-empty');
-    
-    // Show loading state
-    loadingElement.classList.remove('hidden');
-    itemsElement.classList.add('hidden');
-    emptyElement.classList.add('hidden');
-    
-    try {
-        const response = await fetch('/points/history');
-        
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const data = await response.json();
-        
-        if (data.success) {
-            pointHistoryData = data.history;
-            displayPointHistory(data.history);
-        } else {
-            console.error('Failed to load point history:', data.error);
-            showErrorState();
-        }
-    } catch (error) {
-        console.error('Error loading point history:', error);
-        showErrorState();
+    function escapeHtml(str) {
+        if (str == null) return '';
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
     }
-}
 
-/**
- * Display the point history data
- */
-function displayPointHistory(history) {
-    const loadingElement = document.getElementById('point-history-loading');
-    const itemsElement = document.getElementById('point-history-items');
-    const emptyElement = document.getElementById('point-history-empty');
-    
-    // Hide loading state
-    loadingElement.classList.add('hidden');
-    
-    if (!history || history.length === 0) {
-        emptyElement.classList.remove('hidden');
-        return;
+    function setVisible(el, visible) {
+        if (!el) return;
+        if (visible) el.removeAttribute('hidden');
+        else el.setAttribute('hidden', '');
     }
-    
-    // Clear existing items
-    itemsElement.innerHTML = '';
-    
-    // Group history by date
-    const groupedHistory = groupHistoryByDate(history);
-    
-    // Display grouped history
-    for (const [date, transactions] of Object.entries(groupedHistory)) {
-        const dateGroup = createDateGroup(date, transactions);
-        itemsElement.appendChild(dateGroup);
-    }
-    
-    itemsElement.classList.remove('hidden');
-}
 
-/**
- * Group history items by date
- */
-function groupHistoryByDate(history) {
-    const grouped = {};
-    
-    history.forEach(item => {
-        const date = new Date(item.created_at).toDateString();
-        if (!grouped[date]) {
-            grouped[date] = [];
+    function formatDateHeader(dateStr) {
+        var d = new Date(dateStr);
+        var now = new Date();
+        var yesterday = new Date(now);
+        yesterday.setDate(yesterday.getDate() - 1);
+        if (d.toDateString() === now.toDateString()) return 'Today';
+        if (d.toDateString() === yesterday.toDateString()) return 'Yesterday';
+        return d.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    }
+
+    function buildExpiration(transaction) {
+        if (!transaction.expires_at) {
+            return '<span class="badge badge--success"><i class="fa-solid fa-infinity"></i> Never</span>';
         }
-        grouped[date].push(item);
-    });
-    
-    return grouped;
-}
-
-/**
- * Create a date group element
- */
-function createDateGroup(date, transactions) {
-    const dateGroup = document.createElement('div');
-    dateGroup.className = 'mb-6';
-    
-    // Date header
-    const dateHeader = document.createElement('div');
-    dateHeader.className = 'flex items-center space-x-2 mb-3 pb-2 border-b border-gray-200';
-    
-    const dateIcon = document.createElement('i');
-    dateIcon.className = 'fas fa-calendar-day text-blue-500';
-    
-    const dateText = document.createElement('span');
-    dateText.className = 'font-medium text-gray-700';
-    dateText.textContent = formatDateHeader(date);
-    
-    dateHeader.appendChild(dateIcon);
-    dateHeader.appendChild(dateText);
-    
-    // Transactions list
-    const transactionsList = document.createElement('div');
-    transactionsList.className = 'space-y-3';
-    
-    transactions.forEach(transaction => {
-        const transactionElement = createTransactionElement(transaction);
-        transactionsList.appendChild(transactionElement);
-    });
-    
-    dateGroup.appendChild(dateHeader);
-    dateGroup.appendChild(transactionsList);
-    
-    return dateGroup;
-}
-
-/**
- * Create a transaction element
- */
-function createTransactionElement(transaction) {
-    const element = document.createElement('div');
-    element.className = 'flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200 hover:bg-gray-100 transition-colors';
-    
-    // Left side - icon and description
-    const leftSide = document.createElement('div');
-    leftSide.className = 'flex items-center space-x-3 flex-1';
-    
-    // Icon based on source
-    const icon = document.createElement('i');
-    icon.className = getSourceIcon(transaction.source);
-    
-    // Description
-    const description = document.createElement('div');
-    const descriptionText = document.createElement('p');
-    descriptionText.className = 'font-medium text-gray-900';
-    descriptionText.textContent = transaction.description || getDefaultDescription(transaction.source);
-    
-    const sourceText = document.createElement('p');
-    sourceText.className = 'text-sm text-gray-500';
-    sourceText.textContent = getSourceDisplayName(transaction.source);
-    
-    description.appendChild(descriptionText);
-    description.appendChild(sourceText);
-    
-    leftSide.appendChild(icon);
-    leftSide.appendChild(description);
-    
-    // Right side - points and status
-    const rightSide = document.createElement('div');
-    rightSide.className = 'flex items-center space-x-3';
-    
-    // Points change
-    const pointsChange = document.createElement('div');
-    pointsChange.className = 'text-right';
-    
-    const pointsText = document.createElement('p');
-    pointsText.className = `font-semibold ${transaction.points > 0 ? 'text-green-600' : 'text-red-600'}`;
-    pointsText.textContent = `${transaction.points > 0 ? '+' : ''}${transaction.points.toFixed(1)} pts`;
-    
-    const balanceText = document.createElement('p');
-    balanceText.className = 'text-xs text-gray-500';
-    const beforePoints = transaction.points_before !== null ? transaction.points_before.toFixed(1) : 'N/A';
-    const afterPoints = transaction.points_after !== null ? transaction.points_after.toFixed(1) : 'N/A';
-    balanceText.textContent = `${beforePoints} → ${afterPoints}`;
-    
-    pointsChange.appendChild(pointsText);
-    pointsChange.appendChild(balanceText);
-    
-    // Expiration status
-    const expirationStatus = createExpirationStatus(transaction);
-    
-    rightSide.appendChild(pointsChange);
-    rightSide.appendChild(expirationStatus);
-    
-    element.appendChild(leftSide);
-    element.appendChild(rightSide);
-    
-    return element;
-}
-
-/**
- * Create expiration status element
- */
-function createExpirationStatus(transaction) {
-    const statusElement = document.createElement('div');
-    statusElement.className = 'text-right';
-    
-    if (transaction.expires_at && transaction.expires_at !== null) {
-        const expirationDate = new Date(transaction.expires_at);
-        const now = new Date();
-        const daysLeft = Math.ceil((expirationDate - now) / (1000 * 60 * 60 * 24));
-        
+        var exp = new Date(transaction.expires_at);
+        var now = new Date();
+        var daysLeft = Math.ceil((exp - now) / (1000 * 60 * 60 * 24));
         if (daysLeft > 0) {
-            statusElement.innerHTML = `
-                <div class="flex items-center space-x-1 text-xs text-blue-600">
-                    <i class="fas fa-clock"></i>
-                    <span>${daysLeft} days left</span>
-                </div>
-            `;
-        } else if (transaction.is_expired) {
-            statusElement.innerHTML = `
-                <div class="flex items-center space-x-1 text-xs text-gray-500">
-                    <i class="fas fa-hourglass-end"></i>
-                    <span>Expired</span>
-                </div>
-            `;
+            return '<span class="badge"><i class="fa-solid fa-clock"></i> ' + daysLeft + 'd</span>';
         }
-    } else {
-        statusElement.innerHTML = `
-            <div class="flex items-center space-x-1 text-xs text-green-600">
-                <i class="fas fa-infinity"></i>
-                <span>Never expires</span>
-            </div>
-        `;
+        return '<span class="badge badge--critical"><i class="fa-solid fa-hourglass-end"></i> Expired</span>';
     }
-    
-    return statusElement;
-}
 
-/**
- * Get icon class for a source
- */
-function getSourceIcon(source) {
-    const iconMap = {
-        'original': 'fas fa-star text-yellow-500',
-        'daily_login': 'fas fa-calendar-check text-blue-500',
-        'achievement': 'fas fa-trophy text-purple-500',
-        'api_key_add': 'fas fa-key text-green-500',
-        'api_key_usage': 'fas fa-coins text-orange-500',
-        'prompt_share': 'fas fa-share-alt text-indigo-500',
-        'prompt_unshare': 'fas fa-share-alt-slash text-red-500',
-        'prompt_generation': 'fas fa-magic text-blue-500',
-        'advance_generation': 'fas fa-wand-magic-sparkles text-purple-500',
-        'api_key_remove': 'fas fa-trash text-red-500',
-        'legacy': 'fas fa-history text-gray-500'
-    };
-    
-    return iconMap[source] || 'fas fa-coins text-gray-500';
-}
+    function buildTransaction(transaction) {
+        var icon = ICON[transaction.source] || 'fa-coins';
+        var source = DISPLAY_NAME[transaction.source] || (transaction.source || 'Transaction');
+        var desc = transaction.description || DEFAULT_DESC[transaction.source] || 'Point transaction';
+        var pts = Number(transaction.points || 0);
+        var ptsStr = (pts > 0 ? '+' : '') + pts.toFixed(1) + ' pts';
+        var ptsClass = pts > 0 ? 't-accent' : (pts < 0 ? '' : 't-muted');
+        var ptsStyle = pts < 0 ? 'color: var(--p-color-critical);' : '';
+        var before = transaction.points_before != null ? Number(transaction.points_before).toFixed(1) : '—';
+        var after = transaction.points_after != null ? Number(transaction.points_after).toFixed(1) : '—';
+        var color = icon === 'fa-trophy' ? 'var(--p-color-warning)' : 'var(--p-color-primary)';
 
-/**
- * Get display name for a source
- */
-function getSourceDisplayName(source) {
-    const nameMap = {
-        'original': 'Initial Points',
-        'daily_login': 'Daily Login Bonus',
-        'achievement': 'Achievement Reward',
-        'api_key_add': 'API Key Validation',
-        'api_key_usage': 'API Key Usage Compensation',
-        'prompt_share': 'Prompt Sharing',
-        'prompt_unshare': 'Prompt Unsharing',
-        'prompt_generation': 'Prompt Generation',
-        'advance_generation': 'Advanced Prompt Generation',
-        'api_key_remove': 'API Key Removal',
-        'legacy': 'Legacy System'
-    };
-    
-    return nameMap[source] || source;
-}
-
-/**
- * Get default description for a source
- */
-function getDefaultDescription(source) {
-    const descriptionMap = {
-        'original': 'Initial account points',
-        'daily_login': 'Daily login reward',
-        'achievement': 'Achievement unlocked',
-        'api_key_add': 'API key validated',
-        'api_key_usage': 'System used your API key',
-        'prompt_share': 'Shared prompt to community',
-        'prompt_unshare': 'Unshared prompt',
-        'prompt_generation': 'Generated basic prompt',
-        'advance_generation': 'Generated advanced prompt',
-        'api_key_remove': 'Removed API key',
-        'legacy': 'Legacy point operation'
-    };
-    
-    return descriptionMap[source] || 'Point transaction';
-}
-
-/**
- * Format date header
- */
-function formatDateHeader(dateString) {
-    const date = new Date(dateString);
-    const today = new Date();
-    const yesterday = new Date(today);
-    yesterday.setDate(yesterday.getDate() - 1);
-    
-    if (date.toDateString() === today.toDateString()) {
-        return 'Today';
-    } else if (date.toDateString() === yesterday.toDateString()) {
-        return 'Yesterday';
-    } else {
-        return date.toLocaleDateString('en-US', {
-            weekday: 'long',
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-        });
+        return '' +
+            '<div class="card card--compact" style="background: var(--p-color-surface-sunken); margin: 0;">' +
+            '  <div class="cluster" style="align-items: center; gap: var(--p-sp-3);">' +
+            '    <div style="width: 32px; height: 32px; flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; background: var(--p-color-surface); border: var(--p-border-hair); border-radius: var(--p-r-2); color: ' + color + ';">' +
+            '      <i class="fa-solid ' + icon + '"></i>' +
+            '    </div>' +
+            '    <div style="min-width: 0; flex: 1;">' +
+            '      <p class="t-body" style="margin: 0; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">' + escapeHtml(desc) + '</p>' +
+            '      <p class="t-body-sm t-muted" style="margin: 2px 0 0;">' + escapeHtml(source) + '</p>' +
+            '    </div>' +
+            '    <div style="text-align: right; flex-shrink: 0;">' +
+            '      <p class="t-mono" style="margin: 0; font-weight: 600; ' + ptsStyle + '">' + escapeHtml(ptsStr) + '</p>' +
+            '      <p class="t-body-sm t-muted" style="margin: 2px 0 0;">' + escapeHtml(before) + ' → ' + escapeHtml(after) + '</p>' +
+            '    </div>' +
+            '    <div style="flex-shrink: 0;">' + buildExpiration(transaction) + '</div>' +
+            '  </div>' +
+            '</div>';
     }
-}
 
-/**
- * Show error state
- */
-function showErrorState() {
-    const loadingElement = document.getElementById('point-history-loading');
-    const itemsElement = document.getElementById('point-history-items');
-    const emptyElement = document.getElementById('point-history-empty');
-    
-    loadingElement.classList.add('hidden');
-    itemsElement.classList.add('hidden');
-    
-    // Modify empty state to show error
-    const emptyIcon = emptyElement.querySelector('i');
-    const emptyText = emptyElement.querySelector('p');
-    
-    emptyIcon.className = 'fas fa-exclamation-triangle text-4xl text-red-300 mb-4';
-    emptyText.textContent = 'Failed to load point history. Please try again.';
-    
-    emptyElement.classList.remove('hidden');
-}
+    function buildDateGroup(date, transactions) {
+        var html = '' +
+            '<div style="margin-bottom: var(--p-sp-5);">' +
+            '  <div class="cluster" style="gap: var(--p-sp-2); margin-bottom: var(--p-sp-2); padding-bottom: var(--p-sp-2); border-bottom: var(--p-border-rule);">' +
+            '    <i class="fa-solid fa-calendar-day" style="color: var(--p-color-interactive); font-size: 14px;"></i>' +
+            '    <span class="t-body-sm" style="font-weight: 600; color: var(--p-color-text);">' + escapeHtml(formatDateHeader(date)) + '</span>' +
+            '  </div>' +
+            '  <div class="stack--sm">';
+        for (var i = 0; i < transactions.length; i++) {
+            html += buildTransaction(transactions[i]);
+        }
+        html += '  </div></div>';
+        return html;
+    }
 
-/**
- * Close modal when clicking outside
- */
-document.addEventListener('click', function(event) {
-    const modal = document.getElementById('point-history-modal');
-    if (modal && !modal.classList.contains('hidden')) {
-        if (event.target === modal) {
-            hidePointHistory();
+    function groupByDate(history) {
+        var groups = {};
+        for (var i = 0; i < history.length; i++) {
+            var key = new Date(history[i].created_at).toDateString();
+            if (!groups[key]) groups[key] = [];
+            groups[key].push(history[i]);
+        }
+        return groups;
+    }
+
+    function showError() {
+        var loading = document.getElementById('point-history-loading');
+        var items = document.getElementById('point-history-items');
+        var empty = document.getElementById('point-history-empty');
+        setVisible(loading, false);
+        setVisible(items, false);
+        if (empty) {
+            empty.innerHTML = '' +
+                '<div class="empty empty--compact">' +
+                '  <div class="empty__icon" style="color: var(--p-color-critical);"><i class="fa-solid fa-triangle-exclamation"></i></div>' +
+                '  <div class="empty__title">Failed to load point history</div>' +
+                '  <p class="empty__body">Please try again.</p>' +
+                '</div>';
+            setVisible(empty, true);
         }
     }
-});
 
-/**
- * Close modal with Escape key
- */
-document.addEventListener('keydown', function(event) {
-    if (event.key === 'Escape') {
-        hidePointHistory();
+    function displayHistory(history) {
+        var loading = document.getElementById('point-history-loading');
+        var items = document.getElementById('point-history-empty');
+        var empty = document.getElementById('point-history-empty');
+        setVisible(loading, false);
+
+        if (!history || history.length === 0) {
+            setVisible(items, false);
+            setVisible(empty, true);
+            return;
+        }
+
+        var groups = groupByDate(history);
+        var html = '';
+        var keys = Object.keys(groups);
+        for (var i = 0; i < keys.length; i++) {
+            html += buildDateGroup(keys[i], groups[keys[i]]);
+        }
+        items.innerHTML = html;
+        setVisible(items, true);
+        setVisible(empty, false);
     }
-});
 
-// Export functions for global access
-window.showPointHistory = showPointHistory;
-window.hidePointHistory = hidePointHistory;
+    function loadPointHistory() {
+        var loading = document.getElementById('point-history-loading');
+        var items = document.getElementById('point-history-items');
+        var empty = document.getElementById('point-history-empty');
+        setVisible(loading, true);
+        setVisible(items, false);
+        setVisible(empty, false);
+
+        fetch('/points/history')
+            .then(function (r) {
+                if (!r.ok) throw new Error('HTTP ' + r.status);
+                return r.json();
+            })
+            .then(function (data) {
+                if (data && data.success) displayHistory(data.history);
+                else showError();
+            })
+            .catch(function (e) {
+                console.error('Error loading point history:', e);
+                showError();
+            });
+    }
+
+    function showPointHistory() {
+        var modal = document.getElementById('point-history-modal');
+        if (!modal) return;
+        modal.hidden = false;
+        document.body.style.overflow = 'hidden';
+        loadPointHistory();
+    }
+
+    function hidePointHistory() {
+        var modal = document.getElementById('point-history-modal');
+        if (!modal) return;
+        modal.hidden = true;
+        document.body.style.overflow = '';
+    }
+
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') hidePointHistory();
+    });
+
+    document.addEventListener('click', function (e) {
+        var modal = document.getElementById('point-history-modal');
+        if (modal && !modal.hidden && e.target === modal) hidePointHistory();
+    });
+
+    window.showPointHistory = showPointHistory;
+    window.hidePointHistory = hidePointHistory;
+})();

@@ -87,22 +87,22 @@ function attachHistoryButtonListeners() {
                         return;
                     }
                     const listHtml = versions.map(v => `
-                        <div class="mb-4 p-3 rounded-lg bg-white/60 border border-white/40">
-                            <div class="flex items-center justify-between mb-2">
-                                <div class="text-sm text-slate-700">v${v.version_number} • ${escapeHtml(String(v.created_at))}</div>
-                                <div class="space-x-2">
-                                    <button class="px-3 py-1 rounded-md bg-slate-700 text-white text-xs preview-btn" data-v="${v.version_number}">Preview</button>
-                                    <button class="px-3 py-1 rounded-md bg-amber-500 text-white text-xs rollback-btn" data-v="${v.version_number}">Restore</button>
+                        <div class="card card--compact card--sunken" style="margin-bottom: var(--p-sp-3);">
+                            <div class="cluster cluster--between" style="margin-bottom: var(--p-sp-2);">
+                                <div class="t-body-sm t-muted"><strong class="t-mono">v${v.version_number}</strong> · ${escapeHtml(String(v.created_at))}</div>
+                                <div class="cluster" style="gap: var(--p-sp-2);">
+                                    <button class="btn btn--tertiary btn--sm preview-btn" data-v="${v.version_number}"><i class="fa-solid fa-eye"></i> Preview</button>
+                                    <button class="btn btn--primary btn--sm rollback-btn" data-v="${v.version_number}"><i class="fa-solid fa-rotate-left"></i> Restore</button>
                                 </div>
                             </div>
-                            <div class="text-sm font-semibold mb-1">${escapeHtml(v.title)}</div>
-                            <div class="hidden text-sm whitespace-pre-wrap break-words version-content" data-v="${v.version_number}">${escapeHtml(v.prompt)}</div>
+                            <div class="t-body-sm t-strong" style="margin-bottom: var(--p-sp-2); word-break: break-word;">${escapeHtml(v.title)}</div>
+                            <div class="hidden code-block" data-v="${v.version_number}" style="margin-top: var(--p-sp-2); font-size: var(--p-fs-body-sm);">${escapeHtml(v.prompt)}</div>
                         </div>
                     `).join('');
 
                     const content = `
                         <div>
-                            <div class="text-sm text-slate-600 mb-3">History for: <strong>${escapeHtml(title)}</strong></div>
+                            <div class="t-body-sm t-muted" style="margin-bottom: var(--p-sp-4);">History for: <strong>${escapeHtml(title)}</strong></div>
                             ${listHtml}
                         </div>
                     `;
@@ -110,7 +110,7 @@ function attachHistoryButtonListeners() {
                     showAppPopup('Version History', content, {
                         type: 'custom',
                         buttons: [
-                            { text: 'Close', class: 'px-5 py-2.5 rounded-xl bg-slate-600 text-white', action: () => {} }
+                            { text: 'Close', class: 'btn--secondary', action: function () { return true; } }
                         ],
                         size: 'xl'
                     });
@@ -181,22 +181,23 @@ function attachEditButtonListeners() {
 function openEditModal(randomVal, title, prompt, tags) {
     // Wrapped existing content in a single parent div
     const contentHtml = `
-        <div> 
+        <div class="stack">
             <input type="hidden" id="editRandomValModal" value="${randomVal}">
-            <div class="mb-4">
-                <label for="editTitleModal" class="block mb-2 text-sm font-medium text-gray-200">Title:</label>
-                <input type="text" id="editTitleModal" value="${escapeHTML(title)}" class="w-full p-2 bg-gray-700 border border-gray-600 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 placeholder-gray-400">
+            <div class="field">
+                <label class="field__label" for="editTitleModal">Title</label>
+                <input class="input" type="text" id="editTitleModal" value="${escapeHTML(title)}" autocomplete="off">
             </div>
-            <div class="mb-6">
-                <label for="editPromptModal" class="block mb-2 text-sm font-medium text-gray-200">Prompt:</label>
-                <textarea id="editPromptModal" rows="12" class="w-full p-2 bg-gray-700 border border-gray-600 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 placeholder-gray-400">${escapeHTML(prompt)}</textarea>
+            <div class="field">
+                <label class="field__label" for="editPromptModal">Prompt</label>
+                <textarea class="textarea input--mono" id="editPromptModal" rows="14" style="resize: vertical;">${escapeHTML(prompt)}</textarea>
             </div>
         </div>
     `;
 
     const editButtons = [
         {
-            text: "Save Changes",
+            text: "Save changes",
+            class: "btn--primary",
             action: function() {
                 const newRandomVal = document.getElementById('editRandomValModal').value;
                 const newTitle = document.getElementById('editTitleModal').value;
@@ -205,23 +206,25 @@ function openEditModal(randomVal, title, prompt, tags) {
                     showToast("Title cannot be empty.", "error");
                     const titleInput = document.getElementById('editTitleModal');
                     if (titleInput) titleInput.focus();
-                    return false; 
+                    return false;
                 }
                 saveEditedPrompt(newRandomVal, newTitle, newPrompt);
+                return true;
             }
         },
         {
             text: "Cancel",
+            class: "btn--secondary",
             action: function() {
-                closeAppPopup(); 
+                return true;
             }
         }
     ];
 
-    showAppPopup("Edit Prompt", contentHtml, { 
-        type: 'custom', 
+    showAppPopup("Edit prompt", contentHtml, {
+        type: 'custom',
         buttons: editButtons,
-        size: '85vw'
+        size: '720px'
     });
 }
 
@@ -282,33 +285,29 @@ function attachDeleteButtonListeners() {
 
 // Function to confirm deletion - MODIFIED TO USE showAppPopup
 function openDeleteConfirmationModal(randomVal) {
-    const contentHtml = "<p class='text-gray-100'>Are you sure you want to delete this prompt? This action cannot be undone.</p>"; // text-gray-100 for better visibility
-    
-    // Base classes from showAppPopup for consistent look
-    const baseButtonClass = 'px-5 py-2.5 rounded-lg transition duration-200 text-sm font-medium w-full sm:w-auto';
-    const deleteButtonClass = `bg-red-600 hover:bg-red-700 text-white ${baseButtonClass}`;
-    const cancelButtonClass = `bg-gray-600 hover:bg-gray-700 text-white ${baseButtonClass}`;
+    const contentHtml = '<p>Are you sure you want to delete this prompt? This action cannot be undone.</p>';
 
     const deleteButtons = [
         {
             text: "Delete",
-            class: deleteButtonClass,
+            class: "btn--destructive",
             action: function() {
                 deletePrompt(randomVal);
-                // closeAppPopup(); // showAppPopup handles close by default unless action returns false
+                return true;
             }
         },
         {
             text: "Cancel",
-            class: cancelButtonClass,
+            class: "btn--secondary",
             action: function() {
-                closeAppPopup(); // Explicitly close, or rely on default
+                return true;
             }
         }
     ];
-    showAppPopup("Confirm Deletion", contentHtml, { 
-        type: 'custom', 
-        buttons: deleteButtons 
+    showAppPopup("Delete prompt", contentHtml, {
+        type: 'custom',
+        buttons: deleteButtons,
+        size: 'sm'
     });
 }
 

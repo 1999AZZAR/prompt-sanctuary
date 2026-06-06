@@ -1,39 +1,126 @@
 {% extends "base.html" %}
-{% set show_signup = show_signup | default(false) %}
+{% block title %}{% if show_signup %}Create account{% else %}Sign in{% endif %} · Prompt Sanctuary{% endblock %}
+{% block public_content %}
+<div class="split">
+  <aside class="split__cover">
+    <a class="brand" href="{{ url_for('main.index') }}">
+      <span class="brand__mark">P</span>
+      <span class="brand__name">Sanctuary</span>
+      <span class="brand__sub">v1</span>
+    </a>
 
-{% block content %}
-<section class="flex items-center justify-center min-h-screen px-6" role="region" aria-labelledby="page-heading">
-  <div class="mdc-card glass p-8 w-full max-w-md space-y-6">
-    <h1 id="page-heading" class="text-3xl font-bold text-center text-slate-900">{{ _('Prompt Sanctuary') }}</h1>
-    <p class="text-slate-600 text-center mb-4">{% if show_signup %}{{ _('Create an account to join Prompt Sanctuary.') }}{% else %}{{ _('Log in to access Prompt Sanctuary features.') }}{% endif %}</p>
-    <form id="loginForm" action="{{ url_for('main.login') }}" method="post" class="space-y-4 {% if show_signup %}hidden{% endif %}" role="form" aria-labelledby="login-heading">
-      <h2 id="login-heading" class="sr-only">Login Form</h2>
-      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-      <input type="text" name="honeypot" class="hidden">
-      <label for="usernameLogin" class="sr-only">{{ _('Username') }}</label>
-      <input type="text" id="usernameLogin" name="username" required class="w-full p-3 rounded-xl bg-white/70 border border-white/40 text-slate-800 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-purple/40" placeholder="{{ _('Username') }}">
-      <label for="passwordLogin" class="sr-only">{{ _('Password') }}</label>
-      <input type="password" id="passwordLogin" name="password" required class="w-full p-3 rounded-xl bg-white/70 border border-white/40 text-slate-800 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-purple/40" placeholder="{{ _('Password') }}">
-      <div id="loginErrorMessage" class="text-red-500 text-sm my-2 text-center" role="alert"></div>
-      <button type="submit" class="w-full inline-flex items-center justify-center rounded-xl bg-violet-400 text-white px-4 py-3 shadow hover:bg-violet-500 transition">{{ _('Login') }}</button>
-      <p class="text-center">{{ _('Don\'t have an account?') }} <a id="signupLink" href="#" class="text-violet-600 hover:text-violet-700">{{ _('Sign Up') }}</a></p>
-    </form>
-    <form id="signupForm" action="{{ url_for('main.signup') }}" method="post" class="space-y-4 {% if not show_signup %}hidden{% endif %}" role="form" aria-labelledby="signup-heading">
-      <h2 id="signup-heading" class="sr-only">Sign Up Form</h2>
-      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-      <input type="text" name="honeypot" class="hidden">
-      <label for="usernameSignup" class="sr-only">{{ _('Choose username') }}</label>
-      <input type="text" id="usernameSignup" name="username" required class="w-full p-3 rounded-xl bg-white/70 border border-white/40 text-slate-800 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-purple/40" placeholder="{{ _('Choose username') }}">
-      <label for="emailSignup" class="sr-only">{{ _('Email (optional)') }}</label>
-      <input type="email" id="emailSignup" name="email" class="w-full p-3 rounded-xl bg-white/70 border border-white/40 text-slate-800 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-purple/40" placeholder="{{ _('Email (optional)') }}">
-      <label for="passwordSignup" class="sr-only">{{ _('Password') }}</label>
-      <input type="password" id="passwordSignup" name="password" required class="w-full p-3 rounded-xl bg-white/70 border border-white/40 text-slate-800 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-purple/40" placeholder="{{ _('Password') }}">
-      <label for="confirmPassword" class="sr-only">{{ _('Confirm Password') }}</label>
-      <input type="password" id="confirmPassword" name="confirmPassword" required class="w-full p-3 rounded-xl bg-white/70 border border-white/40 text-slate-800 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-purple/40" placeholder="{{ _('Confirm Password') }}">
-      <div id="signupErrorMessage" class="text-red-500 text-sm my-2 text-center" role="alert"></div>
-      <button type="submit" class="w-full inline-flex items-center justify-center rounded-xl border border-violet-300 text-violet-700 px-4 py-3 hover:bg-violet-50 transition">{{ _('Sign Up') }}</button>
-      <p class="text-center">{{ _('Already have an account?') }} <a id="loginLink" href="#" class="text-violet-600 hover:text-violet-700">{{ _('Login') }}</a></p>
-    </form>
-  </div>
-</section>
+    <div>
+      <span class="eyebrow">{% if show_signup %}Index 011 · Sign up{% else %}Index 010 · Sign in{% endif %}</span>
+      <h1 class="t-display-md" style="color:#fff; margin: var(--p-sp-5) 0 var(--p-sp-5); max-width: 12ch;">
+        {% if show_signup %}Start a new account.{% else %}Welcome back.{% endif %}
+      </h1>
+      <p style="color: rgba(255,255,255,0.72); font-size: var(--p-fs-h3); line-height: 1.45; max-width: 38ch; font-weight: 400;">
+        {% if show_signup %}
+          Eighty credits to start. No card. No expiry on drafts.
+        {% else %}
+          Pick up where you left off. Your library and refinement history are waiting.
+        {% endif %}
+      </p>
+    </div>
+
+    <div>
+      <hr style="border-color: rgba(255,255,255,0.18); margin: 0 0 var(--p-sp-5);">
+      <a class="btn btn--secondary" href="{{ url_for('main.index') }}" style="background: transparent; color:#fff; border-color: rgba(255,255,255,0.32);">
+        <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+        Back to index
+      </a>
+    </div>
+  </aside>
+
+  <section class="split__form">
+    <div class="split__form-inner">
+      <div class="tabs" role="tablist" style="margin-bottom: var(--p-sp-7);">
+        <a class="tabs__item {% if not show_signup %}is-active{% endif %}" role="tab" href="{{ url_for('main.login') }}">Sign in</a>
+        <a class="tabs__item {% if show_signup %}is-active{% endif %}" role="tab" href="{{ url_for('main.signup') }}">Create account</a>
+      </div>
+
+      <div id="loginErrorMessage" class="banner banner--critical" hidden style="margin-bottom: var(--p-sp-5);"></div>
+      <div id="signupErrorMessage" class="banner banner--critical" hidden style="margin-bottom: var(--p-sp-5);"></div>
+
+      {% if show_signup %}
+        <h2 class="t-h1" style="margin-bottom: var(--p-sp-2);">New account</h2>
+        <p class="t-body-sm t-muted" style="margin-bottom: var(--p-sp-7);">Three fields. Under ten seconds.</p>
+
+        <form id="signupForm" method="POST" action="{{ url_for('main.signup') }}" novalidate>
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <input type="text" name="honeypot" value="" class="sr-only" tabindex="-1" autocomplete="off">
+
+          <div class="field">
+            <label class="field__label" for="usernameSignup">Username <span class="field__required">*</span></label>
+            <input class="input" type="text" id="usernameSignup" name="username" required minlength="3" maxlength="32" autocomplete="username" autofocus>
+            <span class="field__hint">Letters, numbers, underscore. 3 to 32 characters.</span>
+          </div>
+
+          <div class="field">
+            <label class="field__label" for="emailSignup">Email <span class="t-muted t-body-sm" style="font-weight: 400;">(optional)</span></label>
+            <input class="input" type="email" id="emailSignup" name="email" autocomplete="email">
+            <span class="field__hint">Used only for security alerts. Never shared.</span>
+          </div>
+
+          <div class="field">
+            <label class="field__label" for="passwordSignup">Password <span class="field__required">*</span></label>
+            <input class="input" type="password" id="passwordSignup" name="password" required minlength="6" autocomplete="new-password">
+            <span class="field__hint">Six or more characters.</span>
+          </div>
+
+          <div class="field">
+            <label class="field__label" for="confirmPassword">Confirm password <span class="field__required">*</span></label>
+            <input class="input" type="password" id="confirmPassword" name="confirm_password" required minlength="6" autocomplete="new-password">
+          </div>
+
+          <div class="field">
+            <label class="checkbox">
+              <input type="checkbox" name="accept_terms" value="1">
+              <span>I agree to the <a href="#">terms</a> and <a href="#">privacy policy</a>.</span>
+            </label>
+          </div>
+
+          <button class="btn btn--primary btn--lg btn--block" type="submit" id="signupBtn">
+            <i class="fa-solid fa-user-plus" aria-hidden="true"></i>
+            Create account
+          </button>
+        </form>
+      {% else %}
+        <h2 class="t-h1" style="margin-bottom: var(--p-sp-2);">Sign in</h2>
+        <p class="t-body-sm t-muted" style="margin-bottom: var(--p-sp-7);">Use your username and password.</p>
+
+        <form id="loginForm" method="POST" action="{{ url_for('main.login') }}" novalidate>
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <input type="text" name="honeypot" value="" class="sr-only" tabindex="-1" autocomplete="off">
+
+          <div class="field">
+            <label class="field__label" for="usernameLogin">Username</label>
+            <input class="input" type="text" id="usernameLogin" name="username" required autocomplete="username" autofocus>
+          </div>
+
+          <div class="field">
+            <label class="field__label" for="passwordLogin">Password</label>
+            <input class="input" type="password" id="passwordLogin" name="password" required autocomplete="current-password">
+          </div>
+
+          <div class="cluster cluster--between" style="margin-bottom: var(--p-sp-5);">
+            <label class="checkbox">
+              <input type="checkbox" name="remember" value="1">
+              <span>Remember me</span>
+            </label>
+            <a class="btn--link" href="#">Forgot password?</a>
+          </div>
+
+          <button class="btn btn--primary btn--lg btn--block" type="submit" id="loginBtn">
+            <i class="fa-solid fa-arrow-right-to-bracket" aria-hidden="true"></i>
+            Sign in
+          </button>
+        </form>
+      {% endif %}
+    </div>
+  </section>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='script/login.js') }}" defer></script>
 {% endblock %}

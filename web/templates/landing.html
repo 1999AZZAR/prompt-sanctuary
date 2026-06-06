@@ -1,64 +1,87 @@
 {% extends "base.html" %}
+{% block title %}Prompt Sanctuary · Index 001{% endblock %}
+{% block public_content %}
+<div class="split">
+  <aside class="split__cover">
+    <a class="brand" href="{{ url_for('main.index') }}">
+      <span class="brand__mark">P</span>
+      <span class="brand__name">Sanctuary</span>
+      <span class="brand__sub">v1</span>
+    </a>
 
-{% block content %}
-<section class="flex flex-col items-center justify-center min-h-screen px-6 py-12" role="region" aria-labelledby="main-heading">
-  <div class="hero text-center mb-16">
-    <h1 class="text-6xl font-extrabold text-slate-900 mb-4" id="main-heading">{{ _('Prompt Sanctuary') }}</h1>
-    <p class="text-xl text-slate-600 max-w-2xl mb-8">{{ _('Your one-stop platform to browse, generate, and refine AI prompts for creative storytelling, coding, and more.') }}</p>
-    <div class="flex items-center justify-center gap-4">
-      <a href="{{ url_for('main.login') }}" class="inline-flex items-center justify-center rounded-xl bg-violet-400 text-white px-6 py-3 shadow hover:bg-violet-500 transition">{{ _('Login') }}</a>
-      <a href="{{ url_for('main.signup') }}" class="inline-flex items-center justify-center rounded-xl border border-violet-300 text-violet-700 px-6 py-3 hover:bg-violet-50 transition">{{ _('Sign Up') }}</a>
+    <div>
+      <span class="eyebrow">Index 001</span>
+      <h1 class="t-display-lg" style="color:#fff; margin: var(--p-sp-5) 0 var(--p-sp-6); max-width: 14ch;">
+        A workshop for prompts.
+      </h1>
+      <p style="color: rgba(255,255,255,0.72); font-size: var(--p-fs-h3); line-height: 1.45; max-width: 44ch; font-weight: 400;">
+        Generate, refine, and version your text prompts in one place. Built for makers who iterate.
+      </p>
     </div>
-  </div>
 
-  <div class="w-full max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-    <!-- {{ _('Feature 1: Community Prompts') }} -->
-    <div class="glass p-8 rounded-xl shadow-glass transform transition duration-300 hover:scale-105 hover:shadow-xl h-full flex flex-col" role="region" aria-labelledby="community-prompts-heading">
-      <div class="flex flex-col items-center text-center md:items-start md:text-left flex-grow">
-        <i class="fas fa-users fa-3x text-indigo-400 mb-4 inline-block"></i>
-        <h2 class="text-3xl font-semibold text-slate-900 mb-3" id="community-prompts-heading">{{ _('Community Prompt') }}</h2>
-        <p class="text-slate-600 leading-relaxed mb-6 flex-grow">
-          {{ _('Dive into a diverse collection of prompts crafted by users like you. Share your own creations, discover new ideas, and get inspired by the collective creativity of the Prompt Sanctuary community.') }}
-        </p>
+    <div>
+      <hr style="border-color: rgba(255,255,255,0.18); margin: 0 0 var(--p-sp-5);">
+      <div class="cluster" style="gap: var(--p-sp-7);">
+        <div>
+          <span class="eyebrow" style="color: rgba(255,255,255,0.55);">01</span>
+          <div style="color:#fff; font-weight:600; margin-top: 2px;">Generate</div>
+        </div>
+        <div>
+          <span class="eyebrow" style="color: rgba(255,255,255,0.55);">02</span>
+          <div style="color:#fff; font-weight:600; margin-top: 2px;">Refine</div>
+        </div>
+        <div>
+          <span class="eyebrow" style="color: rgba(255,255,255,0.55);">03</span>
+          <div style="color:#fff; font-weight:600; margin-top: 2px;">Save</div>
+        </div>
       </div>
-      <a href="{{ url_for('main.library') }}" class="inline-flex items-center justify-center rounded-xl bg-indigo-300 text-slate-900 px-6 py-3 hover:bg-indigo-400 transition shadow mt-auto self-center md:self-start">{{ _('Browse Community Library') }}</a>
     </div>
+  </aside>
 
-    <!-- {{ _('Feature 2: Custom Prompt Generation') }} -->
-    <div class="glass p-8 rounded-xl shadow-glass transform transition duration-300 hover:scale-105 hover:shadow-xl h-full flex flex-col" role="region" aria-labelledby="custom-prompt-heading">
-      <div class="flex flex-col items-center text-center md:items-start md:text-left flex-grow">
-        <i class="fas fa-pencil-alt fa-3x text-green-400 mb-4 inline-block"></i>
-        <h2 class="text-3xl font-semibold text-slate-900 mb-3" id="custom-prompt-heading">{{ _('Basic Prompt') }}</h2>
-        <p class="text-slate-600 leading-relaxed mb-6 flex-grow">
-          {{ _('Unleash your creativity with our intuitive prompt generator. Whether you\'re brainstorming for a story, a coding project, or artistic inspiration, quickly generate tailored prompts with our basic tool to get you started.') }}
-        </p>
+  <section class="split__form">
+    <div class="split__form-inner stack--xl">
+      <div>
+        <span class="eyebrow">Index 002</span>
+        <h2 class="t-h1" style="margin-top: var(--p-sp-3);">Built on three principles.</h2>
       </div>
-      <a href="{{ url_for('main.generate') }}" class="inline-flex items-center justify-center rounded-xl bg-emerald-400 text-white px-6 py-3 hover:bg-emerald-500 transition shadow mt-auto self-center md:self-start">{{ _('Try Basic Generator') }}</a>
-    </div>
 
-    <!-- {{ _('Feature 3: Advanced Prompt Engineering') }} -->
-    <div class="glass p-8 rounded-xl shadow-glass transform transition duration-300 hover:scale-105 hover:shadow-xl h-full flex flex-col" role="region" aria-labelledby="advanced-prompt-engineering-heading">
-      <div class="flex flex-col items-center text-center md:items-start md:text-left flex-grow">
-        <i class="fas fa-tools fa-3x text-yellow-400 mb-4 inline-block"></i>
-        <h2 class="text-3xl font-semibold text-slate-900 mb-3" id="advanced-prompt-engineering-heading">{{ _('Advance Prompt') }}</h2>
-        <p class="text-slate-600 leading-relaxed mb-6 flex-grow">
-          {{ _('Take full control with our advanced tools. Fine-tune every parameter, experiment with complex structures, and craft highly specific prompts for sophisticated AI interactions and specialized tasks.') }}
-        </p>
+      <div class="feature-row">
+        <span class="feature-row__index">01</span>
+        <div>
+          <span class="feature-row__icon"><i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i></span>
+          <h3 class="feature-row__title">Generate from a topic or a system prompt.</h3>
+          <p class="feature-row__body">Two modes for two kinds of work. Describe a topic and let the model expand it, or paste a system prompt and iterate from there.</p>
+        </div>
       </div>
-      <a href="{{ url_for('main.advance') }}" class="inline-flex items-center justify-center rounded-xl bg-amber-300 text-slate-900 px-6 py-3 hover:bg-amber-400 transition shadow mt-auto self-center md:self-start">{{ _('Access Advanced Tools') }}</a>
-    </div>
 
-    <!-- {{ _('Feature 4: Prompt Refinement') }} -->
-    <div class="glass p-8 rounded-xl shadow-glass transform transition duration-300 hover:scale-105 hover:shadow-xl h-full flex flex-col" role="region" aria-labelledby="prompt-refinement-heading">
-      <div class="flex flex-col items-center text-center md:items-start md:text-left flex-grow">
-        <i class="fas fa-magic fa-3x text-blue-400 mb-4 inline-block"></i>
-        <h2 class="text-3xl font-semibold text-slate-900 mb-3" id="prompt-refinement-heading">{{ _('Prompt Refinement') }}</h2>
-        <p class="text-slate-600 leading-relaxed mb-6 flex-grow">
-          {{ _('Transform and optimize your prompts with AI-powered refinement. Choose from multiple sources, apply smart improvements, and generate intelligent titles for better prompt management and effectiveness.') }}
-        </p>
+      <div class="feature-row">
+        <span class="feature-row__index">02</span>
+        <div>
+          <span class="feature-row__icon"><i class="fa-solid fa-arrows-rotate" aria-hidden="true"></i></span>
+          <h3 class="feature-row__title">Refine with structured feedback.</h3>
+          <p class="feature-row__body">Tell the model what to change — tone, length, format, audience. Each refinement keeps a versioned history.</p>
+        </div>
       </div>
-      <a href="{{ url_for('main.refinement') }}" class="inline-flex items-center justify-center rounded-xl bg-blue-400 text-white px-6 py-3 hover:bg-blue-500 transition shadow mt-auto self-center md:self-start">{{ _('Refine Your Prompts') }}</a>
+
+      <div class="feature-row">
+        <span class="feature-row__index">03</span>
+        <div>
+          <span class="feature-row__icon"><i class="fa-solid fa-book" aria-hidden="true"></i></span>
+          <h3 class="feature-row__title">Keep everything in one library.</h3>
+          <p class="feature-row__body">Personal saves stay private. Share with the community when you're ready. Browse what others have shipped.</p>
+        </div>
+      </div>
+
+      <hr class="rule--subdued">
+
+      <div class="cluster--between cluster--baseline">
+        <span class="eyebrow">Ready when you are.</span>
+        <a class="btn btn--primary btn--lg" href="{{ url_for('main.login') }}">
+          Open the app
+          <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+        </a>
+      </div>
     </div>
-  </div>
-</section>
+  </section>
+</div>
 {% endblock %}

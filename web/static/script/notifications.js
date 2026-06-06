@@ -1,265 +1,203 @@
 // web/static/script/notifications.js
-function showToast(message, type = 'info', duration = 3000) {
-    const container = document.getElementById('toast-container');
-    if (!container) {
-        console.error('Toast container not found!');
-        return;
-    }
+(function () {
+    'use strict';
 
-    const toast = document.createElement('div');
-    toast.className = `toast toast-${type}`;
-    toast.textContent = message;
+    var ICON = {
+        success: '<i class="fa-solid fa-check" aria-hidden="true"></i>',
+        error:   '<i class="fa-solid fa-xmark" aria-hidden="true"></i>',
+        info:    '<i class="fa-solid fa-circle-info" aria-hidden="true"></i>',
+        warning: '<i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>'
+    };
 
-    container.appendChild(toast);
+    var ACTIVE = { el: null, hideAt: 0, timer: null };
 
-    // Animate in
-    setTimeout(() => {
-        toast.classList.add('show');
-    }, 10); // Small delay to ensure CSS transition is applied
-
-    // Auto-dismiss
-    setTimeout(() => {
-        toast.classList.remove('show');
-        // Remove from DOM after animation
-        setTimeout(() => {
-            if (toast.parentNode === container) {
-                 container.removeChild(toast);
+    function hide() {
+        if (!ACTIVE.el) return;
+        ACTIVE.el.classList.remove('is-visible');
+        var el = ACTIVE.el;
+        setTimeout(function () {
+            if (!el.classList.contains('is-visible')) {
+                el.hidden = true;
+                el.innerHTML = '';
             }
-        }, 300); // Matches transition duration
-    }, duration);
-} 
-
-function showGlobalLoader() {
-    const loader = document.getElementById('global-loader-overlay');
-    if (loader) {
-        loader.classList.remove('hidden');
-    }
-}
-
-// CSRF token handling moved to dedicated csrf.js utility
-
-function hideGlobalLoader() {
-    const loader = document.getElementById('global-loader-overlay');
-    if (loader) {
-        loader.style.display = 'none';
-    }
-}
-
-// NEW GLOBAL POPUP SYSTEM
-
-const APP_POPUP_ID = 'app-global-popup';
-
-/**
- * Displays a global application popup with specified title, content, and buttons.
- * Ensures only one popup is visible at a time.
- *
- * @param {string} title - The title of the popup.
- * @param {string} contentOrMessage - The main content of the popup (can be plain text or HTML).
- * @param {object} options - Configuration options for the popup.
- * @param {'message' | 'confirmation' | 'details' | 'custom'} [options.type='message'] - Type of popup:
- *    - 'message': Displays contentOrMessage as text with an "OK" button.
- *    - 'confirmation': Displays contentOrMessage as text with "Yes" and "No" buttons. Requires onConfirm.
- *    - 'details': Displays contentOrMessage as text (meant for detailed view) with "Copy" (copies contentOrMessage) and "Close" buttons.
- *    - 'custom': Displays contentOrMessage as HTML. Requires options.buttons array.
- * @param {Array<{text: string, class?: string, action: function}>} [options.buttons=null] - Custom buttons for 'custom' type.
- * @param {function} [options.onConfirm=null] - Callback for "Yes" button in 'confirmation' type.
- * @param {function} [options.onCancel=null] - Callback for "No" button in 'confirmation' type.
- * @param {string} [options.copyTargetText=null] - Explicit text to copy for 'details' or 'custom' type if contentOrMessage is HTML and copy is needed for a part of it. If null and type is 'details', contentOrMessage is copied.
- */
-function showAppPopup(title, contentOrMessage, options = {}) {
-    closeAppPopup(); // Close any existing popup first
-
-    const {
-        type = 'message',
-        buttons = null,
-        onConfirm = null,
-        onCancel = null,
-        copyTargetText = null,
-        size = 'md' // Default size
-    } = options;
-
-    const popup = document.createElement('div');
-    popup.id = APP_POPUP_ID;
-    popup.className = 'fixed inset-0 z-50 p-4 flex items-center justify-center bg-slate-900/20 backdrop-blur-sm';
-
-    const popupContent = document.createElement('div');
-    
-    // Base classes for popupContent
-    let popupClasses = 'glass bg-white/70 border border-white/40 p-6 md:p-8 rounded-2xl text-slate-900 relative shadow-xl';
-
-    // Handle size option: Tailwind max-width class or direct CSS width
-    const predefinedSizes = ['sm', 'md', 'lg', 'xl', '2xl'];
-    if (typeof size === 'string' && predefinedSizes.includes(size)) {
-        popupClasses += ` w-full max-w-${size}`;
-    } else if (typeof size === 'string' && (size.includes('vw') || size.includes('%') || size.includes('px') || size.includes('rem') || size.includes('em'))) {
-        // Apply as direct style, ensure it doesn't exceed viewport with padding
-        popupContent.style.width = size;
-        // max-w-full might be useful here if not for the p-4 on the parent
-        popupClasses += ' max-w-[calc(100vw-2rem)]'; // Ensure it fits with backdrop padding
-    } else {
-        // Default if size is not recognized or not a valid custom unit string
-        popupClasses += ' w-full max-w-md'; 
+        }, 220);
+        ACTIVE.el = null;
+        if (ACTIVE.timer) { clearTimeout(ACTIVE.timer); ACTIVE.timer = null; }
     }
 
-    popupContent.className = popupClasses;
-    popupContent.style.maxHeight = '90vh';
-    popupContent.style.overflowY = 'auto';
-    popupContent.style.overflowX = 'hidden';
-    popupContent.classList.add('custom-scrollbar');
+    function show(message, type, duration) {
+        var el = document.getElementById('toast');
+        if (!el) { console.error('Toast element #toast not found in DOM.'); return; }
 
-    const closeIcon = document.createElement('button');
-    closeIcon.className = 'absolute top-3 right-3 md:top-4 md:right-4 text-slate-500 hover:text-slate-700 text-2xl leading-none z-10';
-    closeIcon.innerHTML = '&times;';
-    closeIcon.onclick = () => closeAppPopup();
-    popupContent.appendChild(closeIcon);
+        type = type || 'info';
+        duration = (typeof duration === 'number' && duration > 0) ? duration : 3200;
 
-    const popupTitle = document.createElement('h2');
-    popupTitle.className = 'text-xl md:text-2xl font-bold mb-4 pr-8';
-    popupTitle.textContent = title;
-    popupContent.appendChild(popupTitle);
+        if (ACTIVE.el === el) hide();
 
-    const messageArea = document.createElement('div');
-    messageArea.className = 'text-base md:text-lg text-slate-700 mb-6 break-words';
+        var allowed = ['success', 'error', 'info', 'warning'];
+        if (allowed.indexOf(type) === -1) type = 'info';
 
-    if (type === 'details') {
-        messageArea.style.whiteSpace = 'pre-wrap';
-        messageArea.className += ' bg-white/70 border border-white/40 rounded-xl p-4 font-mono text-sm leading-6 custom-scrollbar';
-        // Make details popup wider by default, unless an explicit size was requested
-        if (!size) {
-            popupContent.className += ' max-w-4xl';
+        el.className = 'toast toast--' + type;
+        el.innerHTML = (ICON[type] || '') + '<span class="toast__msg"></span>';
+        var msg = el.querySelector('.toast__msg');
+        msg.textContent = message == null ? '' : String(message);
+        el.hidden = false;
+        // force reflow so the transition runs
+        void el.offsetWidth;
+        el.classList.add('is-visible');
+
+        ACTIVE.el = el;
+        ACTIVE.hideAt = Date.now() + duration;
+        ACTIVE.timer = setTimeout(hide, duration);
+    }
+
+    function showToast(message, type, duration) { show(message, type, duration); }
+
+    function showGlobalLoader() {
+        var loader = document.getElementById('global-loader-overlay');
+        if (loader) loader.classList.remove('hidden');
+    }
+    function hideGlobalLoader() {
+        var loader = document.getElementById('global-loader-overlay');
+        if (loader) loader.style.display = 'none';
+    }
+
+    var APP_POPUP_ID = 'app-global-popup';
+
+    function closeAppPopup() {
+        var popup = document.getElementById(APP_POPUP_ID);
+        if (popup) {
+            if (popup._keydownHandler) document.removeEventListener('keydown', popup._keydownHandler);
+            popup.remove();
         }
     }
 
-     if (type === 'custom' || (type === 'message' && typeof contentOrMessage === 'string' && contentOrMessage.includes('<'))) {
-        messageArea.innerHTML = contentOrMessage;
-    } else {
-        messageArea.textContent = contentOrMessage;
-        if (type !== 'details' && type !== 'custom') { 
-            messageArea.style.whiteSpace = 'pre-wrap';
+    function showAppPopup(title, contentOrMessage, options) {
+        closeAppPopup();
+        options = options || {};
+        var type = options.type || 'message';
+        var buttons = options.buttons || null;
+        var onConfirm = options.onConfirm || null;
+        var onCancel = options.onCancel || null;
+        var copyTargetText = options.copyTargetText || null;
+        var size = options.size || 'md';
+
+        var popup = document.createElement('div');
+        popup.id = APP_POPUP_ID;
+        popup.className = 'modal-backdrop is-open';
+
+        var modal = document.createElement('div');
+        modal.className = 'modal';
+        modal.setAttribute('role', 'dialog');
+        modal.setAttribute('aria-modal', 'true');
+        modal.setAttribute('aria-labelledby', 'app-popup-title');
+        modal.tabIndex = -1;
+
+        if (typeof size === 'string' && (size.indexOf('vw') !== -1 || size.indexOf('%') !== -1 || size.indexOf('px') !== -1 || size.indexOf('rem') !== -1 || size.indexOf('em') !== -1)) {
+            modal.style.width = size;
+            modal.style.maxWidth = 'calc(100vw - 2rem)';
+        } else {
+            var widths = { sm: '420px', md: '520px', lg: '720px', xl: '920px', '2xl': '1140px' };
+            modal.style.maxWidth = widths[size] || widths.md;
         }
-    }
-    popupContent.appendChild(messageArea);
+        modal.style.width = '100%';
+        modal.style.maxHeight = '90vh';
+        modal.style.overflow = 'auto';
 
-    const buttonContainer = document.createElement('div');
-    buttonContainer.className = 'flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-3';
+        var header = document.createElement('div');
+        header.className = 'modal__header';
+        var h = document.createElement('h2');
+        h.id = 'app-popup-title';
+        h.className = 'modal__title';
+        h.textContent = title || '';
+        header.appendChild(h);
+        var closeBtn = document.createElement('button');
+        closeBtn.className = 'icon-btn';
+        closeBtn.setAttribute('aria-label', 'Close');
+        closeBtn.innerHTML = '<i class="fa-solid fa-xmark" aria-hidden="true"></i>';
+        closeBtn.onclick = closeAppPopup;
+        header.appendChild(closeBtn);
+        modal.appendChild(header);
 
-    // Default button styling
-    const baseButtonClass = 'px-5 py-2.5 rounded-xl transition duration-200 text-sm font-medium w-full sm:w-auto';
-    const primaryButtonClass = `bg-violet-400 hover:bg-violet-500 text-white ${baseButtonClass}`;
-    const secondaryButtonClass = `bg-slate-600 hover:bg-slate-700 text-white ${baseButtonClass}`;
+        var body = document.createElement('div');
+        body.className = 'modal__body';
 
+        if (type === 'details') {
+            body.style.whiteSpace = 'pre-wrap';
+            body.classList.add('code-block--inline');
+        }
+        if (type === 'custom' || (type === 'message' && typeof contentOrMessage === 'string' && contentOrMessage.indexOf('<') !== -1)) {
+            body.innerHTML = contentOrMessage;
+        } else {
+            body.textContent = contentOrMessage;
+            if (type !== 'details' && type !== 'custom') body.style.whiteSpace = 'pre-wrap';
+        }
+        modal.appendChild(body);
 
-    if (type === 'message') {
-        const okButton = document.createElement('button');
-        okButton.className = primaryButtonClass;
-        okButton.textContent = 'OK';
-        okButton.onclick = () => closeAppPopup();
-        buttonContainer.appendChild(okButton);
-    } else if (type === 'confirmation') {
-        const yesButton = document.createElement('button');
-        yesButton.className = primaryButtonClass;
-        yesButton.textContent = 'Yes';
-        yesButton.onclick = () => {
-            if (onConfirm) onConfirm();
-            closeAppPopup();
-        };
+        var footer = document.createElement('div');
+        footer.className = 'modal__footer';
 
-        const noButton = document.createElement('button');
-        noButton.className = secondaryButtonClass;
-        noButton.textContent = 'No';
-        noButton.onclick = () => {
-            if (onCancel) onCancel();
-            closeAppPopup();
-        };
-        buttonContainer.appendChild(noButton);
-        buttonContainer.appendChild(yesButton);
-    } else if (type === 'details') {
-        const copyBtn = document.createElement('button');
-        copyBtn.className = primaryButtonClass;
-        copyBtn.textContent = 'Copy';
-        copyBtn.onclick = () => {
-            const textToCopy = copyTargetText || contentOrMessage;
-            navigator.clipboard.writeText(textToCopy)
-                .then(() => showToast('Copied to clipboard!', 'success'))
-                .catch(err => {
-                    console.error('Failed to copy:', err);
-                    showToast('Failed to copy.', 'error');
-                });
-        };
-        const closeBtn2 = document.createElement('button');
-        closeBtn2.className = secondaryButtonClass;
-        closeBtn2.textContent = 'Close';
-        closeBtn2.onclick = () => closeAppPopup();
-        buttonContainer.appendChild(copyBtn);
-        buttonContainer.appendChild(closeBtn2);
-    } else if (type === 'custom' && Array.isArray(buttons)) {
-        buttons.forEach(btnConfig => {
-            const button = document.createElement('button');
-            button.className = btnConfig.class || primaryButtonClass;
-            if (!btnConfig.class?.includes('px-5')) {
-                 button.className = `${baseButtonClass} ${btnConfig.class || primaryButtonClass}`;
-            } else {
-                 button.className = btnConfig.class;
-            }
+        function mkBtn(text, className, handler) {
+            var b = document.createElement('button');
+            b.className = 'btn ' + (className || 'btn--secondary');
+            b.type = 'button';
+            b.textContent = text;
+            b.onclick = handler;
+            return b;
+        }
 
-            button.textContent = btnConfig.text;
-            button.onclick = () => {
-                if (btnConfig.action() !== false) {
+        if (type === 'message') {
+            footer.appendChild(mkBtn('OK', 'btn--primary', closeAppPopup));
+        } else if (type === 'confirmation') {
+            footer.appendChild(mkBtn('No', 'btn--secondary', function () {
+                if (onCancel) onCancel();
+                closeAppPopup();
+            }));
+            footer.appendChild(mkBtn('Yes', 'btn--primary', function () {
+                if (onConfirm) onConfirm();
+                closeAppPopup();
+            }));
+        } else if (type === 'details') {
+            footer.appendChild(mkBtn('Copy', 'btn--secondary', function () {
+                var text = copyTargetText || contentOrMessage;
+                navigator.clipboard.writeText(text)
+                    .then(function () { showToast('Copied to clipboard!', 'success'); })
+                    .catch(function () { showToast('Failed to copy.', 'error'); });
+            }));
+            footer.appendChild(mkBtn('Close', 'btn--primary', closeAppPopup));
+        } else if (type === 'custom' && Array.isArray(buttons)) {
+            buttons.forEach(function (cfg) {
+                footer.appendChild(mkBtn(cfg.text || '', cfg.class || 'btn--secondary', function () {
+                    if (typeof cfg.action === 'function' && cfg.action() === false) return;
                     closeAppPopup();
-                }
-            };
-            buttonContainer.appendChild(button);
-        });
-    }
-
-    if (buttonContainer.hasChildNodes()) {
-        popupContent.appendChild(buttonContainer);
-    }
-
-    popup.appendChild(popupContent);
-    document.body.appendChild(popup);
-
-    // Close on backdrop click
-    popup.addEventListener('click', (e) => {
-        if (e.target === popup) {
-            closeAppPopup();
+                }));
+            });
         }
-    });
 
-    // Trap focus inside modal and close on Escape
-    const focusableSelectors = 'a[href], button, textarea, input, select, [tabindex]:not([tabindex="-1"])';
-    const getFocusable = () => Array.from(popupContent.querySelectorAll(focusableSelectors)).filter(el => !el.hasAttribute('disabled'));
-    function handleKeyDown(e) {
-        if (e.key === 'Escape') {
-            e.preventDefault();
-            closeAppPopup();
-        } else if (e.key === 'Tab') {
-            const focusable = getFocusable();
-            if (focusable.length === 0) return;
-            const first = focusable[0];
-            const last = focusable[focusable.length - 1];
-            if (e.shiftKey && document.activeElement === first) {
-                e.preventDefault();
-                last.focus();
-            } else if (!e.shiftKey && document.activeElement === last) {
-                e.preventDefault();
-                first.focus();
+        if (footer.childNodes.length) modal.appendChild(footer);
+        popup.appendChild(modal);
+        document.body.appendChild(popup);
+
+        popup.addEventListener('click', function (e) { if (e.target === popup) closeAppPopup(); });
+
+        function onKey(e) {
+            if (e.key === 'Escape') { e.preventDefault(); closeAppPopup(); }
+            else if (e.key === 'Tab') {
+                var f = Array.from(modal.querySelectorAll('a[href], button, textarea, input, select, [tabindex]:not([tabindex="-1"])')).filter(function (el) { return !el.hasAttribute('disabled'); });
+                if (!f.length) return;
+                if (e.shiftKey && document.activeElement === f[0]) { e.preventDefault(); f[f.length - 1].focus(); }
+                else if (!e.shiftKey && document.activeElement === f[f.length - 1]) { e.preventDefault(); f[0].focus(); }
             }
         }
+        document.addEventListener('keydown', onKey);
+        popup._keydownHandler = onKey;
+        setTimeout(function () { var f = modal.querySelector('input, textarea, button'); if (f) f.focus(); else modal.focus(); }, 0);
     }
-    document.addEventListener('keydown', handleKeyDown);
-    // Attach handler reference to popup so closeAppPopup can remove it
-    popup._keydownHandler = handleKeyDown;
-    popupContent.focus();
-}
 
-function closeAppPopup() {
-    const popup = document.getElementById(APP_POPUP_ID);
-    if (popup) {
-        // Remove keydown handler if attached
-        if (popup._keydownHandler) {
-            document.removeEventListener('keydown', popup._keydownHandler);
-        }
-        popup.remove();
-    }
-} 
+    // Expose globals used across templates
+    window.showToast = showToast;
+    window.showGlobalLoader = showGlobalLoader;
+    window.hideGlobalLoader = hideGlobalLoader;
+    window.showAppPopup = showAppPopup;
+    window.closeAppPopup = closeAppPopup;
+})();

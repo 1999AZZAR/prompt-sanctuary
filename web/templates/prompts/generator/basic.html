@@ -1,225 +1,244 @@
 {% extends "base.html" %}
+{% set active_section = 'Generator' %}
+{% set active_nav = 'generate' %}
+{% block title %}Generate · Prompt Sanctuary{% endblock %}
+{% block bar_title %}Generate{% endblock %}
 
 {% block content %}
-    <!-- {{ _('Hero Section') }} -->
-    <div class="hero text-center mb-12 cursor-pointer" onclick="toggleSidePanel()" role="region" aria-labelledby="basic-gen-page-heading">
-        <div class="flex items-center justify-center mb-4 space-x-2">
-            <h1 id="basic-gen-page-heading" class="text-5xl font-bold text-slate-900"><i class="fas fa-cogs mr-2"></i>{{ _('Prompt Generator (Basic)') }}</h1>
-        </div>
-        <p class="text-lg text-slate-600">{{ _('Create custom prompts tailored to your needs.') }}</p>
-    </div>
+<header class="hero section--first" style="padding-top: var(--p-sp-7); padding-bottom: var(--p-sp-7);">
+  <span class="eyebrow hero__eyebrow">Step 02 · Topic mode</span>
+  <h1 class="t-h1 hero__display" style="font-size: var(--p-fs-h1); max-width: 24ch;">Generate from a topic.</h1>
+  <p class="lede hero__lede">Describe what you need. The model expands it into a structured prompt with variables you can fill in later.</p>
+</header>
 
-    <!-- {{ _('Tools Section') }} -->
-    <div class="prompting grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8" role="region" aria-labelledby="basic-tools-section-heading">
-        <h2 id="basic-tools-section-heading" class="sr-only">{{ _('Basic Prompt Generation Tools') }}</h2>
-        <!-- {{ _('Text Prompt') }} -->
-        <div class="mdc-card glass prompt-card p-6 flex flex-col text-[var(--md-sys-color-on-surface)]" role="form" aria-labelledby="basic-text-prompt-heading">
-            <div class="flex justify-between items-center mb-6">
-                <h2 id="basic-text-prompt-heading" class="text-2xl font-bold">{{ _('Generate Text Prompt') }}</h2>
-                <button onclick="toggleHelp('text-help-basic-region')" class="bg-[var(--md-sys-color-surface)] text-[var(--md-sys-color-on-surface)] px-3 py-1 rounded-lg hover:bg-[var(--md-sys-color-surface)] transition duration-200" aria-controls="text-help-basic-region" aria-expanded="false" aria-label="{{ _('Toggle help for basic text prompt generation') }}">?</button>
-            </div>
-            <div id="text-help-basic-region" class="hidden bg-[var(--md-sys-color-surface)] p-4 rounded-lg mb-4 text-[var(--md-sys-color-on-surface)]" role="region" aria-hidden="true">
-                <p class="text-[var(--md-sys-color-on-surface)]">{{ _('This section allows you to generate text prompts. Enter your input and click "Generate" to create a custom prompt, or click "Random" for a surprise prompt.') }}</p>
-            </div>
-            <form id="text-prompt-form" class="space-y-4 flex-grow">
-                <div>
-                    <label for="user_input_text" class="block mb-2">{{ _('Input:') }}</label>
-                    <input type="text" name="user_input" id="user_input_text" placeholder="{{ _('Write a Python code') }}" class="w-full p-3 bg-[var(--md-sys-color-surface)] rounded-lg text-[var(--md-sys-color-on-surface)]" required>
-                </div>
-                <div class="flex space-x-4">
-                    <input type="submit" value="{{ _('Generate') }}" aria-label="{{ _('Generate text prompt based on input') }}" class="bg-[var(--md-sys-color-primary)] text-[var(--md-sys-color-on-primary)] px-6 py-3 rounded-lg hover:bg-[var(--md-sys-color-secondary)] transition duration-200 cursor-pointer">
-                    <button type="button" onclick="submitForm('random-text-prompt-form','/generate/trandom')" aria-label="{{ _('Generate random text prompt') }}" class="bg-[var(--md-sys-color-secondary)] text-[var(--md-sys-color-on-secondary)] px-6 py-3 rounded-lg hover:opacity-90 transition duration-200">{{ _('Random') }}</button>
-                </div>
-            </form>
+<div class="stepper" style="margin-bottom: var(--p-sp-7);">
+  <div class="stepper__step is-active">
+    <span class="stepper__num">01</span>
+    <span class="stepper__label">
+      <span class="stepper__label-eyebrow">Step</span>
+      <span class="stepper__label-title">Generate</span>
+    </span>
+  </div>
+  <div class="stepper__step">
+    <span class="stepper__num">02</span>
+    <span class="stepper__label">
+      <span class="stepper__label-eyebrow">Step</span>
+      <span class="stepper__label-title">Refine</span>
+    </span>
+  </div>
+  <div class="stepper__step">
+    <span class="stepper__num">03</span>
+    <span class="stepper__label">
+      <span class="stepper__label-eyebrow">Step</span>
+      <span class="stepper__label-title">Save</span>
+    </span>
+  </div>
+</div>
 
-            <!-- Add the random-text-prompt-form here -->
-            <form id="random-text-prompt-form" style="display: none;"></form>
-        </div>
-
-        <!-- {{ _('Image Prompt') }} -->
-        <div class="mdc-card glass prompt-card p-6 flex flex-col text-[var(--md-sys-color-on-surface)]" role="region" aria-labelledby="basic-image-prompt-heading">
-            <div class="flex justify-between items-center mb-6">
-                <h2 id="basic-image-prompt-heading" class="text-2xl font-bold">{{ _('Generate Image Prompt') }}</h2>
-                <button onclick="toggleHelp('image-help-basic-region')" class="bg-[var(--md-sys-color-surface)] text-[var(--md-sys-color-on-surface)] px-3 py-1 rounded-lg hover:bg-[var(--md-sys-color-surface)] transition duration-200" aria-controls="image-help-basic-region" aria-expanded="false" aria-label="{{ _('Toggle help for basic image prompt generation') }}">?</button>
-            </div>
-            <div id="image-help-basic-region" class="hidden bg-[var(--md-sys-color-surface)] p-4 rounded-lg mb-4 text-[var(--md-sys-color-on-surface)]" role="region" aria-hidden="true">
-                <p class="text-[var(--md-sys-color-on-surface)]">{{ _('This section allows you to generate image prompts. You can input text, upload an image, or choose a random prompt. Click "Generate" to create your prompt.') }}</p>
-            </div>
-            <div class="space-y-4 flex-grow">
-                <div class="input-radio flex space-x-4" role="radiogroup" aria-labelledby="image-input-type-label">
-                    <span id="image-input-type-label" class="sr-only">{{ _('Choose image input type') }}</span>
-                    <label class="flex items-center space-x-2">
-                        <input type="radio" id="text-input-option" name="prompt-option" value="text" checked onclick="togglePromptInput('text')">
-                        <span>{{ _('Text') }}</span>
-                    </label>
-                    <label class="flex items-center space-x-2">
-                        <input type="radio" id="image-upload-option" name="prompt-option" value="image" onclick="togglePromptInput('image')">
-                        <span>{{ _('File') }}</span>
-                    </label>
-                </div>
-
-                <!-- Text Input Section -->
-                <form id="image-prompt-form" class="space-y-4" role="form" aria-labelledby="image-text-input-heading">
-                    <h3 id="image-text-input-heading" class="sr-only">{{ _('Image prompt from text input') }}</h3>
-                    <div>
-                        <label for="user_input_image" class="block mb-2">{{ _('Input:') }}</label>
-                        <input type="text" name="user_input" id="user_input_image" placeholder="{{ _('Whale on the desert') }}" class="w-full p-3 bg-[var(--md-sys-color-surface)] rounded-lg text-[var(--md-sys-color-on-surface)]" required>
-                    </div>
-                </form>
-
-                <!-- Image Upload Section -->
-                <form id="image-upload-form" enctype="multipart/form-data" class="space-y-4" style="display: none;" role="form" aria-labelledby="image-file-input-heading">
-                    <h3 id="image-file-input-heading" class="sr-only">{{ _('Image prompt from file upload') }}</h3>
-                    <div>
-                        <label for="image" class="block mb-2">{{ _('Upload Image:') }}</label>
-                        <input type="file" name="image" id="image" accept="image/*" class="w-full p-3 bg-[var(--md-sys-color-surface)] rounded-lg text-[var(--md-sys-color-on-surface)]" required>
-                    </div>
-                </form>
-
-                <!-- Buttons -->
-                <div class="flex space-x-4">
-                    <button id="generate-button" onclick="generatePrompt()" aria-label="{{ _('Generate image prompt') }}" class="bg-[var(--md-sys-color-primary)] text-[var(--md-sys-color-on-primary)] px-6 py-3 rounded-lg hover:bg-[var(--md-sys-color-secondary)] transition duration-200">{{ _('Generate') }}</button>
-                    <button type="button" onclick="submitForm('random-image-prompt-form','/generate/irandom')" aria-label="{{ _('Generate random image prompt') }}" class="bg-[var(--md-sys-color-secondary)] text-[var(--md-sys-color-on-secondary)] px-6 py-3 rounded-lg hover:opacity-90 transition duration-200">{{ _('Random') }}</button>
-                </div>
-                <!-- Hidden Random Form -->
-                <form id="random-image-prompt-form" style="display: none;"></form>
-            </div>
-        </div>
-    </div>
-
-    <!-- {{ _('Preview Section (hidden by default, shown only when image is uploaded)') }} -->
-    <div id="preview-container" class="image-preview mdc-card glass prompt-card p-6 mt-12 hidden" role="region" aria-labelledby="basic-image-preview-heading">
-        <h3 id="basic-image-preview-heading" class="sr-only">Image Preview</h3>
-        <img id="preview-image" alt="{{ _('Image Preview') }}" class="w-64 h-auto mx-auto rounded-lg object-contain">
-    </div>
-
-    <!-- {{ _('Loading Section') }} -->
-    <div id="loading" class="loading hidden fixed inset-0 flex items-center justify-center z-50" role="alert" aria-live="assertive">
-        <div class="glass absolute inset-0 z-0"></div>
-        <div class="glass p-8 rounded-lg z-10 flex flex-col items-center justify-center">
-            <div class="loader-modern"><div class="ring"></div><div class="ring ring2"></div><div class="pulse"></div></div>
-            <h1 class="text-center mt-4 text-[var(--md-sys-color-on-surface)]">{{ _('Generating...') }}</h1>
-        </div>
-    </div>
-
-    <!-- Result Section (hidden by default, shown only when a prompt is generated) -->
-    <div id="resultSection" class="max-w-4xl mx-auto mt-8 mdc-card glass prompt-card p-6 hidden" role="region" aria-labelledby="basic-generated-prompt-heading">
-        <h2 id="basic-generated-prompt-heading" class="text-2xl font-bold mb-6 text-slate-900">
-            <i class="fas fa-star text-blue-500 mr-2"></i>{{ _('Generated Prompt') }}
+<div class="grid--2">
+  <section class="card" aria-labelledby="basic-text-heading">
+    <div class="card__header">
+      <div>
+        <span class="eyebrow">01 · Text</span>
+        <h2 class="card__title" id="basic-text-heading" style="margin-top: var(--p-sp-2);">
+          <i class="fa-solid fa-font" style="color: var(--p-color-primary); margin-right: 8px;"></i>
+          Generate a text prompt
         </h2>
-        
-        <div class="p-6 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg border border-blue-200 mb-6">
-            <p id="generated-prompt-text" class="text-slate-700 leading-relaxed whitespace-pre-wrap"></p>
-        </div>
-        
-        <div class="flex flex-wrap gap-4">
-            <button onclick="copyGeneratedPrompt()" class="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg transition duration-200">
-                <i class="fas fa-copy mr-2"></i>{{ _('Copy Prompt') }}
-            </button>
-            <button onclick="saveGeneratedPrompt()" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg transition duration-200">
-                <i class="fas fa-save mr-2"></i>{{ _('Save to Library') }}
-            </button>
-            <button onclick="generateAgain()" class="bg-purple-500 hover:bg-purple-600 text-white px-6 py-3 rounded-lg transition duration-200">
-                <i class="fas fa-redo mr-2"></i>{{ _('Generate Again') }}
-            </button>
-        </div>
+        <p class="card__sub">Describe what you need. Click "Generate" or "Random" for a surprise.</p>
+      </div>
+      <button type="button" class="icon-btn" onclick="toggleHelp('text-help-basic-region')" aria-controls="text-help-basic-region" aria-expanded="false" aria-label="Toggle help">
+        <i class="fa-solid fa-circle-question"></i>
+      </button>
     </div>
 
-    <script>
-        function toggleHelp(helpId) {
-            const helpDiv = document.getElementById(helpId);
-            const isHidden = helpDiv.classList.toggle('hidden');
-            helpDiv.setAttribute('aria-hidden', isHidden);
-            document.querySelector(`[aria-controls="${helpId}"]`).setAttribute('aria-expanded', !isHidden);
-        }
+    <div id="text-help-basic-region" class="banner banner--info" hidden>
+      <i class="fa-solid fa-circle-info banner__icon"></i>
+      <div>
+        <div class="banner__title">How this works</div>
+        <div class="banner__body">Type a topic or task, hit Generate. The model crafts a structured prompt you can save, refine, or share.</div>
+      </div>
+    </div>
 
-        // Loading functions (copied from refinement.html)
-        function showLoading() {
-            document.getElementById('loading').classList.remove('hidden');
-        }
+    <form id="text-prompt-form" class="stack" onsubmit="submitForm('text-prompt-form', '/generate/tprompt'); return false;">
+      <div class="field">
+        <label class="field__label" for="user_input_text">Topic or task</label>
+        <input class="input" type="text" name="user_input" id="user_input_text" placeholder="Write a Python script that…" required>
+        <span class="field__hint">The more specific, the better the result.</span>
+      </div>
+      <div class="cluster">
+        <button type="submit" class="btn btn--primary">
+          <i class="fa-solid fa-wand-magic-sparkles"></i> Generate
+        </button>
+        <button type="button" class="btn btn--secondary" onclick="submitForm('random-text-prompt-form','/generate/trandom')">
+          <i class="fa-solid fa-shuffle"></i> Random
+        </button>
+      </div>
+    </form>
+    <form id="random-text-prompt-form" hidden></form>
+  </section>
 
-        function hideLoading() {
-            document.getElementById('loading').classList.add('hidden');
-        }
+  <section class="card" aria-labelledby="basic-image-heading">
+    <div class="card__header">
+      <div>
+        <span class="eyebrow">02 · Image</span>
+        <h2 class="card__title" id="basic-image-heading" style="margin-top: var(--p-sp-2);">
+          <i class="fa-solid fa-image" style="color: var(--p-color-interactive); margin-right: 8px;"></i>
+          Generate an image prompt
+        </h2>
+        <p class="card__sub">Text-to-image, or reverse-engineer an image.</p>
+      </div>
+      <button type="button" class="icon-btn" onclick="toggleHelp('image-help-basic-region')" aria-controls="image-help-basic-region" aria-expanded="false" aria-label="Toggle help">
+        <i class="fa-solid fa-circle-question"></i>
+      </button>
+    </div>
 
-        // Result action functions (copied from refinement.html pattern)
-        function copyGeneratedPrompt() {
-            const generatedText = document.getElementById('generated-prompt-text').textContent;
-            navigator.clipboard.writeText(generatedText).then(() => {
-                showToast('Generated prompt copied to clipboard!', 'success');
-            }).catch(() => {
-                showToast('Failed to copy prompt.', 'error');
-            });
-        }
+    <div id="image-help-basic-region" class="banner banner--info" hidden>
+      <i class="fa-solid fa-circle-info banner__icon"></i>
+      <div>
+        <div class="banner__title">Two ways to start</div>
+        <div class="banner__body">Type a description for a text-to-image prompt, or upload an image to reverse-engineer it.</div>
+      </div>
+    </div>
 
-        async function saveGeneratedPrompt() {
-            const generatedText = document.getElementById('generated-prompt-text').textContent;
-            
-            if (!generatedText || !generatedText.trim()) {
-                showToast('No generated prompt to save.', 'error');
-                return;
-            }
-            
-            // Show loading while generating title and saving
-            showLoading();
-            
-            try {
-                // Ask AI to generate a smart title for this prompt
-                const titleResponse = await fetch('/generate_title', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                        ...window.CSRF.getFormHeaders()
-                    },
-                    body: new URLSearchParams({
-                        'prompt_text': generatedText.trim(),
-                        'prompt_type': 'basic'
-                    })
-                });
-                
-                const titleData = await titleResponse.json();
-                let title = 'Generated Prompt';
-                
-                if (titleData.success && titleData.title) {
-                    title = titleData.title;
-                } else {
-                    // Fallback to simple title if AI title generation fails
-                    const promptPreview = generatedText.trim().substring(0, 40);
-                    title = `Basic: ${promptPreview}${generatedText.length > 40 ? '...' : ''}`;
-                }
-                
-                // Now save the prompt with the AI-generated title
-                const response = await fetch('/save_prompt', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                        ...window.CSRF.getFormHeaders()
-                    },
-                    body: new URLSearchParams({
-                        'title': title,
-                        'prompt': generatedText.trim()
-                    })
-                });
-                
-                const data = await response.json();
-                hideLoading();
-                
-                if (data.success) {
-                    showToast('Generated prompt saved successfully!', 'success');
-                    updateUserPoints(); // Update points display
-                } else {
-                    showToast(data.message || 'Failed to save prompt.', 'error');
-                }
-            } catch (error) {
-                hideLoading();
-                console.error('Error saving generated prompt:', error);
-                showToast('Failed to save prompt. Please try again.', 'error');
-            }
-        }
+    <div class="choice-group" role="radiogroup" aria-label="Input type">
+      <label class="choice">
+        <input type="radio" name="prompt-option" value="text" checked onclick="togglePromptInput('text')">
+        <i class="fa-solid fa-font"></i>
+        <div>
+          <div class="choice__title">Text</div>
+          <div class="choice__desc">Describe a new image</div>
+        </div>
+      </label>
+      <label class="choice">
+        <input type="radio" name="prompt-option" value="image" onclick="togglePromptInput('image')">
+        <i class="fa-solid fa-upload"></i>
+        <div>
+          <div class="choice__title">File</div>
+          <div class="choice__desc">Reverse-engineer from an image</div>
+        </div>
+      </label>
+    </div>
 
-        function generateAgain() {
-            document.getElementById('resultSection').classList.add('hidden');
-            document.querySelector('.prompting').scrollIntoView({ behavior: 'smooth' });
-        }
-    </script>
+    <form id="image-prompt-form" class="stack" onsubmit="generatePrompt(); return false;">
+      <div class="field">
+        <label class="field__label" for="user_input_image">Describe your image</label>
+        <input class="input" type="text" name="user_input" id="user_input_image" placeholder="Whale on the desert" required>
+      </div>
+    </form>
+
+    <form id="image-upload-form" enctype="multipart/form-data" class="stack" hidden>
+      <label class="file-input" for="image" style="display: flex; align-items: center; gap: var(--p-sp-3); padding: var(--p-sp-5); border: 1px dashed var(--p-color-border); border-radius: var(--p-r-2); cursor: pointer; color: var(--p-color-text-subdued);">
+        <i class="fa-solid fa-cloud-arrow-up" style="color: var(--p-color-primary); font-size: 20px;"></i>
+        <span>Click to choose an image</span>
+        <input type="file" name="image" id="image" accept="image/*" required style="display: none;">
+      </label>
+    </form>
+
+    <div class="cluster">
+      <button id="generate-button" type="button" class="btn btn--primary" onclick="generatePrompt()">
+        <i class="fa-solid fa-wand-magic-sparkles"></i> Generate
+      </button>
+      <button type="button" class="btn btn--secondary" onclick="submitForm('random-image-prompt-form','/generate/irandom')">
+        <i class="fa-solid fa-shuffle"></i> Random
+      </button>
+    </div>
+    <form id="random-image-prompt-form" hidden></form>
+  </section>
+</div>
+
+<div id="preview-container" class="card" hidden style="margin-top: var(--p-sp-7); text-align: center;">
+  <img id="preview-image" alt="Image preview" style="max-width: 320px; margin: 0 auto; border-radius: var(--p-r-2);">
+</div>
+
+<div id="loading" class="modal-backdrop" hidden>
+  <div class="spinner spinner--lg" aria-label="Loading"></div>
+</div>
+
+<div id="resultSection" class="result-panel" hidden style="margin-top: var(--p-sp-7);">
+  <div class="result-panel__header">
+    <span class="eyebrow">Result</span>
+    <h2 class="result-panel__title">
+      <i class="fa-solid fa-star" style="color: var(--p-color-primary); margin-right: 8px;"></i>
+      Generated prompt
+    </h2>
+    <button type="button" class="icon-btn" onclick="document.getElementById('resultSection').setAttribute('hidden','')" aria-label="Close">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+  </div>
+  <div class="result-panel__body">
+    <div class="prompt-body" id="generated-prompt-text"></div>
+  </div>
+  <div class="result-panel__footer">
+    <button type="button" class="btn btn--primary" onclick="copyGeneratedPrompt()">
+      <i class="fa-solid fa-copy"></i> Copy
+    </button>
+    <button type="button" class="btn btn--secondary" onclick="saveGeneratedPrompt()">
+      <i class="fa-solid fa-bookmark"></i> Save to library
+    </button>
+    <button type="button" class="btn--link" onclick="generateAgain()">
+      <i class="fa-solid fa-rotate-right"></i> Generate again
+    </button>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='script/generator.js') }}" defer></script>
+<script>
+function toggleHelp(id) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  var hidden = el.hasAttribute('hidden') ? false : true;
+  if (hidden) el.setAttribute('hidden', ''); else el.removeAttribute('hidden');
+  var btn = document.querySelector('[aria-controls="' + id + '"]');
+  if (btn) btn.setAttribute('aria-expanded', hidden ? 'false' : 'true');
+}
+
+function showLoading() { document.getElementById('loading')?.removeAttribute('hidden'); }
+function hideLoading() { document.getElementById('loading')?.setAttribute('hidden', ''); }
+
+function copyGeneratedPrompt() {
+  var text = document.getElementById('generated-prompt-text').textContent;
+  navigator.clipboard.writeText(text).then(function () {
+    showToast('Generated prompt copied to clipboard!', 'success');
+  }).catch(function () {
+    showToast('Failed to copy prompt.', 'error');
+  });
+}
+
+async function saveGeneratedPrompt() {
+  var text = document.getElementById('generated-prompt-text').textContent;
+  if (!text || !text.trim()) { showToast('No generated prompt to save.', 'error'); return; }
+  showLoading();
+  try {
+    var titleRes = await fetch('/generate_title', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded', ...window.CSRF.getFormHeaders() },
+      body: new URLSearchParams({ prompt_text: text.trim(), prompt_type: 'basic' })
+    });
+    var titleData = await titleRes.json();
+    var title = (titleData.success && titleData.title) ? titleData.title : ('Basic: ' + text.trim().substring(0, 40) + (text.length > 40 ? '…' : ''));
+
+    var saveRes = await fetch('/save_prompt', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded', ...window.CSRF.getFormHeaders() },
+      body: new URLSearchParams({ title: title, prompt: text.trim() })
+    });
+    var data = await saveRes.json();
+    hideLoading();
+    if (data.success) { showToast('Generated prompt saved successfully!', 'success'); if (window.updateUserPoints) window.updateUserPoints(); }
+    else { showToast(data.message || 'Failed to save prompt.', 'error'); }
+  } catch (e) {
+    hideLoading();
+    console.error(e);
+    showToast('Failed to save prompt. Please try again.', 'error');
+  }
+}
+
+function generateAgain() {
+  document.getElementById('resultSection')?.setAttribute('hidden', '');
+  document.getElementById('user_input_text')?.focus();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
 {% endblock %}

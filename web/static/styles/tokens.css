@@ -1,0 +1,151 @@
+/* ============================================================
+   PROMPT SANCTUARY — DESIGN TOKENS
+   Hybrid: Polaris (operational) × Swiss (editorial structure)
+   ============================================================ */
+
+:root {
+  /* ---------- COLOR — POLARIS ---------- */
+  --p-color-bg:               #F4F6F8;
+  --p-color-surface:          #FFFFFF;
+  --p-color-surface-sunken:   #F9FAFB;
+  --p-color-surface-hover:    #F6F6F7;
+  --p-color-surface-selected: #F0F9F4;
+
+  --p-color-border:           #C9CCCF;
+  --p-color-border-subdued:   #E1E3E5;
+  --p-color-divider:          #E4E5E7;
+
+  --p-color-text:             #202223;
+  --p-color-text-subdued:     #6D7175;
+  --p-color-text-disabled:    #8C9196;
+  --p-color-text-inverse:     #FFFFFF;
+
+  --p-color-interactive:      #2C6ECB;
+  --p-color-interactive-hover:#1F5199;
+  --p-color-interactive-subdued: #357AB8;
+
+  --p-color-primary:          #008060;
+  --p-color-primary-hover:    #004C3F;
+  --p-color-primary-subdued:  #E3F1ED;
+  --p-color-primary-text:     #FFFFFF;
+
+  --p-color-critical:         #D82C0D;
+  --p-color-critical-hover:   #BF2712;
+  --p-color-critical-subdued: #F8E1DD;
+  --p-color-warning:          #FFC453;
+  --p-color-warning-subdued:  #FFF1D6;
+  --p-color-success:          #008060;
+  --p-color-success-subdued:  #E3F1ED;
+  --p-color-info:             #2C6ECB;
+  --p-color-info-subdued:     #E0EBF7;
+
+  --p-color-focus:            #2C6ECB;
+  --p-color-focus-ring:       rgba(44, 110, 203, 0.40);
+
+  /* ---------- TYPOGRAPHY — SWISS ---------- */
+  --p-font-sans: "Inter", "Helvetica Neue", "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+  --p-font-mono: "JetBrains Mono", ui-monospace, "SF Mono", "Cascadia Code", Menlo, monospace;
+  --p-font-display: "Inter", "Helvetica Neue", "Arial Black", sans-serif;
+
+  --p-fs-display-xl: 72px;
+  --p-fs-display-lg: 56px;
+  --p-fs-display-md: 44px;
+  --p-fs-h1:         32px;
+  --p-fs-h2:         24px;
+  --p-fs-h3:         20px;
+  --p-fs-h4:         16px;
+  --p-fs-body-lg:    16px;
+  --p-fs-body:       15px;
+  --p-fs-body-sm:    13px;
+  --p-fs-caption:    12px;
+  --p-fs-eyebrow:    11px;
+  --p-fs-mono:       13px;
+
+  --p-lh-display-xl: 1.02;
+  --p-lh-display-lg: 1.05;
+  --p-lh-display-md: 1.08;
+  --p-lh-h1:         1.15;
+  --p-lh-h2:         1.25;
+  --p-lh-h3:         1.30;
+  --p-lh-h4:         1.40;
+  --p-lh-body:       1.55;
+  --p-lh-body-sm:    1.50;
+  --p-lh-mono:       1.65;
+
+  --p-fw-regular:  400;
+  --p-fw-medium:   500;
+  --p-fw-semibold: 600;
+  --p-fw-bold:     700;
+  --p-fw-black:    800;
+
+  --p-ls-display-xl: -0.045em;
+  --p-ls-display-lg: -0.035em;
+  --p-ls-display-md: -0.030em;
+  --p-ls-h1:         -0.020em;
+  --p-ls-h2:         -0.015em;
+  --p-ls-h3:         -0.010em;
+  --p-ls-h4:          0;
+  --p-ls-body:        0;
+  --p-ls-eyebrow:     0.16em;
+  --p-ls-mono:        0;
+
+  /* ---------- SPACING — 4-base ---------- */
+  --p-sp-0:    0;
+  --p-sp-1:    4px;
+  --p-sp-2:    8px;
+  --p-sp-3:    12px;
+  --p-sp-4:    16px;
+  --p-sp-5:    20px;
+  --p-sp-6:    24px;
+  --p-sp-7:    32px;
+  --p-sp-8:    40px;
+  --p-sp-9:    48px;
+  --p-sp-10:   64px;
+  --p-sp-11:   80px;
+  --p-sp-12:   96px;
+  --p-sp-13:  128px;
+  --p-sp-14:  160px;
+
+  /* ---------- RADIUS — SHARP SWISS ---------- */
+  --p-r-0:   0;
+  --p-r-1:   2px;
+  --p-r-2:   4px;
+  --p-r-3:   8px;
+  --p-r-full: 9999px;
+
+  /* ---------- BORDER ---------- */
+  --p-border-hair: 1px solid var(--p-color-border);
+  --p-border-rule: 1px solid var(--p-color-border-subdued);
+  --p-border-divider: 1px solid var(--p-color-divider);
+  --p-border-thick: 2px solid var(--p-color-text);
+  --p-border-interactive: 1px solid var(--p-color-interactive);
+  --p-border-critical: 1px solid var(--p-color-critical);
+
+  /* ---------- GRID — SWISS 12-COL ---------- */
+  --p-grid-cols: 12;
+  --p-grid-gutter: 24px;
+  --p-grid-margin: 32px;
+  --p-grid-max: 1440px;
+  --p-grid-rail-width: 240px;
+  --p-grid-rail-width-lg: 280px;
+  --p-grid-bar-height: 64px;
+
+  /* ---------- MOTION ---------- */
+  --p-ease: cubic-bezier(0.20, 0, 0, 1);
+  --p-dur-fast:   120ms;
+  --p-dur-medium: 200ms;
+  --p-dur-slow:   320ms;
+
+  /* ---------- Z-INDEX ---------- */
+  --p-z-base:    1;
+  --p-z-raised:  10;
+  --p-z-sticky:  100;
+  --p-z-overlay: 800;
+  --p-z-modal:   900;
+  --p-z-toast:   1000;
+
+  /* ---------- DARK MODE (optional future) ---------- */
+  @media (prefers-color-scheme: dark) {
+    /* dark mode tokens deferred — interface stays light-first */
+  }
+}

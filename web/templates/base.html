@@ -1,250 +1,196 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="{{ session.get('language', 'en') }}">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ _('Prompt Sanctuary') }}</title>
-    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='icon/favicon.ico') }}">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#202223">
+  <title>{% block title %}Prompt Sanctuary{% endblock %}</title>
 
-    <!-- Tailwind CSS v3 CDN with inline config -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            colors: {
-              brand: {
-                purple: '#a78bfa',
-                pink: '#fbcfe8',
-                blue: '#bfdbfe',
-                green: '#bbf7d0',
-                yellow: '#fef9c3'
-              }
-            },
-            fontFamily: {
-              sans: ['Montserrat', 'ui-sans-serif', 'system-ui']
-            },
-            boxShadow: {
-              glass: '0 10px 30px rgba(31,41,55,0.10)'
-            }
-          }
-        }
-      }
-    </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap">
 
-    <!-- FontAwesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" referrerpolicy="no-referrer">
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles/loader.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles/tokens.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles/components.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles/styles.css') }}">
 
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Caveat&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-
-    <!-- Jdenticon Library for user profile pictures -->
-    <script src="https://cdn.jsdelivr.net/npm/jdenticon@3.3.0/dist/jdenticon.min.js"
-            integrity="sha384-LfouGM03m83ArVtne1JPk926e3SGD0Tz8XHtW2OKGsgeBU/UfR0Fa8eX+UlwSSAZ"
-            crossorigin="anonymous" defer></script>
-
-    <!-- CSRF Utility (load first) -->
-    <script defer src="{{ url_for('static', filename='script/csrf.js') }}"></script>
-
-    <!-- JavaScript -->
-    <script defer src="{{ url_for('static', filename='script/feedback.js') }}"></script>
-    <script defer src="{{ url_for('static', filename='script/generator.js') }}"></script>
-    <script defer src="{{ url_for('static', filename='script/prompt_refinement.js') }}"></script>
-    <script defer src="{{ url_for('static', filename='script/sidebar.js') }}"></script>
-    <script defer src="{{ url_for('static', filename='script/login.js') }}"></script>
-    <script defer src="{{ url_for('static', filename='script/notifications.js') }}"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.8/clipboard.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2/dist/fuse.min.js"></script>
-    <!-- Markdown render + sanitize + code highlight -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css">
-    <script defer src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-markdown.min.js"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-javascript.min.js"></script>
-
-    <!-- stylesheet -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles/styles.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles/loader.css') }}">
-    <!-- MDC Web CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <style>
-      /* Safe fallback in case Tailwind fails to load */
-      body{font-family: 'Montserrat', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";}
-    </style>
+  <script src="{{ url_for('static', filename='script/csrf.js') }}" defer></script>
+  {% block head_extra %}{% endblock %}
 </head>
+<body class="{% if session.username %}shell--authed{% else %}shell--public{% endif %}">
 
-<body class="flex flex-col min-h-screen antialiased bg-gradient-to-br from-pink-50 via-blue-50 to-purple-50 text-slate-700 selection:bg-brand-purple/30 selection:text-slate-900">
-    <div id="global-loader-overlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[6000] hidden">
-        <div class="spinner"></div>
-    </div>
-    <!-- Sidebar -->
-    <div class="side-panel fixed left-0 top-0 h-full w-72 glass bg-white/40 border border-white/30 shadow-xl backdrop-blur-xl transform -translate-x-full transition-transform duration-300 ease-in-out z-30 flex flex-col" id="sidePanel" role="navigation" aria-label="Main Navigation">
-        <!-- Logo -->
-        <div class="p-6 border-b border-white/30 flex flex-col items-center justify-center cursor-pointer" onclick="toggleSidePanel()" role="banner">
-            <h1 class="text-3xl font-bold text-slate-900">{{ _('Prompt Sanctuary') }}</h1>
-            <p class="text-sm italic text-slate-600 mt-1">{{ _('Your AI-powered prompt creation studio.') }}</p>
-        </div>
+  <a href="#main" class="sr-only">Skip to main content</a>
 
-        <!-- Navigation Links -->
-        <div class="p-4">
-            <ul class="space-y-1">
-                <li onclick="showGlobalLoader(); window.location.href='{{ url_for('main.home') }}';" class="cursor-pointer p-3 rounded-lg transition duration-200 text-slate-700 hover:text-slate-900 hover:bg-white/40">
-                    <i class="fas fa-home mr-2"></i><strong>{{ _('Home') }}</strong>
-                </li>
-                <li onclick="showGlobalLoader(); window.location.href='{{ url_for('main.mylib') }}';" class="cursor-pointer p-3 rounded-lg transition duration-200 text-slate-700 hover:text-slate-900 hover:bg-white/40">
-                    <i class="fas fa-save mr-2"></i><strong>{{ _('Saved Prompts') }}</strong>
-                </li>
-                <!-- Prompt Trial removed -->
-                <li onclick="showGlobalLoader(); window.location.href='{{ url_for('main.library') }}';" class="cursor-pointer p-3 rounded-lg transition duration-200 text-slate-700 hover:text-slate-900 hover:bg-white/40">
-                    <i class="fas fa-users mr-2"></i><strong>{{ _('Community Prompt') }}</strong>
-                </li>
-                <li onclick="showGlobalLoader(); window.location.href='{{ url_for('main.generate') }}';" class="cursor-pointer p-3 rounded-lg transition duration-200 text-slate-700 hover:text-slate-900 hover:bg-white/40">
-                    <i class="fas fa-cogs mr-2"></i><strong>{{ _('Basic Prompt') }}</strong>
-                </li>
-                <li onclick="showGlobalLoader(); window.location.href='{{ url_for('main.advance') }}';" class="cursor-pointer p-3 rounded-lg transition duration-200 text-slate-700 hover:text-slate-900 hover:bg-white/40">
-                    <i class="fas fa-tools mr-2"></i><strong>{{ _('Advance Prompt') }}</strong>
-                </li>
-                <li onclick="showGlobalLoader(); window.location.href='{{ url_for('main.refinement') }}';" class="cursor-pointer p-3 rounded-lg transition duration-200 text-slate-700 hover:text-slate-900 hover:bg-white/40">
-                    <i class="fas fa-magic mr-2"></i><strong>{{ _('Prompt Refinement') }}</strong>
-                </li>
-                <li onclick="showGlobalLoader(); window.location.href='{{ url_for('main.profile') }}';" class="cursor-pointer p-3 rounded-lg transition duration-200 text-slate-700 hover:text-slate-900 hover:bg-white/40">
-                    <i class="fas fa-user mr-2"></i><strong>{{ _('Profile') }}</strong>
-                </li>
-            </ul>
-        </div>
+  {% if session.username %}
+    {# ============== AUTHED SHELL ============== #}
+    <div class="shell" id="appShell">
 
-        <!-- Points Display -->
-        <div class="p-4 border-t border-white/30">
-          <div class="text-center">
-            <div class="flex items-center justify-center space-x-2 mb-2">
-              <i class="fas fa-coins text-yellow-500"></i>
-              <span class="text-sm font-medium text-slate-700">{{ _('Points') }}</span>
-            </div>
-            <div class="text-lg font-bold text-slate-900" id="user-points">{{ "%.1f"|format(current_user_points or 80.0) }}</div>
-            
-            <!-- API Key Status Indicator -->
-            <div id="api-key-indicator" class="mt-2 text-xs" style="display: none;">
-              <div class="inline-flex items-center space-x-1 px-2 py-1 bg-green-100 text-green-700 rounded-full">
-                <i class="fas fa-key"></i>
-                <span>{{ _('Using Own API Key') }}</span>
-              </div>
-            </div>
+      {# Left rail — desktop #}
+      <aside class="shell__rail" aria-label="Primary navigation">
+        <a class="brand" href="{{ url_for('main.home') }}">
+          <span class="brand__mark">P</span>
+          <span class="brand__name">Sanctuary</span>
+          <span class="brand__sub">v1</span>
+        </a>
+
+        <nav class="nav" aria-label="Main">
+          <div class="nav__group">
+            <span class="nav__group-label">Workspace</span>
+            <a class="nav__item {% if active_nav == 'home' %}is-active{% endif %}" href="{{ url_for('main.home') }}">
+              <span class="nav__icon"><i class="fa-solid fa-house" aria-hidden="true"></i></span>
+              <span>Overview</span>
+              <span class="nav__index">01</span>
+            </a>
+            <a class="nav__item {% if active_nav == 'generate' %}is-active{% endif %}" href="{{ url_for('main.generate') }}">
+              <span class="nav__icon"><i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i></span>
+              <span>Generate</span>
+              <span class="nav__index">02</span>
+            </a>
+            <a class="nav__item {% if active_nav == 'advance' %}is-active{% endif %}" href="{{ url_for('main.advance') }}">
+              <span class="nav__icon"><i class="fa-solid fa-sliders" aria-hidden="true"></i></span>
+              <span>Advanced</span>
+              <span class="nav__index">03</span>
+            </a>
+            <a class="nav__item {% if active_nav == 'refinement' %}is-active{% endif %}" href="{{ url_for('main.refinement') }}">
+              <span class="nav__icon"><i class="fa-solid fa-arrows-rotate" aria-hidden="true"></i></span>
+              <span>Refinement</span>
+              <span class="nav__index">04</span>
+            </a>
+          </div>
+
+          <div class="nav__group">
+            <span class="nav__group-label">Library</span>
+            <a class="nav__item {% if active_nav == 'mylib' %}is-active{% endif %}" href="{{ url_for('main.mylib') }}">
+              <span class="nav__icon"><i class="fa-solid fa-book" aria-hidden="true"></i></span>
+              <span>My Library</span>
+              <span class="nav__index">05</span>
+            </a>
+            <a class="nav__item {% if active_nav == 'library' %}is-active{% endif %}" href="{{ url_for('main.library') }}">
+              <span class="nav__icon"><i class="fa-solid fa-users" aria-hidden="true"></i></span>
+              <span>Community</span>
+              <span class="nav__index">06</span>
+            </a>
+          </div>
+
+          <div class="nav__group">
+            <span class="nav__group-label">Account</span>
+            <a class="nav__item {% if active_nav == 'profile' %}is-active{% endif %}" href="{{ url_for('main.profile') }}">
+              <span class="nav__icon"><i class="fa-solid fa-user" aria-hidden="true"></i></span>
+              <span>Profile</span>
+              <span class="nav__index">07</span>
+            </a>
+            <a class="nav__item {% if active_nav == 'feedback' %}is-active{% endif %}" href="{{ url_for('main.feedback_list') }}">
+              <span class="nav__icon"><i class="fa-solid fa-comment-dots" aria-hidden="true"></i></span>
+              <span>Feedback</span>
+              <span class="nav__index">08</span>
+            </a>
+            <a class="nav__item" href="{{ url_for('main.logout') }}">
+              <span class="nav__icon"><i class="fa-solid fa-arrow-right-from-bracket" aria-hidden="true"></i></span>
+              <span>Sign out</span>
+              <span class="nav__index">↩</span>
+            </a>
+          </div>
+        </nav>
+
+        <div class="nav__footer">
+          <div class="nav__points">
+            <span class="nav__points-value" id="userPoints">{{ "%.0f"|format(current_user_points or 0) }}</span>
+            <span class="nav__points-label">Credits</span>
+          </div>
+          <div class="api-key-status" id="apiKeyStatus">
+            <span class="api-key-status__dot"></span>
+            <span>API status</span>
           </div>
         </div>
+      </aside>
 
-        <!-- Logout and Feedback -->
-        <div class="p-4 border-t border-white/30">
-            <ul class="space-y-3">
-                <li onclick="showGlobalLoader(); window.location.href='{{ url_for('main.logout') }}';" class="cursor-pointer p-3 rounded-lg transition duration-200 text-slate-700 hover:text-slate-900 hover:bg-white/40">
-                    <i class="fas fa-sign-out-alt mr-2"></i><strong>{{ _('Logout') }} {% if session.username %}({{ session.username }}){% endif %}</strong>
-                </li>
-                <li onclick="openFeedbackPopup()" class="cursor-pointer p-3 rounded-lg transition duration-200 text-slate-700 hover:text-slate-900 hover:bg-white/40">
-                    <i class="fas fa-comment-dots mr-2"></i><strong>{{ _('Feedback') }}</strong>
-                </li>
-                <li class="p-3">
-                    <div class="flex items-center space-x-2">
-                        <i class="fas fa-language text-slate-600"></i>
-                        <span class="text-sm font-medium text-slate-700">{{ _('Language') }}:</span>
-                        <div class="flex space-x-1">
-                            <a href="{{ url_for('main.set_language', language='en') }}" class="px-2 py-1 text-xs rounded {{ 'bg-blue-500 text-white' if session.get('language') == 'en' else 'bg-gray-200 text-gray-700 hover:bg-gray-300' }} transition" title="English">EN</a>
-                            <a href="{{ url_for('main.set_language', language='id') }}" class="px-2 py-1 text-xs rounded {{ 'bg-blue-500 text-white' if session.get('language') == 'id' else 'bg-gray-200 text-gray-700 hover:bg-gray-300' }} transition" title="Bahasa Indonesia">ID</a>
-                        </div>
-                    </div>
-                </li>
-            </ul>
-        </div>
+      {# Mobile top bar #}
+      <header class="bar-mobile">
+        <button class="bar-mobile__menu" id="mobileMenuBtn" type="button" aria-label="Open menu">
+          <i class="fa-solid fa-bars" aria-hidden="true"></i>
+        </button>
+        <a class="bar-mobile__brand" href="{{ url_for('main.home') }}">Sanctuary</a>
+        <span class="bar-mobile__spacer"></span>
+        <span class="points-display">
+          <span class="points-display__value" id="userPointsMobile">{{ "%.0f"|format(current_user_points or 0) }}</span>
+          <span class="points-display__label">cr</span>
+        </span>
+      </header>
 
-        <div class="mt-auto p-4 border-t border-white/30 text-center space-y-2" role="contentinfo">
-            <p class="text-xs text-slate-500">&copy; 2025 Prompt Sanctuary.</p>
-            <p class="text-xs text-slate-500">{{ _('Created By') }} <a href="https://1999azzar.github.io/1999AZZAR/" target="_blank" class="underline">{{ _('Azzar Budiyanto') }}</a></p>
-            <div class="flex justify-center space-x-3">
-                <a href="https://github.com/1999azzar" target="_blank" class="text-slate-400 hover:text-slate-600"><i class="fab fa-github fa-lg"></i></a>
-                <a href="https://twitter.com/siapa_hayosiapa" target="_blank" class="text-slate-400 hover:text-slate-600"><i class="fab fa-twitter fa-lg"></i></a>
-                <a href="https://1999azzar.github.io/1999AZZAR/" target="_blank" class="text-slate-400 hover:text-slate-600"><i class="fas fa-globe fa-lg"></i></a>
-            </div>
+      <div class="menu-drawer" id="mobileDrawer" aria-hidden="true">
+        <div class="menu-drawer__panel">
+          <button class="menu-drawer__close" id="mobileDrawerClose" type="button" aria-label="Close menu">
+            <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+          </button>
+          <a class="brand" href="{{ url_for('main.home') }}">
+            <span class="brand__mark">P</span>
+            <span class="brand__name">Sanctuary</span>
+          </a>
+          <nav class="nav" aria-label="Mobile">
+            <a class="nav__item" href="{{ url_for('main.home') }}"><span class="nav__icon"><i class="fa-solid fa-house"></i></span><span>Overview</span><span class="nav__index">01</span></a>
+            <a class="nav__item" href="{{ url_for('main.generate') }}"><span class="nav__icon"><i class="fa-solid fa-wand-magic-sparkles"></i></span><span>Generate</span><span class="nav__index">02</span></a>
+            <a class="nav__item" href="{{ url_for('main.advance') }}"><span class="nav__icon"><i class="fa-solid fa-sliders"></i></span><span>Advanced</span><span class="nav__index">03</span></a>
+            <a class="nav__item" href="{{ url_for('main.refinement') }}"><span class="nav__icon"><i class="fa-solid fa-arrows-rotate"></i></span><span>Refinement</span><span class="nav__index">04</span></a>
+            <a class="nav__item" href="{{ url_for('main.mylib') }}"><span class="nav__icon"><i class="fa-solid fa-book"></i></span><span>My Library</span><span class="nav__index">05</span></a>
+            <a class="nav__item" href="{{ url_for('main.library') }}"><span class="nav__icon"><i class="fa-solid fa-users"></i></span><span>Community</span><span class="nav__index">06</span></a>
+            <a class="nav__item" href="{{ url_for('main.profile') }}"><span class="nav__icon"><i class="fa-solid fa-user"></i></span><span>Profile</span><span class="nav__index">07</span></a>
+            <a class="nav__item" href="{{ url_for('main.feedback_list') }}"><span class="nav__icon"><i class="fa-solid fa-comment-dots"></i></span><span>Feedback</span><span class="nav__index">08</span></a>
+            <a class="nav__item" href="{{ url_for('main.logout') }}"><span class="nav__icon"><i class="fa-solid fa-arrow-right-from-bracket"></i></span><span>Sign out</span><span class="nav__index">↩</span></a>
+          </nav>
         </div>
+      </div>
+
+      {# Top bar + canvas #}
+      <div class="shell__main">
+        <header class="shell__bar">
+          <span class="eyebrow">{{ active_section | default('Workspace') }}</span>
+          <h1 class="shell__bar-title">{% block bar_title %}{% endblock %}</h1>
+          <span class="shell__bar-spacer"></span>
+          <button class="btn btn--secondary btn--sm" id="cmdkTrigger" type="button" aria-label="Open command palette">
+            <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+            <span>Search</span>
+            <span class="kbd">⌘K</span>
+          </button>
+          <span class="lang-pill is-active" title="Interface language">
+            <i class="fa-solid fa-globe" aria-hidden="true"></i>
+            <span>{{ (session.get('language') or 'en')|upper }}</span>
+          </span>
+        </header>
+
+        <main class="shell__canvas" id="main">
+          <div class="container">
+            {% block content %}{% endblock %}
+          </div>
+        </main>
+      </div>
     </div>
 
-    <!-- Main Content -->
-    <main class="flex-grow container mx-auto px-4 md:px-6 lg:px-8 py-10" role="main">
-        {% block content %}{% endblock %}
-    </main>
-
-    <!-- Feedback Popup -->
-    <div id="feedback-popup" class="popup hidden fixed inset-0 flex items-center justify-center z-40">
-        <div class="glass bg-white/60 backdrop-blur-xl border border-white/30 shadow-glass p-8 rounded-2xl w-11/12 max-w-md">
-            <button id="close-popup" class="float-right" aria-label="{{ _('Close feedback popup') }}">
-                {{ _('✖️') }}
-            </button>
-            <h2 class="text-2xl font-bold mb-6 text-slate-900">{{ _('Share your feedback') }}</h2>
-            <form id="feedback-form" role="form" aria-labelledby="feedback-heading">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-                <textarea class="w-full h-40 p-4 bg-white/70 backdrop-blur-sm border border-white/40 text-slate-800 placeholder-slate-500 rounded-xl mb-6 resize-none focus:outline-none focus:ring-2 focus:ring-brand-purple/40" name="feedback" placeholder="{{ _('Enter your feedback here') }}" required aria-label="Feedback text area"></textarea>
-                <button type="submit" class="inline-flex items-center justify-center rounded-xl bg-brand-purple text-white px-6 py-3 shadow-sm hover:bg-violet-500 transition duration-200 focus:outline-none focus:ring-2 focus:ring-brand-purple/40">{{ _('Submit') }}</button>
-            </form>
+    {# Command palette (Cmd-K) #}
+    <div class="cmdk-backdrop" id="cmdk" aria-hidden="true">
+      <div class="cmdk" role="dialog" aria-label="Command palette">
+        <input class="cmdk__input" id="cmdkInput" type="text" placeholder="Search actions, prompts, settings…" autocomplete="off" spellcheck="false">
+        <div class="cmdk__list" id="cmdkList"></div>
+        <div class="cmdk__footer">
+          <span><span class="kbd">↑</span> <span class="kbd">↓</span> navigate</span>
+          <span><span class="kbd">↵</span> open</span>
+          <span><span class="kbd">esc</span> close</span>
         </div>
+      </div>
     </div>
 
-    <div id="toast-container" class="fixed top-5 right-5 z-50 space-y-2"></div>
-    <!-- MDC Web JS -->
-    <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
-    <script>
-      mdc.autoInit();
-    </script>
+  {% else %}
+    {# ============== PUBLIC SHELL (auth) ============== #}
+    {% block public_content %}{% endblock %}
+  {% endif %}
 
-    <!-- Identicon functionality -->
-    <script>
-      // Initialize identicons when DOM is loaded
-      document.addEventListener('DOMContentLoaded', function() {
-        // Update all identicons on the page
-        jdenticon.update();
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+  <div id="backdrop"></div>
 
-
-      });
-    </script>
-
-    <!-- Azzar AI Chat Widget -->
-    <script src="https://llm-test.azzar.workers.dev/widget.js"></script>
-    
-    <!-- API Key Status Indicator -->
-    <script defer src="{{ url_for('static', filename='script/api_key_indicator.js') }}"></script>
-    
-    <!-- Global Point Synchronization -->
-    <script>
-        // Global function to update user points display
-        window.updateUserPoints = function() {
-            fetch('/get_user_points', {
-                method: 'GET',
-                headers: window.CSRF.getFormHeaders()
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success && data.points !== undefined) {
-                    const pointsElement = document.getElementById('user-points');
-                    if (pointsElement) {
-                        pointsElement.textContent = parseFloat(data.points).toFixed(1);
-                    }
-                }
-            })
-            .catch(error => {
-                console.error('Error updating user points:', error);
-            });
-        };
-        
-        // Update points on page load to ensure synchronization
-        document.addEventListener('DOMContentLoaded', function() {
-            // Small delay to ensure CSRF is loaded
-            setTimeout(() => {
-                if (window.CSRF) {
-                    window.updateUserPoints();
-                }
-            }, 100);
-        });
-    </script>
+  <script src="{{ url_for('static', filename='script/sidebar.js') }}" defer></script>
+  <script src="{{ url_for('static', filename='script/api_key_indicator.js') }}" defer></script>
+  <script src="{{ url_for('static', filename='script/notifications.js') }}" defer></script>
+  {% block scripts %}{% endblock %}
 </body>
 </html>

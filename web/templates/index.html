@@ -1,90 +1,149 @@
 {% extends "base.html" %}
+{% set active_section = 'Workspace' %}
+{% set active_nav = 'home' %}
+{% block title %}Overview · Prompt Sanctuary{% endblock %}
+{% block bar_title %}Overview{% endblock %}
 
 {% block content %}
-<section class="flex flex-col items-center px-6 py-12" role="region" aria-labelledby="main-heading">
-  <!-- {{ _('Hero Card') }} -->
-  <div class="hero text-center mb-16 w-full max-w-5xl cursor-pointer" onclick="toggleSidePanel()">
-    <h1 class="text-5xl font-bold mb-4 text-slate-900" id="main-heading"><i class="fas fa-home mr-2"></i>{{ _('Prompt Sanctuary') }}</h1>
-    <p class="text-lg text-slate-600">{{ _('Your AI-powered prompt creation studio.') }}</p>
+<header class="hero section--first" style="padding-top: var(--p-sp-7); padding-bottom: var(--p-sp-9);">
+  <span class="eyebrow hero__eyebrow">Index 001 · Today</span>
+  <h1 class="t-display-lg hero__display">Good day, {{ session.username }}.</h1>
+  <p class="lede hero__lede">You have <span class="t-accent"><strong id="heroPoints">{{ "%.0f"|format(current_user_points or 0) }}</strong> credits</span> available. Start a new prompt, refine a draft, or browse the community library.</p>
+  <div class="hero__cta">
+    <a class="btn btn--primary btn--lg" href="{{ url_for('main.generate') }}">
+      <i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i>
+      Generate a prompt
+    </a>
+    <a class="btn btn--secondary btn--lg" href="{{ url_for('main.advance') }}">
+      <i class="fa-solid fa-sliders" aria-hidden="true"></i>
+      Advanced mode
+    </a>
+    <a class="btn--link" href="{{ url_for('main.library') }}">Browse community →</a>
+  </div>
+</header>
+
+<hr class="rule">
+
+<section class="section--tight">
+  <div class="cluster--between cluster--baseline" style="margin-bottom: var(--p-sp-7);">
+    <div>
+      <span class="eyebrow">Index 002</span>
+      <h2 class="t-h1" style="margin-top: var(--p-sp-3);">At a glance.</h2>
+    </div>
+    <span class="t-body-sm t-muted">Updated just now</span>
   </div>
 
-  <!-- {{ _('Feature Cards') }} -->
-  <div class="w-full max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-    <!-- {{ _('Feature 1: Basic Prompt') }} -->
-    <div class="glass p-8 rounded-xl shadow-glass transform transition duration-300 hover:scale-105 hover:shadow-xl h-full flex flex-col" role="region" aria-labelledby="basic-prompt-heading">
-      <div class="flex flex-col items-center text-center md:items-start md:text-left flex-grow">
-        <i class="fas fa-keyboard fa-3x text-purple-400 mb-4 inline-block"></i>
-        <h2 class="text-3xl font-semibold text-slate-900 mb-3" id="basic-prompt-heading">{{ _('Basic Prompt') }}</h2>
-        <div class="flex-grow">
-          <p class="text-slate-600 leading-relaxed mb-2">
-            {{ _('Our basic generator helps you get started quickly. Key features include:') }}
-          </p>
-          <ul class="list-disc list-inside text-slate-600 leading-relaxed mb-6 pl-4">
-            <li>{{ _('Quickly generate creative prompts.') }}</li>
-            <li>{{ _('Ideal for sparking ideas in simple use cases.') }}</li>
-            <li>{{ _('Overcome writer\'s block with ease.') }}</li>
-          </ul>
-        </div>
+  <div class="kpi-strip">
+    <div class="kpi">
+      <div class="kpi__label">Credits</div>
+      <div class="kpi__value" id="kpiPoints">{{ "%.0f"|format(current_user_points or 0) }}</div>
+      <div class="kpi__delta kpi__delta--up">+ 80 on signup</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi__label">Saved</div>
+      <div class="kpi__value" id="kpiSaved">—</div>
+      <div class="kpi__delta">prompts in your library</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi__label">Refinements</div>
+      <div class="kpi__value" id="kpiRefinements">—</div>
+      <div class="kpi__delta">versioned edits</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi__label">Shared</div>
+      <div class="kpi__value" id="kpiShared">—</div>
+      <div class="kpi__delta">with the community</div>
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<section class="section--tight">
+  <div class="cluster--between cluster--baseline" style="margin-bottom: var(--p-sp-7);">
+    <div>
+      <span class="eyebrow">Index 003</span>
+      <h2 class="t-h1" style="margin-top: var(--p-sp-3);">Four ways to work.</h2>
+    </div>
+    <span class="t-body-sm t-muted" style="text-align: right; max-width: 32ch;">Generate, refine, share, and revisit — all from one place.</span>
+  </div>
+
+  <div class="feature-grid">
+    <a class="feature-card" href="{{ url_for('main.generate') }}">
+      <div class="feature-card__meta">
+        <span class="feature-card__index">01</span>
+        <span class="badge"><span class="badge__dot"></span> Basic</span>
       </div>
-      <a href="{{ url_for('main.generate') }}" class="inline-flex items-center justify-center rounded-xl bg-violet-400 text-white px-5 py-3 hover:bg-violet-500 transition shadow mt-auto self-center md:self-start">{{ _('Try Basic Generator') }}</a>
+      <span class="feature-card__icon" aria-hidden="true"><i class="fa-solid fa-wand-magic-sparkles"></i></span>
+      <h3 class="feature-card__title">Generate from a topic</h3>
+      <p class="feature-card__body">Describe what you want. The model expands it into a structured prompt with variables you can fill in later.</p>
+      <span class="feature-card__cta">Open</span>
+    </a>
+
+    <a class="feature-card" href="{{ url_for('main.advance') }}">
+      <div class="feature-card__meta">
+        <span class="feature-card__index">02</span>
+        <span class="badge"><span class="badge__dot"></span> Advanced</span>
+      </div>
+      <span class="feature-card__icon" aria-hidden="true"><i class="fa-solid fa-sliders"></i></span>
+      <h3 class="feature-card__title">Generate from a system prompt</h3>
+      <p class="feature-card__body">Paste a system prompt and the model writes a new one in the same voice. Optional image variants included.</p>
+      <span class="feature-card__cta">Open</span>
+    </a>
+
+    <a class="feature-card" href="{{ url_for('main.refinement') }}">
+      <div class="feature-card__meta">
+        <span class="feature-card__index">03</span>
+        <span class="badge"><span class="badge__dot"></span> Workflow</span>
+      </div>
+      <span class="feature-card__icon" aria-hidden="true"><i class="fa-solid fa-arrows-rotate"></i></span>
+      <h3 class="feature-card__title">Refine an existing prompt</h3>
+      <p class="feature-card__body">Tell the model what to change — tone, length, format, audience. Every refinement is versioned.</p>
+      <span class="feature-card__cta">Open</span>
+    </a>
+
+    <a class="feature-card" href="{{ url_for('main.mylib') }}">
+      <div class="feature-card__meta">
+        <span class="feature-card__index">04</span>
+        <span class="badge"><span class="badge__dot"></span> Library</span>
+      </div>
+      <span class="feature-card__icon" aria-hidden="true"><i class="fa-solid fa-bookmark"></i></span>
+      <h3 class="feature-card__title">Browse your saved prompts</h3>
+      <p class="feature-card__body">All your drafts, refinements, and shared prompts in one searchable list with side detail.</p>
+      <span class="feature-card__cta">Open</span>
+    </a>
+  </div>
+</section>
+
+<hr class="rule">
+
+<section class="section--tight">
+  <div class="cluster--between cluster--baseline" style="margin-bottom: var(--p-sp-7);">
+    <div>
+      <span class="eyebrow">Index 004</span>
+      <h2 class="t-h1" style="margin-top: var(--p-sp-3);">Getting started.</h2>
+    </div>
+  </div>
+
+  <div class="grid--2">
+    <div class="feature-row" style="border-top: 0; padding-top: 0;">
+      <span class="feature-row__index">01</span>
+      <div>
+        <span class="feature-row__icon"><i class="fa-solid fa-key" aria-hidden="true"></i></span>
+        <h3 class="feature-row__title">Bring your own API key</h3>
+        <p class="feature-row__body">Add a Google Generative AI key in your profile. Or use the shared pool with your credits. Either way, generations route through your account.</p>
+        <a class="btn--link" href="{{ url_for('main.profile') }}">Add key →</a>
+      </div>
     </div>
 
-    <!-- {{ _('Feature 2: Advanced Prompt') }} -->
-    <div class="glass p-8 rounded-xl shadow-glass transform transition duration-300 hover:scale-105 hover:shadow-xl h-full flex flex-col" role="region" aria-labelledby="advanced-prompt-heading">
-      <div class="flex flex-col items-center text-center md:items-start md:text-left flex-grow">
-        <i class="fas fa-sliders-h fa-3x text-green-400 mb-4 inline-block"></i>
-        <h2 class="text-3xl font-semibold text-slate-900 mb-3" id="advanced-prompt-heading">{{ _('Advance Prompt') }}</h2>
-        <div class="flex-grow">
-          <p class="text-slate-600 leading-relaxed mb-2">
-            {{ _('With advanced engineering, you gain more control. You can:') }}
-          </p>
-          <ul class="list-disc list-inside text-slate-600 leading-relaxed mb-6 pl-4">
-            <li>{{ _('Fine-tune multiple prompt parameters.') }}</li>
-            <li>{{ _('Regenerate and refine prompts on demand.') }}</li>
-            <li>{{ _('Craft complex and highly specific instructions.') }}</li>
-          </ul>
-        </div>
+    <div class="feature-row" style="border-top: 0; padding-top: 0;">
+      <span class="feature-row__index">02</span>
+      <div>
+        <span class="feature-row__icon"><i class="fa-solid fa-share-nodes" aria-hidden="true"></i></span>
+        <h3 class="feature-row__title">Share with the community</h3>
+        <p class="feature-row__body">When a prompt is ready, share it. Browse what others have shipped. Fork anything you like into your own library.</p>
+        <a class="btn--link" href="{{ url_for('main.library') }}">Browse →</a>
       </div>
-      <a href="{{ url_for('main.advance') }}" class="inline-flex items-center justify-center rounded-xl bg-emerald-400 text-white px-5 py-3 hover:bg-emerald-500 transition shadow mt-auto self-center md:self-start">{{ _('Access Advanced Tools') }}</a>
-    </div>
-
-    <!-- {{ _('Feature 3: Prompt Refinement') }} -->
-    <div class="glass p-8 rounded-xl shadow-glass transform transition duration-300 hover:scale-105 hover:shadow-xl h-full flex flex-col" role="region" aria-labelledby="prompt-refinement-heading">
-      <div class="flex flex-col items-center text-center md:items-start md:text-left flex-grow">
-        <i class="fas fa-magic fa-3x text-blue-400 mb-4 inline-block"></i>
-        <h2 class="text-3xl font-semibold text-slate-900 mb-3" id="prompt-refinement-heading">{{ _('Prompt Refinement') }}</h2>
-        <div class="flex-grow">
-          <p class="text-slate-600 leading-relaxed mb-2">
-            {{ _('Optimize and improve your prompts with AI-powered refinement. Features include:') }}
-          </p>
-          <ul class="list-disc list-inside text-slate-600 leading-relaxed mb-6 pl-4">
-            <li>{{ _('Refine prompts from multiple sources.') }}</li>
-            <li>{{ _('Quick actions: shorten, elaborate, improve, fix grammar.') }}</li>
-            <li>{{ _('Custom refinement instructions.') }}</li>
-            <li>{{ _('AI-powered smart titles for saved prompts.') }}</li>
-          </ul>
-        </div>
-      </div>
-      <a href="{{ url_for('main.refinement') }}" class="inline-flex items-center justify-center rounded-xl bg-blue-400 text-white px-5 py-3 hover:bg-blue-500 transition shadow mt-auto self-center md:self-start">{{ _('Refine Your Prompts') }}</a>
-    </div>
-
-    <!-- {{ _('Feature 4: Community Prompts') }} -->
-    <div class="glass p-8 rounded-xl shadow-glass transform transition duration-300 hover:scale-105 hover:shadow-xl h-full flex flex-col" role="region" aria-labelledby="community-prompts-heading">
-      <div class="flex flex-col items-center text-center md:items-start md:text-left flex-grow">
-        <i class="fas fa-users fa-3x text-yellow-400 mb-4 inline-block"></i>
-        <h2 class="text-3xl font-semibold text-slate-900 mb-3" id="community-prompts-heading">{{ _('Community Prompt') }}</h2>
-        <div class="flex-grow">
-          <p class="text-slate-600 leading-relaxed mb-2">
-            {{ _('In our community library, you will find inspiration. Key benefits are:') }}
-          </p>
-          <ul class="list-disc list-inside text-slate-600 leading-relaxed mb-6 pl-4">
-            <li>{{ _('Explore a diverse collection of prompts from users.') }}</li>
-            <li>{{ _('Share your own creative prompts with others.') }}</li>
-            <li>{{ _('Discover new ideas and techniques.') }}</li>
-          </ul>
-        </div>
-      </div>
-      <a href="{{ url_for('main.library') }}" class="inline-flex items-center justify-center rounded-xl bg-amber-300 text-slate-900 px-5 py-3 hover:bg-amber-400 transition shadow mt-auto self-center md:self-start">{{ _('Browse Community Library') }}</a>
     </div>
   </div>
 </section>

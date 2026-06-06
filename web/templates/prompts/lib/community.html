@@ -1,295 +1,179 @@
 {% extends "base.html" %}
+{% set active_section = 'Library' %}
+{% set active_nav = 'library' %}
+{% block title %}Community · Prompt Sanctuary{% endblock %}
+{% block bar_title %}Community{% endblock %}
 
 {% block content %}
-    <!-- Hero Section -->
-    <div class="hero text-center mb-12 cursor-pointer" onclick="toggleSidePanel()" role="region" aria-labelledby="community-page-heading">
-        <h1 id="community-page-heading" class="text-5xl font-bold mb-4 text-slate-900"><i class="fas fa-users mr-2"></i>{{ _('Community Prompt') }}</h1>
-        <p class="text-lg text-slate-600">{{ _('Explore prompts shared by the community.') }}</p>
-    </div>
+<header class="hero section--first" style="padding-top: var(--p-sp-7); padding-bottom: var(--p-sp-7);">
+  <span class="eyebrow hero__eyebrow">Index 06 · Community</span>
+  <h1 class="t-h1 hero__display" style="font-size: var(--p-fs-h1); max-width: 24ch;">Community prompts.</h1>
+  <p class="lede hero__lede">System prompts and shared prompts from the community. Copy, save, or refine any of them.</p>
+  <div class="hero__cta">
+    <a class="btn btn--primary" href="{{ url_for('main.refinement') }}">
+      <i class="fa-solid fa-wand-magic-sparkles"></i> Refine a prompt
+    </a>
+  </div>
+</header>
 
-    <!-- Search Bar -->
-    <h2 id="search-prompts-heading" class="text-2xl font-bold mb-6">{{ _('Search Prompts') }}</h2>
-    
-    <!-- Refinement Info -->
-    <div class="mb-6 p-4 bg-purple-50 border border-purple-200 rounded-lg">
-      <div class="flex items-center">
-        <i class="fas fa-magic text-purple-500 mr-3"></i>
-        <div>
-          <p class="text-sm text-purple-800 font-medium">{{ _('Want to refine community prompts?') }}</p>
-          <p class="text-xs text-purple-600 mt-1">{{ _('Visit the Prompt Refinement page to customize community prompts for your needs.') }}</p>
-        </div>
-        <a href="/refinement" class="ml-auto bg-purple-500 hover:bg-purple-600 text-white px-3 py-1 rounded text-sm transition-colors">
-          {{ _('Refine') }}
-        </a>
+<section class="section--tight">
+  <div class="cluster" style="margin-bottom: var(--p-sp-5); align-items: flex-end;">
+    <div class="field" style="flex: 1; max-width: 480px; margin: 0;">
+      <label class="field__label" for="searchInput">Search</label>
+      <input class="input" type="text" id="searchInput" placeholder="Search by title or content…">
+    </div>
+    <button type="button" id="clearSearchBtn" class="btn btn--ghost btn--sm" style="display: none;" aria-label="Clear search">
+      <i class="fa-solid fa-xmark"></i> Clear
+    </button>
+  </div>
+
+  <div id="allPrompts" class="grid--3">
+    {% for prompt in system_prompts %}
+    <article class="prompt-box" role="article" aria-labelledby="prompt-title-{{ loop.index0 }}-default">
+      <div class="prompt-box__meta">
+        <span class="badge badge--primary"><i class="fa-solid fa-shield-halved"></i> System</span>
+        <span class="index" style="margin-left: auto;">Default</span>
       </div>
-    </div>
-    
-    <div class="search-container mb-6" role="search">
-    <input type="text" id="searchInput" placeholder="{{ _('Search prompts...') }}" class="w-full p-3 rounded-xl bg-white/70 border border-white/40 text-slate-800 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-violet-300" aria-label="{{ _('Search community prompts') }}">
-        <button id="clearSearchBtn" class="clear-search-btn hidden" aria-label="{{ _('Clear search') }}">&times;</button>
-    </div>
+      <h3 class="prompt-box__title" id="prompt-title-{{ loop.index0 }}-default">{{ prompt.title }}</h3>
+      <p class="prompt-box__body prompt-text">{{ prompt.prompt | safe }}</p>
+      <div class="prompt-box__actions">
+        <button class="btn btn--tertiary btn--sm copy-button" data-clipboard-text="{{ prompt.prompt | e }}" aria-label="Copy {{ prompt.title | e }}">
+          <i class="fa-solid fa-copy"></i> Copy
+        </button>
+        <button class="btn btn--tertiary btn--sm save-button" data-title="{{ prompt.title | e }}" data-prompt="{{ prompt.prompt | e }}" aria-label="Save {{ prompt.title | e }}">
+          <i class="fa-solid fa-bookmark"></i> Save
+        </button>
+        <button class="btn btn--tertiary btn--sm see-button" data-title="{{ prompt.title | e }}" data-content="{{ prompt.prompt | e }}" aria-label="Preview {{ prompt.title | e }}">
+          <i class="fa-solid fa-eye"></i> Preview
+        </button>
+      </div>
+    </article>
+    {% endfor %}
 
-    <!-- Combined Prompts Section -->
-    <div class="mdc-layout-grid" role="region" aria-labelledby="search-prompts-heading">
-        <div class="mdc-layout-grid__inner" id="allPrompts">
-            {% for prompt in system_prompts %}
-            <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12 mdc-layout-grid__cell--span-4-tablet mdc-layout-grid__cell--span-6-desktop">
-                <article class="prompt-card-enhanced" role="article" aria-labelledby="prompt-title-{{ loop.index0 }}-default">
-                    <div class="card-header">
-                        <div class="card-header-content">
-                            <h3 class="card-title" id="prompt-title-{{ loop.index0 }}-default">{{ prompt.title }}</h3>
-                            <div class="card-badges">
-                                <div class="card-type-indicator default-type">
-                                    <i class="fas fa-shield-alt" aria-hidden="true"></i>
-                                    <span>{{ _('System') }}</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card-actions-header">
-                            <!-- Removed favorite button - not connected to backend -->
-                        </div>
-                    </div>
+    {% for prompt in shared_prompts %}
+    <article class="prompt-box" role="article" aria-labelledby="prompt-title-{{ loop.index0 }}-shared">
+      <div class="prompt-box__meta">
+        <span class="badge"><i class="fa-solid fa-users"></i> Community</span>
+        {% if prompt.is_user_owned %}
+        <span class="badge badge--warning"><i class="fa-solid fa-crown"></i> Yours</span>
+        {% endif %}
+        <span class="index" style="margin-left: auto;">Shared</span>
+      </div>
+      <h3 class="prompt-box__title" id="prompt-title-{{ loop.index0 }}-shared">{{ prompt.title }}</h3>
+      <p class="prompt-box__body prompt-text">{{ prompt.prompt | safe }}</p>
+      <div class="prompt-box__actions">
+        <button class="btn btn--tertiary btn--sm copy-button" data-clipboard-text="{{ prompt.prompt | e }}" aria-label="Copy {{ prompt.title | e }}">
+          <i class="fa-solid fa-copy"></i> Copy
+        </button>
+        <button class="btn btn--tertiary btn--sm save-button" data-title="{{ prompt.title | e }}" data-prompt="{{ prompt.prompt | e }}" aria-label="Save {{ prompt.title | e }}">
+          <i class="fa-solid fa-bookmark"></i> Save
+        </button>
+        {% if prompt.is_user_owned %}
+        <button class="btn btn--tertiary btn--sm unshare-button" data-prompt-id="{{ prompt.random_val }}" aria-label="Unshare {{ prompt.title | e }}">
+          <i class="fa-solid fa-share-from-square"></i> Unshare
+        </button>
+        {% endif %}
+        <button class="btn btn--tertiary btn--sm see-button" data-title="{{ prompt.title | e }}" data-content="{{ prompt.prompt | e }}" aria-label="Preview {{ prompt.title | e }}">
+          <i class="fa-solid fa-eye"></i> Preview
+        </button>
+      </div>
+    </article>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}
 
-                    <div class="card-content">
-                        <div class="prompt-preview">
-                            <p class="prompt-text">{{ prompt.prompt | safe }}</p>
-                        </div>
-                        <div class="content-gradient"></div>
-                    </div>
+{% block scripts %}
+<script src="{{ url_for('static', filename='script/community.js') }}" defer></script>
+<script>
+(function () {
+  const allPrompts = [
+    {% for prompt in system_prompts %}
+    { id: 'system-{{ loop.index0 }}', title: {{ prompt.title | tojson }}, prompt: {{ prompt.prompt | tojson }}, type: 'system', is_user_owned: false, random_val: {{ prompt.random_val | tojson }} },
+    {% endfor %}
+    {% for prompt in shared_prompts %}
+    { id: 'shared-{{ loop.index0 }}', title: {{ prompt.title | tojson }}, prompt: {{ prompt.prompt | tojson }}, type: 'shared', is_user_owned: {{ prompt.is_user_owned | tojson }}, random_val: {{ prompt.random_val | tojson }} },
+    {% endfor %}
+  ];
 
-                    <div class="card-footer">
-                        <div class="card-action-buttons">
-                            <button class="primary-action-button copy-button" data-clipboard-text="{{ prompt.prompt | e }}" aria-label="{{ _('Copy prompt:') }} {{ prompt.title | e }}">
-                                <i class="fas fa-copy" aria-hidden="true"></i>
-                                <span>{{ _('Copy') }}</span>
-                            </button>
-                            <button class="primary-action-button save-button" data-title="{{ prompt.title | e }}" data-prompt="{{ prompt.prompt | e }}" aria-label="{{ _('Save prompt:') }} {{ prompt.title | e }}">
-                                <i class="fas fa-bookmark" aria-hidden="true"></i>
-                                <span>{{ _('Save') }}</span>
-                            </button>
-                            <button class="secondary-action-button see-button" data-title="{{ prompt.title | e }}" data-content="{{ prompt.prompt | e }}" aria-label="{{ _('See details for prompt:') }} {{ prompt.title | e }}">
-                                <i class="fas fa-eye" aria-hidden="true"></i>
-                                <span>{{ _('Preview') }}</span>
-                            </button>
-                        </div>
-                    </div>
-                </article>
-            </div>
-            {% endfor %}
+  const fuse = (typeof Fuse !== 'undefined') ? new Fuse(allPrompts, { keys: ['title', 'prompt'], threshold: 0.3 }) : null;
+  const searchInput = document.getElementById('searchInput');
+  const clearSearchBtn = document.getElementById('clearSearchBtn');
+  const allPromptsContainer = document.getElementById('allPrompts');
+  if (!allPromptsContainer) return;
 
-            {% for prompt in shared_prompts %}
-            <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12 mdc-layout-grid__cell--span-4-tablet mdc-layout-grid__cell--span-6-desktop">
-                <article class="prompt-card-enhanced {% if prompt.is_user_owned %}user-owned{% endif %}" role="article" aria-labelledby="prompt-title-{{ loop.index0 }}-shared">
-                    <div class="card-header">
-                        <div class="card-header-content">
-                            <h3 class="card-title" id="prompt-title-{{ loop.index0 }}-shared">{{ prompt.title }}</h3>
-                            <div class="card-badges">
-                                <div class="card-type-indicator shared-type">
-                                    <i class="fas fa-users" aria-hidden="true"></i>
-                                    <span>{{ _('Community') }}</span>
-                                </div>
-                                {% if prompt.is_user_owned %}
-                                <div class="owner-badge-header">
-                                    <i class="fas fa-crown" aria-hidden="true"></i>
-                                    <span>{{ _('Your prompt') }}</span>
-                                </div>
-                                {% endif %}
-                            </div>
-                        </div>
-                        <div class="card-actions-header">
-                            <!-- Unshare button moved to footer -->
-                        </div>
-                    </div>
+  function escapeHtml(str) {
+    if (typeof str !== 'string') return '';
+    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+  }
 
-                    <div class="card-content">
-                        <div class="prompt-preview">
-                            <p class="prompt-text">{{ prompt.prompt | safe }}</p>
-                        </div>
-                        <div class="content-gradient"></div>
-                        {% if prompt.is_user_owned %}
-                        <div class="owner-badge">
-                            <i class="fas fa-crown" aria-hidden="true"></i>
-                            <span>{{ _('Your prompt') }}</span>
-                        </div>
-                        {% endif %}
-                    </div>
+  function renderAllPrompts(promptsToRender) {
+    if (!promptsToRender) promptsToRender = allPrompts;
+    if (promptsToRender.length === 0) {
+      allPromptsContainer.innerHTML = '<div class="card empty" style="grid-column: 1 / -1;"><div class="empty__icon"><i class="fa-solid fa-magnifying-glass"></i></div><div class="empty__title">No matches</div><p class="empty__body">Try a different search term.</p></div>';
+      return;
+    }
+    allPromptsContainer.innerHTML = promptsToRender.map((prompt, index) => {
+      const uniqueId = prompt.id || (prompt.type + '-' + index);
+      const isOwned = prompt.type === 'shared' && prompt.is_user_owned;
+      const typeText = prompt.type === 'system' ? 'System' : 'Community';
+      const typeIcon = prompt.type === 'system' ? 'fa-shield-halved' : 'fa-users';
+      const badgeClass = prompt.type === 'system' ? 'badge--primary' : '';
+      return `
+        <article class="prompt-box" role="article" aria-labelledby="prompt-title-${uniqueId}">
+          <div class="prompt-box__meta">
+            <span class="badge ${badgeClass}"><i class="fa-solid ${typeIcon}"></i> ${typeText}</span>
+            ${isOwned ? '<span class="badge badge--warning"><i class="fa-solid fa-crown"></i> Yours</span>' : ''}
+            <span class="index" style="margin-left: auto;">${prompt.type === 'system' ? 'Default' : 'Shared'}</span>
+          </div>
+          <h3 class="prompt-box__title" id="prompt-title-${uniqueId}">${escapeHtml(prompt.title)}</h3>
+          <p class="prompt-box__body prompt-text">${escapeHtml(prompt.prompt)}</p>
+          <div class="prompt-box__actions">
+            <button class="btn btn--tertiary btn--sm copy-button" data-clipboard-text="${escapeHtml(prompt.prompt)}" aria-label="Copy ${escapeHtml(prompt.title)}">
+              <i class="fa-solid fa-copy"></i> Copy
+            </button>
+            <button class="btn btn--tertiary btn--sm save-button" data-title="${escapeHtml(prompt.title)}" data-prompt="${escapeHtml(prompt.prompt)}" aria-label="Save ${escapeHtml(prompt.title)}">
+              <i class="fa-solid fa-bookmark"></i> Save
+            </button>
+            ${isOwned && prompt.type === 'shared' ? `<button class="btn btn--tertiary btn--sm unshare-button" data-prompt-id="${escapeHtml(prompt.random_val)}" aria-label="Unshare ${escapeHtml(prompt.title)}"><i class="fa-solid fa-share-from-square"></i> Unshare</button>` : ''}
+            <button class="btn btn--tertiary btn--sm see-button" data-title="${escapeHtml(prompt.title)}" data-content="${escapeHtml(prompt.prompt)}" aria-label="Preview ${escapeHtml(prompt.title)}">
+              <i class="fa-solid fa-eye"></i> Preview
+            </button>
+          </div>
+        </article>`;
+    }).join('');
 
-                    <div class="card-footer">
-                        <div class="card-action-buttons">
-                            <button class="primary-action-button copy-button" data-clipboard-text="{{ prompt.prompt | e }}" aria-label="{{ _('Copy prompt:') }} {{ prompt.title | e }}">
-                                <i class="fas fa-copy" aria-hidden="true"></i>
-                                <span>{{ _('Copy') }}</span>
-                            </button>
-                            <button class="primary-action-button save-button" data-title="{{ prompt.title | e }}" data-prompt="{{ prompt.prompt | e }}" aria-label="{{ _('Save prompt:') }} {{ prompt.title | e }}">
-                                <i class="fas fa-bookmark" aria-hidden="true"></i>
-                                <span>{{ _('Save') }}</span>
-                            </button>
-                            {% if prompt.is_user_owned %}
-                            <button class="primary-action-button unshare-button" data-prompt-id="{{ prompt.random_val }}" aria-label="{{ _('Unshare your prompt:') }} {{ prompt.title | e }}">
-                                <i class="fas fa-share-alt" aria-hidden="true"></i>
-                                <span>{{ _('Unshare') }}</span>
-                            </button>
-                            {% endif %}
-                            <button class="secondary-action-button see-button" data-title="{{ prompt.title | e }}" data-content="{{ prompt.prompt | e }}" aria-label="{{ _('See details for prompt:') }} {{ prompt.title | e }}">
-                                <i class="fas fa-eye" aria-hidden="true"></i>
-                                <span>{{ _('Preview') }}</span>
-                            </button>
-                        </div>
-                    </div>
-                </article>
-            </div>
-            {% endfor %}
-        </div>
-    </div>
+    if (window.reattachCommunityListeners) window.reattachCommunityListeners();
+  }
 
-    <!-- JavaScript for Sidebar Behavior -->
-    <script defer src="{{ url_for('static', filename='script/community.js') }}"></script>
+  function debounce(fn, delay) {
+    let id;
+    return function () {
+      const args = arguments;
+      clearTimeout(id);
+      id = setTimeout(() => fn.apply(null, args), delay);
+    };
+  }
 
-    <!-- JavaScript for Fuzzy Search -->
-    <script>
-        // Initialize Fuse.js for fuzzy search
-        const allPrompts = [
-            {% for prompt in system_prompts %}
-            { id: 'system-{{ loop.index0 }}', title: {{ prompt.title | tojson }}, prompt: {{ prompt.prompt | tojson }}, type: 'system', is_user_owned: false, random_val: {{ prompt.random_val | tojson }} },
-            {% endfor %}
-            {% for prompt in shared_prompts %}
-            { id: 'shared-{{ loop.index0 }}', title: {{ prompt.title | tojson }}, prompt: {{ prompt.prompt | tojson }}, type: 'shared', is_user_owned: {{ prompt.is_user_owned | tojson }}, random_val: {{ prompt.random_val | tojson }} },
-            {% endfor %}
-        ];
+  if (searchInput) {
+    searchInput.addEventListener('input', debounce((e) => {
+      const q = e.target.value.trim();
+      clearSearchBtn.style.display = q ? 'inline-flex' : 'none';
+      if (q === '') renderAllPrompts();
+      else if (fuse) renderAllPrompts(fuse.search(q).map(r => r.item));
+    }, 300));
+  }
 
-        const fuseOptions = {
-            keys: ['title', 'prompt'],
-            threshold: 0.3, // Adjust sensitivity of search
-        };
+  if (clearSearchBtn) {
+    clearSearchBtn.addEventListener('click', () => {
+      searchInput.value = '';
+      clearSearchBtn.style.display = 'none';
+      renderAllPrompts();
+      searchInput.focus();
+    });
+  }
 
-        const fuse = new Fuse(allPrompts, fuseOptions);
-
-        const searchInput = document.getElementById('searchInput');
-        const clearSearchBtn = document.getElementById('clearSearchBtn');
-        const allPromptsContainer = document.getElementById('allPrompts');
-
-        // Function to render all prompts
-        function renderAllPrompts(promptsToRender = allPrompts) {
-            const currentUsername = "{{ session.username }}"; // Get current username from session
-            allPromptsContainer.innerHTML = promptsToRender.map((prompt, index) => {
-                const uniqueId = prompt.id || `${prompt.type}-${index}`;
-                let userOwnedClass = '';
-                let ownerBadgeHtml = '';
-
-                // Check if user owns this shared prompt
-                if (prompt.type === 'shared' && prompt.is_user_owned) {
-                    userOwnedClass = 'user-owned';
-                    ownerBadgeHtml = `<div class="owner-badge-header">
-                        <i class="fas fa-crown" aria-hidden="true"></i>
-                        <span>Your prompt</span>
-                    </div>`;
-                }
-
-                const typeIndicatorClass = prompt.type === 'system' ? 'default-type' : 'shared-type';
-                const typeIcon = prompt.type === 'system' ? 'fa-shield-alt' : 'fa-users';
-                const typeText = prompt.type === 'system' ? 'System' : 'Community';
-
-                return `
-                <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12 mdc-layout-grid__cell--span-4-tablet mdc-layout-grid__cell--span-6-desktop">
-                    <article class="prompt-card-enhanced ${userOwnedClass}" role="article" aria-labelledby="prompt-title-${uniqueId}">
-                        <div class="card-header">
-                            <div class="card-header-content">
-                                <h3 class="card-title" id="prompt-title-${uniqueId}">${escapeHtml(prompt.title)}</h3>
-                                <div class="card-badges">
-                                    <div class="card-type-indicator ${typeIndicatorClass}">
-                                        <i class="fas ${typeIcon}" aria-hidden="true"></i>
-                                        <span>${typeText}</span>
-                                    </div>
-                                    ${ownerBadgeHtml}
-                                </div>
-                            </div>
-                            <div class="card-actions-header">
-                                <!-- Favorite button removed - not connected to backend -->
-                            </div>
-                        </div>
-
-                        <div class="card-content">
-                            <div class="prompt-preview">
-                                <p class="prompt-text">${escapeHtml(prompt.prompt)}</p>
-                            </div>
-                            <div class="content-gradient"></div>
-                        </div>
-
-                        <div class="card-footer">
-                            <div class="card-action-buttons">
-                                <button class="primary-action-button copy-button" data-clipboard-text="${escapeHtml(prompt.prompt)}" aria-label="Copy prompt: ${escapeHtml(prompt.title)}">
-                                    <i class="fas fa-copy" aria-hidden="true"></i>
-                                    <span>Copy</span>
-                                </button>
-                                <button class="primary-action-button save-button" data-title="${escapeHtml(prompt.title)}" data-prompt="${escapeHtml(prompt.prompt)}" aria-label="Save prompt: ${escapeHtml(prompt.title)}">
-                                    <i class="fas fa-bookmark" aria-hidden="true"></i>
-                                    <span>Save</span>
-                                </button>
-                                ${prompt.is_user_owned && prompt.type === 'shared' ? `<button class="primary-action-button unshare-button" data-prompt-id="${escapeHtml(prompt.random_val)}" aria-label="Unshare your prompt: ${escapeHtml(prompt.title)}">
-                                    <i class="fas fa-share-alt" aria-hidden="true"></i>
-                                    <span>Unshare</span>
-                                </button>` : ''}
-                                <button class="secondary-action-button see-button" data-title="${escapeHtml(prompt.title)}" data-content="${escapeHtml(prompt.prompt)}" aria-label="See details for prompt: ${escapeHtml(prompt.title)}">
-                                    <i class="fas fa-eye" aria-hidden="true"></i>
-                                    <span>Preview</span>
-                                </button>
-                            </div>
-                        </div>
-                    </article>
-                </div>
-            `}).join('');
-
-            // Re-attach event listeners after rendering
-            reattachEventListeners();
-        }
-
-        // Escape HTML special chars for safe attribute values and content
-        function escapeHtml(str) {
-            if (typeof str !== 'string') return '';
-            return str.replace(/&/g, '&amp;')
-                      .replace(/</g, '&lt;')
-                      .replace(/>/g, '&gt;')
-                      .replace(/"/g, '&quot;')
-                      .replace(/'/g, '&#039;');
-        }
-
-        // Debounce function
-        function debounce(func, delay) {
-            let timeoutId;
-            return function(...args) {
-                clearTimeout(timeoutId);
-                timeoutId = setTimeout(() => {
-                    func.apply(this, args);
-                }, delay);
-            };
-        }
-
-        // Search function (debounced)
-        searchInput.addEventListener('input', debounce((e) => {
-            const query = e.target.value.trim();
-            clearSearchBtn.classList.toggle('hidden', query === "");
-
-            if (query === "") {
-                renderAllPrompts();
-            } else {
-                const results = fuse.search(query);
-                renderAllPrompts(results.map(r => r.item));
-            }
-        }, 300)); // Adjusted debounce to 300ms
-
-        clearSearchBtn.addEventListener('click', () => {
-            searchInput.value = "";
-            renderAllPrompts();
-            clearSearchBtn.classList.add('hidden');
-            searchInput.focus(); // Optional: refocus the input
-        });
-
-        // Initial state for clear button
-        clearSearchBtn.classList.toggle('hidden', searchInput.value.trim() === "");
-
-        // Render all prompts on page load
-        renderAllPrompts();
-    </script>
-
-
+  renderAllPrompts();
+})();
+</script>
 {% endblock %}

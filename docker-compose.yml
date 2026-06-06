@@ -1,0 +1,42 @@
+name: prompt-sanctuary
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: prompt-sanctuary:latest
+    container_name: prompt-sanctuary
+    restart: unless-stopped
+    ports:
+      - "${HOST_PORT:-5000}:5000"
+    env_file:
+      - web/.env
+    environment:
+      # Compose-level overrides; .env values take precedence
+      PORT: "5000"
+      GUNICORN_WORKERS: "${GUNICORN_WORKERS:-2}"
+      GUNICORN_THREADS: "${GUNICORN_THREADS:-4}"
+      GUNICORN_TIMEOUT: "${GUNICORN_TIMEOUT:-120}"
+      SECURE_COOKIES: "${SECURE_COOKIES:-false}"
+    volumes:
+      # Persist SQLite databases and Babel translations across restarts.
+      - sanctuary-data:/app/web/database
+      - sanctuary-translations:/app/web/translations
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "-o", "/dev/null", "http://127.0.0.1:5000/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  sanctuary-data:
+    name: prompt-sanctuary-data
+  sanctuary-translations:
+    name: prompt-sanctuary-translations

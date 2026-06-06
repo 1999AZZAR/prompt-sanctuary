@@ -1,53 +1,66 @@
 {% extends "base.html" %}
+{% set active_section = 'Account' %}
+{% set active_nav = 'feedback' %}
+{% block title %}Feedback · Prompt Sanctuary{% endblock %}
+{% block bar_title %}Feedback{% endblock %}
 
 {% block content %}
-<div class="hero text-center mb-12 cursor-pointer" onclick="toggleSidePanel()">
-  <h1 class="text-5xl font-bold text-slate-900"><i class="fas fa-comments mr-2"></i>{{ _('Feedback') }}</h1>
-  <p class="text-lg text-slate-600">{{ _('Browse all feedback messages.') }}</p>
-</div>
-<div class="mdc-layout-grid">
-  <div class="mdc-layout-grid__inner justify-center">
-    <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-8-desktop mdc-layout-grid__cell--span-12">
-      <div class="mdc-card glass prompt-card p-6">
-        <h2 class="text-2xl font-semibold text-slate-900 mb-4">{{ _('All Feedback') }}</h2>
-        {% if feedbacks %}
-        <ul class="divide-y divide-gray-700">
-          {% for fb in feedbacks %}
-          <li class="py-3 flex justify-between items-center feedback-list-item">
-            <div class="flex-1">
-              <p class="text-slate-900 font-medium">{{ fb.id }}. {{ fb.username }}</p>
-              <p class="text-slate-600 text-sm truncate">{{ fb.feedback }}</p>
-            </div>
-            <div class="feedback-list-actions">
-              <button data-id="{{ fb.id }}" class="mdc-button mdc-button--text text-blue-400 hover:text-blue-300 view-button btn">{{ _('View') }}</button>
-            </div>
-          </li>
-          {% endfor %}
-        </ul>
-        {% else %}
-        <p class="text-gray-400">{{ _('No feedback available.') }}</p>
-        {% endif %}
+<header class="hero section--first" style="padding-top: var(--p-sp-7); padding-bottom: var(--p-sp-7);">
+  <span class="eyebrow hero__eyebrow">Index 08 · Feedback</span>
+  <h1 class="t-h1 hero__display" style="font-size: var(--p-fs-h1); max-width: 24ch;">Feedback log.</h1>
+  <p class="lede hero__lede">Browse all feedback messages. Click an item to read the full text.</p>
+</header>
+
+<section class="section--tight">
+  <div class="card" style="max-width: 800px;">
+    <div class="card__header">
+      <div>
+        <span class="eyebrow">All feedback</span>
+        <h2 class="card__title" style="margin-top: var(--p-sp-2);">{{ feedbacks|length }} {{ 'entry' if feedbacks|length == 1 else 'entries' }}</h2>
       </div>
     </div>
+
+    {% if feedbacks %}
+    <div class="stack--sm">
+      {% for fb in feedbacks %}
+      <article class="card card--flat" style="background: var(--p-color-surface-sunken);">
+        <div class="cluster--between" style="align-items: flex-start; gap: var(--p-sp-3);">
+          <div style="min-width: 0; flex: 1;">
+            <p class="t-mono t-body-sm" style="margin: 0 0 var(--p-sp-1); color: var(--p-color-text-subdued);">#{{ "%03d"|format(fb.id) }} · {{ fb.username }}</p>
+            <p class="t-body" style="margin: 0; line-height: 1.5; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">{{ fb.feedback }}</p>
+          </div>
+          <button data-id="{{ fb.id }}" class="btn btn--tertiary btn--sm view-button" aria-label="View feedback #{{ fb.id }}">
+            <i class="fa-solid fa-eye"></i> View
+          </button>
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty empty--compact">
+      <div class="empty__icon"><i class="fa-solid fa-inbox" aria-hidden="true"></i></div>
+      <div class="empty__title">No feedback available</div>
+      <p class="empty__body">When users submit feedback, it will appear here.</p>
+    </div>
+    {% endif %}
   </div>
-</div>
+</section>
+{% endblock %}
+
+{% block scripts %}
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
-    document.querySelectorAll('.view-button').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const id = btn.dataset.id;
-        fetch(`/feedback/${id}/json`)
-          .then(res => { if (!res.ok) throw new Error(); return res.json(); })
-          .then(data => {
-            if (data.success === false) {
-              showAppPopup('Error', data.error || 'Failed to load feedback.');
-            } else {
-              showAppPopup(`Feedback by ${data.username}`, data.feedback, { type: 'details', copyTargetText: data.feedback });
-            }
-          })
-          .catch(() => showAppPopup('Error', 'Failed to load feedback.'));
-      });
+document.addEventListener('DOMContentLoaded', function () {
+  document.querySelectorAll('.view-button').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var id = btn.dataset.id;
+      fetch('/feedback/' + id + '/json')
+        .then(function (r) { if (!r.ok) throw new Error('not ok'); return r.json(); })
+        .then(function (data) {
+          if (window.showToast) window.showToast(data.feedback || data.message || '—', 'info');
+        })
+        .catch(function () { if (window.showToast) window.showToast('Failed to load feedback.', 'error'); });
     });
   });
+});
 </script>
 {% endblock %}

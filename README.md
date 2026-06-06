@@ -322,8 +322,9 @@ python safe_migration.py --force
 
 - Python 3.8 or higher
 - Google AI Studio API key(s)
+- (Optional) Docker + Docker Compose v2 for containerized runs
 
-### Installation Steps
+### Option A — Local Python (development)
 
 1. **Clone and setup environment**
 
@@ -353,6 +354,40 @@ python web/app.py
 ```
 
    Application will be available at `http://127.0.0.1:5000`
+
+### Option B — Docker (recommended for production / parity)
+
+```bash
+# 1. Create your env file
+cp web/.env.example web/.env
+#   → edit web/.env and set GENAI_API_KEY (and any other secrets)
+
+# 2. Build and start
+docker compose up -d --build
+
+# 3. Tail logs
+docker compose logs -f app
+
+# 4. Stop
+docker compose down
+```
+
+The image is multi-stage and runs Gunicorn (2 workers × 4 threads by default)
+behind a `tini` init. SQLite databases and translation files are persisted in
+two named volumes (`prompt-sanctuary-data`, `prompt-sanctuary-translations`).
+
+Useful overrides:
+
+```bash
+# Change host port
+HOST_PORT=8080 docker compose up -d
+
+# Scale workers
+GUNICORN_WORKERS=4 GUNICORN_THREADS=8 docker compose up -d
+
+# Run one-off commands inside the container
+docker compose exec app bash
+```
 
 ### Database Structure
 

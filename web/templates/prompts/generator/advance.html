@@ -1,585 +1,451 @@
 {% extends "base.html" %}
+{% set active_section = 'Generator' %}
+{% set active_nav = 'advance' %}
+{% block title %}Advanced · Prompt Sanctuary{% endblock %}
+{% block bar_title %}Advanced generator{% endblock %}
 
 {% block content %}
-    <!-- {{ _('Hero Section') }} -->
-    <div class="hero text-center mb-12 cursor-pointer" onclick="toggleSidePanel()" role="region" aria-labelledby="adv-gen-page-heading">
-        <div class="flex items-center justify-center mb-4 space-x-2">
-            <h1 id="adv-gen-page-heading" class="text-5xl font-bold text-slate-900"><i class="fas fa-tools mr-2"></i>{{ _('Advance Prompt') }}</h1>
-        </div>
-        <p class="text-lg text-slate-600">{{ _('Create custom and specialized prompts tailored to your needs.') }}</p>
-    </div>
+<header class="hero section--first" style="padding-top: var(--p-sp-7); padding-bottom: var(--p-sp-7);">
+  <span class="eyebrow hero__eyebrow">Step 03 · Pro mode</span>
+  <h1 class="t-h1 hero__display" style="font-size: var(--p-fs-h1); max-width: 24ch;">Generate from a system prompt.</h1>
+  <p class="lede hero__lede">Configure use case, structure, safety, and style. Optional knowledge base for domain-specific prompts.</p>
+  <div class="cluster" style="margin-top: var(--p-sp-5);">
+    <span class="badge badge--info"><span class="badge__dot"></span> 1.0 credit per generation</span>
+    <span class="badge"><span class="badge__dot"></span> Image variants included</span>
+  </div>
+</header>
 
-    <!-- {{ _('Tools Section') }} -->
-    <div class="prompting grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 p-4" role="region" aria-labelledby="tools-section-heading">
-        <h2 id="tools-section-heading" class="sr-only">Prompt Generation Tools</h2>
-        <!-- {{ _('Text Prompt') }} -->
-        <div class="mdc-card glass prompt-card p-6 flex flex-col text-[var(--md-sys-color-on-surface)]" role="form" aria-labelledby="text-prompt-heading">
-            <div class="flex justify-between items-center mb-6">
-                <h2 id="text-prompt-heading" class="text-2xl font-bold">{{ _('Generate Text Prompt') }}</h2>
-                <button onclick="toggleTextHelp()" class="bg-[var(--md-sys-color-surface)] text-[var(--md-sys-color-on-surface)] px-3 py-1 rounded-lg hover:bg-[var(--md-sys-color-surface)] transition duration-200" aria-controls="text-help-region" aria-expanded="false" aria-label="{{ _('Toggle help for text prompt generation') }}">?</button>
-            </div>
-            <div id="text-help-region" class="hidden bg-[var(--md-sys-color-surface)] p-4 rounded-lg mb-4 text-[var(--md-sys-color-on-surface)]" role="region" aria-hidden="true">
-                <p class="text-[var(--md-sys-color-on-surface)]">{{ _('This section allows you to generate text prompts. Enter your use case, select the prompt type, and configure other parameters to create a custom prompt.') }}</p>
-            </div>
-            <form id="a-text-prompt-form" class="space-y-4 flex-grow" onsubmit="submitForm('a-text-prompt-form', '/advance/generate'); return false;">
-                <!-- parameter 0 -->
-                <div>
-                    <label for="text_parameter0" class="block mb-2">{{ _('Use case:') }}</label>
-                    <input type="text" name="parameter0" id="text_parameter0" placeholder="{{ _('Write a README file') }}" class="w-full p-3 bg-[var(--md-sys-color-surface)] rounded-lg text-[var(--md-sys-color-on-surface)]" required maxlength="300">
-                </div>
-                <!-- parameter 0 end -->
+<div class="stepper" style="margin-bottom: var(--p-sp-7);">
+  <div class="stepper__step">
+    <span class="stepper__num">01</span>
+    <span class="stepper__label">
+      <span class="stepper__label-eyebrow">Step</span>
+      <span class="stepper__label-title">Generate</span>
+    </span>
+  </div>
+  <div class="stepper__step is-active">
+    <span class="stepper__num">02</span>
+    <span class="stepper__label">
+      <span class="stepper__label-eyebrow">Step</span>
+      <span class="stepper__label-title">Refine</span>
+    </span>
+  </div>
+  <div class="stepper__step">
+    <span class="stepper__num">03</span>
+    <span class="stepper__label">
+      <span class="stepper__label-eyebrow">Step</span>
+      <span class="stepper__label-title">Save</span>
+    </span>
+  </div>
+</div>
 
-                <!-- parameter 1 -->
-                <div>
-                    <label for="text_parameter1" class="block mb-2">{{ _('Prompt type:') }}</label>
-                    <select name="parameter1" id="text_parameter1" class="w-full p-3 bg-[var(--md-sys-color-surface)] rounded-lg text-[var(--md-sys-color-on-surface)]">
-                        <option value="simple">{{ _('Simple') }}</option>
-                        <option value="standard">{{ _('Standard') }}</option>
-                        <option value="detailed">{{ _('Detailed') }}</option>
-                        <option value="step-by-step">{{ _('Step by Step') }}</option>
-                    </select>
-                </div>
-                <!-- parameter 1 end -->
-
-                <!-- parameter 2 -->
-                <div>
-                    <label for="text_parameter2" class="block mb-2">{{ _('Harm content:') }}</label>
-                    <select name="parameter2" id="text_parameter2" class="w-full p-3 bg-[var(--md-sys-color-surface)] rounded-lg text-[var(--md-sys-color-on-surface)]">
-                        <option value="unspecified">{{ _('Unspecified') }}</option>
-                        <option value="none">{{ _('Block none') }}</option>
-                        <option value="few">{{ _('Block few') }}</option>
-                        <option value="some">{{ _('Block some') }}</option>
-                        <option value="most">{{ _('Block most') }}</option>
-                    </select>
-                </div>
-                <!-- parameter 2 end -->
-
-                <!-- parameter 3 -->
-                <div>
-                    <label for="text_parameter3" class="block mb-2">{{ _('Knowledge base:') }}</label>
-                    <input type="text" name="parameter3" id="text_parameter3" placeholder="{{ _('Enter the Knowledge base if any') }}" class="w-full p-3 bg-[var(--md-sys-color-surface)] rounded-lg text-[var(--md-sys-color-on-surface)]" maxlength="1000">
-                </div>
-                <!-- parameter 3 end -->
-
-                <input type="submit" value="{{ _('Generate Text Prompt') }}" class="bg-[var(--md-sys-color-primary)] text-[var(--md-sys-color-on-primary)] px-6 py-3 rounded-lg hover:bg-[var(--md-sys-color-secondary)] transition duration-200 cursor-pointer w-full">
-            </form>
-        </div>
-
-        <!-- Image Prompt -->
-        <div class="mdc-card glass prompt-card p-6 flex flex-col text-[var(--md-sys-color-on-surface)]" role="region" aria-labelledby="imageSectionTitle">
-            <div role="radiogroup" aria-labelledby="image-mode-label" class="flex items-center space-x-6 mb-6">
-                <span id="image-mode-label" class="sr-only">{{ _('Choose Image Prompt Mode') }}</span>
-                <label class="flex items-center space-x-2">
-                    <input type="radio" name="imageMode" value="generate" checked onchange="toggleImageForms()" />
-                    <span>{{ _('Generate from Text') }}</span>
-                </label>
-                <label class="flex items-center space-x-2">
-                    <input type="radio" name="imageMode" value="reverse" onchange="toggleImageForms()" />
-                    <span>{{ _('Reverse from Image') }}</span>
-                </label>
-                <button onclick="toggleImageHelp()" class="bg-[var(--md-sys-color-surface)] text-[var(--md-sys-color-on-surface)] px-3 py-1 rounded-lg hover:bg-[var(--md-sys-color-surface)] transition duration-200" aria-controls="image-generate-help-region image-reverse-help-region" aria-expanded="false" aria-label="Toggle help for image prompt generation">?</button>
-            </div>
-            <h2 id="imageSectionTitle" class="text-2xl font-bold mb-6">{{ _('Generate Image Prompt') }}</h2>
-            <div id="image-generate-help-region" class="hidden bg-[var(--md-sys-color-surface)] p-4 rounded-lg mb-4 text-[var(--md-sys-color-on-surface)]" role="region" aria-hidden="true">
-                <p class="text-[var(--md-sys-color-on-surface)]">{{ _('This section allows you to generate image prompts. Enter your input, select the mood, and choose the primary and secondary styles to create a custom image prompt.') }}</p>
-            </div>
-            <div id="image-reverse-help-region" class="hidden bg-[var(--md-sys-color-surface)] p-4 rounded-lg mb-4 text-[var(--md-sys-color-on-surface)]" role="region" aria-hidden="true">
-                <p class="text-[var(--md-sys-color-on-surface)]">{{ _('This section allows you to upload an image and generate a prompt based on it. You can also select the mood and style to customize the output.') }}</p>
-            </div>
-            <form id="a-image-prompt-form" class="space-y-4 flex-grow" enctype="multipart/form-data" onsubmit="submitForm('a-image-prompt-form', '/advance/igenerate'); return false;" role="form" aria-labelledby="image-generate-form-heading">
-                <h3 id="image-generate-form-heading" class="sr-only">{{ _('Image Generation from Text Form') }}</h3>
-                <!-- parameter 0 -->
-                <div>
-                    <label for="image_gen_parameter0" class="block mb-2">{{ _('Input:') }}</label>
-                    <input type="text" name="parameter0" id="image_gen_parameter0" placeholder="{{ _('Cat on the sky') }}" class="w-full p-3 bg-[var(--md-sys-color-surface)] rounded-lg text-[var(--md-sys-color-on-surface)]" required maxlength="300">
-                </div>
-                <!-- parameter 0 end -->
-
-                <!-- parameter 1 -->
-                <div>
-                    <label for="image_gen_parameter1" class="block mb-2">{{ _('Primary mood:') }}</label>
-                    <select name="parameter1" id="image_gen_parameter1" class="w-full p-3 bg-[var(--md-sys-color-surface)] rounded-lg text-[var(--md-sys-color-on-surface)]">
-                        <optgroup label="{{ _('Positive Moods') }}">
-                            <option value="happy">{{ _('Happy') }}</option>
-                            <option value="joyful">{{ _('Joyful') }}</option>
-                            <option value="excited">{{ _('Excited') }}</option>
-                            <option value="cheerful">{{ _('Cheerful') }}</option>
-                            <option value="content">{{ _('Content') }}</option>
-                        </optgroup>
-                        <optgroup label="{{ _('Negative Moods') }}">
-                            <option value="angry">{{ _('Angry') }}</option>
-                            <option value="disgust">{{ _('Disgust') }}</option>
-                            <option value="fear">{{ _('Fear') }}</option>
-                            <option value="sad">{{ _('Sad') }}</option>
-                            <option value="depressed">{{ _('Depressed') }}</option>
-                        </optgroup>
-                        <optgroup label="{{ _('Neutral Moods') }}">
-                            <option value="neutral">{{ _('Neutral') }}</option>
-                            <option value="calm">{{ _('Calm') }}</option>
-                            <option value="relaxed">{{ _('Relaxed') }}</option>
-                            <option value="serene">{{ _('Serene') }}</option>
-                            <option value="tranquil">{{ _('Tranquil') }}</option>
-                        </optgroup>
-                        <optgroup label="{{ _('Other Moods') }}">
-                            <option value="surprised">{{ _('Surprised') }}</option>
-                            <option value="curious">{{ _('Curious') }}</option>
-                            <option value="mysterious">{{ _('Mysterious') }}</option>
-                            <option value="surreal">{{ _('Surreal') }}</option>
-                            <option value="eerie">{{ _('Eerie') }}</option>
-                            <option value="random">{{ _('Random') }}</option>
-                        </optgroup>
-                    </select>
-                </div>
-                <!-- parameter 1 end -->
-
-                <!-- parameter 2 -->
-                <div>
-                    <label for="image_gen_parameter2" class="block mb-2">{{ _('Primary style:') }}</label>
-                    <select name="parameter2" id="image_gen_parameter2" class="w-full p-3 bg-[var(--md-sys-color-surface)] rounded-lg text-[var(--md-sys-color-on-surface)]">
-                        <optgroup label="{{ _('Styles') }}">
-                            <option value="3d-model">{{ _('3D Model') }}</option>
-                            <option value="abstract">{{ _('Abstract') }}</option>
-                            <option value="analog-film">{{ _('Analog Film') }}</option>
-                            <option value="anime">{{ _('Anime') }}</option>
-                            <option value="cartoon">{{ _('Cartoon') }}</option>
-                            <option value="chalk-art">{{ _('Chalk Art') }}</option>
-                            <option value="comic-book">{{ _('Comic Book') }}</option>
-                            <option value="digital-art">{{ _('Digital Art') }}</option>
-                            <option value="disney-style">{{ _('Disney') }}</option>
-                            <option value="fantasy-art">{{ _('Fantasy Art') }}</option>
-                            <option value="glitch-art">{{ _('Glitch Art') }}</option>
-                            <option value="graffiti">{{ _('Graffiti') }}</option>
-                        </optgroup>
-                        <optgroup label="{{ _('Genres') }}">
-                            <option value="cinematic">{{ _('Cinematic') }}</option>
-                            <option value="cyberpunk">{{ _('Cyberpunk') }}</option>
-                            <option value="surreal">{{ _('Surreal') }}</option>
-                            <option value="pop-art">{{ _('Pop Art') }}</option>
-                            <option value="steampunk">{{ _('Steampunk') }}</option>
-                        </optgroup>
-                        <optgroup label="{{ _('Techniques') }}">
-                            <option value="cubism">{{ _('Cubism') }}</option>
-                            <option value="decoupage">{{ _('Decoupage') }}</option>
-                            <option value="enhance">{{ _('Enhance') }}</option>
-                            <option value="expressionistic">{{ _('Expressionistic') }}</option>
-                            <option value="hyperrealistic">{{ _('Hyperrealistic') }}</option>
-                            <option value="impressionistic">{{ _('Impressionistic') }}</option>
-                            <option value="isometric">{{ _('Isometric') }}</option>
-                            <option value="line-art">{{ _('Line Art') }}</option>
-                            <option value="low-poly">{{ _('Low Poly') }}</option>
-                            <option value="minimalist">{{ _('Minimalist') }}</option>
-                            <option value="modeling-compound">{{ _('Modeling Compound') }}</option>
-                            <option value="origami">{{ _('Origami') }}</option>
-                            <option value="paper-cut">{{ _('Paper Cut') }}</option>
-                            <option value="photographic">{{ _('Photographic') }}</option>
-                            <option value="pixel-art">{{ _('Pixel Art') }}</option>
-                            <option value="surreal">{{ _('Surreal') }}</option>
-                            <option value="tile-texture">{{ _('Tile Texture') }}</option>
-                            <option value="vaporwave">{{ _('Vaporwave') }}</option>
-                            <option value="watercolor">{{ _('Watercolor') }}</option>
-                        </optgroup>
-                    </select>
-                </div>
-                <!-- parameter 2 end -->
-
-                <!-- parameter 3 -->
-                <div>
-                    <label for="image_gen_parameter3" class="block mb-2">{{ _('Secondary style:') }}</label>
-                    <select name="parameter3" id="image_gen_parameter3" class="w-full p-3 bg-[var(--md-sys-color-surface)] rounded-lg text-[var(--md-sys-color-on-surface)]">
-                        <optgroup label="{{ _('Styles') }}">
-                            <option value="3d-model">{{ _('3D Model') }}</option>
-                            <option value="abstract">{{ _('Abstract') }}</option>
-                            <option value="analog-film">{{ _('Analog Film') }}</option>
-                            <option value="anime">{{ _('Anime') }}</option>
-                            <option value="cartoon">{{ _('Cartoon') }}</option>
-                            <option value="chalk-art">{{ _('Chalk Art') }}</option>
-                            <option value="comic-book">{{ _('Comic Book') }}</option>
-                            <option value="digital-art">{{ _('Digital Art') }}</option>
-                            <option value="disney-style">{{ _('Disney') }}</option>
-                            <option value="fantasy-art">{{ _('Fantasy Art') }}</option>
-                            <option value="glitch-art">{{ _('Glitch Art') }}</option>
-                            <option value="graffiti">{{ _('Graffiti') }}</option>
-                        </optgroup>
-                        <optgroup label="{{ _('Genres') }}">
-                            <option value="cinematic">{{ _('Cinematic') }}</option>
-                            <option value="cyberpunk">{{ _('Cyberpunk') }}</option>
-                            <option value="surreal">{{ _('Surreal') }}</option>
-                            <option value="pop-art">{{ _('Pop Art') }}</option>
-                            <option value="steampunk">{{ _('Steampunk') }}</option>
-                        </optgroup>
-                        <optgroup label="{{ _('Techniques') }}">
-                            <option value="cubism">{{ _('Cubism') }}</option>
-                            <option value="decoupage">{{ _('Decoupage') }}</option>
-                            <option value="enhance">{{ _('Enhance') }}</option>
-                            <option value="expressionistic">{{ _('Expressionistic') }}</option>
-                            <option value="hyperrealistic">{{ _('Hyperrealistic') }}</option>
-                            <option value="impressionistic">{{ _('Impressionistic') }}</option>
-                            <option value="isometric">{{ _('Isometric') }}</option>
-                            <option value="line-art">{{ _('Line Art') }}</option>
-                            <option value="low-poly">{{ _('Low Poly') }}</option>
-                            <option value="minimalist">{{ _('Minimalist') }}</option>
-                            <option value="modeling-compound">{{ _('Modeling Compound') }}</option>
-                            <option value="origami">{{ _('Origami') }}</option>
-                            <option value="paper-cut">{{ _('Paper Cut') }}</option>
-                            <option value="photographic">{{ _('Photographic') }}</option>
-                            <option value="pixel-art">{{ _('Pixel Art') }}</option>
-                            <option value="surreal">{{ _('Surreal') }}</option>
-                            <option value="tile-texture">{{ _('Tile Texture') }}</option>
-                            <option value="vaporwave">{{ _('Vaporwave') }}</option>
-                            <option value="watercolor">{{ _('Watercolor') }}</option>
-                        </optgroup>
-                    </select>
-                </div>
-                <!-- parameter 3 end -->
-
-                <input type="submit" value="{{ _('Generate Image from Text') }}" class="bg-[var(--md-sys-color-primary)] text-[var(--md-sys-color-on-primary)] px-6 py-3 rounded-lg hover:bg-[var(--md-sys-color-secondary)] transition duration-200 cursor-pointer w-full">
-            </form>
-
-            <!-- Reverse Image Prompt (merged into same card) -->
-            <div id="reverseSection" class="hidden mt-8 pt-6 border-t border-[var(--md-sys-color-on-surface)] space-y-4">
-                <form id="a-reverse-image-form" class="space-y-4 flex-grow" enctype="multipart/form-data" onsubmit="submitForm('a-reverse-image-form', '/advance/image'); return false;" role="form" aria-labelledby="image-reverse-form-heading">
-                    <h3 id="image-reverse-form-heading" class="sr-only">{{ _('Image Generation from Uploaded Image Form') }}</h3>
-                    <!-- parameter 0 -->
-                    <div>
-                        <label for="image_upload_input" class="block mb-2">{{ _('Upload Image:') }}</label>
-                        <input type="file" name="image" id="image_upload_input" accept="image/*" class="w-full p-3 bg-[var(--md-sys-color-surface)] rounded-lg text-[var(--md-sys-color-on-surface)]" required>
-                    </div>
-                    <!-- parameter 0 end -->
-
-                    <!-- parameter 1 -->
-                    <div>
-                        <label for="image_rev_parameter1" class="block mb-2">{{ _('Primary mood:') }}</label>
-                        <select name="parameter1" id="image_rev_parameter1" class="w-full p-3 bg-[var(--md-sys-color-surface)] rounded-lg text-[var(--md-sys-color-on-surface)]">
-                            <option value="original">{{ _('Original') }}</option>
-                            <optgroup label="{{ _('Positive Moods') }}">
-                                <option value="happy">{{ _('Happy') }}</option>
-                                <option value="joyful">{{ _('Joyful') }}</option>
-                                <option value="excited">{{ _('Excited') }}</option>
-                                <option value="cheerful">{{ _('Cheerful') }}</option>
-                                <option value="content">{{ _('Content') }}</option>
-                            </optgroup>
-                            <optgroup label="{{ _('Negative Moods') }}">
-                                <option value="angry">{{ _('Angry') }}</option>
-                                <option value="disgust">{{ _('Disgust') }}</option>
-                                <option value="fear">{{ _('Fear') }}</option>
-                                <option value="sad">{{ _('Sad') }}</option>
-                                <option value="depressed">{{ _('Depressed') }}</option>
-                            </optgroup>
-                            <optgroup label="{{ _('Neutral Moods') }}">
-                                <option value="neutral">{{ _('Neutral') }}</option>
-                                <option value="calm">{{ _('Calm') }}</option>
-                                <option value="relaxed">{{ _('Relaxed') }}</option>
-                                <option value="serene">{{ _('Serene') }}</option>
-                                <option value="tranquil">{{ _('Tranquil') }}</option>
-                            </optgroup>
-                            <optgroup label="{{ _('Other Moods') }}">
-                                <option value="surprised">{{ _('Surprised') }}</option>
-                                <option value="curious">{{ _('Curious') }}</option>
-                                <option value="mysterious">{{ _('Mysterious') }}</option>
-                                <option value="surreal">{{ _('Surreal') }}</option>
-                                <option value="eerie">{{ _('Eerie') }}</option>
-                                <option value="random">{{ _('Random') }}</option>
-                            </optgroup>
-                        </select>
-                    </div>
-                    <!-- parameter 1 end -->
-
-                    <!-- parameter 2 -->
-                    <div>
-                        <label for="image_rev_parameter2" class="block mb-2">{{ _('Primary style:') }}</label>
-                        <select name="parameter2" id="image_rev_parameter2" class="w-full p-3 bg-[var(--md-sys-color-surface)] rounded-lg text-[var(--md-sys-color-on-surface)]">
-                            <option value="original">{{ _('Original') }}</option>
-                            <optgroup label="{{ _('Styles') }}">
-                                <option value="3d-model">{{ _('3D Model') }}</option>
-                                <option value="abstract">{{ _('Abstract') }}</option>
-                                <option value="analog-film">{{ _('Analog Film') }}</option>
-                                <option value="anime">{{ _('Anime') }}</option>
-                                <option value="cartoon">{{ _('Cartoon') }}</option>
-                                <option value="chalk-art">{{ _('Chalk Art') }}</option>
-                                <option value="comic-book">{{ _('Comic Book') }}</option>
-                                <option value="digital-art">{{ _('Digital Art') }}</option>
-                                <option value="disney-style">{{ _('Disney') }}</option>
-                                <option value="fantasy-art">{{ _('Fantasy Art') }}</option>
-                                <option value="glitch-art">{{ _('Glitch Art') }}</option>
-                                <option value="graffiti">{{ _('Graffiti') }}</option>
-                            </optgroup>
-                            <optgroup label="{{ _('Genres') }}">
-                                <option value="cinematic">{{ _('Cinematic') }}</option>
-                                <option value="cyberpunk">{{ _('Cyberpunk') }}</option>
-                                <option value="surreal">{{ _('Surreal') }}</option>
-                                <option value="pop-art">{{ _('Pop Art') }}</option>
-                                <option value="steampunk">{{ _('Steampunk') }}</option>
-                            </optgroup>
-                            <optgroup label="{{ _('Techniques') }}">
-                                <option value="cubism">{{ _('Cubism') }}</option>
-                                <option value="decoupage">{{ _('Decoupage') }}</option>
-                                <option value="enhance">{{ _('Enhance') }}</option>
-                                <option value="expressionistic">{{ _('Expressionistic') }}</option>
-                                <option value="hyperrealistic">{{ _('Hyperrealistic') }}</option>
-                                <option value="impressionistic">{{ _('Impressionistic') }}</option>
-                                <option value="isometric">{{ _('Isometric') }}</option>
-                                <option value="line-art">{{ _('Line Art') }}</option>
-                                <option value="low-poly">{{ _('Low Poly') }}</option>
-                                <option value="minimalist">{{ _('Minimalist') }}</option>
-                                <option value="modeling-compound">{{ _('Modeling Compound') }}</option>
-                                <option value="origami">{{ _('Origami') }}</option>
-                                <option value="paper-cut">{{ _('Paper Cut') }}</option>
-                                <option value="photographic">{{ _('Photographic') }}</option>
-                                <option value="pixel-art">{{ _('Pixel Art') }}</option>
-                                <option value="surreal">{{ _('Surreal') }}</option>
-                                <option value="tile-texture">{{ _('Tile Texture') }}</option>
-                                <option value="vaporwave">{{ _('Vaporwave') }}</option>
-                                <option value="watercolor">{{ _('Watercolor') }}</option>
-                            </optgroup>
-                        </select>
-                    </div>
-                    <!-- parameter 2 end -->
-
-                    <!-- parameter 3 -->
-                    <div>
-                        <label for="image_rev_parameter3" class="block mb-2">Secondary style:</label>
-                        <select name="parameter3" id="image_rev_parameter3" class="w-full p-3 bg-[var(--md-sys-color-surface)] rounded-lg text-[var(--md-sys-color-on-surface)]">
-                            <option value="original">Original</option>
-                            <optgroup label="Styles">
-                                <option value="3d-model">3D Model</option>
-                                <option value="abstract">Abstract</option>
-                                <option value="analog-film">Analog Film</option>
-                                <option value="anime">Anime</option>
-                                <option value="cartoon">Cartoon</option>
-                                <option value="chalk-art">Chalk Art</option>
-                                <option value="comic-book">Comic Book</option>
-                                <option value="digital-art">Digital Art</option>
-                                <option value="disney-style">Disney</option>
-                                <option value="fantasy-art">Fantasy Art</option>
-                                <option value="glitch-art">Glitch Art</option>
-                                <option value="graffiti">Graffiti</option>
-                            </optgroup>
-                            <optgroup label="Genres">
-                                <option value="cinematic">Cinematic</option>
-                                <option value="cyberpunk">Cyberpunk</option>
-                                <option value="surreal">Surreal</option>
-                                <option value="pop-art">Pop Art</option>
-                                <option value="steampunk">Steampunk</option>
-                            </optgroup>
-                            <optgroup label="Techniques">
-                                <option value="cubism">Cubism</option>
-                                <option value="decoupage">Decoupage</option>
-                                <option value="enhance">Enhance</option>
-                                <option value="expressionistic">Expressionistic</option>
-                                <option value="hyperrealistic">Hyperrealistic</option>
-                                <option value="impressionistic">Impressionistic</option>
-                                <option value="isometric">Isometric</option>
-                                <option value="line-art">Line Art</option>
-                                <option value="low-poly">Low Poly</option>
-                                <option value="minimalist">Minimalist</option>
-                                <option value="modeling-compound">Modeling Compound</option>
-                                <option value="origami">Origami</option>
-                                <option value="paper-cut">Paper Cut</option>
-                                <option value="photographic">Photographic</option>
-                                <option value="pixel-art">Pixel Art</option>
-                                <option value="surreal">Surreal</option>
-                                <option value="tile-texture">Tile Texture</option>
-                                <option value="vaporwave">Vaporwave</option>
-                                <option value="watercolor">Watercolor</option>
-                            </optgroup>
-                        </select>
-                    </div>
-                    <!-- parameter 3 end -->
-
-                    <input type="submit" value="{{ _('Generate Prompt from Image') }}" class="bg-[var(--md-sys-color-primary)] text-[var(--md-sys-color-on-primary)] px-6 py-3 rounded-lg hover:bg-[var(--md-sys-color-secondary)] transition duration-200 cursor-pointer w-full">
-                </form>
-            </div>
-        </div>
-    </div>
-    <!-- {{ _('Tools Section End') }} -->
-
-    <!-- {{ _('Preview Section (hidden by default, shown only when image is uploaded)') }} -->
-    <div id="preview-container" class="image-preview mdc-card glass prompt-card p-6 mt-12 hidden" role="region" aria-labelledby="image-preview-heading">
-        <h3 id="image-preview-heading" class="sr-only">Image Preview</h3>
-        <img id="preview-image" alt="Image Preview" class="w-64 h-64 mx-auto rounded-lg object-contain">
-    </div>
-
-    <!-- {{ _('Loading Section') }} -->
-    <div id="loading" class="loading hidden fixed inset-0 flex items-center justify-center z-50" role="alert" aria-live="assertive">
-        <div class="glass absolute inset-0 z-0"></div>
-        <div class="relative z-10 flex flex-col items-center justify-center p-8">
-          <div class="loader-modern"><div class="ring"></div><div class="ring ring2"></div><div class="pulse"></div></div>
-          <h1 class="text-center mt-4 text-[var(--md-sys-color-on-surface)]">Generating...</h1>
-        </div>
-    </div>
-
-    <!-- Result Section (hidden by default, shown only when a prompt is generated) -->
-    <div id="resultSection" class="max-w-4xl mx-auto mt-8 mdc-card glass prompt-card p-6 hidden" role="region" aria-labelledby="generated-prompt-heading">
-        <h2 id="generated-prompt-heading" class="text-2xl font-bold mb-6 text-slate-900">
-            <i class="fas fa-star text-purple-500 mr-2"></i>{{ _('Generated Prompt') }}
+<div class="grid--2">
+  <section class="card" aria-labelledby="text-prompt-heading">
+    <div class="card__header">
+      <div>
+        <span class="eyebrow">01 · Text</span>
+        <h2 class="card__title" id="text-prompt-heading" style="margin-top: var(--p-sp-2);">
+          <i class="fa-solid fa-font" style="color: var(--p-color-primary); margin-right: 8px;"></i>
+          Generate text prompt
         </h2>
-        
-        <div class="p-6 bg-gradient-to-br from-purple-50 to-violet-50 rounded-lg border border-purple-200 mb-6">
-            <p id="generated-prompt-text" class="text-slate-700 leading-relaxed whitespace-pre-wrap"></p>
-        </div>
-        
-        <div class="flex flex-wrap gap-4">
-            <button onclick="copyGeneratedPrompt()" class="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg transition duration-200">
-                <i class="fas fa-copy mr-2"></i>{{ _('Copy Prompt') }}
-            </button>
-            <button onclick="saveGeneratedPrompt()" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg transition duration-200">
-                <i class="fas fa-save mr-2"></i>{{ _('Save to Library') }}
-            </button>
-            <button onclick="generateAgain()" class="bg-purple-500 hover:bg-purple-600 text-white px-6 py-3 rounded-lg transition duration-200">
-                <i class="fas fa-redo mr-2"></i>{{ _('Generate Again') }}
-            </button>
-        </div>
+        <p class="card__sub">Configure use case, structure, and safety in detail.</p>
+      </div>
+      <button type="button" class="icon-btn" onclick="toggleTextHelp()" aria-controls="text-help-region" aria-expanded="false" aria-label="Toggle help">
+        <i class="fa-solid fa-circle-question"></i>
+      </button>
     </div>
 
-    <script>
-        function toggleTextHelp() {
-            const helpRegion = document.getElementById('text-help-region');
-            const isHidden = helpRegion.classList.toggle('hidden');
-            helpRegion.setAttribute('aria-hidden', isHidden);
-            document.querySelector('[aria-controls="text-help-region"]').setAttribute('aria-expanded', !isHidden);
-        }
-        function toggleImageHelp() {
-            const mode = document.querySelector('input[name="imageMode"]:checked').value;
-            const generateHelpRegion = document.getElementById('image-generate-help-region');
-            const reverseHelpRegion = document.getElementById('image-reverse-help-region');
-            const helpButton = document.querySelector('[aria-controls="image-generate-help-region image-reverse-help-region"]');
+    <div id="text-help-region" class="banner banner--info" hidden>
+      <i class="fa-solid fa-circle-info banner__icon"></i>
+      <div>
+        <div class="banner__title">How this works</div>
+        <div class="banner__body">Enter your use case, select the prompt type, and configure other parameters to create a custom prompt.</div>
+      </div>
+    </div>
 
-            if (mode === 'generate') {
-                const isHidden = generateHelpRegion.classList.toggle('hidden');
-                generateHelpRegion.setAttribute('aria-hidden', isHidden);
-                reverseHelpRegion.classList.add('hidden');
-                reverseHelpRegion.setAttribute('aria-hidden', 'true');
-                helpButton.setAttribute('aria-expanded', !isHidden);
-            } else {
-                const isHidden = reverseHelpRegion.classList.toggle('hidden');
-                reverseHelpRegion.setAttribute('aria-hidden', isHidden);
-                generateHelpRegion.classList.add('hidden');
-                generateHelpRegion.setAttribute('aria-hidden', 'true');
-                helpButton.setAttribute('aria-expanded', !isHidden);
-            }
-        }
-        function toggleImageForms() {
-            const mode = document.querySelector('input[name="imageMode"]:checked').value;
-            document.getElementById('a-image-prompt-form').classList.toggle('hidden', mode !== 'generate');
-            document.getElementById('reverseSection').classList.toggle('hidden', mode !== 'reverse');
-            
-            // Hide both help sections when toggling forms, let toggleImageHelp handle showing the correct one
-            const generateHelpRegion = document.getElementById('image-generate-help-region');
-            const reverseHelpRegion = document.getElementById('image-reverse-help-region');
-            const helpButton = document.querySelector('[aria-controls="image-generate-help-region image-reverse-help-region"]');
+    <form id="a-text-prompt-form" class="stack" onsubmit="submitForm('a-text-prompt-form', '/advance/generate'); return false;">
+      <div class="field">
+        <label class="field__label" for="text_parameter0">Use case</label>
+        <input class="input" type="text" name="parameter0" id="text_parameter0" placeholder="Write a README file" maxlength="300" required>
+      </div>
 
-            generateHelpRegion.classList.add('hidden');
-            generateHelpRegion.setAttribute('aria-hidden', 'true');
-            reverseHelpRegion.classList.add('hidden');
-            reverseHelpRegion.setAttribute('aria-hidden', 'true');
-            helpButton.setAttribute('aria-expanded', 'false');
-            
-            document.getElementById('imageSectionTitle').textContent = mode === 'generate' ? '{{ _('Generate Image Prompt') }}' : '{{ _('Reverse Image Prompt') }}';
-        }
-        // Loading functions (copied from refinement.html)
-        function showLoading() {
-            document.getElementById('loading').classList.remove('hidden');
-        }
+      <div class="field">
+        <label class="field__label" for="text_parameter1">Prompt type</label>
+        <select class="select" name="parameter1" id="text_parameter1">
+          <option value="simple">Simple</option>
+          <option value="standard">Standard</option>
+          <option value="detailed">Detailed</option>
+          <option value="step-by-step">Step by step</option>
+        </select>
+      </div>
 
-        function hideLoading() {
-            document.getElementById('loading').classList.add('hidden');
-        }
+      <div class="field">
+        <label class="field__label" for="text_parameter2">Harm content filter</label>
+        <select class="select" name="parameter2" id="text_parameter2">
+          <option value="unspecified">Unspecified</option>
+          <option value="none">Block none</option>
+          <option value="few">Block few</option>
+          <option value="some">Block some</option>
+          <option value="most">Block most</option>
+        </select>
+      </div>
 
-        // Result action functions (copied from refinement.html pattern)
-        function copyGeneratedPrompt() {
-            const generatedText = document.getElementById('generated-prompt-text').textContent;
-            navigator.clipboard.writeText(generatedText).then(() => {
-                showToast('Generated prompt copied to clipboard!', 'success');
-            }).catch(() => {
-                showToast('Failed to copy prompt.', 'error');
-            });
-        }
+      <div class="field">
+        <label class="field__label" for="text_parameter3">Knowledge base <span class="t-muted t-body-sm" style="font-weight: 400;">(optional)</span></label>
+        <textarea class="textarea" name="parameter3" id="text_parameter3" placeholder="Enter the knowledge base if any" maxlength="1000" rows="3"></textarea>
+        <span class="field__hint">Up to 1,000 characters of context for the model.</span>
+      </div>
 
-        async function saveGeneratedPrompt() {
-            const generatedText = document.getElementById('generated-prompt-text').textContent;
-            
-            if (!generatedText || !generatedText.trim()) {
-                showToast('No generated prompt to save.', 'error');
-                return;
-            }
-            
-            // Show loading while generating title and saving
-            showLoading();
-            
-            try {
-                // Determine the generation type for better title context
-                const imageMode = document.querySelector('input[name="imageMode"]:checked')?.value;
-                let promptType = 'advanced';
-                
-                if (imageMode === 'generate') {
-                    promptType = 'advanced_image';
-                } else if (imageMode === 'reverse') {
-                    promptType = 'advanced_reverse';
-                }
-                
-                // Ask AI to generate a smart title for this prompt
-                const titleResponse = await fetch('/generate_title', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                        ...window.CSRF.getFormHeaders()
-                    },
-                    body: new URLSearchParams({
-                        'prompt_text': generatedText.trim(),
-                        'prompt_type': promptType
-                    })
-                });
-                
-                const titleData = await titleResponse.json();
-                let title = 'Advanced Generated Prompt';
-                
-                if (titleData.success && titleData.title) {
-                    title = titleData.title;
-                } else {
-                    // Fallback to simple title if AI title generation fails
-                    const promptPreview = generatedText.trim().substring(0, 40);
-                    title = `Advanced: ${promptPreview}${generatedText.length > 40 ? '...' : ''}`;
-                }
-                
-                // Now save the prompt with the AI-generated title
-                const response = await fetch('/save_prompt', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                        ...window.CSRF.getFormHeaders()
-                    },
-                    body: new URLSearchParams({
-                        'title': title,
-                        'prompt': generatedText.trim()
-                    })
-                });
-                
-                const data = await response.json();
-                hideLoading();
-                
-                if (data.success) {
-                    showToast('Generated prompt saved successfully!', 'success');
-                    updateUserPoints(); // Update points display
-                } else {
-                    showToast(data.message || 'Failed to save prompt.', 'error');
-                }
-            } catch (error) {
-                hideLoading();
-                console.error('Error saving generated prompt:', error);
-                showToast('Failed to save prompt. Please try again.', 'error');
-            }
-        }
+      <button type="submit" class="btn btn--primary btn--block">
+        <i class="fa-solid fa-wand-magic-sparkles"></i> Generate text prompt
+      </button>
+    </form>
+  </section>
 
-        function generateAgain() {
-            document.getElementById('resultSection').classList.add('hidden');
-            document.querySelector('.prompting').scrollIntoView({ behavior: 'smooth' });
-        }
+  <section class="card" aria-labelledby="imageSectionTitle">
+    <div class="card__header">
+      <div>
+        <span class="eyebrow">02 · Image</span>
+        <h2 class="card__title" id="imageSectionTitle" style="margin-top: var(--p-sp-2);">
+          <i class="fa-solid fa-image" style="color: var(--p-color-interactive); margin-right: 8px;"></i>
+          Generate image prompt
+        </h2>
+        <p class="card__sub">Pick a mode, mood, and style.</p>
+      </div>
+      <button type="button" class="icon-btn" onclick="toggleImageHelp()" aria-controls="image-generate-help-region image-reverse-help-region" aria-expanded="false" aria-label="Toggle help">
+        <i class="fa-solid fa-circle-question"></i>
+      </button>
+    </div>
 
-        // Ensure unique IDs for form controls by renaming based on form if necessary
-        // This is mostly handled by prefixing IDs in the HTML (e.g., text_parameter0, image_gen_parameter0, image_rev_parameter0)
-        // Initial call to set up the correct form visibility
-        document.addEventListener('DOMContentLoaded', () => {
-            toggleImageForms();
-        });
-    </script>
+    <div id="image-generate-help-region" class="banner banner--info" hidden>
+      <i class="fa-solid fa-circle-info banner__icon"></i>
+      <div>
+        <div class="banner__title">Generate from text</div>
+        <div class="banner__body">Enter your input, select the mood, and choose the primary and secondary styles.</div>
+      </div>
+    </div>
+    <div id="image-reverse-help-region" class="banner banner--info" hidden>
+      <i class="fa-solid fa-circle-info banner__icon"></i>
+      <div>
+        <div class="banner__title">Reverse from image</div>
+        <div class="banner__body">Upload an image and we will generate a prompt based on it, with optional mood and style.</div>
+      </div>
+    </div>
+
+    <div class="choice-group" role="radiogroup" aria-label="Image prompt mode">
+      <label class="choice">
+        <input type="radio" name="imageMode" value="generate" checked onchange="toggleImageForms()">
+        <i class="fa-solid fa-pen-to-square"></i>
+        <div>
+          <div class="choice__title">Generate from text</div>
+          <div class="choice__desc">Type a description</div>
+        </div>
+      </label>
+      <label class="choice">
+        <input type="radio" name="imageMode" value="reverse" onchange="toggleImageForms()">
+        <i class="fa-solid fa-rotate"></i>
+        <div>
+          <div class="choice__title">Reverse from image</div>
+          <div class="choice__desc">Upload and decode</div>
+        </div>
+      </label>
+    </div>
+
+    <form id="a-image-prompt-form" class="stack" enctype="multipart/form-data" onsubmit="submitForm('a-image-prompt-form', '/advance/igenerate'); return false;">
+      <div class="field">
+        <label class="field__label" for="image_gen_parameter0">Input</label>
+        <input class="input" type="text" name="parameter0" id="image_gen_parameter0" placeholder="Cat on the sky" maxlength="300" required>
+      </div>
+
+      <div class="field">
+        <label class="field__label" for="image_gen_parameter1">Primary mood</label>
+        <select class="select" name="parameter1" id="image_gen_parameter1">
+          <optgroup label="Positive">
+            <option value="happy">Happy</option>
+            <option value="joyful">Joyful</option>
+            <option value="excited">Excited</option>
+            <option value="cheerful">Cheerful</option>
+            <option value="content">Content</option>
+          </optgroup>
+          <optgroup label="Negative">
+            <option value="angry">Angry</option>
+            <option value="disgust">Disgust</option>
+            <option value="fear">Fear</option>
+            <option value="sad">Sad</option>
+            <option value="depressed">Depressed</option>
+          </optgroup>
+          <optgroup label="Neutral">
+            <option value="neutral">Neutral</option>
+            <option value="calm">Calm</option>
+            <option value="relaxed">Relaxed</option>
+            <option value="serene">Serene</option>
+            <option value="tranquil">Tranquil</option>
+          </optgroup>
+          <optgroup label="Other">
+            <option value="surprised">Surprised</option>
+            <option value="curious">Curious</option>
+            <option value="mysterious">Mysterious</option>
+            <option value="surreal">Surreal</option>
+            <option value="eerie">Eerie</option>
+            <option value="random">Random</option>
+          </optgroup>
+        </select>
+      </div>
+
+      <div class="field">
+        <label class="field__label" for="image_gen_parameter2">Primary style</label>
+        <select class="select" name="parameter2" id="image_gen_parameter2">
+          <optgroup label="Styles">
+            <option value="3d-model">3D Model</option>
+            <option value="abstract">Abstract</option>
+            <option value="analog-film">Analog Film</option>
+            <option value="anime">Anime</option>
+            <option value="cartoon">Cartoon</option>
+            <option value="digital-art">Digital Art</option>
+            <option value="fantasy-art">Fantasy Art</option>
+          </optgroup>
+          <optgroup label="Techniques">
+            <option value="photographic">Photographic</option>
+            <option value="pixel-art">Pixel Art</option>
+            <option value="watercolor">Watercolor</option>
+            <option value="isometric">Isometric</option>
+            <option value="low-poly">Low Poly</option>
+            <option value="cinematic">Cinematic</option>
+          </optgroup>
+        </select>
+      </div>
+
+      <div class="field">
+        <label class="field__label" for="image_gen_parameter3">Secondary style</label>
+        <select class="select" name="parameter3" id="image_gen_parameter3">
+          <option value="">— None —</option>
+          <optgroup label="Styles">
+            <option value="3d-model">3D Model</option>
+            <option value="abstract">Abstract</option>
+            <option value="anime">Anime</option>
+            <option value="cartoon">Cartoon</option>
+            <option value="digital-art">Digital Art</option>
+            <option value="cyberpunk">Cyberpunk</option>
+            <option value="steampunk">Steampunk</option>
+          </optgroup>
+          <optgroup label="Techniques">
+            <option value="photographic">Photographic</option>
+            <option value="pixel-art">Pixel Art</option>
+            <option value="watercolor">Watercolor</option>
+            <option value="vaporwave">Vaporwave</option>
+            <option value="line-art">Line Art</option>
+          </optgroup>
+        </select>
+      </div>
+
+      <button type="submit" class="btn btn--primary btn--block">
+        <i class="fa-solid fa-wand-magic-sparkles"></i> Generate image from text
+      </button>
+    </form>
+
+    <form id="a-reverse-image-form" class="stack" enctype="multipart/form-data" hidden onsubmit="submitForm('a-reverse-image-form', '/advance/image'); return false;">
+      <div class="field">
+        <label class="field__label" for="image_upload_input">Upload image</label>
+        <label for="image_upload_input" style="display: flex; align-items: center; gap: var(--p-sp-3); padding: var(--p-sp-5); border: 1px dashed var(--p-color-border); border-radius: var(--p-r-2); cursor: pointer; color: var(--p-color-text-subdued);">
+          <i class="fa-solid fa-cloud-arrow-up" style="color: var(--p-color-interactive); font-size: 20px;"></i>
+          <span>Click to choose an image</span>
+        </label>
+        <input type="file" name="image" id="image_upload_input" accept="image/*" required style="display: none;">
+      </div>
+
+      <div class="field">
+        <label class="field__label" for="image_rev_parameter1">Primary mood</label>
+        <select class="select" name="parameter1" id="image_rev_parameter1">
+          <option value="original">Original</option>
+          <optgroup label="Positive">
+            <option value="happy">Happy</option>
+            <option value="joyful">Joyful</option>
+            <option value="excited">Excited</option>
+            <option value="cheerful">Cheerful</option>
+            <option value="content">Content</option>
+          </optgroup>
+          <optgroup label="Negative">
+            <option value="angry">Angry</option>
+            <option value="disgust">Disgust</option>
+            <option value="fear">Fear</option>
+            <option value="sad">Sad</option>
+            <option value="depressed">Depressed</option>
+          </optgroup>
+          <optgroup label="Neutral">
+            <option value="neutral">Neutral</option>
+            <option value="calm">Calm</option>
+            <option value="relaxed">Relaxed</option>
+            <option value="serene">Serene</option>
+            <option value="tranquil">Tranquil</option>
+          </optgroup>
+          <optgroup label="Other">
+            <option value="surprised">Surprised</option>
+            <option value="curious">Curious</option>
+            <option value="mysterious">Mysterious</option>
+            <option value="surreal">Surreal</option>
+            <option value="eerie">Eerie</option>
+            <option value="random">Random</option>
+          </optgroup>
+        </select>
+      </div>
+
+      <div class="field">
+        <label class="field__label" for="image_rev_parameter2">Primary style</label>
+        <select class="select" name="parameter2" id="image_rev_parameter2">
+          <option value="original">Original</option>
+          <optgroup label="Styles">
+            <option value="3d-model">3D Model</option>
+            <option value="abstract">Abstract</option>
+            <option value="analog-film">Analog Film</option>
+            <option value="anime">Anime</option>
+            <option value="cartoon">Cartoon</option>
+            <option value="digital-art">Digital Art</option>
+            <option value="fantasy-art">Fantasy Art</option>
+          </optgroup>
+          <optgroup label="Techniques">
+            <option value="photographic">Photographic</option>
+            <option value="pixel-art">Pixel Art</option>
+            <option value="watercolor">Watercolor</option>
+            <option value="isometric">Isometric</option>
+            <option value="low-poly">Low Poly</option>
+          </optgroup>
+        </select>
+      </div>
+
+      <div class="field">
+        <label class="field__label" for="image_rev_parameter3">Secondary style</label>
+        <select class="select" name="parameter3" id="image_rev_parameter3">
+          <option value="original">Original</option>
+          <optgroup label="Styles">
+            <option value="3d-model">3D Model</option>
+            <option value="abstract">Abstract</option>
+            <option value="analog-film">Analog Film</option>
+            <option value="anime">Anime</option>
+            <option value="cartoon">Cartoon</option>
+          </optgroup>
+          <optgroup label="Techniques">
+            <option value="photographic">Photographic</option>
+            <option value="pixel-art">Pixel Art</option>
+            <option value="watercolor">Watercolor</option>
+          </optgroup>
+        </select>
+      </div>
+
+      <button type="submit" class="btn btn--primary btn--block">
+        <i class="fa-solid fa-wand-magic-sparkles"></i> Generate prompt from image
+      </button>
+    </form>
+  </section>
+</div>
+
+<div id="preview-container" class="card" hidden style="margin-top: var(--p-sp-7); text-align: center;">
+  <img id="preview-image" alt="Image preview" style="max-width: 256px; margin: 0 auto; border-radius: var(--p-r-2);">
+</div>
+
+<div id="loading" class="modal-backdrop" hidden>
+  <div class="spinner spinner--lg" aria-label="Loading"></div>
+</div>
+
+<div id="resultSection" class="result-panel" hidden style="margin-top: var(--p-sp-7);">
+  <div class="result-panel__header">
+    <span class="eyebrow">Result</span>
+    <h2 class="result-panel__title">
+      <i class="fa-solid fa-star" style="color: var(--p-color-primary); margin-right: 8px;"></i>
+      Generated prompt
+    </h2>
+    <button type="button" class="icon-btn" onclick="document.getElementById('resultSection').setAttribute('hidden','')" aria-label="Close">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+  </div>
+  <div class="result-panel__body">
+    <div class="prompt-body" id="generated-prompt-text"></div>
+  </div>
+  <div class="result-panel__footer">
+    <button type="button" class="btn btn--primary" onclick="copyGeneratedPrompt()"><i class="fa-solid fa-copy"></i> Copy</button>
+    <button type="button" class="btn btn--secondary" onclick="saveGeneratedPrompt()"><i class="fa-solid fa-bookmark"></i> Save to library</button>
+    <button type="button" class="btn--link" onclick="generateAgain()"><i class="fa-solid fa-rotate-right"></i> Generate again</button>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='script/generator.js') }}" defer></script>
+<script>
+function toggleTextHelp() {
+  var el = document.getElementById('text-help-region');
+  if (!el) return;
+  var hidden = el.hasAttribute('hidden') ? false : true;
+  if (hidden) el.setAttribute('hidden', ''); else el.removeAttribute('hidden');
+  document.querySelector('[aria-controls="text-help-region"]')?.setAttribute('aria-expanded', hidden ? 'false' : 'true');
+}
+function toggleImageHelp() {
+  var mode = (document.querySelector('input[name="imageMode"]:checked') || {}).value;
+  var gen = document.getElementById('image-generate-help-region');
+  var rev = document.getElementById('image-reverse-help-region');
+  var btn = document.querySelector('[aria-controls*="help-region"]');
+  var target = mode === 'reverse' ? rev : gen;
+  if (!target) return;
+  var willShow = target.hasAttribute('hidden');
+  [gen, rev].forEach(function (e) { e && e.setAttribute('hidden', ''); });
+  if (willShow) target.removeAttribute('hidden');
+  if (btn) btn.setAttribute('aria-expanded', willShow ? 'true' : 'false');
+}
+function toggleImageForms() {
+  var mode = (document.querySelector('input[name="imageMode"]:checked') || {}).value;
+  var genForm = document.getElementById('a-image-prompt-form');
+  var revForm = document.getElementById('a-reverse-image-form');
+  if (genForm) genForm.hidden = (mode !== 'generate');
+  if (revForm) revForm.hidden = (mode !== 'reverse');
+  var title = document.getElementById('imageSectionTitle');
+  if (title) title.textContent = mode === 'reverse' ? 'Reverse image prompt' : 'Generate image prompt';
+}
+function showLoading() { document.getElementById('loading')?.removeAttribute('hidden'); }
+function hideLoading() { document.getElementById('loading')?.setAttribute('hidden', ''); }
+
+function copyGeneratedPrompt() {
+  var text = document.getElementById('generated-prompt-text').textContent;
+  navigator.clipboard.writeText(text).then(function () {
+    showToast('Generated prompt copied to clipboard!', 'success');
+  }).catch(function () { showToast('Failed to copy prompt.', 'error'); });
+}
+
+async function saveGeneratedPrompt() {
+  var text = document.getElementById('generated-prompt-text').textContent;
+  if (!text || !text.trim()) { showToast('No generated prompt to save.', 'error'); return; }
+  showLoading();
+  try {
+    var mode = (document.querySelector('input[name="imageMode"]:checked') || {}).value;
+    var promptType = mode === 'generate' ? 'advanced_image' : (mode === 'reverse' ? 'advanced_reverse' : 'advanced');
+    var titleRes = await fetch('/generate_title', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded', ...window.CSRF.getFormHeaders() },
+      body: new URLSearchParams({ prompt_text: text.trim(), prompt_type: promptType })
+    });
+    var titleData = await titleRes.json();
+    var title = (titleData.success && titleData.title) ? titleData.title : ('Advanced: ' + text.trim().substring(0, 40) + (text.length > 40 ? '…' : ''));
+
+    var saveRes = await fetch('/save_prompt', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded', ...window.CSRF.getFormHeaders() },
+      body: new URLSearchParams({ title: title, prompt: text.trim() })
+    });
+    var data = await saveRes.json();
+    hideLoading();
+    if (data.success) { showToast('Generated prompt saved successfully!', 'success'); if (window.updateUserPoints) window.updateUserPoints(); }
+    else { showToast(data.message || 'Failed to save prompt.', 'error'); }
+  } catch (e) {
+    hideLoading();
+    console.error(e);
+    showToast('Failed to save prompt. Please try again.', 'error');
+  }
+}
+
+function generateAgain() {
+  document.getElementById('resultSection')?.setAttribute('hidden', '');
+  document.getElementById('text_parameter0')?.focus();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+document.addEventListener('DOMContentLoaded', toggleImageForms);
+</script>
 {% endblock %}

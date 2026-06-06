@@ -44,64 +44,64 @@ document.addEventListener('DOMContentLoaded', function() {
         if (has_api_key && is_validated) {
             // User has a validated API key
             apiKeyStatus.innerHTML = `
-                <div class="flex items-center space-x-2 p-3 bg-green-50 rounded-lg border border-green-200">
-                    <i class="fas fa-check-circle text-green-500"></i>
-                    <div class="flex-1">
-                        <span class="text-sm font-medium text-green-700">API Key Active</span>
-                        <p class="text-xs text-green-600">Using your key: ${masked_key}</p>
+                <div class="banner banner--success cluster" style="gap: var(--p-sp-3);">
+                    <i class="fa-solid fa-check-circle" style="font-size: 18px;"></i>
+                    <div style="flex: 1; min-width: 0;">
+                        <div class="t-body t-strong">API key active</div>
+                        <p class="t-body-sm t-muted" style="margin: 2px 0 0;">Using your key: <span class="t-mono">${masked_key}</span></p>
                     </div>
-                    <button id="toggle-form-btn" class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded hover:bg-green-200 transition-colors">
-                        <i class="fas fa-edit mr-1"></i>Change
+                    <button id="toggle-form-btn" class="btn btn--secondary btn--sm" type="button">
+                        <i class="fa-solid fa-pen"></i> Change
                     </button>
                 </div>
             `;
 
             // Show the form but hide the input initially
-            apiKeyForm.style.display = 'block';
-            apiKeyInput.style.display = 'none';
-            removeApiKeyBtn.style.display = 'inline-block';
+            apiKeyForm.hidden = false;
+            apiKeyInput.hidden = true;
+            removeApiKeyBtn.hidden = false;
 
             // Add toggle button functionality
             document.getElementById('toggle-form-btn').addEventListener('click', function() {
-                if (apiKeyInput.style.display === 'none') {
-                    apiKeyInput.style.display = 'block';
-                    this.innerHTML = '<i class="fas fa-times mr-1"></i>Cancel';
+                if (apiKeyInput.hidden) {
+                    apiKeyInput.hidden = false;
+                    this.innerHTML = '<i class="fa-solid fa-xmark"></i> Cancel';
                 } else {
-                    apiKeyInput.style.display = 'none';
+                    apiKeyInput.hidden = true;
                     apiKeyInput.value = '';
-                    this.innerHTML = '<i class="fas fa-edit mr-1"></i>Change';
+                    this.innerHTML = '<i class="fa-solid fa-pen"></i> Change';
                 }
             });
 
         } else if (has_api_key && !is_validated) {
             // User has an API key but it's not validated
             apiKeyStatus.innerHTML = `
-                <div class="flex items-center space-x-2 p-3 bg-yellow-50 rounded-lg border border-yellow-200">
-                    <i class="fas fa-exclamation-triangle text-yellow-500"></i>
-                    <div class="flex-1">
-                        <span class="text-sm font-medium text-yellow-700">API Key Not Validated</span>
-                        <p class="text-xs text-yellow-600">Please validate your API key to use it</p>
+                <div class="banner banner--warning cluster" style="gap: var(--p-sp-3);">
+                    <i class="fa-solid fa-triangle-exclamation" style="font-size: 18px;"></i>
+                    <div style="flex: 1; min-width: 0;">
+                        <div class="t-body t-strong">API key not validated</div>
+                        <p class="t-body-sm t-muted" style="margin: 2px 0 0;">Please validate your API key to use it.</p>
                     </div>
                 </div>
             `;
-            apiKeyForm.style.display = 'block';
-            apiKeyInput.style.display = 'block';
-            removeApiKeyBtn.style.display = 'inline-block';
+            apiKeyForm.hidden = false;
+            apiKeyInput.hidden = false;
+            removeApiKeyBtn.hidden = false;
 
         } else {
             // User has no API key
             apiKeyStatus.innerHTML = `
-                <div class="flex items-center space-x-2 p-3 bg-slate-50 rounded-lg border border-slate-200">
-                    <i class="fas fa-key text-slate-500"></i>
-                    <div class="flex-1">
-                        <span class="text-sm font-medium text-slate-700">No API Key Set</span>
-                        <p class="text-xs text-slate-600">Add your Gemini API key to avoid point consumption</p>
+                <div class="card card--compact card--sunken cluster" style="gap: var(--p-sp-3);">
+                    <i class="fa-solid fa-key" style="color: var(--p-color-text-subdued); font-size: 18px;"></i>
+                    <div style="flex: 1; min-width: 0;">
+                        <span class="t-body t-strong">No API Key Set</span>
+                        <p class="t-body-sm t-muted" style="margin: 2px 0 0;">Add your Gemini API key to avoid point consumption.</p>
                     </div>
                 </div>
             `;
-            apiKeyForm.style.display = 'block';
-            apiKeyInput.style.display = 'block';
-            removeApiKeyBtn.style.display = 'none';
+            apiKeyForm.hidden = false;
+            apiKeyInput.hidden = false;
+            removeApiKeyBtn.hidden = true;
         }
     }
 
@@ -117,7 +117,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Show loading state
         const submitBtn = validateApiKeyForm.querySelector('button[type="submit"]');
         const originalText = submitBtn.innerHTML;
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Validating...';
+        submitBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Validating…';
         submitBtn.disabled = true;
 
         try {
@@ -235,36 +235,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function showNotification(message, type) {
-        // Remove any existing notifications
-        const existingNotifications = document.querySelectorAll('.api-key-notification');
-        existingNotifications.forEach(notification => notification.remove());
-
-        // Create new notification
-        const notification = document.createElement('div');
-        notification.className = `api-key-notification fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg max-w-sm transition-all duration-300 transform translate-x-full`;
-        
-        if (type === 'success') {
-            notification.className += ' bg-green-500 text-white';
-            notification.innerHTML = `<i class="fas fa-check-circle mr-2"></i>${message}`;
-        } else if (type === 'error') {
-            notification.className += ' bg-red-500 text-white';
-            notification.innerHTML = `<i class="fas fa-exclamation-circle mr-2"></i>${message}`;
-        } else if (type === 'achievement') {
-            notification.className += ' bg-yellow-500 text-white';
-            notification.innerHTML = `<i class="fas fa-trophy mr-2"></i>${message}`;
+        // Just route to the global toast — no separate floating widget
+        if (typeof showToast === 'function') {
+            showToast(message, type === 'error' ? 'error' : 'success');
         }
-
-        document.body.appendChild(notification);
-
-        // Animate in
-        setTimeout(() => {
-            notification.classList.remove('translate-x-full');
-        }, 100);
-
-        // Auto remove after 5 seconds
-        setTimeout(() => {
-            notification.classList.add('translate-x-full');
-            setTimeout(() => notification.remove(), 300);
-        }, 5000);
     }
 });

@@ -1,272 +1,240 @@
-// Function to display error message inline
-function displayFormError(form, message) {
-    const errorElementId = form.id === "loginForm" ? "loginErrorMessage" : "signupErrorMessage";
-    const errorElement = document.getElementById(errorElementId);
-    if (errorElement) {
-        errorElement.textContent = message;
+// web/static/script/login.js
+(function () {
+    'use strict';
+
+    function displayFormError(form, message) {
+        const errorElementId = form.id === "loginForm" ? "loginErrorMessage" : "signupErrorMessage";
+        const errorElement = document.getElementById(errorElementId);
+        if (errorElement) {
+            errorElement.textContent = message;
+            errorElement.hidden = false;
+        }
+        if (typeof showToast === 'function') showToast(message, 'error');
     }
-}
 
-// Function to clear previous error messages
-function clearFormError(form) {
-    const errorElementId = form.id === "loginForm" ? "loginErrorMessage" : "signupErrorMessage";
-    const errorElement = document.getElementById(errorElementId);
-    if (errorElement) {
-        errorElement.textContent = "";
+    function clearFormError(form) {
+        const errorElementId = form.id === "loginForm" ? "loginErrorMessage" : "signupErrorMessage";
+        const errorElement = document.getElementById(errorElementId);
+        if (errorElement) {
+            errorElement.textContent = "";
+            errorElement.hidden = true;
+        }
     }
-}
 
-// Function to hide loading animation and show form
-function hideLoadingAnimation(form) {
-    const loadingContainer = form.parentNode.querySelector(".loading-container");
-    if (loadingContainer) {
-        loadingContainer.remove();
+    function hideLoadingAnimation(form) {
+        const loadingContainer = form.parentNode ? form.parentNode.querySelector(".loading-container") : null;
+        if (loadingContainer) loadingContainer.remove();
+        form.classList.remove("hidden");
     }
-    form.classList.remove("hidden");
-}
 
-// Function to handle form submission
-function handleFormSubmission(form, action) {
-    clearFormError(form); // Clear previous errors
-    const formData = new FormData(form);
+    function handleFormSubmission(form, action) {
+        clearFormError(form);
+        const formData = new FormData(form);
 
-    fetch(action, {
-        method: 'POST',
-        headers: window.CSRF.getFormHeaders(),
-        body: formData
-    })
-    .then(response => {
-        if (!response.ok) {
-            return response.json().then(data => {
-                hideLoadingAnimation(form);
-                displayFormError(form, data.error || "An error occurred.");
-                if (form.id === "loginForm") {
-                    document.getElementById("passwordLogin").value = "";
-                } else if (form.id === "signupForm") {
-                    document.getElementById("passwordSignup").value = "";
-                    document.getElementById("confirmPassword").value = "";
-                    const emailEl = document.getElementById("emailSignup");
-                    if (emailEl) emailEl.value = "";
+        fetch(action, {
+            method: 'POST',
+            headers: window.CSRF.getFormHeaders(),
+            body: formData
+        })
+        .then(function (response) {
+            if (!response.ok) {
+                return response.json().then(function (data) {
+                    hideLoadingAnimation(form);
+                    displayFormError(form, (data && (data.error || data.message)) || "An error occurred.");
+                    if (form.id === "loginForm") {
+                        const p = document.getElementById("passwordLogin");
+                        if (p) p.value = "";
+                    } else if (form.id === "signupForm") {
+                        const p = document.getElementById("passwordSignup");
+                        if (p) p.value = "";
+                        const c = document.getElementById("confirmPassword");
+                        if (c) c.value = "";
+                        const e = document.getElementById("emailSignup");
+                        if (e) e.value = "";
+                    }
+                    return Promise.reject(data);
+                });
+            }
+            return response.json();
+        })
+        .then(function (data) {
+            if (data.success) {
+                if (data.daily_bonus || data.new_achievements) {
+                    showLoginRewards(data);
                 }
-                return Promise.reject(data); // Propagate error
+                handleSuccess(data.redirect);
+            } else {
+                hideLoadingAnimation(form);
+                displayFormError(form, (data && (data.error || data.message)) || "An error occurred.");
+                if (form.id === "loginForm") {
+                    const p = document.getElementById("passwordLogin");
+                    if (p) p.value = "";
+                } else if (form.id === "signupForm") {
+                    const p = document.getElementById("passwordSignup");
+                    if (p) p.value = "";
+                    const c = document.getElementById("confirmPassword");
+                    if (c) c.value = "";
+                }
+            }
+        })
+        .catch(function (error) {
+            if (!form.classList.contains("hidden")) {
+                hideLoadingAnimation(form);
+                if (typeof showToast === 'function') showToast("A network error occurred. Please try again.", 'error');
+                if (form.id === "loginForm") {
+                    const p = document.getElementById("passwordLogin");
+                    if (p) p.value = "";
+                } else if (form.id === "signupForm") {
+                    const p = document.getElementById("passwordSignup");
+                    if (p) p.value = "";
+                    const c = document.getElementById("confirmPassword");
+                    if (c) c.value = "";
+                    const e = document.getElementById("emailSignup");
+                    if (e) e.value = "";
+                }
+            }
+            console.error('Error in handleFormSubmission:', error);
+        });
+    }
+
+    function handleSuccess(redirectUrl) {
+        if (redirectUrl) window.location.href = redirectUrl;
+    }
+
+    function validateLoginForm(form, username, password) {
+        clearFormError(form);
+        if (!username || !password) {
+            displayFormError(form, "Username and password are required.");
+            return false;
+        }
+        if (username.includes(" ")) {
+            displayFormError(form, "Username cannot contain spaces.");
+            return false;
+        }
+        if (username === password) {
+            displayFormError(form, "Username cannot be equal to password.");
+            return false;
+        }
+        const restricted = ["system", "admin", "consol", "sysadmin", "useradmin"];
+        if (restricted.indexOf(username.toLowerCase()) !== -1) {
+            displayFormError(form, "Username cannot be one of: system, admin, consol, sysadmin, useradmin.");
+            return false;
+        }
+        return true;
+    }
+
+    function validateSignupForm(form, username, password, confirmPassword) {
+        clearFormError(form);
+        if (!username || !password || !confirmPassword) {
+            displayFormError(form, "All fields are required.");
+            return false;
+        }
+        if (username.length < 3 || username.length > 32) {
+            displayFormError(form, "Username must be 3 to 32 characters.");
+            return false;
+        }
+        if (!/^[A-Za-z0-9_]+$/.test(username)) {
+            displayFormError(form, "Username may only contain letters, numbers, and underscores.");
+            return false;
+        }
+        if (password.length < 6) {
+            displayFormError(form, "Password must be at least 6 characters.");
+            return false;
+        }
+        if (password !== confirmPassword) {
+            displayFormError(form, "Passwords do not match.");
+            return false;
+        }
+        const restricted = ["system", "admin", "consol", "sysadmin", "useradmin"];
+        if (restricted.indexOf(username.toLowerCase()) !== -1) {
+            displayFormError(form, "Username cannot be one of: system, admin, consol, sysadmin, useradmin.");
+            return false;
+        }
+        return true;
+    }
+
+    function showLoadingAnimation(form) {
+        clearFormError(form);
+        const loadingContainer = document.createElement("div");
+        loadingContainer.className = "loading-container";
+        loadingContainer.style.textAlign = "center";
+        loadingContainer.style.padding = "var(--p-sp-3) 0";
+        loadingContainer.style.color = "var(--p-color-text-subdued)";
+        loadingContainer.style.fontSize = "var(--p-fs-body-sm)";
+        loadingContainer.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin" aria-hidden="true"></i> Please wait…';
+        if (form.parentNode) form.parentNode.insertBefore(loadingContainer, form);
+        form.classList.add("hidden");
+    }
+
+    function showLoginRewards(data) {
+        let message = "Welcome! ";
+        if (data.daily_bonus > 0) message += "You earned " + data.daily_bonus + " points for your daily login. ";
+        if (data.new_achievements && data.new_achievements.length === 1) {
+            message += "You unlocked a new achievement: " + data.new_achievements[0] + "! ";
+        } else if (data.new_achievements && data.new_achievements.length > 1) {
+            message += "You unlocked " + data.new_achievements.length + " new achievements! ";
+        }
+        if (data.achievement_points > 0) message += "You earned " + data.achievement_points + " achievement points!";
+        if (typeof showToast === 'function') showToast(message.trim(), 'success');
+    }
+
+    function attachToggle(linkId, targetFormId, otherFormId) {
+        const link = document.getElementById(linkId);
+        if (!link) return;
+        link.addEventListener("click", function (event) {
+            event.preventDefault();
+            const t = document.getElementById(targetFormId);
+            const o = document.getElementById(otherFormId);
+            if (t) t.classList.toggle("hidden");
+            if (o) o.classList.toggle("hidden");
+            if (t) clearFormError(t);
+            if (o) clearFormError(o);
+        });
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const loginForm = document.getElementById("loginForm");
+        const signupForm = document.getElementById("signupForm");
+
+        attachToggle("signupLink", "signupForm", "loginForm");
+        attachToggle("loginLink", "loginForm", "signupForm");
+
+        if (loginForm) {
+            loginForm.addEventListener("submit", function (event) {
+                event.preventDefault();
+                clearFormError(loginForm);
+
+                const usernameEl = document.getElementById("usernameLogin");
+                const passwordEl = document.getElementById("passwordLogin");
+                const username = usernameEl ? usernameEl.value : "";
+                const password = passwordEl ? passwordEl.value : "";
+
+                if (validateLoginForm(loginForm, username, password)) {
+                    showLoadingAnimation(loginForm);
+                    handleFormSubmission(loginForm, "/login");
+                }
             });
         }
-        return response.json();
-    })
-    .then(data => {
-        if (data.success) {
-            // Check for achievements and daily bonus
-            if (data.daily_bonus || data.new_achievements) {
-                showLoginRewards(data);
-            }
-            handleSuccess(data.redirect);
-        } else {
-            hideLoadingAnimation(form);
-            displayFormError(form, data.error || "An error occurred.");
-            if (form.id === "loginForm") {
-                document.getElementById("passwordLogin").value = "";
-            } else if (form.id === "signupForm") {
-                document.getElementById("passwordSignup").value = "";
-                document.getElementById("confirmPassword").value = "";
-            }
+
+        if (signupForm) {
+            signupForm.addEventListener("submit", function (event) {
+                event.preventDefault();
+                clearFormError(signupForm);
+
+                const u = document.getElementById("usernameSignup");
+                const e = document.getElementById("emailSignup");
+                const p = document.getElementById("passwordSignup");
+                const c = document.getElementById("confirmPassword");
+                const username = u ? u.value : "";
+                const email = e ? e.value : "";
+                const password = p ? p.value : "";
+                const confirmPassword = c ? c.value : "";
+
+                if (validateSignupForm(signupForm, username, password, confirmPassword)) {
+                    showLoadingAnimation(signupForm);
+                    handleFormSubmission(signupForm, "/signup");
+                }
+            });
         }
-    })
-    .catch(error => {
-        if (!form.classList.contains("hidden")) {
-            hideLoadingAnimation(form);
-            // Use toast for general network errors, keep inline for form-specific issues if preferred
-            showToast("A network error occurred. Please try again.", 'error');
-            // displayFormError(form, "An error occurred. Please try again.");
-            if (form.id === "loginForm") {
-                document.getElementById("passwordLogin").value = "";
-            } else if (form.id === "signupForm") {
-                document.getElementById("passwordSignup").value = "";
-                document.getElementById("confirmPassword").value = "";
-                const emailEl = document.getElementById("emailSignup");
-                if (emailEl) emailEl.value = "";
-            }
-        }
-        console.error('Error in handleFormSubmission:', error);
     });
-}
-
-// Function to handle success
-function handleSuccess(redirectUrl) {
-    if (redirectUrl) {
-        window.location.href = redirectUrl;
-    }
-}
-
-// Function to validate login form
-function validateLoginForm(form, username, password) {
-    clearFormError(form);
-    if (username.includes(" ")) {
-        displayFormError(form, "Username cannot contain spaces.");
-        return false;
-    }
-
-    if (username === password) {
-        displayFormError(form, "Username cannot be equal to password.");
-        return false;
-    }
-
-    const restrictedUsernames = ["system", "admin", "consol", "sysadmin", "useradmin"];
-    if (restrictedUsernames.includes(username.toLowerCase())) {
-        displayFormError(form, "Username cannot be one of: system, admin, consol, sysadmin, useradmin.");
-        return false;
-    }
-
-    return true;
-}
-
-// Function to validate signup form
-function validateSignupForm(form, username, password, confirmPassword) {
-    clearFormError(form);
-    if (username.includes(" ")) {
-        displayFormError(form, "Username cannot contain spaces.");
-        return false;
-    }
-
-    if (username === password) {
-        displayFormError(form, "Username cannot be equal to password.");
-        return false;
-    }
-
-    const restrictedUsernames = ["system", "admin", "consol", "sysadmin", "useradmin"];
-    if (restrictedUsernames.includes(username.toLowerCase())) {
-        displayFormError(form, "Username cannot be one of: system, admin, consol, sysadmin, useradmin.");
-        return false;
-    }
-
-    if (password !== confirmPassword) {
-        displayFormError(form, "Passwords do not match.");
-        return false;
-    }
-
-    return true;
-}
-
-// Function to toggle between login and signup forms
-function toggleForms() {
-    const loginForm = document.getElementById("loginForm");
-    const signupForm = document.getElementById("signupForm");
-    loginForm.classList.toggle("hidden");
-    signupForm.classList.toggle("hidden");
-    clearFormError(loginForm);
-    clearFormError(signupForm);
-}
-
-// Function to show loading animation
-function showLoadingAnimation(form) {
-    clearFormError(form);
-    const loadingContainer = document.createElement("div");
-    loadingContainer.classList.add("loading-container");
-    loadingContainer.style.textAlign = 'center';
-
-    const loadingAnimation = document.createElement("div");
-    loadingAnimation.classList.add("loading-animation");
-    loadingAnimation.textContent = 'Loading...';
-    loadingAnimation.style.padding = '10px';
-
-    const loadingText = document.createElement("div");
-    loadingText.textContent = "Please wait...";
-    loadingText.style.fontSize = '0.9em';
-    loadingText.style.color = '#888';
-
-    loadingContainer.appendChild(loadingAnimation);
-    form.parentNode.insertBefore(loadingContainer, form);
-    form.classList.add("hidden");
-}
-
-// Function to show login rewards (achievements and daily bonus)
-function showLoginRewards(data) {
-    let message = "Welcome back! ";
-
-    if (data.daily_bonus > 0) {
-        message += `You earned ${data.daily_bonus} points for your daily login! `;
-    }
-
-    if (data.new_achievements && data.new_achievements.length > 0) {
-        if (data.new_achievements.length === 1) {
-            message += `You unlocked a new achievement: ${data.new_achievements[0]}! `;
-        } else {
-            message += `You unlocked ${data.new_achievements.length} new achievements! `;
-        }
-
-        if (data.achievement_points > 0) {
-            message += `You earned ${data.achievement_points} achievement points!`;
-        }
-    }
-
-    showToast(message, 'success');
-}
-
-// Event listeners for login and signup forms
-document.addEventListener("DOMContentLoaded", function () {
-    const loginForm = document.getElementById("loginForm");
-    const signupForm = document.getElementById("signupForm");
-
-    // Toggle signup form
-    document.getElementById("signupLink").addEventListener("click", function (event) {
-        event.preventDefault();
-        toggleForms();
-        resetLoginForm();
-    });
-
-    // Toggle login form
-    document.getElementById("loginLink").addEventListener("click", function (event) {
-        event.preventDefault();
-        toggleForms();
-        resetSignupForm();
-    });
-
-    // Reset login form
-    function resetLoginForm() {
-        document.getElementById("usernameLogin").value = "";
-        document.getElementById("passwordLogin").value = "";
-        clearFormError(loginForm);
-    }
-
-    // Reset signup form
-    function resetSignupForm() {
-        document.getElementById("usernameSignup").value = "";
-        document.getElementById("passwordSignup").value = "";
-        document.getElementById("confirmPassword").value = "";
-        const emailEl = document.getElementById("emailSignup");
-        if (emailEl) emailEl.value = "";
-        clearFormError(signupForm);
-    }
-
-    // Login form submission
-    if (loginForm) {
-        loginForm.addEventListener("submit", function (event) {
-            event.preventDefault();
-            clearFormError(loginForm);
-
-            const username = document.getElementById("usernameLogin").value;
-            const password = document.getElementById("passwordLogin").value;
-
-            if (validateLoginForm(loginForm, username, password)) {
-                showLoadingAnimation(loginForm);
-                handleFormSubmission(loginForm, '/login');
-            }
-        });
-    }
-
-    // Signup form submission
-    if (signupForm) {
-        signupForm.addEventListener("submit", function (event) {
-            event.preventDefault();
-            clearFormError(signupForm);
-
-            const username = document.getElementById("usernameSignup").value;
-            const password = document.getElementById("passwordSignup").value;
-            const confirmPassword = document.getElementById("confirmPassword").value;
-
-            if (validateSignupForm(signupForm, username, password, confirmPassword)) {
-                showLoadingAnimation(signupForm);
-                handleFormSubmission(signupForm, '/signup');
-            }
-        });
-    }
-});
+})();

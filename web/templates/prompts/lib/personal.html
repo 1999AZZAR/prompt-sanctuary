@@ -1,244 +1,169 @@
 {% extends "base.html" %}
+{% set active_section = 'Library' %}
+{% set active_nav = 'mylib' %}
+{% block title %}My Library · Prompt Sanctuary{% endblock %}
+{% block bar_title %}My Library{% endblock %}
 
 {% block content %}
-    <div id="backdrop" style="display: none;"></div>
-    <div class="mdc-layout-grid">
-      <div class="mdc-layout-grid__inner">
-        <!-- Hero Card -->
-        <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12">
-          <div class="hero text-center mb-12 cursor-pointer" onclick="toggleSidePanel()" role="region" aria-labelledby="personal-page-heading">
-            <h1 id="personal-page-heading" class="text-5xl font-bold mb-4 text-slate-900"><i class="fas fa-save mr-2"></i>{{ _('Saved Prompts') }}</h1>
-            <p class="text-lg text-slate-600">{{ _('Explore your saved prompts.') }}</p>
-          </div>
-        </div>
-        <!-- Search Section -->
-        <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12">
-          <h2 id="search-saved-prompts-heading" class="text-2xl font-bold mb-6">{{ _('Search Saved Prompts') }}</h2>
-          
-          <!-- Refinement Info -->
-          <div class="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-            <div class="flex items-center">
-              <i class="fas fa-magic text-blue-500 mr-3"></i>
-              <div>
-                <p class="text-sm text-blue-800 font-medium">{{ _('Want to refine your prompts?') }}</p>
-                <p class="text-xs text-blue-600 mt-1">{{ _('Visit the Prompt Refinement page to improve your prompts with AI assistance.') }}</p>
-              </div>
-              <a href="/refinement" class="ml-auto bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm transition-colors">
-                {{ _('Refine') }}
-              </a>
-            </div>
-          </div>
-          
-          <div class="search-container mb-6" role="search">
-          <input type="text" id="searchPersonalInput" placeholder="{{ _('Search prompts...') }}" class="w-full p-3 rounded-xl bg-white/70 border border-white/40 text-slate-800 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-violet-300" aria-label="{{ _('Search your saved prompts') }}">
-            <button id="clearPersonalSearchBtn" class="clear-search-btn hidden" aria-label="{{ _('Clear search') }}">&times;</button>
-          </div>
-        </div>
-        {% if saved_prompts %}
-        <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12" id="savedPromptsContainerWrapper" role="region" aria-labelledby="search-saved-prompts-heading">
-          <!-- This div will be the mdc-layout-grid__inner for the cards -->
-          <div class="mdc-layout-grid__inner" id="savedPromptsContainer">
-              {% for prompt in saved_prompts %}
-              <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12 mdc-layout-grid__cell--span-4-tablet mdc-layout-grid__cell--span-6-desktop">
-                  <article class="prompt-card-enhanced" role="article" aria-labelledby="prompt-title-{{ prompt.random_val }}">
-                      <div class="card-header">
-                          <div class="card-header-content">
-                              <h3 class="card-title" id="prompt-title-{{ prompt.random_val }}">{{ prompt.title }}</h3>
-                              <div class="card-badges">
-                                  <div class="card-type-indicator personal-type">
-                                      <i class="fas fa-bookmark" aria-hidden="true"></i>
-                                      <span>{{ _('Personal') }}</span>
-                                  </div>
-                              </div>
-                          </div>
-                          <div class="card-actions-header">
-                              <!-- Header actions for personal prompts -->
-                          </div>
-                      </div>
+<header class="hero section--first" style="padding-top: var(--p-sp-7); padding-bottom: var(--p-sp-7);">
+  <span class="eyebrow hero__eyebrow">Index 05 · Personal</span>
+  <h1 class="t-h1 hero__display" style="font-size: var(--p-fs-h1); max-width: 24ch;">Your prompt library.</h1>
+  <p class="lede hero__lede">Edit, share, or refine any prompt. Search by title or content. All your drafts live here.</p>
+  <div class="hero__cta">
+    <a class="btn btn--primary" href="{{ url_for('main.refinement') }}">
+      <i class="fa-solid fa-wand-magic-sparkles"></i> Refine a prompt
+    </a>
+    <a class="btn btn--secondary" href="{{ url_for('main.generate') }}">
+      <i class="fa-solid fa-plus"></i> New prompt
+    </a>
+  </div>
+</header>
 
-                      <div class="card-content">
-                          <div class="prompt-preview">
-                              <p class="prompt-text">{{ prompt.prompt | safe }}</p>
-                          </div>
-                          <div class="content-gradient"></div>
-                      </div>
-
-                      <div class="card-footer">
-                          <div class="card-action-buttons">
-                              <button class="primary-action-button copy-button" data-clipboard-text="{{ prompt.prompt | e }}" aria-label="{{ _('Copy prompt:') }} {{ prompt.title | e }}">
-                                  <i class="fas fa-copy" aria-hidden="true"></i>
-                                  <span>{{ _('Copy') }}</span>
-                              </button>
-                              <button class="primary-action-button edit-button" data-random-val="{{ prompt.random_val }}" data-title="{{ prompt.title | e }}" data-prompt="{{ prompt.prompt | e }}" aria-label="{{ _('Edit prompt:') }} {{ prompt.title | e }}">
-                                  <i class="fas fa-edit" aria-hidden="true"></i>
-                                  <span>{{ _('Edit') }}</span>
-                              </button>
-                              <button class="primary-action-button delete-button" data-random-val="{{ prompt.random_val }}" aria-label="{{ _('Delete prompt:') }} {{ prompt.title | e }}">
-                                  <i class="fas fa-trash" aria-hidden="true"></i>
-                                  <span>{{ _('Delete') }}</span>
-                              </button>
-                              {% if prompt.is_shared %}
-                              <button class="primary-action-button unshare-button" data-prompt-id="{{ prompt.random_val }}" aria-label="{{ _('Unshare prompt:') }} {{ prompt.title | e }}">
-                                  <i class="fas fa-share-alt" aria-hidden="true"></i>
-                                  <span>{{ _('Unshare') }}</span>
-                              </button>
-                              {% else %}
-                              <button class="primary-action-button share-button" data-prompt-id="{{ prompt.random_val }}" data-title="{{ prompt.title|e }}" data-prompt="{{ prompt.prompt|e }}" aria-label="{{ _('Share prompt:') }} {{ prompt.title | e }}">
-                                  <i class="fas fa-share-alt" aria-hidden="true"></i>
-                                  <span>{{ _('Share') }}</span>
-                              </button>
-                              {% endif %}
-                              <button class="secondary-action-button history-button" data-random-val="{{ prompt.random_val }}" data-title="{{ prompt.title | e }}" aria-label="{{ _('View version history:') }} {{ prompt.title | e }}">
-                                  <i class="fas fa-history" aria-hidden="true"></i>
-                                  <span>{{ _('History') }}</span>
-                              </button>
-                              <button class="secondary-action-button see-button" data-title="{{ prompt.title | e }}" data-content="{{ prompt.prompt | e }}" aria-label="{{ _('See details for prompt:') }} {{ prompt.title | e }}">
-                                  <i class="fas fa-eye" aria-hidden="true"></i>
-                                  <span>{{ _('Preview') }}</span>
-                              </button>
-                          </div>
-                      </div>
-                  </article>
-              </div>
-              {% endfor %}
-          </div>
-        </div>
-        {% else %}
-        <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12">
-          <p class="text-slate-600 text-center">{{ _('You have no saved prompts yet.') }}</p>
-        </div>
-        {% endif %}
-      </div>
+<section class="section--tight">
+  <div class="cluster" style="margin-bottom: var(--p-sp-5); align-items: flex-end;">
+    <div class="field" style="flex: 1; max-width: 480px; margin: 0;">
+      <label class="field__label" for="searchPersonalInput">Search</label>
+      <input class="input" type="text" id="searchPersonalInput" placeholder="Search by title or content…">
     </div>
+    <button type="button" id="clearPersonalSearchBtn" class="btn btn--ghost btn--sm" style="display: none;" aria-label="Clear search">
+      <i class="fa-solid fa-xmark"></i> Clear
+    </button>
+  </div>
 
-    <!-- JavaScript for personal library -->
-    <script defer src="{{ url_for('static', filename='script/personal.js') }}"></script>
-    <!-- Inline fuzzy search for personal library -->
-    <script>
-      // Escape HTML special chars for dynamic rendering
-      function escapeHtml(str) {
-        if (typeof str !== 'string') return ''; // Added safety for non-string
-        return str.replace(/&/g,'&amp;')
-                  .replace(/</g,'&lt;')
-                  .replace(/>/g,'&gt;')
-                  .replace(/"/g,'&quot;')
-                  .replace(/'/g,'&#039;');
-      }
+  {% if saved_prompts %}
+  <div id="savedPromptsContainer" class="grid--3">
+    {% for prompt in saved_prompts %}
+    <article class="prompt-box" role="article" aria-labelledby="prompt-title-{{ prompt.random_val }}">
+      <div class="prompt-box__meta">
+        <span class="badge"><i class="fa-solid fa-bookmark"></i> Personal</span>
+        {% if prompt.is_shared %}
+        <span class="badge badge--primary"><i class="fa-solid fa-users"></i> Shared</span>
+        {% endif %}
+        <span class="index" style="margin-left: auto;">{{ prompt.time }}</span>
+      </div>
+      <h3 class="prompt-box__title" id="prompt-title-{{ prompt.random_val }}">{{ prompt.title }}</h3>
+      <p class="prompt-box__body prompt-text">{{ prompt.prompt | safe }}</p>
+      <div class="prompt-box__actions">
+        <button class="btn btn--tertiary btn--sm copy-button" data-clipboard-text="{{ prompt.prompt | e }}" aria-label="Copy {{ prompt.title | e }}">
+          <i class="fa-solid fa-copy"></i> Copy
+        </button>
+        <button class="btn btn--tertiary btn--sm edit-button" data-random-val="{{ prompt.random_val }}" data-title="{{ prompt.title | e }}" data-prompt="{{ prompt.prompt | e }}" aria-label="Edit {{ prompt.title | e }}">
+          <i class="fa-solid fa-pen"></i> Edit
+        </button>
+        {% if prompt.is_shared %}
+        <button class="btn btn--tertiary btn--sm unshare-button" data-prompt-id="{{ prompt.random_val }}" aria-label="Unshare {{ prompt.title | e }}">
+          <i class="fa-solid fa-share-from-square"></i> Unshare
+        </button>
+        {% else %}
+        <button class="btn btn--tertiary btn--sm share-button" data-prompt-id="{{ prompt.random_val }}" data-title="{{ prompt.title|e }}" data-prompt="{{ prompt.prompt|e }}" aria-label="Share {{ prompt.title | e }}">
+          <i class="fa-solid fa-share-from-square"></i> Share
+        </button>
+        {% endif %}
+        <button class="btn btn--tertiary btn--sm history-button" data-random-val="{{ prompt.random_val }}" data-title="{{ prompt.title | e }}" aria-label="History {{ prompt.title | e }}">
+          <i class="fa-solid fa-clock-rotate-left"></i> History
+        </button>
+        <button class="btn btn--tertiary btn--sm see-button" data-title="{{ prompt.title | e }}" data-content="{{ prompt.prompt | e }}" aria-label="Preview {{ prompt.title | e }}">
+          <i class="fa-solid fa-eye"></i> Preview
+        </button>
+        <button class="btn btn--tertiary btn--sm delete-button" data-random-val="{{ prompt.random_val }}" aria-label="Delete {{ prompt.title | e }}" style="color: var(--p-color-critical); margin-left: auto;">
+          <i class="fa-solid fa-trash"></i>
+        </button>
+      </div>
+    </article>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="card empty">
+    <div class="empty__icon"><i class="fa-solid fa-bookmark" aria-hidden="true"></i></div>
+    <div class="empty__title">No saved prompts yet</div>
+    <p class="empty__body">Generate a prompt and save it to build your library.</p>
+    <a href="{{ url_for('main.generate') }}" class="btn btn--primary">
+      <i class="fa-solid fa-wand-magic-sparkles"></i> Open generator
+    </a>
+  </div>
+  {% endif %}
+</section>
+{% endblock %}
 
-      const personalPrompts = [
-        {% for prompt_item in saved_prompts %}
-        { id: "{{ prompt_item.random_val }}", title: {{ prompt_item.title | tojson }}, prompt: {{ prompt_item.prompt | tojson }}, is_shared: {{ prompt_item.is_shared | tojson }} },
-        {% endfor %}
-      ];
-      const fuseOptions = { keys: ['title','prompt'], threshold: 0.3 };
-      const fuse = new Fuse(personalPrompts, fuseOptions);
+{% block scripts %}
+<script src="{{ url_for('static', filename='script/personal.js') }}" defer></script>
+<script>
+(function () {
+  const personalPrompts = [
+    {% for prompt_item in saved_prompts %}
+    { id: "{{ prompt_item.random_val }}", title: {{ prompt_item.title | tojson }}, prompt: {{ prompt_item.prompt | tojson }}, is_shared: {{ prompt_item.is_shared | tojson }} },
+    {% endfor %}
+  ];
+  const fuse = (typeof Fuse !== 'undefined') ? new Fuse(personalPrompts, { keys: ['title', 'prompt'], threshold: 0.3 }) : null;
+  const searchInput = document.getElementById('searchPersonalInput');
+  const clearSearchBtn = document.getElementById('clearPersonalSearchBtn');
+  const container = document.getElementById('savedPromptsContainer');
+  if (!container) return;
 
-      const searchInput = document.getElementById('searchPersonalInput');
-      const clearSearchBtn = document.getElementById('clearPersonalSearchBtn');
-      const savedPromptsContainer = document.getElementById('savedPromptsContainer');
+  function escapeHtml(str) {
+    if (typeof str !== 'string') return '';
+    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+  }
 
-      function renderSavedPrompts(promptsToRender) {
-        savedPromptsContainer.innerHTML = promptsToRender.map(p => `
-          <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12 mdc-layout-grid__cell--span-4-tablet mdc-layout-grid__cell--span-6-desktop">
-            <article class="prompt-card-enhanced" role="article" aria-labelledby="prompt-title-${p.id}">
-              <div class="card-header">
-                <div class="card-header-content">
-                  <h3 class="card-title" id="prompt-title-${p.id}">${escapeHtml(p.title)}</h3>
-                  <div class="card-badges">
-                    <div class="card-type-indicator personal-type">
-                      <i class="fas fa-bookmark" aria-hidden="true"></i>
-                      <span>Personal</span>
-                    </div>
-                  </div>
-                </div>
-                <div class="card-actions-header">
-                  <!-- Header actions for personal prompts -->
-                </div>
-              </div>
+  function renderSavedPrompts(list) {
+    if (!list || list.length === 0) {
+      container.innerHTML = '<div class="card empty" style="grid-column: 1 / -1;"><div class="empty__icon"><i class="fa-solid fa-magnifying-glass"></i></div><div class="empty__title">No matches</div><p class="empty__body">Try a different search term.</p></div>';
+      return;
+    }
+    container.innerHTML = list.map(p => `
+      <article class="prompt-box" role="article" aria-labelledby="prompt-title-${p.id}">
+        <div class="prompt-box__meta">
+          <span class="badge"><i class="fa-solid fa-bookmark"></i> Personal</span>
+          ${p.is_shared ? '<span class="badge badge--primary"><i class="fa-solid fa-users"></i> Shared</span>' : ''}
+          <span class="index" style="margin-left: auto;">Saved</span>
+        </div>
+        <h3 class="prompt-box__title" id="prompt-title-${p.id}">${escapeHtml(p.title)}</h3>
+        <p class="prompt-box__body prompt-text">${escapeHtml(p.prompt)}</p>
+        <div class="prompt-box__actions">
+          <button class="btn btn--tertiary btn--sm copy-button" data-clipboard-text="${escapeHtml(p.prompt)}" aria-label="Copy ${escapeHtml(p.title)}"><i class="fa-solid fa-copy"></i> Copy</button>
+          <button class="btn btn--tertiary btn--sm edit-button" data-random-val="${p.id}" data-title="${escapeHtml(p.title)}" data-prompt="${escapeHtml(p.prompt)}" aria-label="Edit ${escapeHtml(p.title)}"><i class="fa-solid fa-pen"></i> Edit</button>
+          <button class="btn btn--tertiary btn--sm delete-button" data-random-val="${p.id}" style="color: var(--p-color-critical);" aria-label="Delete ${escapeHtml(p.title)}"><i class="fa-solid fa-trash"></i> Delete</button>
+          ${p.is_shared
+            ? `<button class="btn btn--tertiary btn--sm unshare-button" data-prompt-id="${p.id}" aria-label="Unshare ${escapeHtml(p.title)}"><i class="fa-solid fa-share-from-square"></i> Unshare</button>`
+            : `<button class="btn btn--tertiary btn--sm share-button" data-prompt-id="${p.id}" data-title="${escapeHtml(p.title)}" data-prompt="${escapeHtml(p.prompt)}" aria-label="Share ${escapeHtml(p.title)}"><i class="fa-solid fa-share-from-square"></i> Share</button>`}
+          <button class="btn btn--tertiary btn--sm history-button" data-random-val="${p.id}" data-title="${escapeHtml(p.title)}" aria-label="History ${escapeHtml(p.title)}"><i class="fa-solid fa-clock-rotate-left"></i> History</button>
+          <button class="btn btn--tertiary btn--sm see-button" data-title="${escapeHtml(p.title)}" data-content="${escapeHtml(p.prompt)}" aria-label="Preview ${escapeHtml(p.title)}"><i class="fa-solid fa-eye"></i> Preview</button>
+        </div>
+      </article>
+    `).join('');
 
-              <div class="card-content">
-                <div class="prompt-preview">
-                  <p class="prompt-text">${escapeHtml(p.prompt)}</p>
-                </div>
-                <div class="content-gradient"></div>
-              </div>
+    if (window.reattachPersonalListeners) window.reattachPersonalListeners();
+  }
 
-              <div class="card-footer">
-                <div class="card-action-buttons">
-                  <button class="primary-action-button copy-button" data-clipboard-text="${escapeHtml(p.prompt)}" aria-label="Copy prompt: ${escapeHtml(p.title)}">
-                    <i class="fas fa-copy" aria-hidden="true"></i>
-                    <span>Copy</span>
-                  </button>
-                  <button class="primary-action-button edit-button" data-random-val="${p.id}" data-title="${escapeHtml(p.title)}" data-prompt="${escapeHtml(p.prompt)}" data-tags="" aria-label="Edit prompt: ${escapeHtml(p.title)}">
-                    <i class="fas fa-edit" aria-hidden="true"></i>
-                    <span>Edit</span>
-                  </button>
-                  <button class="primary-action-button delete-button" data-random-val="${p.id}" aria-label="Delete prompt: ${escapeHtml(p.title)}">
-                    <i class="fas fa-trash" aria-hidden="true"></i>
-                    <span>Delete</span>
-                  </button>
-                  ${p.is_shared ? `
-                  <button class="primary-action-button unshare-button" data-prompt-id="${p.id}" aria-label="Unshare prompt: ${escapeHtml(p.title)}">
-                    <i class="fas fa-share-alt" aria-hidden="true"></i>
-                    <span>Unshare</span>
-                  </button>
-                  ` : `
-                  <button class="primary-action-button share-button" data-prompt-id="${p.id}" data-title="${escapeHtml(p.title)}" data-prompt="${escapeHtml(p.prompt)}" aria-label="Share prompt: ${escapeHtml(p.title)}">
-                    <i class="fas fa-share-alt" aria-hidden="true"></i>
-                    <span>Share</span>
-                  </button>
-                  `}
-                  <button class="secondary-action-button history-button" data-random-val="${p.id}" data-title="${escapeHtml(p.title)}" aria-label="View version history: ${escapeHtml(p.title)}">
-                    <i class="fas fa-history" aria-hidden="true"></i>
-                    <span>History</span>
-                  </button>
-                  <button class="secondary-action-button see-button" data-title="${escapeHtml(p.title)}" data-content="${escapeHtml(p.prompt)}" aria-label="See details for prompt: ${escapeHtml(p.title)}">
-                    <i class="fas fa-eye" aria-hidden="true"></i>
-                    <span>Preview</span>
-                  </button>
-                </div>
-              </div>
-            </article>
-          </div>
-        `).join('');
-        if (typeof reattachEventListeners === 'function') {
-            reattachEventListeners();
-        }
-      }
+  function debounce(fn, delay) {
+    let id;
+    return function () {
+      const args = arguments;
+      clearTimeout(id);
+      id = setTimeout(() => fn.apply(null, args), delay);
+    };
+  }
 
-      // Debounce function
-      function debounce(func, delay) {
-          let timeoutId;
-          return function(...args) {
-              clearTimeout(timeoutId);
-              timeoutId = setTimeout(() => {
-                  func.apply(this, args);
-              }, delay);
-          };
-      }
-
-      searchInput.addEventListener('input', debounce(e => {
-        const q = e.target.value.trim();
-        clearSearchBtn.classList.toggle('hidden', q === "");
-        const results = q ? fuse.search(q).map(r => r.item) : personalPrompts;
-        renderSavedPrompts(results);
-      }, 300));
-
-      clearSearchBtn.addEventListener('click', () => {
-        searchInput.value = "";
+  if (searchInput) {
+    searchInput.addEventListener('input', debounce(e => {
+      const q = e.target.value.trim();
+      clearSearchBtn.style.display = q ? 'inline-flex' : 'none';
+      if (fuse) {
+        renderSavedPrompts(q ? fuse.search(q).map(r => r.item) : personalPrompts);
+      } else {
         renderSavedPrompts(personalPrompts);
-        clearSearchBtn.classList.add('hidden');
-        searchInput.focus();
-      });
-
-      // Initial state for clear button
-      clearSearchBtn.classList.toggle('hidden', searchInput.value.trim() === "");
-
-      // Initial render
-      if (savedPromptsContainer) {
-        renderSavedPrompts(personalPrompts);
       }
+    }, 300));
+  }
+
+  if (clearSearchBtn) {
+    clearSearchBtn.addEventListener('click', () => {
+      searchInput.value = '';
+      clearSearchBtn.style.display = 'none';
+      renderSavedPrompts(personalPrompts);
+      searchInput.focus();
     });
-  </script>
-
+  }
+})();
+</script>
 {% endblock %}
