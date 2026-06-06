@@ -6,7 +6,7 @@ sys.path.insert(0, os.path.dirname(__file__))
 from flask import Flask, request, session
 from flask_wtf.csrf import CSRFProtect, generate_csrf, validate_csrf
 from flask_babel import Babel, gettext, ngettext, _
-from models import create_tables
+from db import init_app as db_init_app, get_session
 from routes import create_main_blueprint
 
 # Initialize Flask app
@@ -17,8 +17,6 @@ csrf = CSRFProtect(app)
 # Configure CSRF to accept tokens from headers for AJAX requests
 app.config['WTF_CSRF_HEADERS'] = ['X-CSRFToken', 'X-CSRF-Token']
 app.config['WTF_CSRF_CHECK_DEFAULT'] = False  # Disable automatic CSRF checking for all requests
-
-# Import CSRF validation from utils (avoid circular import)
 
 # Initialize Babel
 babel = Babel(app)
@@ -50,29 +48,25 @@ def get_locale():
 
 babel.init_app(app, locale_selector=get_locale)
 
-# Database paths (absolute, relative to this file)
+# Initialize SQLAlchemy (runs `alembic upgrade head` on first call)
+db_init_app(app)
+
+# Create and register the Blueprint with the unified database path.
+# The four legacy *_DATABASE env vars are preserved for back-compat with
+# docker-compose / config, but routes.py no longer uses them (all data lives
+# in web.database.app.db now). We pass the unified path as each of the four.
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 def default_path(*parts):
     return os.path.join(BASE_DIR, *parts)
 
-USER_DATABASE = os.getenv("USER_DATABASE", default_path("database", "user.db"))
-PROMPT_DATABASE = os.getenv("PROMPT_DATABASE", default_path("database", "prompt_data.db"))
-QUERY_DATABASE = os.getenv("QUERY_DATABASE", default_path("database", "community", "query.db"))
-COMMUNITY_DATABASE = os.getenv("COMMUNITY_DATABASE", default_path("database", "community", "shared.db"))
-FEEDBACK_DATABASE = os.getenv("FEEDBACK_DATABASE", default_path("database", "feedback.db"))
+DEFAULT_APP_DB = os.getenv("APP_DATABASE", default_path("database", "app.db"))
+USER_DATABASE = os.getenv("USER_DATABASE", DEFAULT_APP_DB)
+PROMPT_DATABASE = os.getenv("PROMPT_DATABASE", DEFAULT_APP_DB)
+QUERY_DATABASE = os.getenv("QUERY_DATABASE", DEFAULT_APP_DB)
+COMMUNITY_DATABASE = os.getenv("COMMUNITY_DATABASE", DEFAULT_APP_DB)
+FEEDBACK_DATABASE = os.getenv("FEEDBACK_DATABASE", DEFAULT_APP_DB)
 
-# Ensure database directories exist
-for db_path in [USER_DATABASE, PROMPT_DATABASE, QUERY_DATABASE, COMMUNITY_DATABASE, FEEDBACK_DATABASE]:
-    db_dir = os.path.dirname(db_path)
-    if db_dir and not os.path.exists(db_dir):
-        os.makedirs(db_dir, exist_ok=True)
-
-# Create necessary tables
-create_tables(
-    USER_DATABASE, PROMPT_DATABASE, COMMUNITY_DATABASE, FEEDBACK_DATABASE
-)
-
-# Create and register the Blueprint with database paths
+# Create and register the Blueprint
 main_blueprint = create_main_blueprint(
     USER_DATABASE,
     PROMPT_DATABASE,
@@ -126,6 +120,21 @@ def add_security_headers(resp):
     resp.headers.setdefault("X-Frame-Options", "SAMEORIGIN")
     resp.headers.setdefault("Permissions-Policy", "camera=(), microphone=(), geolocation=()")
     return resp
+
+# Health endpoint — uses SQLAlchemy session to verify the toolchain works.
+@app.route("/api/health")
+def health():
+    from flask import g
+    from db.models import User, Achievement
+    s = g.db_session
+    user_count = s.query(User).count()
+    ach_count = s.query(Achievement).count()
+    return {
+        "status": "ok",
+        "db": "app.db",
+        "users": user_count,
+        "achievements": ach_count,
+    }
 
 if __name__ == "__main__":
     # app.run(debug=True, port=int(os.environ.get('PORT', 80)))

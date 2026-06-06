@@ -9,6 +9,7 @@ from flask import (
     flash,
     Response,
     stream_template,
+    g,
 )
 from utils import validate_csrf_token
 from flask_babel import _, gettext
@@ -21,7 +22,6 @@ import sys
 sys.path.insert(0, os.path.dirname(__file__))
 
 from models import (
-    get_db_connection,
     create_user_table_if_not_exists,
     save_prompt_to_db,
     get_next_version_number,
@@ -55,6 +55,15 @@ from models import (
     is_api_key_validated,
     set_api_key_validated,
 )
+from db.models import (
+    User,
+    Prompt as DbPrompt,
+    PromptVersion as DbPromptVersion,
+    SharedPrompt as DbSharedPrompt,
+    Feedback as DbFeedback,
+    Session as DbSession,
+)
+from sqlalchemy import select, and_, or_, func
 
 # LANGUAGES will be imported from app after initialization
 LANGUAGES = None
@@ -188,20 +197,26 @@ def create_main_blueprint(
             return jsonify({"success": False, "error": "Invalid email address."}), 400
 
         try:
-            with get_db_connection(main_blueprint.user_db) as conn:
-                cursor = conn.cursor()
-                cursor.execute("SELECT * FROM users WHERE username = ?", (username,))
-                if cursor.fetchone():
-                    return jsonify({"success": False, "error": "Username already exists. Please choose another."}), 409
-                if email:
-                    cursor.execute("SELECT 1 FROM users WHERE email = ?", (email,))
-                    if cursor.fetchone():
-                        return jsonify({"success": False, "error": "Email is already in use."}), 409
+            sess = g.db_session
+            existing = sess.get(User, username)
+            if existing is not None:
+                return jsonify({"success": False, "error": "Username already exists. Please choose another."}), 409
+            if email:
+                email_taken = sess.execute(
+                    select(User).where(User.email == email)
+                ).scalar_one_or_none()
+                if email_taken is not None:
+                    return jsonify({"success": False, "error": "Email is already in use."}), 409
 
-                hashed_password = generate_password_hash(password)
-                cursor.execute("INSERT INTO users (username, password, email, points) VALUES (?, ?, ?, 80.0)", (username, hashed_password, email))
-                conn.commit()
-                create_user_table_if_not_exists(username, main_blueprint.prompt_db)
+            hashed_password = generate_password_hash(password)
+            sess.add(User(
+                username=username,
+                password=hashed_password,
+                email=email,
+                points=80.0,
+            ))
+            sess.flush()  # surface any unique-constraint violations now
+            create_user_table_if_not_exists(username, main_blueprint.prompt_db)
         except Exception as e:
             logger.exception("Signup error")
             return jsonify({"success": False, "error": "Internal server error."}), 500
@@ -233,15 +248,15 @@ def create_main_blueprint(
             return jsonify({"success": False, "error": "Invalid username format. Only letters, numbers, and underscores are allowed."}), 400
 
         try:
-            with get_db_connection(main_blueprint.user_db) as conn:
-                cursor = conn.cursor()
-                cursor.execute("SELECT username, password FROM users WHERE username = ?", (username,))
-                user = cursor.fetchone()
+            sess = g.db_session
+            user_row = sess.execute(
+                select(User.username, User.password).where(User.username == username)
+            ).first()
         except Exception as e:
             logger.exception("Login error")
             return jsonify({"success": False, "error": "Internal server error."}), 500
 
-        if user and check_password_hash(user[1], password):
+        if user_row and check_password_hash(user_row[1], password):
             session["username"] = username
             # Create a session token for optional session management and revocation
             token = secrets.token_urlsafe(24)
@@ -316,20 +331,17 @@ def create_main_blueprint(
         except Exception:
             current_points = 80.0  # Default fallback
 
-        conn = get_db_connection(main_blueprint.prompt_db)
-        cursor = conn.cursor()
-
         create_user_table_if_not_exists(username, main_blueprint.prompt_db)
 
-        table_name = f'"{username}"'
         try:
-            cursor.execute(f"SELECT random_val, title, prompt, time FROM {table_name} ORDER BY time DESC")
-            raw_saved_prompts = cursor.fetchall()
+            raw_saved_prompts = g.db_session.execute(
+                select(DbPrompt.random_val, DbPrompt.title, DbPrompt.prompt, DbPrompt.time)
+                .where(DbPrompt.username == username)
+                .order_by(DbPrompt.time.desc())
+            ).all()
         except Exception as e:
             logger.error(f"Error fetching prompts: {e}")
             raw_saved_prompts = []
-
-        conn.close()
 
         # Add sharing status to each saved prompt
         saved_prompts = []
@@ -364,19 +376,18 @@ def create_main_blueprint(
             edited_title = request.form.get("edited_title")
             edited_prompt = request.form.get("edited_prompt")
             username = session["username"]
-            table_name = f'"{username}"'
 
             if not all([prompt_id, edited_title, edited_prompt]):
                 return jsonify(success=False, message="Missing data for editing."), 400
 
             try:
-                with get_db_connection(main_blueprint.prompt_db) as conn:
-                    # Update the user's prompt table (table_name already quoted)
-                    conn.execute(
-                        f"UPDATE {table_name} SET title = ?, prompt = ? WHERE random_val = ?",
-                        (edited_title, edited_prompt, prompt_id),
-                    )
-                    conn.commit()
+                sess = g.db_session
+                # Update the user's prompt
+                sess.execute(
+                    DbPrompt.__table__.update()
+                    .where(DbPrompt.username == username, DbPrompt.random_val == prompt_id)
+                    .values(title=edited_title, prompt=edited_prompt)
+                )
                 # Insert new version after edit
                 version_number = get_next_version_number(username, prompt_id, main_blueprint.prompt_db)
                 insert_prompt_version(username, prompt_id, version_number, edited_title, edited_prompt, main_blueprint.prompt_db)
@@ -390,18 +401,11 @@ def create_main_blueprint(
     @required_login
     def list_versions(prompt_id):
         username = session["username"]
-        with get_db_connection(main_blueprint.prompt_db) as conn:
-            cursor = conn.cursor()
-            cursor.execute(
-                """
-                SELECT version_number, title, prompt, created_at
-                FROM prompt_versions
-                WHERE username = ? AND prompt_id = ?
-                ORDER BY version_number DESC
-                """,
-                (username, prompt_id),
-            )
-            rows = cursor.fetchall()
+        rows = g.db_session.execute(
+            select(DbPromptVersion.version_number, DbPromptVersion.title, DbPromptVersion.prompt, DbPromptVersion.created_at)
+            .where(DbPromptVersion.username == username, DbPromptVersion.prompt_id == prompt_id)
+            .order_by(DbPromptVersion.version_number.desc())
+        ).all()
         versions = [
             {
                 "version_number": row[0],
@@ -422,19 +426,24 @@ def create_main_blueprint(
         if not prompt_id or version_number is None:
             return jsonify({"success": False, "error": "Missing prompt_id or version_number"}), 400
         try:
-            with get_db_connection(main_blueprint.prompt_db) as conn:
-                cursor = conn.cursor()
-                cursor.execute(
-                    "SELECT title, prompt FROM prompt_versions WHERE username = ? AND prompt_id = ? AND version_number = ?",
-                    (username, prompt_id, version_number),
+            sess = g.db_session
+            row = sess.execute(
+                select(DbPromptVersion.title, DbPromptVersion.prompt)
+                .where(
+                    DbPromptVersion.username == username,
+                    DbPromptVersion.prompt_id == prompt_id,
+                    DbPromptVersion.version_number == version_number,
                 )
-                row = cursor.fetchone()
-                if not row:
-                    return jsonify({"success": False, "error": "Version not found"}), 404
-                title, prompt_text = row[0], row[1]
-                # Update the current record in user's table to match selected version
-                cursor.execute(f'UPDATE "{username}" SET title = ?, prompt = ? WHERE random_val = ?', (title, prompt_text, prompt_id))
-                conn.commit()
+            ).first()
+            if not row:
+                return jsonify({"success": False, "error": "Version not found"}), 404
+            title, prompt_text = row[0], row[1]
+            # Update the current record in user's table to match selected version
+            sess.execute(
+                DbPrompt.__table__.update()
+                .where(DbPrompt.username == username, DbPrompt.random_val == prompt_id)
+                .values(title=title, prompt=prompt_text)
+            )
             # Record a new version snapshot for the rollback action
             new_version = get_next_version_number(username, prompt_id, main_blueprint.prompt_db)
             insert_prompt_version(username, prompt_id, new_version, title, prompt_text, main_blueprint.prompt_db)
@@ -458,33 +467,30 @@ def create_main_blueprint(
         if not random_val or not title or not prompt_text:
             return jsonify({"success": False, "error": "Missing required data."}), 400
         try:
-            with get_db_connection(main_blueprint.community_db) as conn:
-                cursor = conn.cursor()
-                # Check if prompt is already shared
-                cursor.execute("SELECT title, prompt FROM shared WHERE owner=? AND random_val=?", (owner, random_val))
-                existing = cursor.fetchone()
+            sess = g.db_session
+            existing = sess.execute(
+                select(DbSharedPrompt.title, DbSharedPrompt.prompt)
+                .where(DbSharedPrompt.owner == owner, DbSharedPrompt.random_val == random_val)
+            ).first()
 
-                if existing:
-                    # Prompt is already shared, check if content changed
-                    existing_title, existing_prompt = existing
-                    if existing_title == title and existing_prompt == prompt_text:
-                        # Same content, no need to update
-                        return jsonify({"success": True, "message": "Prompt already shared."})
-                    else:
-                        # Content changed, update the shared prompt
-                        cursor.execute(
-                            "UPDATE shared SET title=?, prompt=? WHERE owner=? AND random_val=?",
-                            (title, prompt_text, owner, random_val)
-                        )
-                        conn.commit()
-                        return jsonify({"success": True, "message": "Shared prompt updated."})
+            if existing:
+                existing_title, existing_prompt = existing
+                if existing_title == title and existing_prompt == prompt_text:
+                    return jsonify({"success": True, "message": "Prompt already shared."})
                 else:
-                    # Prompt not shared yet, insert new record
-                    cursor.execute(
-                        "INSERT INTO shared (owner, random_val, title, prompt) VALUES (?, ?, ?, ?)",
-                        (owner, random_val, title, prompt_text),
+                    sess.execute(
+                        DbSharedPrompt.__table__.update()
+                        .where(DbSharedPrompt.owner == owner, DbSharedPrompt.random_val == random_val)
+                        .values(title=title, prompt=prompt_text)
                     )
-                    conn.commit()
+                    return jsonify({"success": True, "message": "Shared prompt updated."})
+            else:
+                sess.add(DbSharedPrompt(
+                    owner=owner,
+                    random_val=random_val,
+                    title=title,
+                    prompt=prompt_text,
+                ))
 
             # Reward user with 1 point for sharing (only for new shares, not updates)
             add_user_points_with_source(main_blueprint.user_db, owner, 1.0, 'prompt_share', 'Shared prompt to community')
@@ -502,13 +508,11 @@ def create_main_blueprint(
         owner = session.get("username")
         prompt_id = data.get("prompt_id")
         try:
-            with get_db_connection(main_blueprint.community_db) as conn:
-                cursor = conn.cursor()
-                cursor.execute(
-                    "DELETE FROM shared WHERE owner=? AND random_val=?",
-                    (owner, prompt_id),
-                )
-                conn.commit()
+            sess = g.db_session
+            sess.execute(
+                DbSharedPrompt.__table__.delete()
+                .where(DbSharedPrompt.owner == owner, DbSharedPrompt.random_val == prompt_id)
+            )
 
             # Deduct 1 point for unsharing
             deduct_user_points_with_source(main_blueprint.user_db, owner, 1.0, 'prompt_unshare', 'Unshared prompt from community')
@@ -523,10 +527,10 @@ def create_main_blueprint(
         prompt_id = request.form["prompt_id"]
         username = session["username"]
 
-        with get_db_connection(main_blueprint.prompt_db) as conn:
-            cursor = conn.cursor()
-            cursor.execute(f"DELETE FROM \"{username}\" WHERE random_val = ?", (prompt_id,))
-            conn.commit()
+        g.db_session.execute(
+            DbPrompt.__table__.delete()
+            .where(DbPrompt.username == username, DbPrompt.random_val == prompt_id)
+        )
 
         return jsonify({"success": True, "message": "Prompt deleted successfully!"})
 
@@ -540,20 +544,20 @@ def create_main_blueprint(
             current_points = 80.0  # Default fallback
 
         try:
-            with get_db_connection(main_blueprint.query_db) as conn:
-                cursor = conn.cursor()
-                cursor.execute(
-                    "SELECT random_val, username, tittle, prompt, tag, time FROM community"
+            # The legacy query.db::community table (built-in system prompts)
+            # has been retired along with the multi-DB layout. Its data was
+            # never persisted in the unified schema, so we just return an
+            # empty list and let the template handle that.
+            raw_system_prompts = []
+            raw_shared_prompts = g.db_session.execute(
+                select(
+                    DbSharedPrompt.owner,
+                    DbSharedPrompt.random_val,
+                    DbSharedPrompt.title,
+                    DbSharedPrompt.prompt,
+                    DbSharedPrompt.time,
                 )
-                raw_system_prompts = cursor.fetchall()
-
-            with get_db_connection(main_blueprint.community_db) as conn:
-                cursor = conn.cursor()
-                cursor.execute(
-                    "SELECT owner, random_val, title, prompt, time FROM shared"
-                )
-                raw_shared_prompts = cursor.fetchall()
-
+            ).all()
         except Exception as e:
             logger.error(f"Error fetching prompts: {e}")
             raw_system_prompts, raw_shared_prompts = [], []
@@ -620,13 +624,10 @@ def create_main_blueprint(
                 old_password = request.form.get("old_password", "")
                 new_password = request.form.get("new_password", "")
                 confirm_password = request.form.get("confirm_password", "")
-                with get_db_connection(main_blueprint.user_db) as conn:
-                    cursor = conn.cursor()
-                    cursor.execute(
-                        "SELECT password FROM users WHERE username = ?", (session["username"],)
-                    )
-                    user = cursor.fetchone()
-                if not user or not check_password_hash(user[0], old_password):
+                user_row = g.db_session.execute(
+                    select(User.password).where(User.username == session["username"])
+                ).first()
+                if not user_row or not check_password_hash(user_row[0], old_password):
                     error = "Old password is incorrect."
                 elif new_password != confirm_password:
                     error = "New passwords do not match."
@@ -634,13 +635,11 @@ def create_main_blueprint(
                     error = "New password must be at least 6 characters."
                 else:
                     hashed = generate_password_hash(new_password)
-                    with get_db_connection(main_blueprint.user_db) as conn:
-                        cursor = conn.cursor()
-                        cursor.execute(
-                            "UPDATE users SET password = ? WHERE username = ?",
-                            (hashed, session["username"]),
-                        )
-                        conn.commit()
+                    g.db_session.execute(
+                        User.__table__.update()
+                        .where(User.username == session["username"])
+                        .values(password=hashed)
+                    )
                     success = "Password updated successfully."
             elif action == "update_email":
                 email = request.form.get("email", "").strip() or None
@@ -688,14 +687,17 @@ def create_main_blueprint(
             create_user_table_if_not_exists(username, main_blueprint.prompt_db)
         except Exception:
             logger.exception("Failed to ensure user table exists")
-        with get_db_connection(main_blueprint.prompt_db) as conn:
-            cursor = conn.cursor()
-            # Fetch prompt ID, title, content, and timestamp for saved prompts
-            cursor.execute(
-                f'SELECT random_val AS prompt_id, title, prompt, time FROM "{username}" '
-                'ORDER BY time DESC LIMIT 5'
+        raw_saved_prompts = g.db_session.execute(
+            select(
+                DbPrompt.random_val.label("prompt_id"),
+                DbPrompt.title,
+                DbPrompt.prompt,
+                DbPrompt.time,
             )
-            raw_saved_prompts = cursor.fetchall()
+            .where(DbPrompt.username == username)
+            .order_by(DbPrompt.time.desc())
+            .limit(5)
+        ).all()
 
         # Add sharing status to each saved prompt
         saved_prompts = []
@@ -720,15 +722,17 @@ def create_main_blueprint(
                 'needs_update': sharing_status['needs_update']
             }
             saved_prompts.append(enhanced_prompt)
-        with get_db_connection(main_blueprint.community_db) as conn:
-            cursor = conn.cursor()
-            # Fetch shared prompt ID, title, content, and timestamp
-            cursor.execute(
-                "SELECT random_val AS prompt_id, title, prompt, time FROM shared "
-                "WHERE owner = ? ORDER BY time DESC LIMIT 5",
-                (username,)
+        shared_prompts = g.db_session.execute(
+            select(
+                DbSharedPrompt.random_val.label("prompt_id"),
+                DbSharedPrompt.title,
+                DbSharedPrompt.prompt,
+                DbSharedPrompt.time,
             )
-            shared_prompts = cursor.fetchall()
+            .where(DbSharedPrompt.owner == username)
+            .order_by(DbSharedPrompt.time.desc())
+            .limit(5)
+        ).all()
         # List sessions
         try:
             sessions_list = list_sessions_for_user(main_blueprint.user_db, username)
@@ -806,23 +810,13 @@ def create_main_blueprint(
     @required_login
     def delete_account():
         username = session["username"]
-        # delete user credentials
-        with get_db_connection(main_blueprint.user_db) as conn:
-            cursor = conn.cursor()
-            cursor.execute(
-                "DELETE FROM users WHERE username = ?", (username,)
-            )
-            conn.commit()
-        # delete user sessions
-        with get_db_connection(main_blueprint.user_db) as conn:
-            cursor = conn.cursor()
-            cursor.execute("DELETE FROM sessions WHERE username = ?", (username,))
-            conn.commit()
-        # drop user's prompt table
-        with get_db_connection(main_blueprint.prompt_db) as conn:
-            cursor = conn.cursor()
-            cursor.execute(f'DROP TABLE IF EXISTS "{username}"')
-            conn.commit()
+        sess = g.db_session
+        # Cascading FKs handle sessions, prompts, prompt_versions, shared_prompts,
+        # point_transactions, point_history, user_logins, user_achievements, feedback.
+        # The `users` row is the only manual delete; ON DELETE CASCADE on all
+        # related ForeignKeys handles the rest.
+        sess.execute(User.__table__.delete().where(User.username == username))
+        sess.flush()
         session.clear()
         return redirect(url_for("main.index"))
 
@@ -1220,13 +1214,7 @@ def create_main_blueprint(
         username = session["username"]
         feedback = request.form["feedback"]
 
-        with get_db_connection(main_blueprint.feedback_db) as conn:
-            cursor = conn.cursor()
-            cursor.execute(
-                "INSERT INTO feedback (username, feedback) VALUES (?, ?)",
-                (username, feedback),
-            )
-            conn.commit()
+        g.db_session.add(DbFeedback(username=username, feedback=feedback))
 
         return jsonify(
             {"status": "success", "message": "Feedback submitted successfully!"}
@@ -1236,22 +1224,21 @@ def create_main_blueprint(
     @main_blueprint.route("/feedback", methods=["GET"])
     @required_login
     def feedback_list():
-        with get_db_connection(main_blueprint.feedback_db) as conn:
-            cursor = conn.cursor()
-            cursor.execute("SELECT id, username, feedback FROM feedback ORDER BY id DESC")
-            feedbacks = cursor.fetchall()
-        return render_template("feedback_list.html", feedbacks=feedbacks)
+        rows = g.db_session.execute(
+            select(DbFeedback.id, DbFeedback.username, DbFeedback.feedback)
+            .order_by(DbFeedback.id.desc())
+        ).all()
+        return render_template("feedback_list.html", feedbacks=rows)
 
     @main_blueprint.route("/feedback/<int:feedback_id>", methods=["PUT"])
     @required_login
     def update_feedback(feedback_id):
         feedback = request.json.get("feedback")
-        with get_db_connection(main_blueprint.feedback_db) as conn:
-            cursor = conn.cursor()
-            cursor.execute(
-                "UPDATE feedback SET feedback = ? WHERE id = ?", (feedback, feedback_id)
-            )
-            conn.commit()
+        g.db_session.execute(
+            DbFeedback.__table__.update()
+            .where(DbFeedback.id == feedback_id)
+            .values(feedback=feedback)
+        )
         return jsonify(
             {"status": "success", "message": "Feedback updated successfully!"}
         )
@@ -1259,10 +1246,9 @@ def create_main_blueprint(
     @main_blueprint.route("/feedback/<int:feedback_id>", methods=["DELETE"])
     @required_login
     def delete_feedback(feedback_id):
-        with get_db_connection(main_blueprint.feedback_db) as conn:
-            cursor = conn.cursor()
-            cursor.execute("DELETE FROM feedback WHERE id = ?", (feedback_id,))
-            conn.commit()
+        g.db_session.execute(
+            DbFeedback.__table__.delete().where(DbFeedback.id == feedback_id)
+        )
         return jsonify(
             {"status": "success", "message": "Feedback deleted successfully!"}
         )
@@ -1270,10 +1256,9 @@ def create_main_blueprint(
     @main_blueprint.route("/feedback/<int:feedback_id>/json", methods=["GET"])
     @required_login
     def get_feedback_json(feedback_id):
-        with get_db_connection(main_blueprint.feedback_db) as conn:
-            cursor = conn.cursor()
-            cursor.execute("SELECT username, feedback FROM feedback WHERE id = ?", (feedback_id,))
-            row = cursor.fetchone()
+        row = g.db_session.execute(
+            select(DbFeedback.username, DbFeedback.feedback).where(DbFeedback.id == feedback_id)
+        ).first()
         if not row:
             return jsonify({"success": False, "error": "Feedback not found"}), 404
         return jsonify({"id": feedback_id, "username": row[0], "feedback": row[1]})
@@ -1571,40 +1556,43 @@ Provide only the corrected version, no explanations."""
         
         try:
             # Test user's saved prompts
-            with get_db_connection(main_blueprint.prompt_db) as conn:
-                cursor = conn.cursor()
-                cursor.execute(f"SELECT * FROM \"{username}\" ORDER BY time DESC LIMIT 50")
-                saved_rows = cursor.fetchall()
-                debug_info['saved_prompts_count'] = len(saved_rows)
-                
-                for row in saved_rows:
-                    debug_info['saved_prompts'].append({
-                        'prompt_id': row['random_val'],
-                        'title': row['title'],
-                        'prompt': row['prompt'][:100] + '...' if len(row['prompt']) > 100 else row['prompt'],
-                        'time': row['time'],
-                        'source': 'personal'
-                    })
+            saved_rows = g.db_session.execute(
+                select(DbPrompt)
+                .where(DbPrompt.username == username)
+                .order_by(DbPrompt.time.desc())
+                .limit(50)
+            ).all()
+            debug_info['saved_prompts_count'] = len(saved_rows)
+
+            for row in saved_rows:
+                debug_info['saved_prompts'].append({
+                    'prompt_id': row.random_val,
+                    'title': row.title,
+                    'prompt': row.prompt[:100] + '...' if len(row.prompt) > 100 else row.prompt,
+                    'time': row.time,
+                    'source': 'personal'
+                })
         except Exception as e:
             debug_info['errors'].append(f"Saved prompts error: {str(e)}")
 
         try:
             # Test community prompts
-            with get_db_connection(main_blueprint.community_db) as conn:
-                cursor = conn.cursor()
-                cursor.execute("SELECT * FROM shared ORDER BY time DESC LIMIT 50")
-                community_rows = cursor.fetchall()
-                debug_info['community_prompts_count'] = len(community_rows)
-                
-                for row in community_rows:
-                    debug_info['community_prompts'].append({
-                        'prompt_id': row['random_val'],
-                        'title': row['title'],
-                        'prompt': row['prompt'][:100] + '...' if len(row['prompt']) > 100 else row['prompt'],
-                        'time': row['time'],
-                        'owner': row['owner'],
-                        'source': 'community'
-                    })
+            community_rows = g.db_session.execute(
+                select(DbSharedPrompt)
+                .order_by(DbSharedPrompt.time.desc())
+                .limit(50)
+            ).all()
+            debug_info['community_prompts_count'] = len(community_rows)
+
+            for row in community_rows:
+                debug_info['community_prompts'].append({
+                    'prompt_id': row.random_val,
+                    'title': row.title,
+                    'prompt': row.prompt[:100] + '...' if len(row.prompt) > 100 else row.prompt,
+                    'time': row.time,
+                    'owner': row.owner,
+                    'source': 'community'
+                })
         except Exception as e:
             debug_info['errors'].append(f"Community prompts error: {str(e)}")
 
@@ -1624,43 +1612,44 @@ Provide only the corrected version, no explanations."""
             # Get user's saved prompts
             saved_prompts = []
             logger.info(f"Loading saved prompts for user: {username}")
-            logger.info(f"Prompt database path: {main_blueprint.prompt_db}")
-            
-            with get_db_connection(main_blueprint.prompt_db) as conn:
-                cursor = conn.cursor()
-                cursor.execute(f"SELECT * FROM \"{username}\" ORDER BY time DESC LIMIT 50")
-                saved_rows = cursor.fetchall()
-                logger.info(f"Found {len(saved_rows)} saved prompts for user {username}")
-                
-                for row in saved_rows:
-                    saved_prompts.append({
-                        'prompt_id': row['random_val'],
-                        'title': row['title'],
-                        'prompt': row['prompt'],
-                        'time': row['time'],
-                        'source': 'personal'
-                    })
+
+            saved_rows = g.db_session.execute(
+                select(DbPrompt)
+                .where(DbPrompt.username == username)
+                .order_by(DbPrompt.time.desc())
+                .limit(50)
+            ).all()
+            logger.info(f"Found {len(saved_rows)} saved prompts for user {username}")
+
+            for row in saved_rows:
+                saved_prompts.append({
+                    'prompt_id': row.random_val,
+                    'title': row.title,
+                    'prompt': row.prompt,
+                    'time': row.time,
+                    'source': 'personal'
+                })
 
             # Get community prompts
             community_prompts = []
             logger.info(f"Loading community prompts")
-            logger.info(f"Community database path: {main_blueprint.community_db}")
-            
-            with get_db_connection(main_blueprint.community_db) as conn:
-                cursor = conn.cursor()
-                cursor.execute("SELECT * FROM shared ORDER BY time DESC LIMIT 50")
-                community_rows = cursor.fetchall()
-                logger.info(f"Found {len(community_rows)} community prompts")
-                
-                for row in community_rows:
-                    community_prompts.append({
-                        'prompt_id': row['random_val'] or '',
-                        'title': row['title'] or '',
-                        'prompt': row['prompt'] or '',
-                        'time': row['time'] or '',
-                        'owner': row['owner'] or '',
-                        'source': 'community'
-                    })
+
+            community_rows = g.db_session.execute(
+                select(DbSharedPrompt)
+                .order_by(DbSharedPrompt.time.desc())
+                .limit(50)
+            ).all()
+            logger.info(f"Found {len(community_rows)} community prompts")
+
+            for row in community_rows:
+                community_prompts.append({
+                    'prompt_id': row.random_val or '',
+                    'title': row.title or '',
+                    'prompt': row.prompt or '',
+                    'time': row.time or '',
+                    'owner': row.owner or '',
+                    'source': 'community'
+                })
 
         except Exception as e:
             logger.exception("Failed to load prompts for refinement")

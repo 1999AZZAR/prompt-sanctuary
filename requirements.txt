@@ -9,3 +9,6 @@ pillow
 Flask-WTF
 Flask-Babel
 gunicorn==23.0.0
+SQLAlchemy>=2.0,<2.1
+alembic>=1.13,<2.0
+
