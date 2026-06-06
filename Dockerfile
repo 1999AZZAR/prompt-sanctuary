@@ -51,6 +51,8 @@ COPY --from=deps /usr/local/bin /usr/local/bin
 
 # App source
 COPY web/ ./web/
+COPY migrations/ ./migrations/
+COPY alembic.ini ./
 COPY devserver.sh ./
 
 # Persistent directories for SQLite + Babel translations

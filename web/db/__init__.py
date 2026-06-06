@@ -13,6 +13,7 @@ Exposes:
 
 from __future__ import annotations
 
+import logging
 import os
 import subprocess
 import sys
@@ -23,6 +24,8 @@ from typing import Iterator
 from flask import Flask, g
 from sqlalchemy import create_engine, event
 from sqlalchemy.engine import Engine
+
+logger = logging.getLogger(__name__)
 from sqlalchemy.orm import Session, sessionmaker
 
 from .models import Base
@@ -103,19 +106,53 @@ def _run_migrations() -> None:
 
     Called once on Flask startup. Safe to call repeatedly: Alembic tracks
     applied revisions in the alembic_version table.
+
+    A file-based lock prevents the gunicorn workers from racing on first
+    boot (multiple workers would otherwise all try to upgrade head at once
+    and the second-comer would fail with "expected to match one row").
     """
-    migrations_dir = Path(__file__).resolve().parent.parent / "migrations"
-    if not migrations_dir.exists():
+    # /app/web/db/__init__.py -> /app/migrations  +  /app/alembic.ini
+    project_root = Path(__file__).resolve().parent.parent.parent
+    migrations_dir = project_root / "migrations"
+    alembic_ini = project_root / "alembic.ini"
+    if not (migrations_dir.exists() and alembic_ini.exists()):
+        logger.warning(
+            "Skipping alembic migrations: %s or %s not found",
+            migrations_dir, alembic_ini,
+        )
         return
-    env = os.environ.copy()
-    env.setdefault("DATABASE_URL", _database_url())
-    subprocess.run(
-        [sys.executable, "-m", "alembic", "upgrade", "head"],
-        cwd=str(migrations_dir.parent),
-        env=env,
-        check=False,
-        capture_output=True,
-    )
+
+    # Use the SQLite DB file path as the lock target so different DBs
+    # (e.g. dev vs prod) lock independently.
+    db_path = _database_url().replace("sqlite:///", "")
+    lock_path = f"{db_path}.alembic.lock"
+    try:
+        import fcntl
+    except ImportError:
+        fcntl = None  # type: ignore[assignment]
+
+    with open(lock_path, "w") as lock_file:
+        if fcntl is not None:
+            try:
+                fcntl.flock(lock_file.fileno(), fcntl.LOCK_EX)
+            except OSError:
+                pass
+        env = os.environ.copy()
+        env.setdefault("DATABASE_URL", _database_url())
+        result = subprocess.run(
+            [sys.executable, "-m", "alembic", "-c", str(alembic_ini), "upgrade", "head"],
+            cwd=str(project_root),
+            env=env,
+            check=False,
+            capture_output=True,
+            text=True,
+        )
+        if result.returncode != 0:
+            logger.error("alembic upgrade head failed (rc=%s)", result.returncode)
+            if result.stdout:
+                logger.error("stdout: %s", result.stdout)
+            if result.stderr:
+                logger.error("stderr: %s", result.stderr)
 
 
 def init_app(app: Flask) -> None:
