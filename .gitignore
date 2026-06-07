@@ -7,8 +7,10 @@ sanctuary/
 web/database/*.db
 web/database/*.db-shm
 web/database/*.db-wal
+web/database/*.alembic.lock
 web/database/community/*.db-shm
 web/database/community/*.db-wal
+web/database/community/*.alembic.lock
 
 # Exception: Keep community query.db tracked
 !web/database/community/query.db
