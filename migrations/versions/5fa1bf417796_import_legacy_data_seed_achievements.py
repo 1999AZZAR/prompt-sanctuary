@@ -97,19 +97,36 @@ def upgrade() -> None:
         column("condition_value", Integer),
         column("hidden", Integer),
     )
+    dialect = bind.dialect.name
     for row in ACHIEVEMENT_SEED:
-        op.execute(
-            ach_table.insert().prefix_with("OR IGNORE").values(
-                name=row[0],
-                description=row[1],
-                icon=row[2],
-                points_reward=row[3],
-                category=row[4],
-                condition_type=row[5],
-                condition_value=row[6],
-                hidden=row[7],
+        if dialect == "postgresql":
+            # Postgres: ON CONFLICT DO NOTHING on the unique name column.
+            from sqlalchemy.dialects.postgresql import insert as pg_insert
+            op.execute(
+                pg_insert(ach_table).values(
+                    name=row[0],
+                    description=row[1],
+                    icon=row[2],
+                    points_reward=row[3],
+                    category=row[4],
+                    condition_type=row[5],
+                    condition_value=row[6],
+                    hidden=row[7],
+                ).on_conflict_do_nothing(index_elements=["name"])
             )
-        )
+        else:
+            op.execute(
+                ach_table.insert().prefix_with("OR IGNORE").values(
+                    name=row[0],
+                    description=row[1],
+                    icon=row[2],
+                    points_reward=row[3],
+                    category=row[4],
+                    condition_type=row[5],
+                    condition_value=row[6],
+                    hidden=row[7],
+                )
+            )
 
     # 2) Import legacy data
     from migrations.legacy_import import import_legacy_data  # noqa: PLC0415

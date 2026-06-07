@@ -101,6 +101,19 @@ def _with_session(fn):
 # Schema initialization (now a no-op — Alembic manages the schema)
 # ============================================================================
 
+def invalidate_user_cache(username: str) -> None:
+    """Drop the cached values that depend on the user's mutable state.
+
+    Call this after any write that changes points, prompt list, or sharing
+    status. The function is best-effort: if Redis is down, the cache will
+    simply expire on its TTL.
+    """
+    from cache import cache_invalidate_pattern
+    cache_invalidate_pattern(f"sanctuary:points:{username}:*")
+    cache_invalidate_pattern(f"sanctuary:share_status:{username}:*")
+    cache_invalidate_pattern(f"sanctuary:prompts:{username}:*")
+
+
 def create_tables(user_db, prompt_db, community_db, feedback_db):
     """Deprecated. Schema is managed by Alembic; this is a no-op kept for
     backward compatibility with web.app.py. Run `alembic upgrade head` to
@@ -383,24 +396,28 @@ def save_prompt_to_db(s, username, random_val, title, prompt_text, prompt_db):  
 @_with_session
 def get_prompt_sharing_status(s, username: str, prompt_id: str, title: str,
                               prompt_content: str, prompt_db: str, community_db: str):  # noqa: ARG001
-    row = s.execute(
-        select(SharedPrompt.title, SharedPrompt.prompt)
-        .where(SharedPrompt.owner == username, SharedPrompt.random_val == prompt_id)
-    ).first()
-    if not row:
+    from cache import cache_through, k
+    key = k("share_status", username, prompt_id)
+    def _compute():
+        row = s.execute(
+            select(SharedPrompt.title, SharedPrompt.prompt)
+            .where(SharedPrompt.owner == username, SharedPrompt.random_val == prompt_id)
+        ).first()
+        if not row:
+            return {
+                "is_shared": False,
+                "needs_update": False,
+                "shared_title": None,
+                "shared_content": None,
+            }
+        shared_title, shared_content = row
         return {
-            "is_shared": False,
-            "needs_update": False,
-            "shared_title": None,
-            "shared_content": None,
+            "is_shared": True,
+            "needs_update": shared_title != title or shared_content != prompt_content,
+            "shared_title": shared_title,
+            "shared_content": shared_content,
         }
-    shared_title, shared_content = row
-    return {
-        "is_shared": True,
-        "needs_update": shared_title != title or shared_content != prompt_content,
-        "shared_title": shared_title,
-        "shared_content": shared_content,
-    }
+    return cache_through(key, 60, _compute)
 
 
 # ============================================================================
@@ -422,23 +439,32 @@ def calculate_expiration_date(source: str):
 
 @_with_session
 def get_user_points(s, user_db, username: str) -> float:  # noqa: ARG001
-    """Sum of non-expired point transactions for the user."""
-    try:
-        result = s.execute(
-            select(func.coalesce(func.sum(PointTransaction.points), 0.0))
-            .where(
-                PointTransaction.username == username,
-                PointTransaction.is_expired == 0,
-            )
-            .where(
-                (PointTransaction.expires_at.is_(None))
-                | (PointTransaction.expires_at > datetime.utcnow())
-            )
-        ).scalar()
-        return float(result or 0.0) or 80.0
-    except Exception as e:
-        logger.exception("Failed to get user points for %s: %s", username, e)
-        return 80.0
+    """Sum of non-expired point transactions for the user.
+
+    Cached for 30s in Redis to absorb the per-request read on every page
+    load. Invalidated on point changes (see invalidate_user_cache()).
+    """
+    from cache import cache_through, k
+
+    def _compute() -> float:
+        try:
+            result = s.execute(
+                select(func.coalesce(func.sum(PointTransaction.points), 0.0))
+                .where(
+                    PointTransaction.username == username,
+                    PointTransaction.is_expired == 0,
+                )
+                .where(
+                    (PointTransaction.expires_at.is_(None))
+                    | (PointTransaction.expires_at > datetime.utcnow())
+                )
+            ).scalar()
+            return float(result or 0.0) or 80.0
+        except Exception as e:
+            logger.exception("Failed to get user points for %s: %s", username, e)
+            return 80.0
+
+    return float(cache_through(k("points", username), 30, _compute) or 80.0)
 
 
 @_with_session
@@ -487,6 +513,7 @@ def add_user_points_with_source(s, user_db, username: str, points: float,  # noq
             points_before=before,
             points_after=after,
         ))
+        invalidate_user_cache(username)
         return True
     except (IntegrityError, OperationalError) as e:
         s.rollback()
@@ -522,6 +549,7 @@ def deduct_user_points_with_source(s, user_db, username: str, cost: float,  # no
             points_before=current,
             points_after=current - cost,
         ))
+        invalidate_user_cache(username)
         return True
     except (IntegrityError, OperationalError) as e:
         s.rollback()

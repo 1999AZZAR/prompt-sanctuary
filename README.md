@@ -27,12 +27,13 @@ This project merges three earlier tools into one codebase:
 ## Tech Stack
 
 - **Runtime**: Python 3.12, Flask, gunicorn 23.0 (2 workers x 4 threads), tini
-- **Database**: SQLite via SQLAlchemy 2.0, schema managed by Alembic
-- **AI**: Google Gemini (`gemini-2.5-flash` default, override via `GENAI_MODEL_NAME`)
+- **Database**: PostgreSQL 16 (SQLite supported for dev fallback) via SQLAlchemy 2.0, schema managed by Alembic
+- **Cache + rate limit**: Redis 7. Token bucket for `/generate/*` and `/advance/*`; read-through cache for `get_user_points`, `get_prompt_sharing_status`, and the system prompts list
+- **AI**: Google Gemini (`gemini-2.5-flash` default, override via `GENAI_MODEL_NAME`; comma-separated keys auto-rotate)
 - **Frontend**: Jinja templates, vanilla JS, Font Awesome 6. No build step.
 - **i18n**: Flask-Babel
 - **Security**: Flask-WTF CSRF (form + `X-CSRFToken` header), DOMPurify for rendered content
-- **Container**: multi-stage `Dockerfile`, non-root user, JSON access logs, healthcheck
+- **Container**: multi-stage `Dockerfile`, non-root user, JSON access logs, healthcheck. Compose stack bundles Postgres + Redis.
 
 ## Design Language
 
@@ -65,17 +66,21 @@ and seeds 55 achievements. Subsequent boots are no-ops.
 ## Quick Start (Docker)
 
 ```bash
-cp web/.env.example web/.env
-# Edit web/.env and set GENAI_API_KEY
+cp .env.example .env 2>/dev/null || true
+# Edit .env and set GENAI_API_KEY (comma-separated for rotation)
+# Postgres + Redis credentials are also in .env
 
 docker compose up -d --build
 docker compose logs -f app
-# Open http://127.0.0.1:5000
+# Open http://127.0.0.1:${HOST_PORT:-5000}
 ```
 
-The image is multi-stage, runs as a non-root user, and persists the
-SQLite database and Babel translations in named volumes
-(`prompt-sanctuary-data`, `prompt-sanctuary-translations`).
+The compose stack bundles three services: `app` (the Flask + gunicorn
+image), `sanctuary-postgres` (PostgreSQL 16), and `sanctuary-redis`
+(Redis 7). Both data stores are persisted in named volumes
+(`sanctuary-postgres-data`, `sanctuary-redis-data`). The first request
+runs `alembic upgrade head` against the Postgres database, wrapped in a
+`pg_advisory_lock` so gunicorn workers don't race.
 
 ```bash
 # Bind to a different host port
@@ -84,22 +89,42 @@ HOST_PORT=8080 docker compose up -d
 # Scale workers
 GUNICORN_WORKERS=4 GUNICORN_THREADS=8 docker compose up -d
 
-# Shell into the container
+# Shell into the app container
 docker compose exec app bash
+
+# Open a psql session
+docker compose exec sanctuary-postgres psql -U sanctuary -d sanctuary
+
+# Inspect the Redis cache + rate-limit state
+docker compose exec sanctuary-redis redis-cli KEYS 'sanctuary:*'
 ```
+
+### SQLite (dev fallback)
+
+For local dev without Docker, set `DATABASE_URL=sqlite:///app.db` (or
+just leave it unset; the app falls back to `web/database/app.db`).
+SQLite is supported as a single-process dev DB; the Alembic migrations
+include dialect-agnostic paths so the same chain applies.
 
 ## Database
 
-Single SQLite file at `web/database/app.db`. Schema is declarative
-SQLAlchemy 2.0 (`web/db/models.py`) and versioned with Alembic
-(`migrations/versions/`).
+PostgreSQL 16 in production (SQLite supported as a dev fallback).
+Schema is declarative SQLAlchemy 2.0 (`web/db/models.py`) and versioned
+with Alembic (`migrations/versions/`).
 
-**Tables** (11): `users`, `sessions`, `user_logins`, `achievements`,
+**Tables** (12): `users`, `sessions`, `user_logins`, `achievements`,
 `user_achievements`, `point_transactions`, `point_history`, `prompts`,
-`prompt_versions`, `shared_prompts`, `feedback`.
+`prompt_versions`, `shared_prompts`, `feedback`, `system_prompts`.
 
-PRAGMAs applied on every connection: `foreign_keys=ON`,
-`journal_mode=WAL`, `synchronous=NORMAL`.
+The connection pool is sized for `gunicorn workers x threads` with
+overflow headroom (`pool_size=10, max_overflow=20` by default;
+`pool_pre_ping=True` reconnects stale connections). SQLite connections
+get `check_same_thread=False`, `foreign_keys=ON`, `journal_mode=WAL`,
+`synchronous=NORMAL`.
+
+The first request runs `alembic upgrade head` against the configured
+database. On Postgres, a `pg_advisory_lock` serialises workers so they
+don't race the migration. On SQLite, an `fcntl.flock` does the same.
 
 **Migrations**:
 

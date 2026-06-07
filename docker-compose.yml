@@ -8,21 +8,23 @@ services:
     image: prompt-sanctuary:latest
     container_name: prompt-sanctuary
     restart: unless-stopped
+    depends_on:
+      sanctuary-postgres:
+        condition: service_healthy
+      sanctuary-redis:
+        condition: service_healthy
     ports:
       - "${HOST_PORT:-5000}:5000"
-    env_file:
-      - web/.env
     environment:
-      # Compose-level overrides; .env values take precedence
       PORT: "5000"
       GUNICORN_WORKERS: "${GUNICORN_WORKERS:-2}"
       GUNICORN_THREADS: "${GUNICORN_THREADS:-4}"
       GUNICORN_TIMEOUT: "${GUNICORN_TIMEOUT:-120}"
       SECURE_COOKIES: "${SECURE_COOKIES:-false}"
-    volumes:
-      # Persist SQLite databases and Babel translations across restarts.
-      - sanctuary-data:/app/web/database
-      - sanctuary-translations:/app/web/translations
+      DATABASE_URL: "postgresql+psycopg://${POSTGRES_USER:-sanctuary}:${POSTGRES_PASSWORD:-sanctuary_dev_pw}@sanctuary-postgres:5432/${POSTGRES_DB:-sanctuary}"
+      REDIS_URL: "redis://sanctuary-redis:6379/0"
+      SECRET_KEY: "${SECRET_KEY:-dev-secret-key-only-for-local-preview}"
+      GENAI_API_KEY: "${GENAI_API_KEY:-}"
     healthcheck:
       test: ["CMD", "curl", "-fsS", "-o", "/dev/null", "http://127.0.0.1:5000/"]
       interval: 30s
@@ -35,8 +37,49 @@ services:
         max-size: "10m"
         max-file: "3"
 
+  sanctuary-postgres:
+    image: postgres:16-alpine
+    container_name: sanctuary-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: "${POSTGRES_USER:-sanctuary}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:-sanctuary_dev_pw}"
+      POSTGRES_DB: "${POSTGRES_DB:-sanctuary}"
+    volumes:
+      - sanctuary-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-sanctuary} -d ${POSTGRES_DB:-sanctuary}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  sanctuary-redis:
+    image: redis:7-alpine
+    container_name: sanctuary-redis
+    restart: unless-stopped
+    command: ["redis-server", "--maxmemory", "128mb", "--maxmemory-policy", "allkeys-lru", "--save", "60", "1000"]
+    volumes:
+      - sanctuary-redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
 volumes:
-  sanctuary-data:
-    name: prompt-sanctuary-data
-  sanctuary-translations:
-    name: prompt-sanctuary-translations
+  sanctuary-postgres-data:
+    name: sanctuary-postgres-data
+  sanctuary-redis-data:
+    name: sanctuary-redis-data

@@ -72,6 +72,7 @@ from response2 import GenerativeAI
 from response import GenerativeModel
 from api_key_validator import validate_gemini_api_key
 from api_key_pool import get_api_key_pool
+from rate_limit import rate_limit
 import logging
 import secrets
 from datetime import datetime
@@ -576,15 +577,22 @@ def create_main_blueprint(
         try:
             # System prompts (curated, shipped with the app) - imported from
             # the legacy community/query.db::community table by Alembic.
-            raw_system_prompts = g.db_session.execute(
-                select(
-                    DbSystemPrompt.random_val,
-                    DbSystemPrompt.title,
-                    DbSystemPrompt.prompt,
-                    DbSystemPrompt.tag,
-                    DbSystemPrompt.time,
-                )
-            ).all()
+            # Cached in Redis for 5 min — the list is read on every /library
+            # page load and changes only when an admin ships a new bundle.
+            from cache import cache_through, k as cache_k
+            def _load_system_prompts():
+                return g.db_session.execute(
+                    select(
+                        DbSystemPrompt.random_val,
+                        DbSystemPrompt.title,
+                        DbSystemPrompt.prompt,
+                        DbSystemPrompt.tag,
+                        DbSystemPrompt.time,
+                    )
+                ).all()
+            raw_system_prompts = cache_through(
+                cache_k("library", "system_prompts"), 300, _load_system_prompts
+            )
             raw_shared_prompts = g.db_session.execute(
                 select(
                     DbSharedPrompt.owner,
@@ -894,6 +902,7 @@ def create_main_blueprint(
 
     @main_blueprint.route("/generate/tprompt", methods=["POST"])
     @required_login
+    @rate_limit()
     def process():
         """Generate a text prompt using user input. Validates input and returns model response."""
         user_input = request.form.get("user_input", "").strip()
@@ -932,6 +941,7 @@ def create_main_blueprint(
 
     @main_blueprint.route("/generate/tprompt/stream", methods=["POST"])
     @required_login
+    @rate_limit()
     def process_stream():
         """Generate a text prompt using streaming response."""
         user_input = request.form.get("user_input", "").strip()
@@ -979,6 +989,7 @@ def create_main_blueprint(
 
     @main_blueprint.route("/generate/trandom", methods=["POST"])
     @required_login
+    @rate_limit()
     def random_prompt():
         username = session["username"]
         cost = 0.8  # Basic random prompt cost
@@ -1010,6 +1021,7 @@ def create_main_blueprint(
 
     @main_blueprint.route("/generate/iprompt", methods=["POST"])
     @required_login
+    @rate_limit()
     def vprocess():
         user_input = request.form["user_input"]
         username = session["username"]
@@ -1044,6 +1056,7 @@ def create_main_blueprint(
 
     @main_blueprint.route("/generate/irandom", methods=["POST"])
     @required_login
+    @rate_limit()
     def vrandom_prompt():
         username = session["username"]
         cost = 0.8  # Basic random image prompt cost
@@ -1075,6 +1088,7 @@ def create_main_blueprint(
 
     @main_blueprint.route("/generate/image", methods=["POST"])
     @required_login
+    @rate_limit()
     def reverse_image():
         try:
             username = session["username"]
@@ -1120,6 +1134,7 @@ def create_main_blueprint(
 
     @main_blueprint.route("/advance/generate", methods=["POST"])
     @required_login
+    @rate_limit()
     def generate_advance_response():
         try:
             username = session["username"]
@@ -1145,6 +1160,7 @@ def create_main_blueprint(
 
     @main_blueprint.route("/advance/igenerate", methods=["POST"])
     @required_login
+    @rate_limit()
     def generate_advance_iresponse():
         try:
             username = session["username"]
@@ -1170,6 +1186,7 @@ def create_main_blueprint(
 
     @main_blueprint.route("/advance/image", methods=["POST"])
     @required_login
+    @rate_limit()
     def advance_image():
         try:
             username = session["username"]
