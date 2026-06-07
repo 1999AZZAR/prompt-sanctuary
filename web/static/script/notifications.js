@@ -279,4 +279,20 @@
     window.hideGlobalLoader = hideGlobalLoader;
     window.showAppPopup = showAppPopup;
     window.closeAppPopup = closeAppPopup;
+
+    // Back-compat stub. generator.js calls blurBackground(true|false) when a
+    // request is in flight; the original implementation was deleted without
+    // a replacement. We apply a soft focus dim to <main> instead of a CSS blur
+    // (which was too heavy on the page) — purely a visual hint.
+    if (typeof window.blurBackground !== 'function') {
+        window.blurBackground = function (on) {
+            var main = document.querySelector('main');
+            if (main) main.style.opacity = on ? '0.6' : '';
+            if (on) {
+                if (typeof window.showGlobalLoader === 'function') window.showGlobalLoader();
+            } else {
+                if (typeof window.hideGlobalLoader === 'function') window.hideGlobalLoader();
+            }
+        };
+    }
 })();

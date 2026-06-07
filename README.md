@@ -196,7 +196,7 @@ re-run `alembic upgrade head`. The schema is dialect-agnostic.
 
 | Variable             | Required | Default                              | Description                                  |
 | -------------------- | -------- | ------------------------------------ | -------------------------------------------- |
-| `GENAI_API_KEY`      | yes      | -                                    | Gemini API key(s), comma-separated           |
+| `GENAI_API_KEY`      | yes      | -                                    | Gemini API key(s), comma-separated for automatic rotation under load |
 | `STABILITY_API_KEY`  | no       | -                                    | Stability AI key (image alt)                 |
 | `GENAI_MODEL_NAME`   | no       | `gemini-2.5-flash`                   | Model override (e.g., `gemini-2.5-pro`)      |
 | `SECRET_KEY`         | no       | auto-generated                       | Flask session secret (set in production)     |
