@@ -15,12 +15,12 @@ function attachCopyButtonListeners() {
             navigator.clipboard.writeText(promptContent)
                 .then(() => {
                     // Use global toast for copy confirmation
-                    showToast("Prompt copied to clipboard!", "success");
+                    showToast(_("Prompt copied to clipboard!"), "success");
                 })
                 .catch((err) => {
                     console.error('Failed to copy prompt:', err);
                     // Use global toast for copy error
-                    showToast("Failed to copy prompt. Please try again.", "error");
+                    showToast(_("Failed to copy prompt. Please try again."), "error");
                 });
         });
     });
@@ -39,8 +39,8 @@ function attachSaveButtonListeners() {
 
             // Show custom confirmation popup with "Yes" and "No" buttons
             showAppPopup(
-                "Confirm Save",
-                `Are you sure you want to save "${title}" to your personal library?`,
+                _("Confirm Save"),
+                _("Are you sure you want to save \"%(title)s\" to your personal library?", { title: title }),
                 {
                     type: 'confirmation',
                     onConfirm: () => {
@@ -49,7 +49,7 @@ function attachSaveButtonListeners() {
                     },
                     onCancel: () => {
                         // If user clicks "No", do nothing
-                        console.log("Save canceled.");
+                        console.log(_("Save canceled."));
                     }
                 }
             );
@@ -98,23 +98,23 @@ function unsharePrompt(promptId) {
         body: JSON.stringify({ prompt_id: promptId })
     })
     .then(response => {
-        if (!response.ok) throw new Error('Failed to unshare prompt.');
+        if (!response.ok) throw new Error(_("Failed to unshare prompt."));
         return response.json();
     })
     .then(data => {
         if (data.success) {
             // Use global toast for success
-            showToast("Prompt unshared successfully!", "success");
+            showToast(_("Prompt unshared successfully!"), "success");
             setTimeout(() => window.location.reload(), 1000);
         } else {
             // Use global toast for error
-            showToast("Failed to unshare prompt: " + (data.error || "Unknown error"), "error");
+            showToast(_("Failed to unshare prompt: %(error)s", { error: data.error || _("Unknown error") }), "error");
         }
     })
     .catch(error => {
         console.error('Error:', error);
         // Use global toast for error
-        showToast("Error unsharing prompt: " + error.message, "error");
+        showToast(_("Error unsharing prompt: %(message)s", { message: error.message }), "error");
     });
 }
 
@@ -125,12 +125,12 @@ function attachUnshareButtonListeners() {
             e.preventDefault();
             const promptId = button.getAttribute('data-prompt-id');
             showAppPopup(
-                "Confirm Unshare",
-                "Are you sure you want to unshare this prompt?",
+                _("Confirm Unshare"),
+                _("Are you sure you want to unshare this prompt?"),
                 {
                     type: 'confirmation',
                     onConfirm: () => unsharePrompt(promptId),
-                    onCancel: () => console.log("Unshare canceled.")
+                    onCancel: () => console.log(_("Unshare canceled."))
                 }
             );
         });
@@ -152,16 +152,16 @@ function savePrompt(title, prompt) {
     .then(data => {
         if (data.success) {
             // Use global toast for success
-            showToast(data.message || "Prompt saved successfully!", "success");
+            showToast(data.message || _("Prompt saved successfully!"), "success");
         } else {
             // Use global toast for error
-            showToast(data.message || 'Failed to save prompt.', "error");
+            showToast(data.message || _("Failed to save prompt."), "error");
         }
     })
     .catch((error) => {
         console.error('Error:', error);
         // Use global toast for error
-        showToast("Failed to save prompt: " + error.message, "error");
+        showToast(_("Failed to save prompt: %(message)s", { message: error.message }), "error");
     });
 }
 

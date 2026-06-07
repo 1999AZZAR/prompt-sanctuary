@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-06-07 11:55+0000\n"
+"POT-Creation-Date: 2026-06-07 14:48+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,219 +17,215 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.18.0\n"
 
-#: web/routes.py:1841
+#: routes.py:1844
 msgid "Language not supported"
 msgstr ""
 
-#: web/routes.py:1845
+#: routes.py:1848
 #, python-format
 msgid "Language changed to %(language)s"
 msgstr ""
 
-#: web/templates/account/profile.html:4 web/templates/base.html:7
-#: web/templates/feedback_list.html:4 web/templates/index.html:4
-#: web/templates/landing.html:2 web/templates/landing.html:86
-#: web/templates/login.html:2 web/templates/privacy.html:2
-#: web/templates/prompts/generator/advance.html:4
-#: web/templates/prompts/generator/basic.html:4
-#: web/templates/prompts/generator/refinement.html:4
-#: web/templates/prompts/lib/community.html:4
-#: web/templates/prompts/lib/personal.html:4 web/templates/terms.html:2
+#: templates/account/profile.html:4 templates/base.html:7
+#: templates/feedback_list.html:4 templates/index.html:4
+#: templates/landing.html:2 templates/landing.html:86 templates/login.html:2
+#: templates/privacy.html:2 templates/prompts/generator/advance.html:4
+#: templates/prompts/generator/basic.html:4
+#: templates/prompts/generator/refinement.html:4
+#: templates/prompts/lib/community.html:4 templates/prompts/lib/personal.html:4
+#: templates/terms.html:2
 msgid "Prompt Sanctuary"
 msgstr ""
 
-#: web/templates/base.html:25
+#: templates/base.html:36
 msgid "Skip to main content"
 msgstr ""
 
-#: web/templates/base.html:36
+#: templates/base.html:47
 msgid "Primary navigation"
 msgstr ""
 
-#: web/templates/base.html:39 web/templates/base.html:119
-#: web/templates/base.html:134 web/templates/landing.html:8
-#: web/templates/login.html:8 web/templates/privacy.html:9
-#: web/templates/terms.html:9
+#: templates/base.html:50 templates/base.html:130 templates/base.html:145
+#: templates/landing.html:8 templates/login.html:8 templates/privacy.html:9
+#: templates/terms.html:9
 msgid "Sanctuary"
 msgstr ""
 
-#: web/templates/base.html:43
+#: templates/base.html:54
 msgid "Main"
 msgstr ""
 
-#: web/templates/base.html:45 web/templates/base.html:153
+#: templates/base.html:56 templates/base.html:164
 msgid "Workspace"
 msgstr ""
 
-#: web/templates/base.html:48 web/templates/base.html:137
-#: web/templates/index.html:4 web/templates/index.html:5
+#: templates/base.html:59 templates/base.html:148 templates/index.html:4
+#: templates/index.html:5
 msgid "Overview"
 msgstr ""
 
-#: web/templates/base.html:53 web/templates/base.html:138
-#: web/templates/landing.html:27
-#: web/templates/prompts/generator/advance.html:23
-#: web/templates/prompts/generator/basic.html:4
-#: web/templates/prompts/generator/basic.html:5
-#: web/templates/prompts/generator/basic.html:19
-#: web/templates/prompts/generator/basic.html:70
-#: web/templates/prompts/generator/basic.html:139
-#: web/templates/prompts/generator/refinement.html:23
+#: templates/base.html:64 templates/base.html:149 templates/landing.html:27
+#: templates/prompts/generator/advance.html:23
+#: templates/prompts/generator/basic.html:4
+#: templates/prompts/generator/basic.html:5
+#: templates/prompts/generator/basic.html:19
+#: templates/prompts/generator/basic.html:70
+#: templates/prompts/generator/basic.html:139
+#: templates/prompts/generator/refinement.html:23
 msgid "Generate"
 msgstr ""
 
-#: web/templates/base.html:58 web/templates/base.html:139
-#: web/templates/index.html:86 web/templates/prompts/generator/advance.html:4
+#: templates/base.html:69 templates/base.html:150 templates/index.html:86
+#: templates/prompts/generator/advance.html:4
 msgid "Advanced"
 msgstr ""
 
-#: web/templates/base.html:63 web/templates/base.html:140
-#: web/templates/prompts/generator/refinement.html:4
-#: web/templates/prompts/generator/refinement.html:5
+#: templates/base.html:74 templates/base.html:151
+#: templates/prompts/generator/refinement.html:4
+#: templates/prompts/generator/refinement.html:5
 msgid "Refinement"
 msgstr ""
 
-#: web/templates/base.html:69 web/templates/index.html:108
+#: templates/base.html:80 templates/index.html:108
 msgid "Library"
 msgstr ""
 
-#: web/templates/base.html:72 web/templates/base.html:141
-#: web/templates/prompts/lib/personal.html:4
-#: web/templates/prompts/lib/personal.html:5
+#: templates/base.html:83 templates/base.html:152
+#: templates/prompts/lib/personal.html:4 templates/prompts/lib/personal.html:5
 msgid "My Library"
 msgstr ""
 
-#: web/templates/base.html:77 web/templates/base.html:142
-#: web/templates/prompts/generator/refinement.html:60
-#: web/templates/prompts/lib/community.html:4
-#: web/templates/prompts/lib/community.html:5
-#: web/templates/prompts/lib/community.html:59
+#: templates/base.html:88 templates/base.html:153
+#: templates/prompts/generator/refinement.html:60
+#: templates/prompts/lib/community.html:4
+#: templates/prompts/lib/community.html:5
+#: templates/prompts/lib/community.html:59
 msgid "Community"
 msgstr ""
 
-#: web/templates/base.html:83
+#: templates/base.html:94
 msgid "Account"
 msgstr ""
 
-#: web/templates/account/profile.html:4 web/templates/account/profile.html:5
-#: web/templates/base.html:86 web/templates/base.html:143
+#: templates/account/profile.html:4 templates/account/profile.html:5
+#: templates/base.html:97 templates/base.html:154
 msgid "Profile"
 msgstr ""
 
-#: web/templates/base.html:91 web/templates/base.html:144
-#: web/templates/feedback_list.html:4 web/templates/feedback_list.html:5
+#: templates/base.html:102 templates/base.html:155
+#: templates/feedback_list.html:4 templates/feedback_list.html:5
 msgid "Feedback"
 msgstr ""
 
-#: web/templates/base.html:96 web/templates/base.html:145
+#: templates/base.html:107 templates/base.html:156
 msgid "Sign out"
 msgstr ""
 
-#: web/templates/base.html:105 web/templates/index.html:38
+#: templates/base.html:116 templates/index.html:38
 msgid "Credits"
 msgstr ""
 
-#: web/templates/base.html:109
+#: templates/base.html:120
 msgid "API status"
 msgstr ""
 
-#: web/templates/base.html:116
+#: templates/base.html:127
 msgid "Open menu"
 msgstr ""
 
-#: web/templates/base.html:123
+#: templates/base.html:134
 msgid "cr"
 msgstr ""
 
-#: web/templates/base.html:129
+#: templates/base.html:140
 msgid "Close menu"
 msgstr ""
 
-#: web/templates/base.html:136
+#: templates/base.html:147
 msgid "Mobile"
 msgstr ""
 
-#: web/templates/base.html:156
+#: templates/base.html:167
 msgid "Open command palette"
 msgstr ""
 
-#: web/templates/base.html:158 web/templates/prompts/lib/community.html:22
-#: web/templates/prompts/lib/personal.html:25
+#: templates/base.html:169 templates/prompts/lib/community.html:22
+#: templates/prompts/lib/personal.html:25
 msgid "Search"
 msgstr ""
 
-#: web/templates/base.html:162
+#: templates/base.html:173
 msgid "Interface language"
 msgstr ""
 
-#: web/templates/base.html:192
+#: templates/base.html:203
 msgid "Command palette"
 msgstr ""
 
-#: web/templates/base.html:193
+#: templates/base.html:204
 msgid "Search actions, prompts, settings…"
 msgstr ""
 
-#: web/templates/base.html:196
+#: templates/base.html:207
 msgid "navigate"
 msgstr ""
 
-#: web/templates/base.html:197
+#: templates/base.html:208
 msgid "open"
 msgstr ""
 
-#: web/templates/base.html:198
+#: templates/base.html:209
 msgid "close"
 msgstr ""
 
-#: web/templates/feedback_list.html:9
+#: templates/feedback_list.html:9
 msgid "Index 08 · Feedback"
 msgstr ""
 
-#: web/templates/feedback_list.html:10
+#: templates/feedback_list.html:10
 msgid "Feedback log."
 msgstr ""
 
-#: web/templates/feedback_list.html:11
+#: templates/feedback_list.html:11
 msgid "Browse all feedback messages. Click an item to read the full text."
 msgstr ""
 
-#: web/templates/feedback_list.html:18
+#: templates/feedback_list.html:18
 msgid "All feedback"
 msgstr ""
 
-#: web/templates/feedback_list.html:19
+#: templates/feedback_list.html:19
 #, python-format
 msgid "%(count)s entries"
 msgstr ""
 
-#: web/templates/feedback_list.html:32
+#: templates/feedback_list.html:32
 msgid "View feedback #"
 msgstr ""
 
-#: web/templates/account/profile.html:213
-#: web/templates/account/profile.html:251 web/templates/feedback_list.html:33
+#: templates/account/profile.html:213 templates/account/profile.html:251
+#: templates/feedback_list.html:33
 msgid "View"
 msgstr ""
 
-#: web/templates/feedback_list.html:42
+#: templates/feedback_list.html:42
 msgid "No feedback available"
 msgstr ""
 
-#: web/templates/feedback_list.html:43
+#: templates/feedback_list.html:43
 msgid "When users submit feedback, it will appear here."
 msgstr ""
 
-#: web/templates/index.html:9
+#: templates/index.html:9
 msgid "Index 001 · Today"
 msgstr ""
 
-#: web/templates/index.html:10
+#: templates/index.html:10
 #, python-format
 msgid "Good day, %(username)s."
 msgstr ""
 
-#: web/templates/index.html:11
+#: templates/index.html:11
 #, python-format
 msgid ""
 "You have <span class=\"t-accent\"><strong "
@@ -237,1517 +233,1506 @@ msgid ""
 "new prompt, refine a draft, or browse the community library."
 msgstr ""
 
-#: web/templates/index.html:15
+#: templates/index.html:15
 msgid "Generate a prompt"
 msgstr ""
 
-#: web/templates/index.html:19
+#: templates/index.html:19
 msgid "Advanced mode"
 msgstr ""
 
-#: web/templates/index.html:21
+#: templates/index.html:21
 msgid "Browse community →"
 msgstr ""
 
-#: web/templates/index.html:30 web/templates/landing.html:44
+#: templates/index.html:30 templates/landing.html:44
 msgid "Index 002"
 msgstr ""
 
-#: web/templates/index.html:31
+#: templates/index.html:31
 msgid "At a glance."
 msgstr ""
 
-#: web/templates/index.html:33
+#: templates/index.html:33
 msgid "Updated just now"
 msgstr ""
 
-#: web/templates/index.html:40
+#: templates/index.html:40
 msgid "+ 80 on signup"
 msgstr ""
 
-#: web/templates/index.html:43
-#: web/templates/prompts/generator/refinement.html:57
+#: templates/index.html:43 templates/prompts/generator/refinement.html:57
 msgid "Saved"
 msgstr ""
 
-#: web/templates/index.html:45
+#: templates/index.html:45
 msgid "prompts in your library"
 msgstr ""
 
-#: web/templates/index.html:48
+#: templates/index.html:48
 msgid "Refinements"
 msgstr ""
 
-#: web/templates/index.html:50
+#: templates/index.html:50
 msgid "versioned edits"
 msgstr ""
 
-#: web/templates/index.html:53 web/templates/prompts/lib/community.html:63
-#: web/templates/prompts/lib/personal.html:40
+#: templates/index.html:53 templates/prompts/lib/community.html:63
+#: templates/prompts/lib/personal.html:40
 msgid "Shared"
 msgstr ""
 
-#: web/templates/index.html:55
+#: templates/index.html:55
 msgid "with the community"
 msgstr ""
 
-#: web/templates/index.html:65
+#: templates/index.html:65
 msgid "Index 003"
 msgstr ""
 
-#: web/templates/index.html:66
+#: templates/index.html:66
 msgid "Four ways to work."
 msgstr ""
 
-#: web/templates/index.html:68
+#: templates/index.html:68
 msgid "Generate, refine, share, and revisit — all from one place."
 msgstr ""
 
-#: web/templates/index.html:75
+#: templates/index.html:75
 msgid "Basic"
 msgstr ""
 
-#: web/templates/index.html:78
+#: templates/index.html:78
 msgid "Generate from a topic"
 msgstr ""
 
-#: web/templates/index.html:79
+#: templates/index.html:79
 msgid ""
 "Describe what you want. The model expands it into a structured prompt "
 "with variables you can fill in later."
 msgstr ""
 
-#: web/templates/index.html:80 web/templates/index.html:91
-#: web/templates/index.html:102 web/templates/index.html:113
+#: templates/index.html:80 templates/index.html:91 templates/index.html:102
+#: templates/index.html:113
 msgid "Open"
 msgstr ""
 
-#: web/templates/index.html:89
+#: templates/index.html:89
 msgid "Generate from a system prompt"
 msgstr ""
 
-#: web/templates/index.html:90
+#: templates/index.html:90
 msgid ""
 "Paste a system prompt and the model writes a new one in the same voice. "
 "Optional image variants included."
 msgstr ""
 
-#: web/templates/index.html:97
+#: templates/index.html:97
 msgid "Workflow"
 msgstr ""
 
-#: web/templates/index.html:100
+#: templates/index.html:100
 msgid "Refine an existing prompt"
 msgstr ""
 
-#: web/templates/index.html:101
+#: templates/index.html:101
 msgid ""
 "Tell the model what to change — tone, length, format, audience. Every "
 "refinement is versioned."
 msgstr ""
 
-#: web/templates/index.html:111
+#: templates/index.html:111
 msgid "Browse your saved prompts"
 msgstr ""
 
-#: web/templates/index.html:112
+#: templates/index.html:112
 msgid ""
 "All your drafts, refinements, and shared prompts in one searchable list "
 "with side detail."
 msgstr ""
 
-#: web/templates/index.html:123
+#: templates/index.html:123
 msgid "Index 004"
 msgstr ""
 
-#: web/templates/index.html:124
+#: templates/index.html:124
 msgid "Getting started."
 msgstr ""
 
-#: web/templates/index.html:133
+#: templates/index.html:133
 msgid "Bring your own API key"
 msgstr ""
 
-#: web/templates/index.html:134
+#: templates/index.html:134
 msgid ""
 "Add a Google Generative AI key in your profile. Or use the shared pool "
 "with your credits. Either way, generations route through your account."
 msgstr ""
 
-#: web/templates/index.html:135
+#: templates/index.html:135
 msgid "Add key →"
 msgstr ""
 
-#: web/templates/index.html:143
+#: templates/index.html:143
 msgid "Share with the community"
 msgstr ""
 
-#: web/templates/index.html:144
+#: templates/index.html:144
 msgid ""
 "When a prompt is ready, share it. Browse what others have shipped. Fork "
 "anything you like into your own library."
 msgstr ""
 
-#: web/templates/index.html:145
+#: templates/index.html:145
 msgid "Browse →"
 msgstr ""
 
-#: web/templates/landing.html:2 web/templates/landing.html:13
+#: templates/landing.html:2 templates/landing.html:13
 msgid "Index 001"
 msgstr ""
 
-#: web/templates/landing.html:15
+#: templates/landing.html:15
 msgid "A workshop for prompts."
 msgstr ""
 
-#: web/templates/landing.html:18
+#: templates/landing.html:18
 msgid ""
 "Generate, refine, and version your text prompts in one place. Built for "
 "makers who iterate."
 msgstr ""
 
-#: web/templates/landing.html:31
-#: web/templates/prompts/generator/advance.html:30
-#: web/templates/prompts/generator/basic.html:26
-#: web/templates/prompts/generator/refinement.html:30
-#: web/templates/prompts/lib/community.html:46
-#: web/templates/prompts/lib/community.html:47
-#: web/templates/prompts/lib/community.html:79
-#: web/templates/prompts/lib/community.html:80
-#: web/templates/prompts/lib/personal.html:53
-#: web/templates/prompts/lib/personal.html:54
+#: templates/landing.html:31 templates/prompts/generator/advance.html:30
+#: templates/prompts/generator/basic.html:26
+#: templates/prompts/generator/refinement.html:30
+#: templates/prompts/lib/community.html:46
+#: templates/prompts/lib/community.html:47
+#: templates/prompts/lib/community.html:79
+#: templates/prompts/lib/community.html:80
+#: templates/prompts/lib/personal.html:53
+#: templates/prompts/lib/personal.html:54
 msgid "Refine"
 msgstr ""
 
-#: web/templates/landing.html:35
-#: web/templates/prompts/generator/advance.html:37
-#: web/templates/prompts/generator/basic.html:33
-#: web/templates/prompts/generator/refinement.html:37
-#: web/templates/prompts/lib/community.html:43
-#: web/templates/prompts/lib/community.html:44
-#: web/templates/prompts/lib/community.html:71
-#: web/templates/prompts/lib/community.html:72
+#: templates/landing.html:35 templates/prompts/generator/advance.html:37
+#: templates/prompts/generator/basic.html:33
+#: templates/prompts/generator/refinement.html:37
+#: templates/prompts/lib/community.html:43
+#: templates/prompts/lib/community.html:44
+#: templates/prompts/lib/community.html:71
+#: templates/prompts/lib/community.html:72
 msgid "Save"
 msgstr ""
 
-#: web/templates/landing.html:45
+#: templates/landing.html:45
 msgid "Built on three principles."
 msgstr ""
 
-#: web/templates/landing.html:52
+#: templates/landing.html:52
 msgid "Generate from a topic or a system prompt."
 msgstr ""
 
-#: web/templates/landing.html:53
+#: templates/landing.html:53
 msgid ""
 "Two modes for two kinds of work. Describe a topic and let the model "
 "expand it, or paste a system prompt and iterate from there."
 msgstr ""
 
-#: web/templates/landing.html:61
+#: templates/landing.html:61
 msgid "Refine with structured feedback."
 msgstr ""
 
-#: web/templates/landing.html:62
+#: templates/landing.html:62
 msgid ""
 "Tell the model what to change — tone, length, format, audience. Each "
 "refinement keeps a versioned history."
 msgstr ""
 
-#: web/templates/landing.html:70
+#: templates/landing.html:70
 msgid "Keep everything in one library."
 msgstr ""
 
-#: web/templates/landing.html:71
+#: templates/landing.html:71
 msgid ""
 "Personal saves stay private. Share with the community when you’re ready. "
 "Browse what others have shipped."
 msgstr ""
 
-#: web/templates/landing.html:78
+#: templates/landing.html:78
 msgid "Ready when you are."
 msgstr ""
 
-#: web/templates/landing.html:80
+#: templates/landing.html:80
 msgid "Open the app"
 msgstr ""
 
-#: web/templates/landing.html:87
+#: templates/landing.html:87
 msgid "Terms"
 msgstr ""
 
-#: web/templates/landing.html:88
+#: templates/landing.html:88
 msgid "Privacy"
 msgstr ""
 
-#: web/templates/login.html:2 web/templates/login.html:39
-#: web/templates/login.html:85
+#: templates/login.html:2 templates/login.html:39 templates/login.html:85
 msgid "Create account"
 msgstr ""
 
-#: web/templates/login.html:2 web/templates/login.html:38
-#: web/templates/login.html:89 web/templates/login.html:116
+#: templates/login.html:2 templates/login.html:38 templates/login.html:89
+#: templates/login.html:116
 msgid "Sign in"
 msgstr ""
 
-#: web/templates/login.html:13
+#: templates/login.html:13
 msgid "Index 011 · Sign up"
 msgstr ""
 
-#: web/templates/login.html:13
+#: templates/login.html:13
 msgid "Index 010 · Sign in"
 msgstr ""
 
-#: web/templates/login.html:15
+#: templates/login.html:15
 msgid "Start a new account."
 msgstr ""
 
-#: web/templates/login.html:15
+#: templates/login.html:15
 msgid "Welcome back."
 msgstr ""
 
-#: web/templates/login.html:19
+#: templates/login.html:19
 msgid "Eighty credits to start. No card. No expiry on drafts."
 msgstr ""
 
-#: web/templates/login.html:21
+#: templates/login.html:21
 msgid ""
 "Pick up where you left off. Your library and refinement history are "
 "waiting."
 msgstr ""
 
-#: web/templates/login.html:30
+#: templates/login.html:30
 msgid "Back to index"
 msgstr ""
 
-#: web/templates/login.html:46
+#: templates/login.html:46
 msgid "New account"
 msgstr ""
 
-#: web/templates/login.html:47
+#: templates/login.html:47
 msgid "Three fields. Under ten seconds."
 msgstr ""
 
-#: web/templates/login.html:54 web/templates/login.html:97
+#: templates/login.html:54 templates/login.html:97
 msgid "Username"
 msgstr ""
 
-#: web/templates/login.html:56
+#: templates/login.html:56
 msgid "Letters, numbers, underscore. 3 to 32 characters."
 msgstr ""
 
-#: web/templates/account/profile.html:77 web/templates/login.html:60
+#: templates/account/profile.html:77 templates/login.html:60
 msgid "Email"
 msgstr ""
 
-#: web/templates/login.html:60 web/templates/prompts/generator/advance.html:94
+#: templates/login.html:60 templates/prompts/generator/advance.html:94
 msgid "optional"
 msgstr ""
 
-#: web/templates/login.html:62
+#: templates/login.html:62
 msgid "Used only for security alerts. Never shared."
 msgstr ""
 
-#: web/templates/login.html:66 web/templates/login.html:102
+#: templates/login.html:66 templates/login.html:102
 msgid "Password"
 msgstr ""
 
-#: web/templates/login.html:68
+#: templates/login.html:68
 msgid "Six or more characters."
 msgstr ""
 
-#: web/templates/login.html:72
+#: templates/login.html:72
 msgid "Confirm password"
 msgstr ""
 
-#: web/templates/login.html:79
+#: templates/login.html:79
 msgid "I agree to the"
 msgstr ""
 
-#: web/templates/login.html:79
+#: templates/login.html:79
 msgid "terms of service"
 msgstr ""
 
-#: web/templates/login.html:79
+#: templates/login.html:79
 msgid "and"
 msgstr ""
 
-#: web/templates/login.html:79
+#: templates/login.html:79
 msgid "privacy policy"
 msgstr ""
 
-#: web/templates/login.html:90
+#: templates/login.html:90
 msgid "Use your username and password."
 msgstr ""
 
-#: web/templates/login.html:109
+#: templates/login.html:109
 msgid "Remember me"
 msgstr ""
 
-#: web/templates/login.html:111
+#: templates/login.html:111
 msgid "Forgot password?"
 msgstr ""
 
-#: web/templates/privacy.html:2
+#: templates/privacy.html:2
 msgid "Privacy Policy"
 msgstr ""
 
-#: web/templates/privacy.html:13 web/templates/terms.html:13
+#: templates/privacy.html:13 templates/terms.html:13
 msgid "Back home"
 msgstr ""
 
-#: web/templates/privacy.html:19
+#: templates/privacy.html:19
 msgid "Legal · 10"
 msgstr ""
 
-#: web/templates/privacy.html:20
+#: templates/privacy.html:20
 msgid "Privacy policy."
 msgstr ""
 
-#: web/templates/privacy.html:21
+#: templates/privacy.html:21
 msgid ""
 "What we collect, why, how long we keep it, and how to get it back. The "
 "short version: we keep what we need to run the service, nothing more, and"
 " you can delete your account at any time."
 msgstr ""
 
-#: web/templates/privacy.html:23 web/templates/terms.html:23
+#: templates/privacy.html:23 templates/terms.html:23
 #, python-format
 msgid "Last updated %(date)s"
 msgstr ""
 
-#: web/templates/privacy.html:24 web/templates/terms.html:24
+#: templates/privacy.html:24 templates/terms.html:24
 #, python-format
 msgid "%(minutes)s min read"
 msgstr ""
 
-#: web/templates/privacy.html:25
+#: templates/privacy.html:25
 msgid "GDPR-aligned"
 msgstr ""
 
-#: web/templates/terms.html:2
+#: templates/terms.html:2
 msgid "Terms of Service"
 msgstr ""
 
-#: web/templates/terms.html:19
+#: templates/terms.html:19
 msgid "Legal · 09"
 msgstr ""
 
-#: web/templates/terms.html:20
+#: templates/terms.html:20
 msgid "Terms of service."
 msgstr ""
 
-#: web/templates/terms.html:21
+#: templates/terms.html:21
 msgid ""
 "The rules that govern your use of Prompt Sanctuary. Plain language, no "
 "surprises. By creating an account or using the service, you agree to "
 "these terms."
 msgstr ""
 
-#: web/templates/terms.html:25
+#: templates/terms.html:25
 msgid "Effective immediately"
 msgstr ""
 
-#: web/templates/account/profile.html:9
+#: templates/account/profile.html:9
 msgid "Index 07 · Account"
 msgstr ""
 
-#: web/templates/account/profile.html:10
+#: templates/account/profile.html:10
 msgid "Profile & settings."
 msgstr ""
 
-#: web/templates/account/profile.html:11
+#: templates/account/profile.html:11
 msgid "Manage your account, sessions, API key, achievements, and points."
 msgstr ""
 
-#: web/templates/account/profile.html:21
+#: templates/account/profile.html:21
 msgid "Member"
 msgstr ""
 
-#: web/templates/account/profile.html:25 web/templates/account/profile.html:288
+#: templates/account/profile.html:25 templates/account/profile.html:288
 msgid "pts"
 msgstr ""
 
-#: web/templates/account/profile.html:27
+#: templates/account/profile.html:27
 msgid "Click to view history"
 msgstr ""
 
-#: web/templates/account/profile.html:32
+#: templates/account/profile.html:32
 msgid "Total prompts"
 msgstr ""
 
-#: web/templates/account/profile.html:36 web/templates/account/profile.html:271
+#: templates/account/profile.html:36 templates/account/profile.html:271
 msgid "Achievements"
 msgstr ""
 
-#: web/templates/account/profile.html:40 web/templates/account/profile.html:158
+#: templates/account/profile.html:40 templates/account/profile.html:158
 msgid "Active sessions"
 msgstr ""
 
-#: web/templates/account/profile.html:51
+#: templates/account/profile.html:51
 msgid "Account information"
 msgstr ""
 
-#: web/templates/account/profile.html:56
+#: templates/account/profile.html:56
 msgid "Current username"
 msgstr ""
 
-#: web/templates/account/profile.html:64 web/templates/account/profile.html:65
+#: templates/account/profile.html:64 templates/account/profile.html:65
 msgid "New username"
 msgstr ""
 
-#: web/templates/account/profile.html:66
+#: templates/account/profile.html:66
 msgid "Only letters, numbers and underscores. 3–32 chars."
 msgstr ""
 
-#: web/templates/account/profile.html:68
+#: templates/account/profile.html:68
 msgid "Change username"
 msgstr ""
 
-#: web/templates/account/profile.html:80
+#: templates/account/profile.html:80
 msgid "Update email"
 msgstr ""
 
-#: web/templates/account/profile.html:86
+#: templates/account/profile.html:86
 msgid "Danger zone"
 msgstr ""
 
-#: web/templates/account/profile.html:87
+#: templates/account/profile.html:87
 msgid "Are you sure? This cannot be undone."
 msgstr ""
 
-#: web/templates/account/profile.html:90
+#: templates/account/profile.html:90
 msgid "Delete account"
 msgstr ""
 
-#: web/templates/account/profile.html:100
+#: templates/account/profile.html:100
 msgid "Security"
 msgstr ""
 
-#: web/templates/account/profile.html:108
-#: web/templates/account/profile.html:109
+#: templates/account/profile.html:108 templates/account/profile.html:109
 msgid "Current password"
 msgstr ""
 
-#: web/templates/account/profile.html:112
-#: web/templates/account/profile.html:113
+#: templates/account/profile.html:112 templates/account/profile.html:113
 msgid "New password"
 msgstr ""
 
-#: web/templates/account/profile.html:116
-#: web/templates/account/profile.html:117
+#: templates/account/profile.html:116 templates/account/profile.html:117
 msgid "Confirm new password"
 msgstr ""
 
-#: web/templates/account/profile.html:119
+#: templates/account/profile.html:119
 msgid "Update password"
 msgstr ""
 
-#: web/templates/account/profile.html:125
+#: templates/account/profile.html:125
 msgid "Gemini API key"
 msgstr ""
 
-#: web/templates/account/profile.html:126
+#: templates/account/profile.html:126
 msgid "Use your own API key to avoid point consumption and earn 100 points."
 msgstr ""
 
-#: web/templates/account/profile.html:130
+#: templates/account/profile.html:130
 msgid "Loading API key status…"
 msgstr ""
 
-#: web/templates/account/profile.html:137
+#: templates/account/profile.html:137
 msgid "Your API key"
 msgstr ""
 
-#: web/templates/account/profile.html:138
+#: templates/account/profile.html:138
 msgid "Enter your Gemini API key"
 msgstr ""
 
-#: web/templates/account/profile.html:141
+#: templates/account/profile.html:141
 msgid "Validate & Save"
 msgstr ""
 
-#: web/templates/account/profile.html:142
+#: templates/account/profile.html:142
 msgid "Remove"
 msgstr ""
 
-#: web/templates/account/profile.html:146
+#: templates/account/profile.html:146
 msgid "Get your API key from"
 msgstr ""
 
-#: web/templates/account/profile.html:146
+#: templates/account/profile.html:146
 msgid "Google AI Studio"
 msgstr ""
 
-#: web/templates/account/profile.html:168
+#: templates/account/profile.html:168
 msgid "Unknown device"
 msgstr ""
 
-#: web/templates/account/profile.html:169
+#: templates/account/profile.html:169
 msgid "N/A"
 msgstr ""
 
-#: web/templates/account/profile.html:174
+#: templates/account/profile.html:174
 msgid "Current"
 msgstr ""
 
-#: web/templates/account/profile.html:176
+#: templates/account/profile.html:176
 msgid "Revoke this session?"
 msgstr ""
 
-#: web/templates/account/profile.html:179
+#: templates/account/profile.html:179
 msgid "Revoke"
 msgstr ""
 
-#: web/templates/account/profile.html:183
+#: templates/account/profile.html:183
 msgid "Revoked"
 msgstr ""
 
-#: web/templates/account/profile.html:191
+#: templates/account/profile.html:191
 msgid "No active sessions."
 msgstr ""
 
-#: web/templates/account/profile.html:199
+#: templates/account/profile.html:199
 msgid "Saved prompts"
 msgstr ""
 
-#: web/templates/account/profile.html:216
+#: templates/account/profile.html:216
 msgid "Update shared"
 msgstr ""
 
-#: web/templates/account/profile.html:216
+#: templates/account/profile.html:216
 msgid "Update"
 msgstr ""
 
-#: web/templates/account/profile.html:218
-#: web/templates/account/profile.html:252
-#: web/templates/prompts/lib/community.html:75
-#: web/templates/prompts/lib/community.html:76
-#: web/templates/prompts/lib/personal.html:57
-#: web/templates/prompts/lib/personal.html:58
+#: templates/account/profile.html:218 templates/account/profile.html:252
+#: templates/prompts/lib/community.html:75
+#: templates/prompts/lib/community.html:76
+#: templates/prompts/lib/personal.html:57
+#: templates/prompts/lib/personal.html:58
 msgid "Unshare"
 msgstr ""
 
-#: web/templates/account/profile.html:221
-#: web/templates/prompts/lib/personal.html:61
-#: web/templates/prompts/lib/personal.html:62
+#: templates/account/profile.html:221 templates/prompts/lib/personal.html:61
+#: templates/prompts/lib/personal.html:62
 msgid "Share"
 msgstr ""
 
-#: web/templates/account/profile.html:223
-#: web/templates/prompts/lib/personal.html:71
+#: templates/account/profile.html:223 templates/prompts/lib/personal.html:71
 msgid "Delete"
 msgstr ""
 
-#: web/templates/account/profile.html:231
-#: web/templates/prompts/generator/refinement.html:85
-#: web/templates/prompts/lib/personal.html:81
+#: templates/account/profile.html:231
+#: templates/prompts/generator/refinement.html:85
+#: templates/prompts/lib/personal.html:81
 msgid "No saved prompts yet"
 msgstr ""
 
-#: web/templates/account/profile.html:232
+#: templates/account/profile.html:232
 msgid "Start creating prompts to see them here."
 msgstr ""
 
-#: web/templates/account/profile.html:241
+#: templates/account/profile.html:241
 msgid "Shared prompts"
 msgstr ""
 
-#: web/templates/account/profile.html:260
+#: templates/account/profile.html:260
 msgid "No shared prompts yet"
 msgstr ""
 
-#: web/templates/account/profile.html:261
+#: templates/account/profile.html:261
 msgid "Share your prompts to help the community."
 msgstr ""
 
-#: web/templates/account/profile.html:271
+#: templates/account/profile.html:271
 #, python-format
 msgid "%(count)s unlocked"
 msgstr ""
 
-#: web/templates/account/profile.html:290
+#: templates/account/profile.html:290
 #, python-format
 msgid "Unlocked %(when)s"
 msgstr ""
 
-#: web/templates/account/profile.html:299
+#: templates/account/profile.html:299
 msgid "No achievements yet"
 msgstr ""
 
-#: web/templates/account/profile.html:300
+#: templates/account/profile.html:300
 msgid "Start generating and sharing prompts to earn your first achievement."
 msgstr ""
 
-#: web/templates/account/profile.html:310
+#: templates/account/profile.html:310
 msgid "Point history"
 msgstr ""
 
-#: web/templates/account/profile.html:312
-#: web/templates/account/profile.html:333
-#: web/templates/prompts/generator/advance.html:356
-#: web/templates/prompts/generator/basic.html:164
-#: web/templates/prompts/generator/refinement.html:195
+#: templates/account/profile.html:312 templates/account/profile.html:333
+#: templates/prompts/generator/advance.html:356
+#: templates/prompts/generator/basic.html:164
+#: templates/prompts/generator/refinement.html:195
 msgid "Close"
 msgstr ""
 
-#: web/templates/account/profile.html:320
+#: templates/account/profile.html:320
 msgid "Loading point history…"
 msgstr ""
 
-#: web/templates/account/profile.html:325
+#: templates/account/profile.html:325
 msgid "No point history available yet."
 msgstr ""
 
-#: web/templates/account/profile.html:331
+#: templates/account/profile.html:331
 msgid "Points expire based on their source. Original points never expire."
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:5
+#: templates/prompts/generator/advance.html:5
 msgid "Advanced generator"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:9
+#: templates/prompts/generator/advance.html:9
 msgid "Step 03 · Pro mode"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:10
+#: templates/prompts/generator/advance.html:10
 msgid "Generate from a system prompt."
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:11
+#: templates/prompts/generator/advance.html:11
 msgid ""
 "Configure use case, structure, safety, and style. Optional knowledge base"
 " for domain-specific prompts."
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:13
+#: templates/prompts/generator/advance.html:13
 msgid "1.0 credit per generation"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:14
+#: templates/prompts/generator/advance.html:14
 msgid "Image variants included"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:22
-#: web/templates/prompts/generator/advance.html:29
-#: web/templates/prompts/generator/advance.html:36
-#: web/templates/prompts/generator/basic.html:18
-#: web/templates/prompts/generator/basic.html:25
-#: web/templates/prompts/generator/basic.html:32
-#: web/templates/prompts/generator/refinement.html:22
-#: web/templates/prompts/generator/refinement.html:29
-#: web/templates/prompts/generator/refinement.html:36
+#: templates/prompts/generator/advance.html:22
+#: templates/prompts/generator/advance.html:29
+#: templates/prompts/generator/advance.html:36
+#: templates/prompts/generator/basic.html:18
+#: templates/prompts/generator/basic.html:25
+#: templates/prompts/generator/basic.html:32
+#: templates/prompts/generator/refinement.html:22
+#: templates/prompts/generator/refinement.html:29
+#: templates/prompts/generator/refinement.html:36
 msgid "Step"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:46
-#: web/templates/prompts/generator/basic.html:42
-#: web/templates/prompts/generator/basic.html:108
+#: templates/prompts/generator/advance.html:46
+#: templates/prompts/generator/basic.html:42
+#: templates/prompts/generator/basic.html:108
 msgid "Text"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:49
-#: web/templates/prompts/generator/advance.html:100
+#: templates/prompts/generator/advance.html:49
+#: templates/prompts/generator/advance.html:100
 msgid "Generate text prompt"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:51
+#: templates/prompts/generator/advance.html:51
 msgid "Configure use case, structure, and safety in detail."
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:53
-#: web/templates/prompts/generator/advance.html:115
-#: web/templates/prompts/generator/basic.html:49
-#: web/templates/prompts/generator/basic.html:90
+#: templates/prompts/generator/advance.html:53
+#: templates/prompts/generator/advance.html:115
+#: templates/prompts/generator/basic.html:49
+#: templates/prompts/generator/basic.html:90
 msgid "Toggle help"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:61
-#: web/templates/prompts/generator/basic.html:57
+#: templates/prompts/generator/advance.html:61
+#: templates/prompts/generator/basic.html:57
 msgid "How this works"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:62
+#: templates/prompts/generator/advance.html:62
 msgid ""
 "Enter your use case, select the prompt type, and configure other "
 "parameters to create a custom prompt."
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:68
+#: templates/prompts/generator/advance.html:68
 msgid "Use case"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:69
+#: templates/prompts/generator/advance.html:69
 msgid "Write a README file"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:73
+#: templates/prompts/generator/advance.html:73
 msgid "Prompt type"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:75
+#: templates/prompts/generator/advance.html:75
 msgid "Simple"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:76
+#: templates/prompts/generator/advance.html:76
 msgid "Standard"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:77
+#: templates/prompts/generator/advance.html:77
 msgid "Detailed"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:78
+#: templates/prompts/generator/advance.html:78
 msgid "Step by step"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:83
+#: templates/prompts/generator/advance.html:83
 msgid "Harm content filter"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:85
+#: templates/prompts/generator/advance.html:85
 msgid "Unspecified"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:86
+#: templates/prompts/generator/advance.html:86
 msgid "Block none"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:87
+#: templates/prompts/generator/advance.html:87
 msgid "Block few"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:88
+#: templates/prompts/generator/advance.html:88
 msgid "Block some"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:89
+#: templates/prompts/generator/advance.html:89
 msgid "Block most"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:94
+#: templates/prompts/generator/advance.html:94
 msgid "Knowledge base"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:95
+#: templates/prompts/generator/advance.html:95
 msgid "Enter the knowledge base if any"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:96
+#: templates/prompts/generator/advance.html:96
 msgid "Up to 1,000 characters of context for the model."
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:108
-#: web/templates/prompts/generator/basic.html:83
+#: templates/prompts/generator/advance.html:108
+#: templates/prompts/generator/basic.html:83
 msgid "Image"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:111
+#: templates/prompts/generator/advance.html:111
 msgid "Generate image prompt"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:113
+#: templates/prompts/generator/advance.html:113
 msgid "Pick a mode, mood, and style."
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:123
-#: web/templates/prompts/generator/advance.html:140
+#: templates/prompts/generator/advance.html:123
+#: templates/prompts/generator/advance.html:140
 msgid "Generate from text"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:124
+#: templates/prompts/generator/advance.html:124
 msgid ""
 "Enter your input, select the mood, and choose the primary and secondary "
 "styles."
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:130
-#: web/templates/prompts/generator/advance.html:148
+#: templates/prompts/generator/advance.html:130
+#: templates/prompts/generator/advance.html:148
 msgid "Reverse from image"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:131
+#: templates/prompts/generator/advance.html:131
 msgid ""
 "Upload an image and we will generate a prompt based on it, with optional "
 "mood and style."
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:135
+#: templates/prompts/generator/advance.html:135
 msgid "Image prompt mode"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:141
+#: templates/prompts/generator/advance.html:141
 msgid "Type a description"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:149
+#: templates/prompts/generator/advance.html:149
 msgid "Upload and decode"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:156
+#: templates/prompts/generator/advance.html:156
 msgid "Input"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:157
+#: templates/prompts/generator/advance.html:157
 msgid "Cat on the sky"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:161
-#: web/templates/prompts/generator/advance.html:257
+#: templates/prompts/generator/advance.html:161
+#: templates/prompts/generator/advance.html:257
 msgid "Primary mood"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:163
-#: web/templates/prompts/generator/advance.html:260
+#: templates/prompts/generator/advance.html:163
+#: templates/prompts/generator/advance.html:260
 msgid "Positive"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:164
-#: web/templates/prompts/generator/advance.html:261
+#: templates/prompts/generator/advance.html:164
+#: templates/prompts/generator/advance.html:261
 msgid "Happy"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:165
-#: web/templates/prompts/generator/advance.html:262
+#: templates/prompts/generator/advance.html:165
+#: templates/prompts/generator/advance.html:262
 msgid "Joyful"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:166
-#: web/templates/prompts/generator/advance.html:263
+#: templates/prompts/generator/advance.html:166
+#: templates/prompts/generator/advance.html:263
 msgid "Excited"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:167
-#: web/templates/prompts/generator/advance.html:264
+#: templates/prompts/generator/advance.html:167
+#: templates/prompts/generator/advance.html:264
 msgid "Cheerful"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:168
-#: web/templates/prompts/generator/advance.html:265
+#: templates/prompts/generator/advance.html:168
+#: templates/prompts/generator/advance.html:265
 msgid "Content"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:170
-#: web/templates/prompts/generator/advance.html:267
+#: templates/prompts/generator/advance.html:170
+#: templates/prompts/generator/advance.html:267
 msgid "Negative"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:171
-#: web/templates/prompts/generator/advance.html:268
+#: templates/prompts/generator/advance.html:171
+#: templates/prompts/generator/advance.html:268
 msgid "Angry"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:172
-#: web/templates/prompts/generator/advance.html:269
+#: templates/prompts/generator/advance.html:172
+#: templates/prompts/generator/advance.html:269
 msgid "Disgust"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:173
-#: web/templates/prompts/generator/advance.html:270
+#: templates/prompts/generator/advance.html:173
+#: templates/prompts/generator/advance.html:270
 msgid "Fear"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:174
-#: web/templates/prompts/generator/advance.html:271
+#: templates/prompts/generator/advance.html:174
+#: templates/prompts/generator/advance.html:271
 msgid "Sad"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:175
-#: web/templates/prompts/generator/advance.html:272
+#: templates/prompts/generator/advance.html:175
+#: templates/prompts/generator/advance.html:272
 msgid "Depressed"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:177
-#: web/templates/prompts/generator/advance.html:178
-#: web/templates/prompts/generator/advance.html:274
-#: web/templates/prompts/generator/advance.html:275
+#: templates/prompts/generator/advance.html:177
+#: templates/prompts/generator/advance.html:178
+#: templates/prompts/generator/advance.html:274
+#: templates/prompts/generator/advance.html:275
 msgid "Neutral"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:179
-#: web/templates/prompts/generator/advance.html:276
+#: templates/prompts/generator/advance.html:179
+#: templates/prompts/generator/advance.html:276
 msgid "Calm"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:180
-#: web/templates/prompts/generator/advance.html:277
+#: templates/prompts/generator/advance.html:180
+#: templates/prompts/generator/advance.html:277
 msgid "Relaxed"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:181
-#: web/templates/prompts/generator/advance.html:278
+#: templates/prompts/generator/advance.html:181
+#: templates/prompts/generator/advance.html:278
 msgid "Serene"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:182
-#: web/templates/prompts/generator/advance.html:279
+#: templates/prompts/generator/advance.html:182
+#: templates/prompts/generator/advance.html:279
 msgid "Tranquil"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:184
-#: web/templates/prompts/generator/advance.html:281
+#: templates/prompts/generator/advance.html:184
+#: templates/prompts/generator/advance.html:281
 msgid "Other"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:185
-#: web/templates/prompts/generator/advance.html:282
+#: templates/prompts/generator/advance.html:185
+#: templates/prompts/generator/advance.html:282
 msgid "Surprised"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:186
-#: web/templates/prompts/generator/advance.html:283
+#: templates/prompts/generator/advance.html:186
+#: templates/prompts/generator/advance.html:283
 msgid "Curious"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:187
-#: web/templates/prompts/generator/advance.html:284
+#: templates/prompts/generator/advance.html:187
+#: templates/prompts/generator/advance.html:284
 msgid "Mysterious"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:188
-#: web/templates/prompts/generator/advance.html:285
+#: templates/prompts/generator/advance.html:188
+#: templates/prompts/generator/advance.html:285
 msgid "Surreal"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:189
-#: web/templates/prompts/generator/advance.html:286
+#: templates/prompts/generator/advance.html:189
+#: templates/prompts/generator/advance.html:286
 msgid "Eerie"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:190
-#: web/templates/prompts/generator/advance.html:287
-#: web/templates/prompts/generator/basic.html:73
-#: web/templates/prompts/generator/basic.html:142
+#: templates/prompts/generator/advance.html:190
+#: templates/prompts/generator/advance.html:287
+#: templates/prompts/generator/basic.html:73
+#: templates/prompts/generator/basic.html:142
 msgid "Random"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:196
-#: web/templates/prompts/generator/advance.html:293
+#: templates/prompts/generator/advance.html:196
+#: templates/prompts/generator/advance.html:293
 msgid "Primary style"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:198
-#: web/templates/prompts/generator/advance.html:222
-#: web/templates/prompts/generator/advance.html:296
-#: web/templates/prompts/generator/advance.html:319
+#: templates/prompts/generator/advance.html:198
+#: templates/prompts/generator/advance.html:222
+#: templates/prompts/generator/advance.html:296
+#: templates/prompts/generator/advance.html:319
 msgid "Styles"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:199
-#: web/templates/prompts/generator/advance.html:223
-#: web/templates/prompts/generator/advance.html:297
-#: web/templates/prompts/generator/advance.html:320
+#: templates/prompts/generator/advance.html:199
+#: templates/prompts/generator/advance.html:223
+#: templates/prompts/generator/advance.html:297
+#: templates/prompts/generator/advance.html:320
 msgid "3D Model"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:200
-#: web/templates/prompts/generator/advance.html:224
-#: web/templates/prompts/generator/advance.html:298
-#: web/templates/prompts/generator/advance.html:321
+#: templates/prompts/generator/advance.html:200
+#: templates/prompts/generator/advance.html:224
+#: templates/prompts/generator/advance.html:298
+#: templates/prompts/generator/advance.html:321
 msgid "Abstract"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:201
-#: web/templates/prompts/generator/advance.html:299
-#: web/templates/prompts/generator/advance.html:322
+#: templates/prompts/generator/advance.html:201
+#: templates/prompts/generator/advance.html:299
+#: templates/prompts/generator/advance.html:322
 msgid "Analog Film"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:202
-#: web/templates/prompts/generator/advance.html:225
-#: web/templates/prompts/generator/advance.html:300
-#: web/templates/prompts/generator/advance.html:323
+#: templates/prompts/generator/advance.html:202
+#: templates/prompts/generator/advance.html:225
+#: templates/prompts/generator/advance.html:300
+#: templates/prompts/generator/advance.html:323
 msgid "Anime"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:203
-#: web/templates/prompts/generator/advance.html:226
-#: web/templates/prompts/generator/advance.html:301
-#: web/templates/prompts/generator/advance.html:324
+#: templates/prompts/generator/advance.html:203
+#: templates/prompts/generator/advance.html:226
+#: templates/prompts/generator/advance.html:301
+#: templates/prompts/generator/advance.html:324
 msgid "Cartoon"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:204
-#: web/templates/prompts/generator/advance.html:227
-#: web/templates/prompts/generator/advance.html:302
+#: templates/prompts/generator/advance.html:204
+#: templates/prompts/generator/advance.html:227
+#: templates/prompts/generator/advance.html:302
 msgid "Digital Art"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:205
-#: web/templates/prompts/generator/advance.html:303
+#: templates/prompts/generator/advance.html:205
+#: templates/prompts/generator/advance.html:303
 msgid "Fantasy Art"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:207
-#: web/templates/prompts/generator/advance.html:231
-#: web/templates/prompts/generator/advance.html:305
-#: web/templates/prompts/generator/advance.html:326
+#: templates/prompts/generator/advance.html:207
+#: templates/prompts/generator/advance.html:231
+#: templates/prompts/generator/advance.html:305
+#: templates/prompts/generator/advance.html:326
 msgid "Techniques"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:208
-#: web/templates/prompts/generator/advance.html:232
-#: web/templates/prompts/generator/advance.html:306
-#: web/templates/prompts/generator/advance.html:327
+#: templates/prompts/generator/advance.html:208
+#: templates/prompts/generator/advance.html:232
+#: templates/prompts/generator/advance.html:306
+#: templates/prompts/generator/advance.html:327
 msgid "Photographic"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:209
-#: web/templates/prompts/generator/advance.html:233
-#: web/templates/prompts/generator/advance.html:307
-#: web/templates/prompts/generator/advance.html:328
+#: templates/prompts/generator/advance.html:209
+#: templates/prompts/generator/advance.html:233
+#: templates/prompts/generator/advance.html:307
+#: templates/prompts/generator/advance.html:328
 msgid "Pixel Art"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:210
-#: web/templates/prompts/generator/advance.html:234
-#: web/templates/prompts/generator/advance.html:308
-#: web/templates/prompts/generator/advance.html:329
+#: templates/prompts/generator/advance.html:210
+#: templates/prompts/generator/advance.html:234
+#: templates/prompts/generator/advance.html:308
+#: templates/prompts/generator/advance.html:329
 msgid "Watercolor"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:211
-#: web/templates/prompts/generator/advance.html:309
+#: templates/prompts/generator/advance.html:211
+#: templates/prompts/generator/advance.html:309
 msgid "Isometric"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:212
-#: web/templates/prompts/generator/advance.html:310
+#: templates/prompts/generator/advance.html:212
+#: templates/prompts/generator/advance.html:310
 msgid "Low Poly"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:213
+#: templates/prompts/generator/advance.html:213
 msgid "Cinematic"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:219
-#: web/templates/prompts/generator/advance.html:316
+#: templates/prompts/generator/advance.html:219
+#: templates/prompts/generator/advance.html:316
 msgid "Secondary style"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:221
+#: templates/prompts/generator/advance.html:221
 msgid "— None —"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:228
+#: templates/prompts/generator/advance.html:228
 msgid "Cyberpunk"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:229
+#: templates/prompts/generator/advance.html:229
 msgid "Steampunk"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:235
+#: templates/prompts/generator/advance.html:235
 msgid "Vaporwave"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:236
+#: templates/prompts/generator/advance.html:236
 msgid "Line Art"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:242
+#: templates/prompts/generator/advance.html:242
 msgid "Generate image from text"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:248
+#: templates/prompts/generator/advance.html:248
 msgid "Upload image"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:251
-#: web/templates/prompts/generator/basic.html:132
+#: templates/prompts/generator/advance.html:251
+#: templates/prompts/generator/basic.html:132
 msgid "Click to choose an image"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:259
-#: web/templates/prompts/generator/advance.html:295
-#: web/templates/prompts/generator/advance.html:318
+#: templates/prompts/generator/advance.html:259
+#: templates/prompts/generator/advance.html:295
+#: templates/prompts/generator/advance.html:318
 msgid "Original"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:335
+#: templates/prompts/generator/advance.html:335
 msgid "Generate prompt from image"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:342
-#: web/templates/prompts/generator/basic.html:150
+#: templates/prompts/generator/advance.html:342
+#: templates/prompts/generator/basic.html:150
 msgid "Image preview"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:346
-#: web/templates/prompts/generator/basic.html:154
-#: web/templates/prompts/generator/refinement.html:210
+#: templates/prompts/generator/advance.html:346
+#: templates/prompts/generator/basic.html:154
+#: templates/prompts/generator/refinement.html:210
 msgid "Loading"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:351
-#: web/templates/prompts/generator/basic.html:159
-#: web/templates/prompts/generator/refinement.html:190
+#: templates/prompts/generator/advance.html:351
+#: templates/prompts/generator/basic.html:159
+#: templates/prompts/generator/refinement.html:190
 msgid "Result"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:354
-#: web/templates/prompts/generator/basic.html:162
+#: templates/prompts/generator/advance.html:354
+#: templates/prompts/generator/basic.html:162
 msgid "Generated prompt"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:364
-#: web/templates/prompts/generator/basic.html:173
-#: web/templates/prompts/generator/refinement.html:203
-#: web/templates/prompts/lib/community.html:40
-#: web/templates/prompts/lib/community.html:41
-#: web/templates/prompts/lib/community.html:68
-#: web/templates/prompts/lib/community.html:69
-#: web/templates/prompts/lib/personal.html:47
-#: web/templates/prompts/lib/personal.html:48
+#: templates/prompts/generator/advance.html:364
+#: templates/prompts/generator/basic.html:173
+#: templates/prompts/generator/refinement.html:203
+#: templates/prompts/lib/community.html:40
+#: templates/prompts/lib/community.html:41
+#: templates/prompts/lib/community.html:68
+#: templates/prompts/lib/community.html:69
+#: templates/prompts/lib/personal.html:47
+#: templates/prompts/lib/personal.html:48
 msgid "Copy"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:365
-#: web/templates/prompts/generator/basic.html:176
+#: templates/prompts/generator/advance.html:365
+#: templates/prompts/generator/basic.html:176
 msgid "Save to library"
 msgstr ""
 
-#: web/templates/prompts/generator/advance.html:366
-#: web/templates/prompts/generator/basic.html:179
+#: templates/prompts/generator/advance.html:366
+#: templates/prompts/generator/basic.html:179
 msgid "Generate again"
 msgstr ""
 
-#: web/templates/prompts/generator/basic.html:9
+#: templates/prompts/generator/basic.html:9
 msgid "Step 02 · Topic mode"
 msgstr ""
 
-#: web/templates/prompts/generator/basic.html:10
+#: templates/prompts/generator/basic.html:10
 msgid "Generate from a topic."
 msgstr ""
 
-#: web/templates/prompts/generator/basic.html:11
+#: templates/prompts/generator/basic.html:11
 msgid ""
 "Describe what you need. The model expands it into a structured prompt "
 "with variables you can fill in later."
 msgstr ""
 
-#: web/templates/prompts/generator/basic.html:45
+#: templates/prompts/generator/basic.html:45
 msgid "Generate a text prompt"
 msgstr ""
 
-#: web/templates/prompts/generator/basic.html:47
+#: templates/prompts/generator/basic.html:47
 msgid "Describe what you need. Click \"Generate\" or \"Random\" for a surprise."
 msgstr ""
 
-#: web/templates/prompts/generator/basic.html:58
+#: templates/prompts/generator/basic.html:58
 msgid ""
 "Type a topic or task, hit Generate. The model crafts a structured prompt "
 "you can save, refine, or share."
 msgstr ""
 
-#: web/templates/prompts/generator/basic.html:64
+#: templates/prompts/generator/basic.html:64
 msgid "Topic or task"
 msgstr ""
 
-#: web/templates/prompts/generator/basic.html:65
+#: templates/prompts/generator/basic.html:65
 msgid "Write a Python script that…"
 msgstr ""
 
-#: web/templates/prompts/generator/basic.html:66
+#: templates/prompts/generator/basic.html:66
 msgid "The more specific, the better the result."
 msgstr ""
 
-#: web/templates/prompts/generator/basic.html:86
+#: templates/prompts/generator/basic.html:86
 msgid "Generate an image prompt"
 msgstr ""
 
-#: web/templates/prompts/generator/basic.html:88
+#: templates/prompts/generator/basic.html:88
 msgid "Text-to-image, or reverse-engineer an image."
 msgstr ""
 
-#: web/templates/prompts/generator/basic.html:98
+#: templates/prompts/generator/basic.html:98
 msgid "Two ways to start"
 msgstr ""
 
-#: web/templates/prompts/generator/basic.html:99
+#: templates/prompts/generator/basic.html:99
 msgid ""
 "Type a description for a text-to-image prompt, or upload an image to "
 "reverse-engineer it."
 msgstr ""
 
-#: web/templates/prompts/generator/basic.html:103
+#: templates/prompts/generator/basic.html:103
 msgid "Input type"
 msgstr ""
 
-#: web/templates/prompts/generator/basic.html:109
+#: templates/prompts/generator/basic.html:109
 msgid "Describe a new image"
 msgstr ""
 
-#: web/templates/prompts/generator/basic.html:116
+#: templates/prompts/generator/basic.html:116
 msgid "File"
 msgstr ""
 
-#: web/templates/prompts/generator/basic.html:117
+#: templates/prompts/generator/basic.html:117
 msgid "Reverse-engineer from an image"
 msgstr ""
 
-#: web/templates/prompts/generator/basic.html:124
+#: templates/prompts/generator/basic.html:124
 msgid "Describe your image"
 msgstr ""
 
-#: web/templates/prompts/generator/basic.html:125
+#: templates/prompts/generator/basic.html:125
 msgid "Whale on the desert"
 msgstr ""
 
-#: web/templates/prompts/generator/refinement.html:9
+#: templates/prompts/generator/refinement.html:9
 msgid "Step 04 · Refine workflow"
 msgstr ""
 
-#: web/templates/prompts/generator/refinement.html:10
+#: templates/prompts/generator/refinement.html:10
 msgid "Refine an existing prompt."
 msgstr ""
 
-#: web/templates/prompts/generator/refinement.html:11
+#: templates/prompts/generator/refinement.html:11
 msgid ""
 "Pick a quick action or write custom instructions. Every refinement is "
 "versioned in your library."
 msgstr ""
 
-#: web/templates/prompts/generator/refinement.html:13
+#: templates/prompts/generator/refinement.html:13
 msgid "0.5 credits per refinement"
 msgstr ""
 
-#: web/templates/prompts/generator/refinement.html:14
+#: templates/prompts/generator/refinement.html:14
 msgid "Versioned"
 msgstr ""
 
-#: web/templates/prompts/generator/refinement.html:47
+#: templates/prompts/generator/refinement.html:47
 msgid "Source"
 msgstr ""
 
-#: web/templates/prompts/generator/refinement.html:48
+#: templates/prompts/generator/refinement.html:48
 msgid "Choose your prompt source"
 msgstr ""
 
-#: web/templates/prompts/generator/refinement.html:54
+#: templates/prompts/generator/refinement.html:54
 msgid "Manual input"
 msgstr ""
 
-#: web/templates/prompts/generator/refinement.html:65
+#: templates/prompts/generator/refinement.html:65
 msgid "Your prompt"
 msgstr ""
 
-#: web/templates/prompts/generator/refinement.html:66
+#: templates/prompts/generator/refinement.html:66
 msgid "Paste or type the prompt you want to refine…"
 msgstr ""
 
-#: web/templates/prompts/generator/refinement.html:86
+#: templates/prompts/generator/refinement.html:86
 msgid "Save some prompts first to refine them."
 msgstr ""
 
-#: web/templates/prompts/generator/refinement.html:98
+#: templates/prompts/generator/refinement.html:98
 #, python-format
 msgid "by %(owner)s"
 msgstr ""
 
-#: web/templates/prompts/generator/refinement.html:107
+#: templates/prompts/generator/refinement.html:107
 msgid "No community prompts"
 msgstr ""
 
-#: web/templates/prompts/generator/refinement.html:108
+#: templates/prompts/generator/refinement.html:108
 msgid "Check back later for shared prompts."
 msgstr ""
 
-#: web/templates/prompts/generator/refinement.html:116
+#: templates/prompts/generator/refinement.html:116
 msgid "Selected"
 msgstr ""
 
-#: web/templates/prompts/generator/refinement.html:120
+#: templates/prompts/generator/refinement.html:120
 msgid "Clear selection"
 msgstr ""
 
-#: web/templates/prompts/generator/refinement.html:129
+#: templates/prompts/generator/refinement.html:129
 msgid "Action"
 msgstr ""
 
-#: web/templates/prompts/generator/refinement.html:130
+#: templates/prompts/generator/refinement.html:130
 msgid "Choose how to refine"
 msgstr ""
 
-#: web/templates/prompts/generator/refinement.html:135
+#: templates/prompts/generator/refinement.html:135
 msgid "Quick actions"
 msgstr ""
 
-#: web/templates/prompts/generator/refinement.html:139
+#: templates/prompts/generator/refinement.html:139
 msgid "Shorten"
 msgstr ""
 
-#: web/templates/prompts/generator/refinement.html:140
+#: templates/prompts/generator/refinement.html:140
 msgid "Make the prompt more concise."
 msgstr ""
 
-#: web/templates/prompts/generator/refinement.html:145
+#: templates/prompts/generator/refinement.html:145
 msgid "Elaborate"
 msgstr ""
 
-#: web/templates/prompts/generator/refinement.html:146
+#: templates/prompts/generator/refinement.html:146
 msgid "Add more details and context."
 msgstr ""
 
-#: web/templates/prompts/generator/refinement.html:151
+#: templates/prompts/generator/refinement.html:151
 msgid "Improve"
 msgstr ""
 
-#: web/templates/prompts/generator/refinement.html:152
+#: templates/prompts/generator/refinement.html:152
 msgid "Enhance clarity and effectiveness."
 msgstr ""
 
-#: web/templates/prompts/generator/refinement.html:157
+#: templates/prompts/generator/refinement.html:157
 msgid "Fix grammar"
 msgstr ""
 
-#: web/templates/prompts/generator/refinement.html:158
+#: templates/prompts/generator/refinement.html:158
 msgid "Correct grammar and spelling."
 msgstr ""
 
-#: web/templates/prompts/generator/refinement.html:164
+#: templates/prompts/generator/refinement.html:164
 msgid "Custom instructions"
 msgstr ""
 
-#: web/templates/prompts/generator/refinement.html:165
+#: templates/prompts/generator/refinement.html:165
 msgid "Tell me how to refine your prompt"
 msgstr ""
 
-#: web/templates/prompts/generator/refinement.html:166
+#: templates/prompts/generator/refinement.html:166
 msgid ""
 "Example: Make it more professional, add technical details, change the "
 "tone to be more friendly, focus on specific aspects…"
 msgstr ""
 
-#: web/templates/prompts/generator/refinement.html:168
+#: templates/prompts/generator/refinement.html:168
 msgid "Tips for better refinements"
 msgstr ""
 
-#: web/templates/prompts/generator/refinement.html:170
+#: templates/prompts/generator/refinement.html:170
 msgid "Be specific about what you want to change."
 msgstr ""
 
-#: web/templates/prompts/generator/refinement.html:171
+#: templates/prompts/generator/refinement.html:171
 msgid "Mention tone, style, or format preferences."
 msgstr ""
 
-#: web/templates/prompts/generator/refinement.html:172
+#: templates/prompts/generator/refinement.html:172
 msgid "Specify target audience or use case."
 msgstr ""
 
-#: web/templates/prompts/generator/refinement.html:180
+#: templates/prompts/generator/refinement.html:180
 msgid "Refine prompt"
 msgstr ""
 
-#: web/templates/prompts/generator/refinement.html:182
+#: templates/prompts/generator/refinement.html:182
 msgid "Costs 0.5 credits"
 msgstr ""
 
-#: web/templates/prompts/generator/refinement.html:193
+#: templates/prompts/generator/refinement.html:193
 msgid "Refined prompt"
 msgstr ""
 
-#: web/templates/prompts/generator/refinement.html:204
+#: templates/prompts/generator/refinement.html:204
 msgid "Save as new"
 msgstr ""
 
-#: web/templates/prompts/generator/refinement.html:205
+#: templates/prompts/generator/refinement.html:205
 msgid "Refine again"
 msgstr ""
 
-#: web/templates/prompts/lib/community.html:9
+#: templates/prompts/lib/community.html:9
 msgid "Index 06 · Community"
 msgstr ""
 
-#: web/templates/prompts/lib/community.html:10
+#: templates/prompts/lib/community.html:10
 msgid "Community prompts."
 msgstr ""
 
-#: web/templates/prompts/lib/community.html:11
+#: templates/prompts/lib/community.html:11
 msgid ""
 "System prompts and shared prompts from the community. Copy, save, or "
 "refine any of them."
 msgstr ""
 
-#: web/templates/prompts/lib/community.html:14
-#: web/templates/prompts/lib/personal.html:14
+#: templates/prompts/lib/community.html:14
+#: templates/prompts/lib/personal.html:14
 msgid "Refine a prompt"
 msgstr ""
 
-#: web/templates/prompts/lib/community.html:23
-#: web/templates/prompts/lib/personal.html:26
+#: templates/prompts/lib/community.html:23
+#: templates/prompts/lib/personal.html:26
 msgid "Search by title or content…"
 msgstr ""
 
-#: web/templates/prompts/lib/community.html:25
-#: web/templates/prompts/lib/personal.html:28
+#: templates/prompts/lib/community.html:25
+#: templates/prompts/lib/personal.html:28
 msgid "Clear search"
 msgstr ""
 
-#: web/templates/prompts/lib/community.html:26
-#: web/templates/prompts/lib/personal.html:29
+#: templates/prompts/lib/community.html:26
+#: templates/prompts/lib/personal.html:29
 msgid "Clear"
 msgstr ""
 
-#: web/templates/prompts/lib/community.html:34
+#: templates/prompts/lib/community.html:34
 msgid "System"
 msgstr ""
 
-#: web/templates/prompts/lib/community.html:35
+#: templates/prompts/lib/community.html:35
 msgid "Default"
 msgstr ""
 
-#: web/templates/prompts/lib/community.html:49
-#: web/templates/prompts/lib/community.html:50
-#: web/templates/prompts/lib/community.html:82
-#: web/templates/prompts/lib/community.html:83
-#: web/templates/prompts/lib/personal.html:68
-#: web/templates/prompts/lib/personal.html:69
+#: templates/prompts/lib/community.html:49
+#: templates/prompts/lib/community.html:50
+#: templates/prompts/lib/community.html:82
+#: templates/prompts/lib/community.html:83
+#: templates/prompts/lib/personal.html:68
+#: templates/prompts/lib/personal.html:69
 msgid "Preview"
 msgstr ""
 
-#: web/templates/prompts/lib/community.html:61
+#: templates/prompts/lib/community.html:61
 msgid "Yours"
 msgstr ""
 
-#: web/templates/prompts/lib/personal.html:9
+#: templates/prompts/lib/personal.html:9
 msgid "Index 05 · Personal"
 msgstr ""
 
-#: web/templates/prompts/lib/personal.html:10
+#: templates/prompts/lib/personal.html:10
 msgid "Your prompt library."
 msgstr ""
 
-#: web/templates/prompts/lib/personal.html:11
+#: templates/prompts/lib/personal.html:11
 msgid ""
 "Edit, share, or refine any prompt. Search by title or content. All your "
 "drafts live here."
 msgstr ""
 
-#: web/templates/prompts/lib/personal.html:17
+#: templates/prompts/lib/personal.html:17
 msgid "New prompt"
 msgstr ""
 
-#: web/templates/prompts/lib/personal.html:38
+#: templates/prompts/lib/personal.html:38
 msgid "Personal"
 msgstr ""
 
-#: web/templates/prompts/lib/personal.html:50
-#: web/templates/prompts/lib/personal.html:51
+#: templates/prompts/lib/personal.html:50
+#: templates/prompts/lib/personal.html:51
 msgid "Edit"
 msgstr ""
 
-#: web/templates/prompts/lib/personal.html:65
-#: web/templates/prompts/lib/personal.html:66
+#: templates/prompts/lib/personal.html:65
+#: templates/prompts/lib/personal.html:66
 msgid "History"
 msgstr ""
 
-#: web/templates/prompts/lib/personal.html:82
+#: templates/prompts/lib/personal.html:82
 msgid "Generate a prompt and save it to build your library."
 msgstr ""
 
-#: web/templates/prompts/lib/personal.html:84
+#: templates/prompts/lib/personal.html:84
 msgid "Open generator"
 msgstr ""
 

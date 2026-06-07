@@ -8,10 +8,10 @@ function attachCopyButtonListeners() {
             const text = button.getAttribute('data-clipboard-text') || '';
             if (navigator.clipboard && navigator.clipboard.writeText) {
                 navigator.clipboard.writeText(text)
-                    .then(() => showToast("Prompt copied to clipboard!", "success"))
-                    .catch(() => showToast("Failed to copy prompt.", "error"));
+                    .then(() => showToast(_("Prompt copied to clipboard!"), "success"))
+                    .catch(() => showToast(_("Failed to copy prompt."), "error"));
             } else {
-                showToast("Clipboard not available in this browser.", "error");
+                showToast(_("Clipboard not available in this browser."), "error");
             }
         });
         button.classList.add('listener-attached');
@@ -80,7 +80,7 @@ function attachHistoryButtonListeners() {
             const promptId = this.getAttribute('data-random-val');
             const title = this.getAttribute('data-title') || 'Prompt';
             if (!promptId) {
-                showToast('Missing prompt id.', 'error');
+                showToast(_('Missing prompt id.'), 'error');
                 return;
             }
             fetch(`/versions/${encodeURIComponent(promptId)}`)
@@ -89,7 +89,7 @@ function attachHistoryButtonListeners() {
                     if (!data.success) throw new Error(data.error || 'Failed to load versions');
                     const versions = data.versions || [];
                     if (versions.length === 0) {
-                        showToast('No versions found for this prompt.', 'info');
+                        showToast(_('No versions found for this prompt.'), 'info');
                         return;
                     }
                     // Sort newest first so the most recent version is at the top.
@@ -102,8 +102,8 @@ function attachHistoryButtonListeners() {
                                     <span class="t-body-sm t-muted">${escapeHtml(String(v.created_at))}</span>
                                 </div>
                                 <div class="cluster" style="gap: var(--p-sp-2);">
-                                    <button type="button" class="btn btn--tertiary btn--sm version-preview-btn" data-v="${v.version_number}"><i class="fa-solid fa-eye"></i> Preview</button>
-                                    <button type="button" class="btn btn--primary btn--sm rollback-btn" data-v="${v.version_number}"><i class="fa-solid fa-rotate-left"></i> Restore</button>
+                                    <button type="button" class="btn btn--tertiary btn--sm version-preview-btn" data-v="${v.version_number}"><i class="fa-solid fa-eye"></i> ${_("Preview")}</button>
+                                    <button type="button" class="btn btn--primary btn--sm rollback-btn" data-v="${v.version_number}"><i class="fa-solid fa-rotate-left"></i> ${_("Restore")}</button>
                                 </div>
                             </div>
                             <div class="t-body-sm t-strong" style="word-break: break-word;">${escapeHtml(v.title)}</div>
@@ -115,15 +115,20 @@ function attachHistoryButtonListeners() {
                     // the visible view and rewrites the footer (Preview row
                     // becomes Back to list). The list and preview state are
                     // driven by a `mode` variable.
+                    const versionCount = sorted.length;
+                    const versionText = versionCount === 1
+                        ? _("1 version")
+                        : _("%(n)s versions", { n: versionCount });
+                    const currentText = _("current is v%(v)s", { v: sorted[0].version_number });
                     const content = `
                         <div id="historyListView">
-                            <div class="t-body-sm t-muted" style="margin-bottom: var(--p-sp-4);">${sorted.length} version${sorted.length === 1 ? '' : 's'} · current is <strong class="t-mono">v${sorted[0].version_number}</strong></div>
+                            <div class="t-body-sm t-muted" style="margin-bottom: var(--p-sp-4);">${versionText} · ${currentText}</div>
                             ${listHtml}
                         </div>
                         <div id="historyPreviewView" hidden>
                             <div class="preview-header" style="margin-bottom: var(--p-sp-3);">
                                 <div class="preview-header__eyebrow">
-                                    <span>Version</span>
+                                    <span>${_("Version")}</span>
                                     <span id="historyPreviewLabel"></span>
                                 </div>
                                 <h2 class="preview-header__title" id="historyPreviewTitle"></h2>
@@ -134,12 +139,12 @@ function attachHistoryButtonListeners() {
 
                     const buttons = [
                         {
-                            text: "Preview",
+                            text: _("Preview"),
                             class: "btn--tertiary",
                             action: function () { return false; }
                         },
                         {
-                            text: "Back to list",
+                            text: _("Back to list"),
                             class: "btn--tertiary",
                             action: function () {
                                 const popup = document.getElementById('app-global-popup');
@@ -153,13 +158,13 @@ function attachHistoryButtonListeners() {
                             }
                         },
                         {
-                            text: "Close",
+                            text: _("Close"),
                             class: "btn--secondary",
                             action: function () { return true; }
                         }
                     ];
 
-                    showAppPopup('Version History', content, {
+                    showAppPopup(_('Version History'), content, {
                         type: 'custom',
                         buttons: buttons,
                         size: 'xl'
@@ -174,9 +179,9 @@ function attachHistoryButtonListeners() {
                             if (footer) {
                                 Array.from(footer.querySelectorAll('button')).forEach(btn => {
                                     const txt = (btn.textContent || '').trim();
-                                    if (txt.startsWith('Preview') && !txt.includes('Back')) btn.dataset.historyLabel = 'Preview';
-                                    else if (txt.includes('Back to list')) btn.dataset.historyLabel = 'Back to list';
-                                    else if (txt.includes('Close')) btn.dataset.historyLabel = 'Close';
+                                    if (txt.startsWith(_('Preview')) && !txt.includes(_('Back to list'))) btn.dataset.historyLabel = 'Preview';
+                                    else if (txt.includes(_('Back to list'))) btn.dataset.historyLabel = 'Back to list';
+                                    else if (txt.includes(_('Close'))) btn.dataset.historyLabel = 'Close';
                                 });
                                 // Hide the no-op top "Preview" button. The
                                 // per-version rows are the actual entry points.
@@ -213,18 +218,18 @@ function attachHistoryButtonListeners() {
                                 fetch('/versions/rollback', { method: 'POST', body: fd })
                                     .then(res => res.json())
                                     .then(resp => {
-                                        if (!resp.success) throw new Error(resp.error || 'Rollback failed');
-                                        showToast('Restored v' + v + '.', 'success');
+                                        if (!resp.success) throw new Error(resp.error || _('Rollback failed'));
+                                        showToast(_('Restored v%(v)s.', { v: v }), 'success');
                                         setTimeout(() => window.location.reload(), 800);
                                     })
-                                    .catch(err => showToast(err.message || 'Rollback failed', 'error'));
+                                    .catch(err => showToast(err.message || _('Rollback failed'), 'error'));
                             });
                         });
                     }, 0);
                 })
                 .catch(err => {
                     console.error(err);
-                    showToast('Failed to load history.', 'error');
+                    showToast(_('Failed to load history.'), 'error');
                 });
         });
         button.classList.add('listener-attached');
@@ -260,16 +265,16 @@ function openEditModal(randomVal, title, prompt, tags) {
             <input type="hidden" id="editRandomValModal" value="${escapeHTML(randomVal)}">
             <div class="cluster" style="gap: var(--p-sp-2); align-items: center; color: var(--p-color-text-subdued); font-size: var(--p-fs-eyebrow); text-transform: uppercase; letter-spacing: 0.16em;">
                 <i class="fa-solid fa-pen" aria-hidden="true"></i>
-                <span>Editing</span>
+                <span>${_("Editing")}</span>
                 <span class="t-strong" style="text-transform: none; letter-spacing: 0; color: var(--p-color-text);">&ldquo;${safeTitle}&rdquo;</span>
             </div>
             <div class="field">
-                <label class="field__label" for="editTitleModal">Title</label>
+                <label class="field__label" for="editTitleModal">${_("Title")}</label>
                 <input class="input" type="text" id="editTitleModal" value="${safeTitle}" autocomplete="off" maxlength="200">
             </div>
             <div class="field">
                 <div class="cluster cluster--between" style="margin-bottom: var(--p-sp-2); align-items: baseline;">
-                    <label class="field__label" for="editPromptModal" style="margin: 0;">Prompt body</label>
+                    <label class="field__label" for="editPromptModal" style="margin: 0;">${_("Prompt body")}</label>
                     <span class="t-body-sm t-muted t-mono" id="editCountStrip">0 chars &middot; 0 words &middot; 1 line</span>
                 </div>
                 <textarea class="textarea input--mono" id="editPromptModal" rows="18" style="resize: vertical; min-height: 280px;">${safePrompt}</textarea>
@@ -278,8 +283,8 @@ function openEditModal(randomVal, title, prompt, tags) {
         <div class="stack" id="editPreviewView" hidden>
             <div class="preview-header" style="margin-bottom: var(--p-sp-3);">
                 <div class="preview-header__eyebrow">
-                    <span>Preview</span>
-                    <span>Edit preview</span>
+                    <span>${_("Preview")}</span>
+                    <span>${_("Edit preview")}</span>
                 </div>
                 <h2 class="preview-header__title" id="editPreviewTitle"></h2>
             </div>
@@ -291,14 +296,14 @@ function openEditModal(randomVal, title, prompt, tags) {
 
     const editButtons = [
         {
-            text: "Preview",
+            text: _("Preview"),
             class: "btn--tertiary",
             action: function() {
                 if (mode === 'preview') return false;
                 const newTitle = document.getElementById('editTitleModal').value;
                 const newPrompt = document.getElementById('editPromptModal').value;
                 if (!newTitle.trim()) {
-                    showToast("Add a title before previewing.", "error");
+                    showToast(_("Add a title before previewing."), "error");
                     document.getElementById('editTitleModal').focus();
                     return false;
                 }
@@ -312,7 +317,7 @@ function openEditModal(randomVal, title, prompt, tags) {
             }
         },
         {
-            text: "Back to edit",
+            text: _("Back to edit"),
             class: "btn--tertiary",
             action: function() {
                 if (mode === 'form') return false;
@@ -324,7 +329,7 @@ function openEditModal(randomVal, title, prompt, tags) {
             }
         },
         {
-            text: "Revert",
+            text: _("Revert"),
             class: "btn--ghost",
             action: function() {
                 document.getElementById('editTitleModal').value = title || '';
@@ -332,26 +337,26 @@ function openEditModal(randomVal, title, prompt, tags) {
                 updateEditCounts();
                 const ta = document.getElementById('editPromptModal');
                 if (ta) ta.dispatchEvent(new Event('input'));
-                showToast("Reverted to the saved version.", "info");
+                showToast(_("Reverted to the saved version."), "info");
                 return false;
             }
         },
         {
-            text: "Cancel",
+            text: _("Cancel"),
             class: "btn--secondary",
             action: function() {
                 return true;
             }
         },
         {
-            text: "Save changes",
+            text: _("Save changes"),
             class: "btn--primary",
             action: function() {
                 const newRandomVal = document.getElementById('editRandomValModal').value;
                 const newTitle = document.getElementById('editTitleModal').value;
                 const newPrompt = document.getElementById('editPromptModal').value;
                 if (!newTitle.trim()) {
-                    showToast("Title cannot be empty.", "error");
+                    showToast(_("Title cannot be empty."), "error");
                     const titleInput = document.getElementById('editTitleModal');
                     if (titleInput) titleInput.focus();
                     return false;
@@ -365,8 +370,8 @@ function openEditModal(randomVal, title, prompt, tags) {
     // The full set of footer buttons, in display order. We swap the visible
     // subset between the form view and the preview view by rebuilding the
     // modal footer on demand (see refreshEditFooter).
-    const FORM_BUTTONS = ['Preview', 'Revert', 'Cancel', 'Save changes'];
-    const PREVIEW_BUTTONS = ['Back to edit', 'Revert', 'Cancel', 'Save changes'];
+    const FORM_BUTTONS = [_('Preview'), _('Revert'), _('Cancel'), _('Save changes')];
+    const PREVIEW_BUTTONS = [_('Back to edit'), _('Revert'), _('Cancel'), _('Save changes')];
 
     function refreshEditFooter() {
         const popup = document.getElementById('app-popup');
@@ -385,7 +390,7 @@ function openEditModal(randomVal, title, prompt, tags) {
     // can find them by name in refreshEditFooter.
     editButtons.forEach(b => { b._editLabel = b.text; });
 
-    showAppPopup("Edit prompt", formHtml, {
+    showAppPopup(_("Edit prompt"), formHtml, {
         type: 'custom',
         buttons: editButtons,
         size: '800px'
@@ -407,11 +412,11 @@ function openEditModal(randomVal, title, prompt, tags) {
             if (footer) {
                 Array.from(footer.querySelectorAll('button')).forEach(btn => {
                     const txt = (btn.textContent || '').trim();
-                    if (txt.includes('Back to edit')) btn.dataset.editLabel = 'Back to edit';
-                    else if (txt.startsWith('Preview')) btn.dataset.editLabel = 'Preview';
-                    else if (txt.includes('Revert')) btn.dataset.editLabel = 'Revert';
-                    else if (txt.includes('Cancel')) btn.dataset.editLabel = 'Cancel';
-                    else if (txt.includes('Save changes')) btn.dataset.editLabel = 'Save changes';
+                    if (txt.includes(_('Back to edit'))) btn.dataset.editLabel = 'Back to edit';
+                    else if (txt.startsWith(_('Preview'))) btn.dataset.editLabel = 'Preview';
+                    else if (txt.includes(_('Revert'))) btn.dataset.editLabel = 'Revert';
+                    else if (txt.includes(_('Cancel'))) btn.dataset.editLabel = 'Cancel';
+                    else if (txt.includes(_('Save changes'))) btn.dataset.editLabel = 'Save changes';
                 });
             }
             // Cmd/Ctrl+Enter saves the form from anywhere in the modal.
@@ -468,17 +473,17 @@ function saveEditedPrompt(randomVal, title, prompt) {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            showToast(data.message || "Prompt updated successfully!", "success");
+            showToast(data.message || _("Prompt updated successfully!"), "success");
             closeAppPopup(); // Ensure popup is closed on success
-            setTimeout(() => window.location.reload(), 1000); 
+            setTimeout(() => window.location.reload(), 1000);
         } else {
-            showToast(data.message || "Failed to update prompt.", "error");
+            showToast(data.message || _("Failed to update prompt."), "error");
             // Keep the edit modal open on failure so the user can correct and retry.
         }
     })
     .catch((error) => {
         console.error('Error:', error);
-        showToast("Error updating prompt: " + error.message, "error");
+        showToast(_("Error updating prompt: %(message)s", { message: error.message }), "error");
         // Keep the edit modal open on failure.
     });
 }
@@ -497,11 +502,11 @@ function attachDeleteButtonListeners() {
 
 // Function to confirm deletion - MODIFIED TO USE showAppPopup
 function openDeleteConfirmationModal(randomVal) {
-    const contentHtml = '<p>Are you sure you want to delete this prompt? This action cannot be undone.</p>';
+    const contentHtml = '<p>' + _("Are you sure you want to delete this prompt? This action cannot be undone.") + '</p>';
 
     const deleteButtons = [
         {
-            text: "Delete",
+            text: _("Delete"),
             class: "btn--destructive",
             action: function() {
                 deletePrompt(randomVal);
@@ -509,14 +514,14 @@ function openDeleteConfirmationModal(randomVal) {
             }
         },
         {
-            text: "Cancel",
+            text: _("Cancel"),
             class: "btn--secondary",
             action: function() {
                 return true;
             }
         }
     ];
-    showAppPopup("Delete prompt", contentHtml, {
+    showAppPopup(_("Delete prompt"), contentHtml, {
         type: 'custom',
         buttons: deleteButtons,
         size: 'sm'
@@ -536,15 +541,15 @@ function deletePrompt(randomVal) {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            showToast(data.message || "Prompt deleted successfully!", "success");
-            setTimeout(() => window.location.reload(), 1000); 
+            showToast(data.message || _("Prompt deleted successfully!"), "success");
+            setTimeout(() => window.location.reload(), 1000);
         } else {
-            showToast(data.message || "Failed to delete prompt.", "error");
+            showToast(data.message || _("Failed to delete prompt."), "error");
         }
     })
     .catch((error) => {
         console.error('Error:', error);
-        showToast("Error deleting prompt: " + error.message, "error");
+        showToast(_("Error deleting prompt: %(message)s", { message: error.message }), "error");
     });
 }
 
@@ -564,7 +569,7 @@ function attachShareButtonListeners() {
 
             if (!promptId || !title || !promptContent) {
                 console.error('Share button is missing data attributes:', this.dataset);
-                showToast("Cannot share: critical data missing from button.", "error");
+                showToast(_("Cannot share: critical data missing from button."), "error");
                 return;
             }
 
@@ -591,7 +596,7 @@ function attachShareButtonListeners() {
 
             if (!promptId) {
                 console.error('Unshare button is missing promptId:', this.dataset);
-                showToast("Cannot unshare: missing prompt ID.", "error");
+                showToast(_("Cannot unshare: missing prompt ID."), "error");
                 return;
             }
 
@@ -624,30 +629,31 @@ function sharePrompt(promptId, title, promptContent, buttonElement) {
             // Handle different success messages from backend
             if (result.message) {
                 if (result.message.includes("already shared")) {
-                    showToast("Prompt is already shared!", "info");
+                    showToast(_("Prompt is already shared!"), "info");
                 } else if (result.message.includes("updated")) {
-                    showToast("Shared prompt updated!", "success");
+                    showToast(_("Shared prompt updated!"), "success");
                 } else {
-                    showToast("Prompt shared successfully!", "success");
+                    showToast(_("Prompt shared successfully!"), "success");
                 }
             } else {
-                showToast("Prompt shared successfully!", "success");
+                showToast(_("Prompt shared successfully!"), "success");
             }
 
             if(buttonElement) {
-                buttonElement.textContent = 'Unshare';
+                const unshareLabel = _("Unshare");
+                buttonElement.textContent = unshareLabel;
                 buttonElement.classList.remove('share-button');
                 buttonElement.classList.add('unshare-button');
                 // Update the span text inside the button
                 const spanElement = buttonElement.querySelector('span');
                 if (spanElement) {
-                    spanElement.textContent = 'Unshare';
+                    spanElement.textContent = unshareLabel;
                 }
                 // Remove share-specific data attributes
                 delete buttonElement.dataset.title;
                 delete buttonElement.dataset.prompt;
                 // Update aria-label
-                buttonElement.setAttribute('aria-label', `Unshare prompt: ${title}`);
+                buttonElement.setAttribute('aria-label', _("Unshare prompt: %(title)s", { title: title }));
                 // The button is now an unshare-button but already has the
                 // `listener-attached` marker from the share handler. Clear
                 // it so attachShareButtonListeners can wire the unshare
@@ -658,12 +664,12 @@ function sharePrompt(promptId, title, promptContent, buttonElement) {
                 }, 0);
             }
         } else {
-            showToast(result.error || "Failed to share prompt.", "error");
+            showToast(result.error || _("Failed to share prompt."), "error");
         }
     })
     .catch((error) => {
         console.error('Error:', error);
-        showToast("Error sharing prompt: " + error.message, "error");
+        showToast(_("Error sharing prompt: %(message)s", { message: error.message }), "error");
             });
         }
 
@@ -679,21 +685,22 @@ function unsharePrompt(promptId, title, promptContent, buttonElement) {
     .then(response => response.json())
     .then(result => {
         if (result.success) {
-            showToast("Prompt unshared successfully!", "success");
+            showToast(_("Prompt unshared successfully!"), "success");
             if(buttonElement) {
-                buttonElement.textContent = 'Share';
+                const shareLabel = _("Share");
+                buttonElement.textContent = shareLabel;
                 buttonElement.classList.remove('unshare-button');
                 buttonElement.classList.add('share-button');
                 // Update the span text inside the button
                 const spanElement = buttonElement.querySelector('span');
                 if (spanElement) {
-                    spanElement.textContent = 'Share';
+                    spanElement.textContent = shareLabel;
                 }
                 // Update data attributes for sharing
                 buttonElement.dataset.title = title;
                 buttonElement.dataset.prompt = promptContent;
                 // Update aria-label
-                buttonElement.setAttribute('aria-label', `Share prompt: ${title}`);
+                buttonElement.setAttribute('aria-label', _("Share prompt: %(title)s", { title: title }));
                 // Clear the marker so the share handler can be wired.
                 buttonElement.classList.remove('listener-attached');
                 setTimeout(() => {
@@ -701,12 +708,12 @@ function unsharePrompt(promptId, title, promptContent, buttonElement) {
                 }, 0);
             }
         } else {
-            showToast(result.error || "Failed to unshare prompt.", "error");
+            showToast(result.error || _("Failed to unshare prompt."), "error");
         }
     })
     .catch((error) => {
         console.error('Error:', error);
-        showToast("Error unsharing prompt: " + error.message, "error");
+        showToast(_("Error unsharing prompt: %(message)s", { message: error.message }), "error");
     });
 }
 
@@ -729,21 +736,21 @@ function updateSharedPrompt(promptId, title, promptContent, buttonElement) {
     .then(response => response.json())
     .then(result => {
         if (result.success) {
-            showToast("Prompt updated successfully!", "success");
+            showToast(_("Prompt updated successfully!"), "success");
             if(buttonElement) {
-                buttonElement.textContent = 'Unshare';
+                buttonElement.textContent = _("Unshare");
                 buttonElement.classList.remove('update-shared-button');
                 buttonElement.classList.add('unshare-button');
                 buttonElement.classList.remove('bg-yellow-100', 'text-yellow-700', 'hover:bg-yellow-200');
                 buttonElement.classList.add('bg-red-100', 'text-red-700', 'hover:bg-red-200');
             }
         } else {
-            showToast(result.error || "Failed to update prompt.", "error");
+            showToast(result.error || _("Failed to update prompt."), "error");
         }
     })
     .catch((error) => {
         console.error('Error:', error);
-        showToast("Error updating prompt: " + error.message, "error");
+        showToast(_("Error updating prompt: %(message)s", { message: error.message }), "error");
     });
 }
 
@@ -757,7 +764,7 @@ function attachUpdateSharedButtonListeners() {
 
             if (!promptId || !title || !promptContent) {
                 console.error('Update shared button is missing data attributes:', this.dataset);
-                showToast("Cannot update: critical data missing from button.", "error");
+                showToast(_("Cannot update: critical data missing from button."), "error");
                 return;
             }
 

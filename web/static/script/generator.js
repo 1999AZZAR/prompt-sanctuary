@@ -25,7 +25,7 @@ function submitFormStream(formId, url) {
     }
     if (resultSection && responseContainer) {
         resultSection.removeAttribute('hidden');
-        responseContainer.textContent = 'Generating response...';
+        responseContainer.textContent = _('Generating response...');
     }
 
     fetch(url, {
@@ -89,9 +89,9 @@ function submitFormStream(formId, url) {
     })
     .catch(error => {
         console.error('Error in streaming response:', error);
-        showToast("An error occurred while generating the response.", 'error');
+        showToast(_("An error occurred while generating the response."), 'error');
         if (responseContainer) {
-            responseContainer.innerHTML = '<div class="error">Error generating response. Please try again.</div>';
+            responseContainer.innerHTML = '<div class="error">' + _("Error generating response. Please try again.") + '</div>';
         }
     })
     .finally(() => {
@@ -177,10 +177,10 @@ function submitForm(formId, url) {
         // Handle error responses (JSON format)
         if (data && !data.success) {
             if (response.status === 402) {
-                showToast("Insufficient points! Visit your profile to see your current balance.", 'warning');
+                showToast(_("Insufficient points! Visit your profile to see your current balance."), 'warning');
                 return;
             } else {
-                showToast(data.error || "An error occurred while generating the response.", 'error');
+                showToast(data.error || _("An error occurred while generating the response."), 'error');
                 return;
             }
         }
@@ -222,7 +222,7 @@ function submitForm(formId, url) {
     })
     .catch(error => {
         console.error('Error submitting form:', error);
-        showToast("An error occurred while submitting the form.", 'error');
+        showToast(_("An error occurred while submitting the form."), 'error');
     })
     .finally(() => {
         // Use global loading functions if available, otherwise fallback to local logic
@@ -471,7 +471,7 @@ document.addEventListener("DOMContentLoaded", function () {
             if (promptText && promptText.trim() !== "") {
                 promptForTitleModal(promptText);
             } else {
-                showToast("Nothing to save! Generate a prompt first.", "warning");
+                showToast(_("Nothing to save! Generate a prompt first."), "warning");
             }
         });
     }
@@ -528,15 +528,15 @@ function copyToClipboard() {
         textArea.select();
         try {
             document.execCommand('copy');
-            showToast("Response copied to clipboard!", 'success');
+            showToast(_("Response copied to clipboard!"), 'success');
         } catch (err) {
-            showToast("Failed to copy response.", 'error');
+            showToast(_("Failed to copy response."), 'error');
             console.error('Fallback: Oops, unable to copy', err);
         }
         document.body.removeChild(textArea);
     } else {
         console.error('Response text element not found in the DOM');
-        showToast("Failed to copy response: content not found.", 'error'); 
+        showToast(_("Failed to copy response: content not found."), 'error');
     }
 }
 
@@ -565,7 +565,7 @@ function promptForTitleModal(promptText) {
                 const title = document.getElementById('promptTitle').value;
                 // Removed: const tags = document.getElementById('promptTags').value;
                 if (!title.trim()) {
-                    showToast("Title cannot be empty.", "error");
+                    showToast(_("Title cannot be empty."), "error");
                     const titleInput = document.getElementById('promptTitle');
                     if (titleInput) titleInput.focus();
                     return false; // Keep popup open
@@ -608,14 +608,14 @@ function saveToLibrary(title, promptContent) {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            showToast(data.message || "Prompt saved successfully!", "success");
+            showToast(data.message || _("Prompt saved successfully!"), "success");
         } else {
-            showToast(data.message || "Failed to save prompt.", "error");
+            showToast(data.message || _("Failed to save prompt."), "error");
         }
     })
     .catch(error => {
         console.error('Error saving prompt:', error);
-        showToast("An error occurred while saving the prompt. Check console for details.", "error");
+        showToast(_("An error occurred while saving the prompt. Check console for details."), "error");
     })
     .finally(() => {
         hideGlobalLoader(); // Hide loader after fetch

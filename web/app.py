@@ -82,9 +82,11 @@ routes.LANGUAGES = LANGUAGES
 # Inject LANGUAGES into every template for the language switcher
 @app.context_processor
 def inject_globals():
+    from i18n_runtime import get_runtime_catalog
     return {
         "LANGUAGES": LANGUAGES,
         "ACTIVE_LANGUAGE": session.get("language") or "en",
+        "I18N_CATALOG": get_runtime_catalog(session.get("language") or "en"),
     }
 
 app.register_blueprint(main_blueprint)

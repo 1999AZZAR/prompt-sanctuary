@@ -16,6 +16,17 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='styles/components.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='styles/styles.css') }}">
 
+  <script>
+    // Runtime i18n catalog — embedded by the server so it's available
+    // synchronously before any user-facing JS runs. window._ is defined
+    // by /static/script/i18n.js, which must load BEFORE any script that
+    // uses _().
+    window.I18N = {
+      lang: {{ ACTIVE_LANGUAGE|tojson }},
+      catalog: {{ I18N_CATALOG|tojson }}
+    };
+  </script>
+  <script src="{{ url_for('static', filename='script/i18n.js') }}"></script>
   <script src="{{ url_for('static', filename='script/csrf.js') }}" defer></script>
   {% block head_extra %}{% endblock %}
 </head>
