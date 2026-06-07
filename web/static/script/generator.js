@@ -484,16 +484,16 @@ function togglePromptInput(option) {
 
     if (textInputForm && imageUploadForm) {
         if (option === 'text') {
-            textInputForm.style.display = 'block';
-            imageUploadForm.style.display = 'none';
+            textInputForm.removeAttribute('hidden');
+            imageUploadForm.setAttribute('hidden', '');
             document.getElementById('generate-button').textContent = 'Generate';
         } else if (option === 'image') {
-            textInputForm.style.display = 'none';
-            imageUploadForm.style.display = 'block';
+            textInputForm.setAttribute('hidden', '');
+            imageUploadForm.removeAttribute('hidden');
             document.getElementById('generate-button').textContent = 'Generate';
         } else if (option === 'random') {
-            textInputForm.style.display = 'none';
-            imageUploadForm.style.display = 'none';
+            textInputForm.setAttribute('hidden', '');
+            imageUploadForm.setAttribute('hidden', '');
             if (!document.getElementById('user_input_image').value) {
                 document.getElementById('generate-button').textContent = 'Random';
             } else {
