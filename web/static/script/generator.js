@@ -12,8 +12,8 @@ function submitFormStream(formId, url) {
     if (typeof showLoading === 'function') {
         showLoading();
     } else {
-        var loading = document.getElementById("loading"); 
-        if (loading) loading.classList.remove('hidden');
+        var loading = document.getElementById("loading");
+        if (loading) loading.removeAttribute('hidden');
     }
     blurBackground(true);
 
@@ -24,7 +24,7 @@ function submitFormStream(formId, url) {
         responseContainer = document.getElementById('response');
     }
     if (resultSection && responseContainer) {
-        resultSection.classList.remove('hidden');
+        resultSection.removeAttribute('hidden');
         responseContainer.textContent = 'Generating response...';
     }
 
@@ -99,7 +99,7 @@ function submitFormStream(formId, url) {
         if (typeof hideLoading === 'function') {
             hideLoading();
         } else {
-            if (loading) loading.classList.add('hidden');
+            if (loading) loading.setAttribute('hidden', '');
         }
         blurBackground(false);
         updateUserPoints();
@@ -130,11 +130,11 @@ function processCompleteResponse(text) {
     if (responseContainer && text.trim()) {
         // Use raw text directly like refinement.html (no cleaning)
         responseContainer.textContent = text;
-        
+
         // Show the result section
         const resultSection = document.getElementById('resultSection');
         if (resultSection) {
-            resultSection.classList.remove('hidden');
+            resultSection.removeAttribute('hidden');
             resultSection.scrollIntoView({ behavior: 'smooth' });
         }
     }
@@ -154,8 +154,8 @@ function submitForm(formId, url) {
     if (typeof showLoading === 'function') {
         showLoading();
     } else {
-        var loading = document.getElementById("loading"); 
-        if (loading) loading.classList.remove('hidden');
+        var loading = document.getElementById("loading");
+        if (loading) loading.removeAttribute('hidden');
     }
     blurBackground(true); // Restore blur for local loader's backdrop effect
 
@@ -200,11 +200,11 @@ function submitForm(formId, url) {
         
         if (resultSection && responseContainer) {
             if (result && result.trim() !== '') {
-                resultSection.classList.remove('hidden');
+                resultSection.removeAttribute('hidden');
                 responseContainer.textContent = result.trim();
                 resultSection.scrollIntoView({ behavior: 'smooth' });
             } else {
-                resultSection.classList.add('hidden');
+                resultSection.setAttribute('hidden', '');
                 responseContainer.textContent = '';
             }
         } else {
@@ -216,7 +216,7 @@ function submitForm(formId, url) {
         const previewImage = document.getElementById('preview-image');
         if (previewContainer && previewImage) {
             if (!previewImage.src || previewImage.src.endsWith('favicon.ico')) {
-                previewContainer.classList.add('hidden');
+                previewContainer.setAttribute('hidden', '');
             }
         }
     })
@@ -229,7 +229,7 @@ function submitForm(formId, url) {
         if (typeof hideLoading === 'function') {
             hideLoading();
         } else {
-            if (loading) loading.classList.add('hidden');
+            if (loading) loading.setAttribute('hidden', '');
         }
         blurBackground(false); // Restore blur removal
         updateUserPoints(); // Update points display after generation
@@ -355,13 +355,13 @@ function previewImage() {
 
                 reader.onload = function (e) {
                     preview.src = e.target.result;
-                    container.classList.remove('hidden'); // Show image preview
+                    container.removeAttribute('hidden'); // Show image preview
                     document.body.setAttribute('data-image-selected', 'true');
                 };
 
                 reader.readAsDataURL(file);
             } else {
-                container.classList.add('hidden'); // Hide preview when no image
+                container.setAttribute('hidden', ''); // Hide preview when no image
                 // Set the default image source using Flask's url_for function
                 preview.src = "{{ url_for('static', filename='icon/favicon.ico') }}";
                 document.body.setAttribute('data-image-selected', 'false');
@@ -393,9 +393,9 @@ function previewImage() {
 document.addEventListener("DOMContentLoaded", function () {
     // Always hide preview and result on load
     var previewContainer = document.getElementById('preview-container');
-    if (previewContainer) previewContainer.classList.add('hidden');
+    if (previewContainer) previewContainer.setAttribute('hidden', '');
     var resultSection = document.getElementById('resultSection');
-    if (resultSection) resultSection.classList.add('hidden');
+    if (resultSection) resultSection.setAttribute('hidden', '');
 
     previewImage();
 
@@ -544,7 +544,7 @@ function copyToClipboard() {
 function loadingAnimation() {
     const loading = document.getElementById('loading');
     if (loading) {
-        loading.classList.remove('hidden');
+        loading.removeAttribute('hidden');
     }
 }
 

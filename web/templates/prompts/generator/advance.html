@@ -63,7 +63,7 @@
       </div>
     </div>
 
-    <form id="a-text-prompt-form" class="stack" onsubmit="submitForm('a-text-prompt-form', '/advance/generate'); return false;">
+    <form id="a-text-prompt-form" class="stack">
       <div class="field">
         <label class="field__label" for="text_parameter0">Use case</label>
         <input class="input" type="text" name="parameter0" id="text_parameter0" placeholder="Write a README file" maxlength="300" required>
@@ -151,7 +151,7 @@
       </label>
     </div>
 
-    <form id="a-image-prompt-form" class="stack" enctype="multipart/form-data" onsubmit="submitForm('a-image-prompt-form', '/advance/igenerate'); return false;">
+    <form id="a-image-prompt-form" class="stack" enctype="multipart/form-data">
       <div class="field">
         <label class="field__label" for="image_gen_parameter0">Input</label>
         <input class="input" type="text" name="parameter0" id="image_gen_parameter0" placeholder="Cat on the sky" maxlength="300" required>
@@ -243,7 +243,7 @@
       </button>
     </form>
 
-    <form id="a-reverse-image-form" class="stack" enctype="multipart/form-data" hidden onsubmit="submitForm('a-reverse-image-form', '/advance/image'); return false;">
+    <form id="a-reverse-image-form" class="stack" enctype="multipart/form-data" hidden>
       <div class="field">
         <label class="field__label" for="image_upload_input">Upload image</label>
         <label for="image_upload_input" style="display: flex; align-items: center; gap: var(--p-sp-3); padding: var(--p-sp-5); border: 1px dashed var(--p-color-border); border-radius: var(--p-r-2); cursor: pointer; color: var(--p-color-text-subdued);">
