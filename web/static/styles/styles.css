@@ -31,6 +31,8 @@
   overflow: hidden;
 }
 .prompt-box:hover { border-color: var(--p-color-text); }
+.prompt-box.prompt-option { cursor: pointer; }
+.prompt-box.prompt-option.is-selected { border-color: var(--p-color-primary); background: var(--p-color-surface-selected, rgba(0, 128, 96, 0.04)); }
 .prompt-box__title { font-size: var(--p-fs-h4); font-weight: var(--p-fw-semibold); color: var(--p-color-text); margin: 0; overflow-wrap: break-word; word-break: break-word; }
 .prompt-box__body  { font-size: var(--p-fs-body-sm); color: var(--p-color-text-subdued); line-height: var(--p-lh-body-sm); max-height: 96px; overflow: hidden; position: relative; word-break: break-word; overflow-wrap: anywhere; }
 .prompt-box__body::after { content: ""; position: absolute; bottom: 0; left: 0; right: 0; height: 24px; background: linear-gradient(to bottom, transparent, var(--p-color-surface)); pointer-events: none; }

@@ -50,6 +50,9 @@
         <button class="btn btn--tertiary btn--sm edit-button" data-random-val="{{ prompt.random_val }}" data-title="{{ prompt.title | e }}" data-prompt="{{ prompt.prompt | e }}" aria-label="Edit {{ prompt.title | e }}">
           <i class="fa-solid fa-pen"></i> Edit
         </button>
+        <a class="btn btn--tertiary btn--sm refine-link" href="{{ url_for('main.refinement', source='personal', prompt_id=prompt.random_val) }}" aria-label="Refine {{ prompt.title | e }}">
+          <i class="fa-solid fa-wand-magic-sparkles"></i> Refine
+        </a>
         {% if prompt.is_shared %}
         <button class="btn btn--tertiary btn--sm unshare-button" data-prompt-id="{{ prompt.random_val }}" aria-label="Unshare {{ prompt.title | e }}">
           <i class="fa-solid fa-share-from-square"></i> Unshare
@@ -128,6 +131,7 @@
         <div class="prompt-box__actions">
           <button class="btn btn--tertiary btn--sm copy-button" data-clipboard-text="${escapeHtml(p.prompt)}" aria-label="Copy ${escapeHtml(p.title)}"><i class="fa-solid fa-copy"></i> Copy</button>
           <button class="btn btn--tertiary btn--sm edit-button" data-random-val="${p.id}" data-title="${escapeHtml(p.title)}" data-prompt="${escapeHtml(p.prompt)}" aria-label="Edit ${escapeHtml(p.title)}"><i class="fa-solid fa-pen"></i> Edit</button>
+          <a class="btn btn--tertiary btn--sm refine-link" href="/refinement?source=personal&amp;prompt_id=${encodeURIComponent(p.id)}" aria-label="Refine ${escapeHtml(p.title)}"><i class="fa-solid fa-wand-magic-sparkles"></i> Refine</a>
           ${p.is_shared
             ? `<button class="btn btn--tertiary btn--sm unshare-button" data-prompt-id="${p.id}" aria-label="Unshare ${escapeHtml(p.title)}"><i class="fa-solid fa-share-from-square"></i> Unshare</button>`
             : `<button class="btn btn--tertiary btn--sm share-button" data-prompt-id="${p.id}" data-title="${escapeHtml(p.title)}" data-prompt="${escapeHtml(p.prompt)}" aria-label="Share ${escapeHtml(p.title)}"><i class="fa-solid fa-share-from-square"></i> Share</button>`}

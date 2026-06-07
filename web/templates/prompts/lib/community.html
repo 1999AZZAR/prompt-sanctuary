@@ -43,6 +43,9 @@
         <button class="btn btn--tertiary btn--sm save-button" data-title="{{ prompt.title | e }}" data-prompt="{{ prompt.prompt | e }}" aria-label="Save {{ prompt.title | e }}">
           <i class="fa-solid fa-bookmark"></i> Save
         </button>
+        <a class="btn btn--tertiary btn--sm refine-link" href="{{ url_for('main.refinement', source='system', prompt_id=prompt.random_val) }}" aria-label="Refine {{ prompt.title | e }}">
+          <i class="fa-solid fa-wand-magic-sparkles"></i> Refine
+        </a>
         <button class="btn btn--tertiary btn--sm see-button" data-title="{{ prompt.title | e }}" data-content="{{ prompt.prompt | e }}" data-tags="{{ prompt.tag | e }}" aria-label="Preview {{ prompt.title | e }}">
           <i class="fa-solid fa-eye"></i> Preview
         </button>
@@ -73,6 +76,9 @@
           <i class="fa-solid fa-share-from-square"></i> Unshare
         </button>
         {% endif %}
+        <a class="btn btn--tertiary btn--sm refine-link" href="{{ url_for('main.refinement', source='community', prompt_id=prompt.random_val) }}" aria-label="Refine {{ prompt.title | e }}">
+          <i class="fa-solid fa-wand-magic-sparkles"></i> Refine
+        </a>
         <button class="btn btn--tertiary btn--sm see-button" data-title="{{ prompt.title | e }}" data-content="{{ prompt.prompt | e }}" data-tags="{{ prompt.tag | e }}" aria-label="Preview {{ prompt.title | e }}">
           <i class="fa-solid fa-eye"></i> Preview
         </button>
@@ -119,6 +125,7 @@
       const typeText = prompt.type === 'system' ? 'System' : 'Community';
       const typeIcon = prompt.type === 'system' ? 'fa-shield-halved' : 'fa-users';
       const badgeClass = prompt.type === 'system' ? 'badge--primary' : '';
+      const refineSrc = prompt.type === 'system' ? 'system' : 'community';
       return `
         <article class="prompt-box" role="article" aria-labelledby="prompt-title-${uniqueId}">
           <div class="prompt-box__meta">
@@ -136,6 +143,7 @@
               <i class="fa-solid fa-bookmark"></i> Save
             </button>
             ${isOwned && prompt.type === 'shared' ? `<button class="btn btn--tertiary btn--sm unshare-button" data-prompt-id="${escapeHtml(prompt.random_val)}" aria-label="Unshare ${escapeHtml(prompt.title)}"><i class="fa-solid fa-share-from-square"></i> Unshare</button>` : ''}
+            <a class="btn btn--tertiary btn--sm refine-link" href="/refinement?source=${refineSrc}&amp;prompt_id=${encodeURIComponent(prompt.random_val || '')}" aria-label="Refine ${escapeHtml(prompt.title)}"><i class="fa-solid fa-wand-magic-sparkles"></i> Refine</a>
             <button class="btn btn--tertiary btn--sm see-button" data-title="${escapeHtml(prompt.title)}" data-content="${escapeHtml(prompt.prompt)}" data-tags="${escapeHtml(prompt.tag || '')}" aria-label="Preview ${escapeHtml(prompt.title)}">
               <i class="fa-solid fa-eye"></i> Preview
             </button>

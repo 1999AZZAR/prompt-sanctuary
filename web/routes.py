@@ -1628,11 +1628,12 @@ Provide only the corrected version, no explanations."""
             logger.info(f"Found {len(saved_rows)} saved prompts for user {username}")
 
             for row in saved_rows:
+                p = row[0]
                 saved_prompts.append({
-                    'prompt_id': row.random_val,
-                    'title': row.title,
-                    'prompt': row.prompt,
-                    'time': row.time,
+                    'prompt_id': p.random_val,
+                    'title': p.title,
+                    'prompt': p.prompt,
+                    'time': p.time,
                     'source': 'personal'
                 })
 
@@ -1648,12 +1649,13 @@ Provide only the corrected version, no explanations."""
             logger.info(f"Found {len(community_rows)} community prompts")
 
             for row in community_rows:
+                p = row[0]
                 community_prompts.append({
-                    'prompt_id': row.random_val or '',
-                    'title': row.title or '',
-                    'prompt': row.prompt or '',
-                    'time': row.time or '',
-                    'owner': row.owner or '',
+                    'prompt_id': p.random_val or '',
+                    'title': p.title or '',
+                    'prompt': p.prompt or '',
+                    'time': p.time or '',
+                    'owner': p.owner or '',
                     'source': 'community'
                 })
 
@@ -1663,14 +1665,65 @@ Provide only the corrected version, no explanations."""
             saved_prompts = []
             community_prompts = []
 
+        # Optional pre-selection from query string (?source=personal|community|system&prompt_id=...)
+        preselect = None
+        pre_source = (request.args.get("source") or "").strip().lower()
+        pre_pid = (request.args.get("prompt_id") or "").strip()
+        if pre_source in ("personal", "community", "system") and pre_pid:
+            try:
+                if pre_source == "personal":
+                    row = g.db_session.execute(
+                        select(DbPrompt).where(
+                            DbPrompt.username == username,
+                            DbPrompt.random_val == pre_pid,
+                        )
+                    ).first()
+                    if row:
+                        preselect = {
+                            "source": "personal",
+                            "id": row[0].random_val,
+                            "title": row[0].title,
+                            "text": row[0].prompt,
+                            "owner": username,
+                        }
+                elif pre_source == "community":
+                    row = g.db_session.execute(
+                        select(DbSharedPrompt).where(DbSharedPrompt.random_val == pre_pid)
+                    ).first()
+                    if row:
+                        preselect = {
+                            "source": "community",
+                            "id": row[0].random_val,
+                            "title": row[0].title,
+                            "text": row[0].prompt,
+                            "owner": row[0].owner or "",
+                        }
+                else:  # system
+                    row = g.db_session.execute(
+                        select(DbSystemPrompt).where(DbSystemPrompt.random_val == pre_pid)
+                    ).first()
+                    if row:
+                        preselect = {
+                            "source": "system",
+                            "id": row[0].random_val,
+                            "title": row[0].title,
+                            "text": row[0].prompt,
+                            "owner": "system",
+                        }
+            except Exception:
+                logger.exception("Failed to resolve preselect prompt for refinement")
+                preselect = None
+
         # Sanitize data to ensure JSON serialization works
         sanitized_saved_prompts = sanitize_for_json(saved_prompts)
         sanitized_community_prompts = sanitize_for_json(community_prompts)
-        
+        sanitized_preselect = sanitize_for_json(preselect) if preselect else None
+
         return render_template(
             "prompts/generator/refinement.html",
             saved_prompts=sanitized_saved_prompts,
             community_prompts=sanitized_community_prompts,
+            preselect=sanitized_preselect,
             current_user_points=current_points
         )
 

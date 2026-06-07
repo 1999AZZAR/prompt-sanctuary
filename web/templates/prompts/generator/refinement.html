@@ -183,6 +183,8 @@
   </div>
 </form>
 
+<script id="refinement-data" type="application/json">{{ preselect | tojson if preselect else '{}' }}</script>
+
 <div id="refined-result" class="result-panel" hidden style="margin-top: var(--p-sp-7);">
   <div class="result-panel__header">
     <span class="eyebrow">Result</span>
@@ -353,14 +355,42 @@ function showStatus(message, type) {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-  var stored = sessionStorage.getItem('selectedPromptForRefinement');
-  if (stored) {
+  // Optional pre-selection from the library: ?source=personal|community|system&prompt_id=...
+  var dataEl = document.getElementById('refinement-data');
+  var preselect = null;
+  if (dataEl) {
     try {
-      var d = JSON.parse(stored);
-      if (d.source === 'personal') { selectSource('saved'); selectSavedPrompt(d.id, d.title, d.text); }
-      else if (d.source === 'community') { selectSource('community'); selectCommunityPrompt(d.id, d.title, d.text, d.owner || 'Unknown'); }
-      sessionStorage.removeItem('selectedPromptForRefinement');
+      var raw = (dataEl.textContent || '').trim();
+      preselect = raw ? JSON.parse(raw) : null;
     } catch (e) { console.error(e); }
+  }
+  if (preselect && preselect.id) {
+    var sourceLabel = preselect.source === 'personal' ? 'Saved prompt'
+      : preselect.source === 'community' ? ('Community prompt by ' + (preselect.owner || 'Unknown'))
+      : preselect.source === 'system' ? 'System prompt' : 'Prompt';
+    var matched = false;
+    if (preselect.source === 'personal' || preselect.source === 'community') {
+      selectSource(preselect.source === 'personal' ? 'saved' : 'community');
+      var opt = document.querySelector('.prompt-option[data-prompt-id="' + cssEscape(preselect.id) + '"]');
+      if (opt) {
+        // Call the helper directly. (We can't dispatch a click because the
+        // delegated click handler is registered further down in this callback.)
+        if (opt.dataset.promptSource === 'saved') selectSavedPrompt(opt.dataset.promptId, opt.dataset.promptTitle, opt.dataset.promptText);
+        else if (opt.dataset.promptSource === 'community') selectCommunityPrompt(opt.dataset.promptId, opt.dataset.promptTitle, opt.dataset.promptText, opt.dataset.promptOwner);
+        // Mark the option visually so the user sees which one is selected.
+        opt.classList.add('is-selected');
+        opt.setAttribute('aria-selected', 'true');
+        matched = true;
+      }
+    }
+    if (!matched) {
+      // Fallback: pre-fill the manual textarea with the prompt body.
+      selectSource('manual');
+      var ta = document.getElementById('prompt-text');
+      if (ta) ta.value = preselect.text || '';
+      selectedPromptData = { id: preselect.id, title: preselect.title, text: preselect.text, source: preselect.source, owner: preselect.owner };
+      showSelectedPrompt(preselect.title, preselect.text, sourceLabel);
+    }
   }
   document.getElementById('prompt-text').addEventListener('input', updateRefineButton);
   document.getElementById('custom-instructions').addEventListener('input', function () {
@@ -374,9 +404,19 @@ document.addEventListener('DOMContentLoaded', function () {
     var title = opt.dataset.promptTitle;
     var text = opt.dataset.promptText;
     var source = opt.dataset.promptSource;
+    // Visual selection: clear other selections in the same group, mark this one.
+    var group = opt.parentElement;
+    if (group) group.querySelectorAll('.prompt-option.is-selected').forEach(function (el) { el.classList.remove('is-selected'); el.removeAttribute('aria-selected'); });
+    opt.classList.add('is-selected');
+    opt.setAttribute('aria-selected', 'true');
     if (source === 'saved') selectSavedPrompt(promptId, title, text);
     else if (source === 'community') selectCommunityPrompt(promptId, title, text, opt.dataset.promptOwner);
   });
 });
+
+function cssEscape(s) {
+  if (window.CSS && CSS.escape) return CSS.escape(s);
+  return String(s).replace(/[^a-zA-Z0-9_\-]/g, function (c) { return '\\' + c; });
+}
 </script>
 {% endblock %}
