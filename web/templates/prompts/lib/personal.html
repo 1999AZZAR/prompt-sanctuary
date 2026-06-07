@@ -62,7 +62,7 @@
         <button class="btn btn--tertiary btn--sm history-button" data-random-val="{{ prompt.random_val }}" data-title="{{ prompt.title | e }}" aria-label="History {{ prompt.title | e }}">
           <i class="fa-solid fa-clock-rotate-left"></i> History
         </button>
-        <button class="btn btn--tertiary btn--sm see-button" data-title="{{ prompt.title | e }}" data-content="{{ prompt.prompt | e }}" aria-label="Preview {{ prompt.title | e }}">
+        <button class="btn btn--tertiary btn--sm see-button" data-title="{{ prompt.title | e }}" data-content="{{ prompt.prompt | e }}" data-tags="{{ prompt.tag | e }}" aria-label="Preview {{ prompt.title | e }}">
           <i class="fa-solid fa-eye"></i> Preview
         </button>
         <button class="btn btn--tertiary btn--sm delete-button" data-random-val="{{ prompt.random_val }}" aria-label="Delete {{ prompt.title | e }}" style="color: var(--p-color-critical); margin-left: auto;">

@@ -536,7 +536,22 @@ function attachSeeButtonListeners() {
         button.addEventListener('click', function () {
             const title = this.dataset.title;
             const promptContent = this.dataset.content || '';
-            showAppPopup(title, promptContent, { type: 'details', size: 'xl' });
+            const card = this.closest('.prompt-box') || this.closest('.card');
+            const kindEl = card && card.querySelector('.badge');
+            const kind = kindEl ? (kindEl.textContent || '').trim() : 'Prompt';
+            const labelEl = card && card.querySelector('.index');
+            const label = labelEl ? (labelEl.textContent || '').trim() : 'Preview';
+            const badgeHtml = kindEl ? kindEl.outerHTML : '';
+            const tagsAttr = this.getAttribute('data-tags') || '';
+            const tags = tagsAttr ? tagsAttr.split(',').map(s => s.trim()).filter(Boolean) : [];
+            showAppPopup(title, promptContent, {
+                type: 'details',
+                size: 'xl',
+                kind: kind,
+                label: label,
+                badgeHtml: badgeHtml,
+                tags: tags
+            });
         });
         button.classList.add('listener-attached');
     });

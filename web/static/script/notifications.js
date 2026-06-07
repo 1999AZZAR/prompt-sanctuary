@@ -11,6 +11,16 @@
 
     var ACTIVE = { el: null, hideAt: 0, timer: null };
 
+    function escapeHtml(str) {
+        if (str == null) return '';
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+    }
+
     function hide() {
         if (!ACTIVE.el) return;
         ACTIVE.el.classList.remove('is-visible');
@@ -87,7 +97,7 @@
         popup.className = 'modal-backdrop is-open';
 
         var modal = document.createElement('div');
-        modal.className = 'modal';
+        modal.className = type === 'details' ? 'modal modal--preview' : 'modal';
         modal.setAttribute('role', 'dialog');
         modal.setAttribute('aria-modal', 'true');
         modal.setAttribute('aria-labelledby', 'app-popup-title');
@@ -106,11 +116,31 @@
 
         var header = document.createElement('div');
         header.className = 'modal__header';
-        var h = document.createElement('h2');
-        h.id = 'app-popup-title';
-        h.className = 'modal__title';
-        h.textContent = title || '';
-        header.appendChild(h);
+        if (type === 'details') {
+            // Rich preview: eyebrow (kind + label) + big title, then meta strip
+            // with char/word counts. Body is a monospace code block.
+            var previewKind = (options && options.kind) || 'Prompt';
+            var previewLabel = (options && options.label) || 'Preview';
+            var headerInner = document.createElement('div');
+            headerInner.className = 'preview-header';
+            var eyebrow = document.createElement('div');
+            eyebrow.className = 'preview-header__eyebrow';
+            var badgeHtml = options && options.badgeHtml ? options.badgeHtml : '';
+            eyebrow.innerHTML = '<span>' + escapeHtml(previewKind) + '</span>' + (badgeHtml ? ' ' + badgeHtml : '');
+            var h = document.createElement('h2');
+            h.id = 'app-popup-title';
+            h.className = 'preview-header__title';
+            h.textContent = title || '';
+            headerInner.appendChild(eyebrow);
+            headerInner.appendChild(h);
+            header.appendChild(headerInner);
+        } else {
+            var h0 = document.createElement('h2');
+            h0.id = 'app-popup-title';
+            h0.className = 'modal__title';
+            h0.textContent = title || '';
+            header.appendChild(h0);
+        }
         var closeBtn = document.createElement('button');
         closeBtn.className = 'icon-btn';
         closeBtn.setAttribute('aria-label', 'Close');
@@ -119,18 +149,65 @@
         header.appendChild(closeBtn);
         modal.appendChild(header);
 
+        // For 'details', insert a meta strip (tag, char count, word count)
+        // between the header and the body.
+        if (type === 'details') {
+            var text = contentOrMessage || '';
+            var charCount = text.length;
+            var wordCount = text.trim() ? text.trim().split(/\s+/).length : 0;
+            var charCountFmt = charCount.toLocaleString();
+            var wordCountFmt = wordCount.toLocaleString();
+            var lineCount = text === '' ? 0 : text.split('\n').length;
+            var lineCountFmt = lineCount.toLocaleString();
+
+            var tags = (options && Array.isArray(options.tags)) ? options.tags : [];
+            var meta = document.createElement('div');
+            meta.className = 'preview-meta';
+            if (tags.length) {
+                var tagItem = document.createElement('span');
+                tagItem.className = 'preview-meta__item';
+                tagItem.innerHTML = '<i class="fa-solid fa-tag" aria-hidden="true"></i><span>' +
+                    tags.map(escapeHtml).join(', ') + '</span>';
+                meta.appendChild(tagItem);
+                meta.appendChild(sep());
+            }
+            meta.appendChild(metaItem('fa-font', charCountFmt, 'characters'));
+            meta.appendChild(sep());
+            meta.appendChild(metaItem('fa-text-width', wordCountFmt, 'words'));
+            meta.appendChild(sep());
+            meta.appendChild(metaItem('fa-bars', lineCountFmt, 'lines'));
+            modal.appendChild(meta);
+        }
+
+        function metaItem(icon, value, label) {
+            var item = document.createElement('span');
+            item.className = 'preview-meta__item';
+            item.innerHTML = '<i class="fa-solid ' + icon + '" aria-hidden="true"></i><strong>' +
+                escapeHtml(String(value)) + '</strong> ' + escapeHtml(label);
+            return item;
+        }
+        function sep() {
+            var s = document.createElement('span');
+            s.className = 'preview-meta__sep';
+            s.setAttribute('aria-hidden', 'true');
+            return s;
+        }
+
         var body = document.createElement('div');
         body.className = 'modal__body';
 
         if (type === 'details') {
-            body.style.whiteSpace = 'pre-wrap';
-            body.classList.add('code-block--inline');
-        }
-        if (type === 'custom' || (type === 'message' && typeof contentOrMessage === 'string' && contentOrMessage.indexOf('<') !== -1)) {
+            // Monospace code block; no HTML — content is plain text.
+            body.classList.add('modal__body--flush');
+            var pre = document.createElement('pre');
+            pre.className = 'preview-body';
+            pre.textContent = contentOrMessage || '';
+            body.appendChild(pre);
+        } else if (type === 'custom' || (type === 'message' && typeof contentOrMessage === 'string' && contentOrMessage.indexOf('<') !== -1)) {
             body.innerHTML = contentOrMessage;
         } else {
             body.textContent = contentOrMessage;
-            if (type !== 'details' && type !== 'custom') body.style.whiteSpace = 'pre-wrap';
+            if (type !== 'custom') body.style.whiteSpace = 'pre-wrap';
         }
         modal.appendChild(body);
 
@@ -158,13 +235,15 @@
                 closeAppPopup();
             }));
         } else if (type === 'details') {
-            footer.appendChild(mkBtn('Copy', 'btn--secondary', function () {
+            footer.appendChild(mkBtn('Close', 'btn--secondary', closeAppPopup));
+            var copyBtn = mkBtn('Copy prompt', 'btn--primary', function () {
                 var text = copyTargetText || contentOrMessage;
                 navigator.clipboard.writeText(text)
                     .then(function () { showToast('Copied to clipboard!', 'success'); })
                     .catch(function () { showToast('Failed to copy.', 'error'); });
-            }));
-            footer.appendChild(mkBtn('Close', 'btn--primary', closeAppPopup));
+            });
+            copyBtn.innerHTML = '<i class="fa-solid fa-copy" aria-hidden="true"></i> Copy prompt';
+            footer.appendChild(copyBtn);
         } else if (type === 'custom' && Array.isArray(buttons)) {
             buttons.forEach(function (cfg) {
                 footer.appendChild(mkBtn(cfg.text || '', cfg.class || 'btn--secondary', function () {

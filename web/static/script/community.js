@@ -60,10 +60,30 @@ function attachSaveButtonListeners() {
     document.querySelectorAll('.see-button').forEach(btn => {
         btn.addEventListener('click', function (e) {
             e.preventDefault();
+            const card = btn.closest('.prompt-box') || btn.closest('.card');
             const title = btn.getAttribute('data-title') || '';
             const content = btn.getAttribute('data-content') || '';
-            // Use details type with larger size and markdown rendering
-            showAppPopup(title, content, { type: 'details', size: 'xl' });
+            // Pull kind (System / Community / Personal) from the card's
+            // badge row so the preview popup reflects where the prompt
+            // came from. Fall back to 'Prompt' for cards that don't
+            // expose a badge (e.g. profile.html's flat cards).
+            const badgeEl = card && card.querySelector('.badge');
+            const kind = badgeEl ? (badgeEl.textContent || '').trim() : 'Prompt';
+            const labelEl = card && card.querySelector('.index');
+            const label = labelEl ? (labelEl.textContent || '').trim() : 'Preview';
+            const badgeHtml = badgeEl ? badgeEl.outerHTML : '';
+            // Pull tags from data-tags if present (system prompts have a
+            // comma-separated tag field); community/shared/personal don't.
+            const tagsAttr = btn.getAttribute('data-tags') || '';
+            const tags = tagsAttr ? tagsAttr.split(',').map(s => s.trim()).filter(Boolean) : [];
+            showAppPopup(title, content, {
+                type: 'details',
+                size: 'xl',
+                kind: kind,
+                label: label,
+                badgeHtml: badgeHtml,
+                tags: tags
+            });
         });
     });
 

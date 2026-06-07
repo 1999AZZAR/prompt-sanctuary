@@ -43,7 +43,7 @@
         <button class="btn btn--tertiary btn--sm save-button" data-title="{{ prompt.title | e }}" data-prompt="{{ prompt.prompt | e }}" aria-label="Save {{ prompt.title | e }}">
           <i class="fa-solid fa-bookmark"></i> Save
         </button>
-        <button class="btn btn--tertiary btn--sm see-button" data-title="{{ prompt.title | e }}" data-content="{{ prompt.prompt | e }}" aria-label="Preview {{ prompt.title | e }}">
+        <button class="btn btn--tertiary btn--sm see-button" data-title="{{ prompt.title | e }}" data-content="{{ prompt.prompt | e }}" data-tags="{{ prompt.tag | e }}" aria-label="Preview {{ prompt.title | e }}">
           <i class="fa-solid fa-eye"></i> Preview
         </button>
       </div>
@@ -73,7 +73,7 @@
           <i class="fa-solid fa-share-from-square"></i> Unshare
         </button>
         {% endif %}
-        <button class="btn btn--tertiary btn--sm see-button" data-title="{{ prompt.title | e }}" data-content="{{ prompt.prompt | e }}" aria-label="Preview {{ prompt.title | e }}">
+        <button class="btn btn--tertiary btn--sm see-button" data-title="{{ prompt.title | e }}" data-content="{{ prompt.prompt | e }}" data-tags="{{ prompt.tag | e }}" aria-label="Preview {{ prompt.title | e }}">
           <i class="fa-solid fa-eye"></i> Preview
         </button>
       </div>
@@ -89,10 +89,10 @@
 (function () {
   const allPrompts = [
     {% for prompt in system_prompts %}
-    { id: 'system-{{ loop.index0 }}', title: {{ prompt.title | tojson }}, prompt: {{ prompt.prompt | tojson }}, type: 'system', is_user_owned: false, random_val: {{ prompt.random_val | tojson }} },
+    { id: 'system-{{ loop.index0 }}', title: {{ prompt.title | tojson }}, prompt: {{ prompt.prompt | tojson }}, type: 'system', tag: {{ prompt.tag | tojson }}, is_user_owned: false, random_val: {{ prompt.random_val | tojson }} },
     {% endfor %}
     {% for prompt in shared_prompts %}
-    { id: 'shared-{{ loop.index0 }}', title: {{ prompt.title | tojson }}, prompt: {{ prompt.prompt | tojson }}, type: 'shared', is_user_owned: {{ prompt.is_user_owned | tojson }}, random_val: {{ prompt.random_val | tojson }} },
+    { id: 'shared-{{ loop.index0 }}', title: {{ prompt.title | tojson }}, prompt: {{ prompt.prompt | tojson }}, type: 'shared', tag: '', is_user_owned: {{ prompt.is_user_owned | tojson }}, random_val: {{ prompt.random_val | tojson }} },
     {% endfor %}
   ];
 
@@ -136,7 +136,7 @@
               <i class="fa-solid fa-bookmark"></i> Save
             </button>
             ${isOwned && prompt.type === 'shared' ? `<button class="btn btn--tertiary btn--sm unshare-button" data-prompt-id="${escapeHtml(prompt.random_val)}" aria-label="Unshare ${escapeHtml(prompt.title)}"><i class="fa-solid fa-share-from-square"></i> Unshare</button>` : ''}
-            <button class="btn btn--tertiary btn--sm see-button" data-title="${escapeHtml(prompt.title)}" data-content="${escapeHtml(prompt.prompt)}" aria-label="Preview ${escapeHtml(prompt.title)}">
+            <button class="btn btn--tertiary btn--sm see-button" data-title="${escapeHtml(prompt.title)}" data-content="${escapeHtml(prompt.prompt)}" data-tags="${escapeHtml(prompt.tag || '')}" aria-label="Preview ${escapeHtml(prompt.title)}">
               <i class="fa-solid fa-eye"></i> Preview
             </button>
           </div>
