@@ -321,7 +321,36 @@ def create_main_blueprint(
             current_points = get_user_points(main_blueprint.user_db, username)
         except Exception:
             current_points = 80.0  # Default fallback
-        return render_template("index.html", current_user_points=current_points)
+
+        saved_count = 0
+        refinements_count = 0
+        shared_count = 0
+        try:
+            saved_count = g.db_session.execute(
+                select(func.count()).select_from(DbPrompt).where(DbPrompt.username == username)
+            ).scalar_one()
+        except Exception as e:
+            logger.error(f"Error counting saved prompts: {e}")
+        try:
+            refinements_count = g.db_session.execute(
+                select(func.count()).select_from(DbPromptVersion).where(DbPromptVersion.username == username)
+            ).scalar_one()
+        except Exception as e:
+            logger.error(f"Error counting refinements: {e}")
+        try:
+            shared_count = g.db_session.execute(
+                select(func.count()).select_from(DbSharedPrompt).where(DbSharedPrompt.owner == username)
+            ).scalar_one()
+        except Exception as e:
+            logger.error(f"Error counting shared prompts: {e}")
+
+        return render_template(
+            "index.html",
+            current_user_points=current_points,
+            saved_count=saved_count,
+            refinements_count=refinements_count,
+            shared_count=shared_count,
+        )
 
     @main_blueprint.route("/mylib")
     @required_login
