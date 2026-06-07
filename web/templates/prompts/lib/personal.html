@@ -91,7 +91,7 @@
 (function () {
   const personalPrompts = [
     {% for prompt_item in saved_prompts %}
-    { id: "{{ prompt_item.random_val }}", title: {{ prompt_item.title | tojson }}, prompt: {{ prompt_item.prompt | tojson }}, is_shared: {{ prompt_item.is_shared | tojson }} },
+    { id: "{{ prompt_item.random_val }}", title: {{ prompt_item.title | tojson }}, prompt: {{ prompt_item.prompt | tojson }}, time: {{ prompt_item.time | tojson }}, is_shared: {{ prompt_item.is_shared | tojson }} },
     {% endfor %}
   ];
   const fuse = (typeof Fuse !== 'undefined') ? new Fuse(personalPrompts, { keys: ['title', 'prompt'], threshold: 0.3 }) : null;
@@ -105,6 +105,12 @@
     return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
   }
 
+  function formatTime(s) {
+    if (!s) return 'Saved';
+    // Trim a datetime string to "YYYY-MM-DD HH:MM" for the index pill.
+    return String(s).replace('T', ' ').slice(0, 16);
+  }
+
   function renderSavedPrompts(list) {
     if (!list || list.length === 0) {
       container.innerHTML = '<div class="card empty" style="grid-column: 1 / -1;"><div class="empty__icon"><i class="fa-solid fa-magnifying-glass"></i></div><div class="empty__title">No matches</div><p class="empty__body">Try a different search term.</p></div>';
@@ -115,19 +121,19 @@
         <div class="prompt-box__meta">
           <span class="badge"><i class="fa-solid fa-bookmark"></i> Personal</span>
           ${p.is_shared ? '<span class="badge badge--primary"><i class="fa-solid fa-users"></i> Shared</span>' : ''}
-          <span class="index" style="margin-left: auto;">Saved</span>
+          <span class="index" style="margin-left: auto;">${escapeHtml(formatTime(p.time))}</span>
         </div>
         <h3 class="prompt-box__title" id="prompt-title-${p.id}">${escapeHtml(p.title)}</h3>
         <p class="prompt-box__body prompt-text">${escapeHtml(p.prompt)}</p>
         <div class="prompt-box__actions">
           <button class="btn btn--tertiary btn--sm copy-button" data-clipboard-text="${escapeHtml(p.prompt)}" aria-label="Copy ${escapeHtml(p.title)}"><i class="fa-solid fa-copy"></i> Copy</button>
           <button class="btn btn--tertiary btn--sm edit-button" data-random-val="${p.id}" data-title="${escapeHtml(p.title)}" data-prompt="${escapeHtml(p.prompt)}" aria-label="Edit ${escapeHtml(p.title)}"><i class="fa-solid fa-pen"></i> Edit</button>
-          <button class="btn btn--tertiary btn--sm delete-button" data-random-val="${p.id}" style="color: var(--p-color-critical);" aria-label="Delete ${escapeHtml(p.title)}"><i class="fa-solid fa-trash"></i> Delete</button>
           ${p.is_shared
             ? `<button class="btn btn--tertiary btn--sm unshare-button" data-prompt-id="${p.id}" aria-label="Unshare ${escapeHtml(p.title)}"><i class="fa-solid fa-share-from-square"></i> Unshare</button>`
             : `<button class="btn btn--tertiary btn--sm share-button" data-prompt-id="${p.id}" data-title="${escapeHtml(p.title)}" data-prompt="${escapeHtml(p.prompt)}" aria-label="Share ${escapeHtml(p.title)}"><i class="fa-solid fa-share-from-square"></i> Share</button>`}
           <button class="btn btn--tertiary btn--sm history-button" data-random-val="${p.id}" data-title="${escapeHtml(p.title)}" aria-label="History ${escapeHtml(p.title)}"><i class="fa-solid fa-clock-rotate-left"></i> History</button>
-          <button class="btn btn--tertiary btn--sm see-button" data-title="${escapeHtml(p.title)}" data-content="${escapeHtml(p.prompt)}" aria-label="Preview ${escapeHtml(p.title)}"><i class="fa-solid fa-eye"></i> Preview</button>
+          <button class="btn btn--tertiary btn--sm see-button" data-title="${escapeHtml(p.title)}" data-content="${escapeHtml(p.prompt)}" data-tags="" aria-label="Preview ${escapeHtml(p.title)}"><i class="fa-solid fa-eye"></i> Preview</button>
+          <button class="btn btn--tertiary btn--sm delete-button" data-random-val="${p.id}" style="color: var(--p-color-critical); margin-left: auto;" aria-label="Delete ${escapeHtml(p.title)}"><i class="fa-solid fa-trash"></i></button>
         </div>
       </article>
     `).join('');

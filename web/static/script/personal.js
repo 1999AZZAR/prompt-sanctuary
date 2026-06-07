@@ -1,34 +1,25 @@
 // Copy function on personal library
-document.addEventListener('DOMContentLoaded', function () {
-    // Initialize ClipboardJS for copy buttons
-    // This targets buttons with class 'copy-button' which are typically on each prompt card
-    var clipboard = new ClipboardJS('.copy-button', {
-        text: function (trigger) {
-            // Assuming the prompt content is in an attribute like 'data-clipboard-text'
-            // or find it relative to the trigger if it's in a specific element.
-            // For this example, let's assume it's directly on the button or a nearby element.
-            // This might need adjustment based on your HTML structure.
-            const promptCard = trigger.closest('.prompt-card-enhanced'); // Updated to new card class
-            if (promptCard) {
-                const promptTextElement = promptCard.querySelector('.prompt-text'); // Updated to new content selector
-                if (promptTextElement) {
-                    return promptTextElement.innerText;
-                }
+function attachCopyButtonListeners() {
+    // Copy buttons use the native Clipboard API. The data-clipboard-text
+    // attribute on the button is the source of truth.
+    document.querySelectorAll('.copy-button:not(.listener-attached)').forEach(button => {
+        button.addEventListener('click', function (e) {
+            e.preventDefault();
+            const text = button.getAttribute('data-clipboard-text') || '';
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text)
+                    .then(() => showToast("Prompt copied to clipboard!", "success"))
+                    .catch(() => showToast("Failed to copy prompt.", "error"));
+            } else {
+                showToast("Clipboard not available in this browser.", "error");
             }
-            // Fallback if specific content not found, use data-clipboard-text if available
-            return trigger.getAttribute('data-clipboard-text') || "No text to copy";
-        }
+        });
+        button.classList.add('listener-attached');
     });
+}
 
-    clipboard.on('success', function (e) {
-        e.clearSelection();
-        showToast("Prompt copied to clipboard!", "success"); // Use global toast
-    });
-
-    clipboard.on('error', function (e) {
-        showToast("Failed to copy prompt.", "error"); // Use global toast
-    });
-
+document.addEventListener('DOMContentLoaded', function () {
+    attachCopyButtonListeners();
 
     // Re-attach event listeners for dynamically added elements or after search/filter
     const personalPromptsContainer = document.getElementById('savedPromptsContainer');
@@ -36,33 +27,48 @@ document.addEventListener('DOMContentLoaded', function () {
         const observer = new MutationObserver(mutations => {
             mutations.forEach(mutation => {
                 if (mutation.addedNodes.length) {
-                    reattachEventListeners(); // Re-attach to new nodes
+                    reattachEventListeners();
                 }
             });
         });
         observer.observe(personalPromptsContainer, { childList: true, subtree: true });
     }
-    attachInitialEventListeners(); // Attach to initially loaded elements
+    attachInitialEventListeners();
 });
+
+// Expose reattach on window so the inline search script in personal.html
+// can re-attach listeners after a search re-render. Aliased to match
+// the community library's pattern (which exposes `reattachCommunityListeners`).
+window.reattachPersonalListeners = reattachEventListeners;
+window.reattachEventListeners = reattachEventListeners;
+
+// HTML-escape helper used by the inline templates in this file
+// (history popup, edit modal).
+function escapeHtml(str) {
+    if (typeof str !== 'string') return '';
+    return str.replace(/&/g, '&amp;')
+              .replace(/</g, '&lt;')
+              .replace(/>/g, '&gt;')
+              .replace(/"/g, '&quot;')
+              .replace(/'/g, '&#039;');
+}
 
 
 function attachInitialEventListeners() {
-    // Attach to existing buttons on load
+    attachCopyButtonListeners();
     attachEditButtonListeners();
     attachDeleteButtonListeners();
-    attachShareButtonListeners(); // This will attach to both share and unshare buttons
+    attachShareButtonListeners();
     attachHistoryButtonListeners();
     attachSeeButtonListeners();
     attachUpdateSharedButtonListeners();
-    // Note: ClipboardJS is initialized once and handles elements matching '.copy-button'
 }
 
 function reattachEventListeners() {
-    // This function is called when DOM changes, e.g., after search results are rendered.
-    // It re-attaches listeners to any new buttons.
+    attachCopyButtonListeners();
     attachEditButtonListeners();
     attachDeleteButtonListeners();
-    attachShareButtonListeners(); // This will attach to both share and unshare buttons
+    attachShareButtonListeners();
     attachHistoryButtonListeners();
     attachSeeButtonListeners();
     attachUpdateSharedButtonListeners();
@@ -250,7 +256,7 @@ function saveEditedPrompt(randomVal, title, prompt) {
 
     fetch('/save_edit', {
         method: 'POST',
-        headers: { 'X-CSRFToken': getCsrfTokenFromCookie() || '' },
+        headers: window.CSRF.getFormHeaders(),
         body: formData,
     })
     .then(response => response.json())
@@ -340,7 +346,12 @@ function deletePrompt(randomVal) {
 function attachShareButtonListeners() {
     // Handle share buttons (need title and prompt data)
     document.querySelectorAll('.share-button:not(.listener-attached)').forEach(button => {
-        button.addEventListener('click', function () {
+        button.addEventListener('click', function (e) {
+            // The button may have transitioned to .unshare-button between the
+            // time the listener was attached and the click event firing (e.g.
+            // a successful share flipped the class). Bail so we don't fire
+            // the stale share handler with now-deleted data attributes.
+            if (!this.classList.contains('share-button')) return;
             const promptId = this.dataset.promptId;
             const title = this.dataset.title;
             const promptContent = this.dataset.prompt;
@@ -359,7 +370,18 @@ function attachShareButtonListeners() {
     // Handle unshare buttons (only need promptId)
     document.querySelectorAll('.unshare-button:not(.listener-attached)').forEach(button => {
         button.addEventListener('click', function () {
+            // See note on the share handler — the button may have transitioned
+            // back to .share-button since this listener was attached.
+            if (!this.classList.contains('unshare-button')) return;
             const promptId = this.dataset.promptId;
+            // The unshare button carries only promptId; read title and body
+            // from the parent card so we can restore the share button state
+            // (data-title, data-prompt) on success.
+            const card = this.closest('.prompt-box') || this.closest('.card');
+            const titleEl = card && card.querySelector('.prompt-box__title');
+            const bodyEl = card && card.querySelector('.prompt-text');
+            const title = titleEl ? titleEl.textContent : '';
+            const promptContent = bodyEl ? bodyEl.textContent : '';
 
             if (!promptId) {
                 console.error('Unshare button is missing promptId:', this.dataset);
@@ -367,7 +389,7 @@ function attachShareButtonListeners() {
                 return;
             }
 
-            unsharePrompt(promptId, this);
+            unsharePrompt(promptId, title, promptContent, this);
         });
         button.classList.add('listener-attached');
     });
@@ -420,10 +442,14 @@ function sharePrompt(promptId, title, promptContent, buttonElement) {
                 delete buttonElement.dataset.prompt;
                 // Update aria-label
                 buttonElement.setAttribute('aria-label', `Unshare prompt: ${title}`);
-                // Re-attach listeners since class changed
+                // The button is now an unshare-button but already has the
+                // `listener-attached` marker from the share handler. Clear
+                // it so attachShareButtonListeners can wire the unshare
+                // handler on the next pass.
+                buttonElement.classList.remove('listener-attached');
                 setTimeout(() => {
                     attachShareButtonListeners();
-                }, 100);
+                }, 0);
             }
         } else {
             showToast(result.error || "Failed to share prompt.", "error");
@@ -435,7 +461,7 @@ function sharePrompt(promptId, title, promptContent, buttonElement) {
             });
         }
 
-function unsharePrompt(promptId, buttonElement) {
+function unsharePrompt(promptId, title, promptContent, buttonElement) {
     fetch('/unshare_prompt', {
         method: 'POST',
         headers: {
@@ -462,6 +488,11 @@ function unsharePrompt(promptId, buttonElement) {
                 buttonElement.dataset.prompt = promptContent;
                 // Update aria-label
                 buttonElement.setAttribute('aria-label', `Share prompt: ${title}`);
+                // Clear the marker so the share handler can be wired.
+                buttonElement.classList.remove('listener-attached');
+                setTimeout(() => {
+                    attachShareButtonListeners();
+                }, 0);
             }
         } else {
             showToast(result.error || "Failed to unshare prompt.", "error");
