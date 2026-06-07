@@ -60,9 +60,8 @@ function attachSaveButtonListeners() {
     document.querySelectorAll('.see-button').forEach(btn => {
         btn.addEventListener('click', function (e) {
             e.preventDefault();
-            const card = btn.closest('.prompt-card-enhanced');
-            const title = card.querySelector('.card-title').innerText;
-            const content = card.querySelector('.prompt-text').innerText;
+            const title = btn.getAttribute('data-title') || '';
+            const content = btn.getAttribute('data-content') || '';
             // Use details type with larger size and markdown rendering
             showAppPopup(title, content, { type: 'details', size: 'xl' });
         });
@@ -158,6 +157,7 @@ function reattachEventListeners() {
     attachCopyButtonListeners();
     attachSaveButtonListeners();
     attachUnshareButtonListeners();
-    // show-button listeners already in attachSaveButtonListeners
+    // see-button listeners already in attachSaveButtonListeners
 }
 window.reattachEventListeners = reattachEventListeners;
+window.reattachCommunityListeners = reattachEventListeners;
