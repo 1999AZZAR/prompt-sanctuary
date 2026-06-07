@@ -92,55 +92,118 @@ function attachHistoryButtonListeners() {
                         showToast('No versions found for this prompt.', 'info');
                         return;
                     }
-                    const listHtml = versions.map(v => `
+                    // Sort newest first so the most recent version is at the top.
+                    const sorted = versions.slice().sort((a, b) => b.version_number - a.version_number);
+                    const listHtml = sorted.map(v => `
                         <div class="card card--compact card--sunken" style="margin-bottom: var(--p-sp-3);">
-                            <div class="cluster cluster--between" style="margin-bottom: var(--p-sp-2);">
-                                <div class="t-body-sm t-muted"><strong class="t-mono">v${v.version_number}</strong> · ${escapeHtml(String(v.created_at))}</div>
+                            <div class="cluster cluster--between" style="margin-bottom: var(--p-sp-2); gap: var(--p-sp-3);">
+                                <div class="cluster" style="gap: var(--p-sp-2); align-items: baseline; min-width: 0;">
+                                    <span class="badge"><i class="fa-solid fa-code-branch"></i> v${v.version_number}</span>
+                                    <span class="t-body-sm t-muted">${escapeHtml(String(v.created_at))}</span>
+                                </div>
                                 <div class="cluster" style="gap: var(--p-sp-2);">
-                                    <button class="btn btn--tertiary btn--sm preview-btn" data-v="${v.version_number}"><i class="fa-solid fa-eye"></i> Preview</button>
-                                    <button class="btn btn--primary btn--sm rollback-btn" data-v="${v.version_number}"><i class="fa-solid fa-rotate-left"></i> Restore</button>
+                                    <button type="button" class="btn btn--tertiary btn--sm version-preview-btn" data-v="${v.version_number}"><i class="fa-solid fa-eye"></i> Preview</button>
+                                    <button type="button" class="btn btn--primary btn--sm rollback-btn" data-v="${v.version_number}"><i class="fa-solid fa-rotate-left"></i> Restore</button>
                                 </div>
                             </div>
-                            <div class="t-body-sm t-strong" style="margin-bottom: var(--p-sp-2); word-break: break-word;">${escapeHtml(v.title)}</div>
-                            <div class="hidden code-block" data-v="${v.version_number}" style="margin-top: var(--p-sp-2); font-size: var(--p-fs-body-sm);">${escapeHtml(v.prompt)}</div>
+                            <div class="t-body-sm t-strong" style="word-break: break-word;">${escapeHtml(v.title)}</div>
                         </div>
                     `).join('');
 
+                    // The modal holds two views that share one body: the list
+                    // and a single version's preview. Showing a preview swaps
+                    // the visible view and rewrites the footer (Preview row
+                    // becomes Back to list). The list and preview state are
+                    // driven by a `mode` variable.
                     const content = `
-                        <div>
-                            <div class="t-body-sm t-muted" style="margin-bottom: var(--p-sp-4);">History for: <strong>${escapeHtml(title)}</strong></div>
+                        <div id="historyListView">
+                            <div class="t-body-sm t-muted" style="margin-bottom: var(--p-sp-4);">${sorted.length} version${sorted.length === 1 ? '' : 's'} · current is <strong class="t-mono">v${sorted[0].version_number}</strong></div>
                             ${listHtml}
+                        </div>
+                        <div id="historyPreviewView" hidden>
+                            <div class="preview-header" style="margin-bottom: var(--p-sp-3);">
+                                <div class="preview-header__eyebrow">
+                                    <span>Version</span>
+                                    <span id="historyPreviewLabel"></span>
+                                </div>
+                                <h2 class="preview-header__title" id="historyPreviewTitle"></h2>
+                            </div>
+                            <pre class="preview-body" id="historyPreviewBody" style="min-height: 240px; max-height: 56vh;"></pre>
                         </div>
                     `;
 
+                    const buttons = [
+                        {
+                            text: "Preview",
+                            class: "btn--tertiary",
+                            action: function () { return false; }
+                        },
+                        {
+                            text: "Back to list",
+                            class: "btn--tertiary",
+                            action: function () {
+                                const popup = document.getElementById('app-global-popup');
+                                if (!popup) return true;
+                                document.getElementById('historyListView').hidden = false;
+                                document.getElementById('historyPreviewView').hidden = true;
+                                Array.from(popup.querySelectorAll('.modal__footer button')).forEach(b => {
+                                    b.hidden = b.dataset.historyLabel !== 'Close';
+                                });
+                                return false;
+                            }
+                        },
+                        {
+                            text: "Close",
+                            class: "btn--secondary",
+                            action: function () { return true; }
+                        }
+                    ];
+
                     showAppPopup('Version History', content, {
                         type: 'custom',
-                        buttons: [
-                            { text: 'Close', class: 'btn--secondary', action: function () { return true; } }
-                        ],
+                        buttons: buttons,
                         size: 'xl'
                     });
 
-                    // Attach preview and rollback handlers inside popup
+                    // After the modal is mounted: tag footer buttons, wire
+                    // the per-version Preview/Restore handlers.
                     setTimeout(() => {
-                        document.querySelectorAll('.preview-btn').forEach(btn => {
+                        const popup = document.getElementById('app-global-popup');
+                        if (popup) {
+                            const footer = popup.querySelector('.modal__footer');
+                            if (footer) {
+                                Array.from(footer.querySelectorAll('button')).forEach(btn => {
+                                    const txt = (btn.textContent || '').trim();
+                                    if (txt.startsWith('Preview') && !txt.includes('Back')) btn.dataset.historyLabel = 'Preview';
+                                    else if (txt.includes('Back to list')) btn.dataset.historyLabel = 'Back to list';
+                                    else if (txt.includes('Close')) btn.dataset.historyLabel = 'Close';
+                                });
+                                // Hide the no-op top "Preview" button. The
+                                // per-version rows are the actual entry points.
+                                const topPreview = footer.querySelector('button[data-history-label="Preview"]');
+                                if (topPreview) topPreview.hidden = true;
+                            }
+                        }
+
+                        document.querySelectorAll('.version-preview-btn').forEach(btn => {
                             btn.addEventListener('click', () => {
-                                const v = btn.getAttribute('data-v');
-                                const area = document.querySelector(`.version-content[data-v="${v}"]`);
-                                if (area) {
-                                    const isHidden = area.classList.toggle('hidden');
-                                    if (!isHidden) {
-                                        // Optionally render markdown and highlight
-                                        try {
-                                            const rendered = marked.parse(area.textContent, { mangle: false, headerIds: false });
-                                            const safeHtml = DOMPurify.sanitize(rendered);
-                                            area.innerHTML = safeHtml;
-                                            if (window.Prism) Prism.highlightAllUnder(area);
-                                        } catch (_) {}
-                                    }
-                                }
+                                const v = Number(btn.getAttribute('data-v'));
+                                const version = sorted.find(x => x.version_number === v);
+                                if (!version) return;
+                                const popup = document.getElementById('app-global-popup');
+                                if (!popup) return;
+                                document.getElementById('historyListView').hidden = true;
+                                document.getElementById('historyPreviewView').hidden = false;
+                                document.getElementById('historyPreviewTitle').textContent = version.title;
+                                document.getElementById('historyPreviewLabel').textContent = 'v' + version.version_number + ' · ' + String(version.created_at);
+                                document.getElementById('historyPreviewBody').textContent = version.prompt;
+                                // Footer: keep only the "Back to list" + "Close" buttons.
+                                Array.from(popup.querySelectorAll('.modal__footer button')).forEach(b => {
+                                    b.hidden = b.dataset.historyLabel === 'Preview';
+                                });
                             });
                         });
+
                         document.querySelectorAll('.rollback-btn').forEach(btn => {
                             btn.addEventListener('click', () => {
                                 const v = btn.getAttribute('data-v');
@@ -151,7 +214,7 @@ function attachHistoryButtonListeners() {
                                     .then(res => res.json())
                                     .then(resp => {
                                         if (!resp.success) throw new Error(resp.error || 'Rollback failed');
-                                        showToast('Restored this version.', 'success');
+                                        showToast('Restored v' + v + '.', 'success');
                                         setTimeout(() => window.location.reload(), 800);
                                     })
                                     .catch(err => showToast(err.message || 'Rollback failed', 'error'));
@@ -183,24 +246,103 @@ function attachEditButtonListeners() {
     });
 }
 
-// Function to open the edit popup - MODIFIED TO USE showAppPopup
+// Function to open the edit popup - uses showAppPopup with a refined layout:
+// eyebrow with the original title, live char/word/line counts, a Preview
+// button that swaps the modal body to a preview view (Back to edit returns
+// to the form), a Revert button to reset the form, and Cmd/Ctrl+Enter to save.
 function openEditModal(randomVal, title, prompt, tags) {
-    // Wrapped existing content in a single parent div
-    const contentHtml = `
-        <div class="stack">
-            <input type="hidden" id="editRandomValModal" value="${randomVal}">
+    // Escape user-controlled strings for safe interpolation into the markup.
+    const safeTitle = escapeHTML(title || '');
+    const safePrompt = escapeHTML(prompt || '');
+
+    const formHtml = `
+        <div class="stack" id="editFormView">
+            <input type="hidden" id="editRandomValModal" value="${escapeHTML(randomVal)}">
+            <div class="cluster" style="gap: var(--p-sp-2); align-items: center; color: var(--p-color-text-subdued); font-size: var(--p-fs-eyebrow); text-transform: uppercase; letter-spacing: 0.16em;">
+                <i class="fa-solid fa-pen" aria-hidden="true"></i>
+                <span>Editing</span>
+                <span class="t-strong" style="text-transform: none; letter-spacing: 0; color: var(--p-color-text);">&ldquo;${safeTitle}&rdquo;</span>
+            </div>
             <div class="field">
                 <label class="field__label" for="editTitleModal">Title</label>
-                <input class="input" type="text" id="editTitleModal" value="${escapeHTML(title)}" autocomplete="off">
+                <input class="input" type="text" id="editTitleModal" value="${safeTitle}" autocomplete="off" maxlength="200">
             </div>
             <div class="field">
-                <label class="field__label" for="editPromptModal">Prompt</label>
-                <textarea class="textarea input--mono" id="editPromptModal" rows="14" style="resize: vertical;">${escapeHTML(prompt)}</textarea>
+                <div class="cluster cluster--between" style="margin-bottom: var(--p-sp-2); align-items: baseline;">
+                    <label class="field__label" for="editPromptModal" style="margin: 0;">Prompt body</label>
+                    <span class="t-body-sm t-muted t-mono" id="editCountStrip">0 chars &middot; 0 words &middot; 1 line</span>
+                </div>
+                <textarea class="textarea input--mono" id="editPromptModal" rows="18" style="resize: vertical; min-height: 280px;">${safePrompt}</textarea>
             </div>
+        </div>
+        <div class="stack" id="editPreviewView" hidden>
+            <div class="preview-header" style="margin-bottom: var(--p-sp-3);">
+                <div class="preview-header__eyebrow">
+                    <span>Preview</span>
+                    <span>Edit preview</span>
+                </div>
+                <h2 class="preview-header__title" id="editPreviewTitle"></h2>
+            </div>
+            <pre class="preview-body" id="editPreviewBody" style="min-height: 280px; max-height: 56vh;"></pre>
         </div>
     `;
 
+    let mode = 'form';  // 'form' | 'preview'
+
     const editButtons = [
+        {
+            text: "Preview",
+            class: "btn--tertiary",
+            action: function() {
+                if (mode === 'preview') return false;
+                const newTitle = document.getElementById('editTitleModal').value;
+                const newPrompt = document.getElementById('editPromptModal').value;
+                if (!newTitle.trim()) {
+                    showToast("Add a title before previewing.", "error");
+                    document.getElementById('editTitleModal').focus();
+                    return false;
+                }
+                document.getElementById('editPreviewTitle').textContent = newTitle;
+                document.getElementById('editPreviewBody').textContent = newPrompt;
+                document.getElementById('editFormView').hidden = true;
+                document.getElementById('editPreviewView').hidden = false;
+                mode = 'preview';
+                refreshEditFooter();
+                return false;
+            }
+        },
+        {
+            text: "Back to edit",
+            class: "btn--tertiary",
+            action: function() {
+                if (mode === 'form') return false;
+                document.getElementById('editFormView').hidden = false;
+                document.getElementById('editPreviewView').hidden = true;
+                mode = 'form';
+                refreshEditFooter();
+                return false;
+            }
+        },
+        {
+            text: "Revert",
+            class: "btn--ghost",
+            action: function() {
+                document.getElementById('editTitleModal').value = title || '';
+                document.getElementById('editPromptModal').value = prompt || '';
+                updateEditCounts();
+                const ta = document.getElementById('editPromptModal');
+                if (ta) ta.dispatchEvent(new Event('input'));
+                showToast("Reverted to the saved version.", "info");
+                return false;
+            }
+        },
+        {
+            text: "Cancel",
+            class: "btn--secondary",
+            action: function() {
+                return true;
+            }
+        },
         {
             text: "Save changes",
             class: "btn--primary",
@@ -217,21 +359,85 @@ function openEditModal(randomVal, title, prompt, tags) {
                 saveEditedPrompt(newRandomVal, newTitle, newPrompt);
                 return true;
             }
-        },
-        {
-            text: "Cancel",
-            class: "btn--secondary",
-            action: function() {
-                return true;
-            }
         }
     ];
 
-    showAppPopup("Edit prompt", contentHtml, {
+    // The full set of footer buttons, in display order. We swap the visible
+    // subset between the form view and the preview view by rebuilding the
+    // modal footer on demand (see refreshEditFooter).
+    const FORM_BUTTONS = ['Preview', 'Revert', 'Cancel', 'Save changes'];
+    const PREVIEW_BUTTONS = ['Back to edit', 'Revert', 'Cancel', 'Save changes'];
+
+    function refreshEditFooter() {
+        const popup = document.getElementById('app-popup');
+        if (!popup) return;
+        const footer = popup.querySelector('.modal__footer');
+        if (!footer) return;
+        const labels = mode === 'preview' ? PREVIEW_BUTTONS : FORM_BUTTONS;
+        const buttons = Array.from(footer.querySelectorAll('button'));
+        buttons.forEach(b => {
+            const label = (b.dataset.editLabel || b.textContent || '').trim();
+            b.hidden = !labels.includes(label);
+        });
+    }
+
+    // Tag each footer button with the label it represents so refreshEditFooter
+    // can find them by name in refreshEditFooter.
+    editButtons.forEach(b => { b._editLabel = b.text; });
+
+    showAppPopup("Edit prompt", formHtml, {
         type: 'custom',
         buttons: editButtons,
-        size: '720px'
+        size: '800px'
     });
+
+    // Live count + keyboard shortcut + focus, after the modal is in the DOM.
+    setTimeout(() => {
+        const titleInput = document.getElementById('editTitleModal');
+        const bodyInput = document.getElementById('editPromptModal');
+        if (titleInput) titleInput.focus();
+        const handler = () => updateEditCounts();
+        if (bodyInput) bodyInput.addEventListener('input', handler);
+        if (titleInput) titleInput.addEventListener('input', handler);
+        // After the modal is mounted, label each footer button by its
+        // human-readable text so refreshEditFooter can find it by name.
+        const popup = document.getElementById('app-global-popup');
+        if (popup) {
+            const footer = popup.querySelector('.modal__footer');
+            if (footer) {
+                Array.from(footer.querySelectorAll('button')).forEach(btn => {
+                    const txt = (btn.textContent || '').trim();
+                    if (txt.includes('Back to edit')) btn.dataset.editLabel = 'Back to edit';
+                    else if (txt.startsWith('Preview')) btn.dataset.editLabel = 'Preview';
+                    else if (txt.includes('Revert')) btn.dataset.editLabel = 'Revert';
+                    else if (txt.includes('Cancel')) btn.dataset.editLabel = 'Cancel';
+                    else if (txt.includes('Save changes')) btn.dataset.editLabel = 'Save changes';
+                });
+            }
+            // Cmd/Ctrl+Enter saves the form from anywhere in the modal.
+            popup.addEventListener('keydown', function (e) {
+                if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+                    e.preventDefault();
+                    const saveBtn = Array.from(popup.querySelectorAll('button')).find(b => (b.dataset.editLabel || '') === 'Save changes');
+                    if (saveBtn) saveBtn.click();
+                }
+            });
+        }
+        updateEditCounts();
+    }, 0);
+}
+
+// Live char/word/line counter for the edit modal.
+function updateEditCounts() {
+    const strip = document.getElementById('editCountStrip');
+    const body = document.getElementById('editPromptModal');
+    if (!strip || !body) return;
+    const text = body.value || '';
+    const chars = text.length;
+    const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+    const lines = text === '' ? 1 : text.split('\n').length;
+    const fmt = (n) => Number(n).toLocaleString();
+    strip.textContent = `${fmt(chars)} chars · ${fmt(words)} words · ${fmt(lines)} line${lines === 1 ? '' : 's'}`;
 }
 
 function escapeHTML(str) {
