@@ -131,55 +131,47 @@
       </div>
     </div>
 
-    <div class="grid--2">
-      <div>
-        <span class="eyebrow" style="display: block; margin-bottom: var(--p-sp-3);">Quick actions</span>
-        <div class="stack--sm">
-          <button type="button" class="quick-action-btn prompt-box" data-action="shorten" onclick="setQuickAction('shorten')" style="cursor: pointer; text-align: left;">
-            <div class="cluster" style="justify-content: space-between;">
-              <strong style="font-size: var(--p-fs-h4);"><i class="fa-solid fa-compress" style="color: var(--p-color-warning); margin-right: 8px;"></i>Shorten</strong>
-            </div>
-            <p class="t-body-sm">Make the prompt more concise.</p>
-          </button>
+    <div>
+      <span class="eyebrow" style="display: block; margin-bottom: var(--p-sp-3);">Quick actions</span>
+      <div class="grid--2">
+        <button type="button" class="quick-action-btn" data-action="shorten" onclick="setQuickAction('shorten')">
+          <span class="quick-action-btn__icon" aria-hidden="true"><i class="fa-solid fa-compress"></i></span>
+          <h4 class="quick-action-btn__title">Shorten</h4>
+          <p class="quick-action-btn__body">Make the prompt more concise.</p>
+        </button>
 
-          <button type="button" class="quick-action-btn prompt-box" data-action="elaborate" onclick="setQuickAction('elaborate')" style="cursor: pointer; text-align: left;">
-            <div class="cluster" style="justify-content: space-between;">
-              <strong style="font-size: var(--p-fs-h4);"><i class="fa-solid fa-expand" style="color: var(--p-color-primary); margin-right: 8px;"></i>Elaborate</strong>
-            </div>
-            <p class="t-body-sm">Add more details and context.</p>
-          </button>
+        <button type="button" class="quick-action-btn" data-action="elaborate" onclick="setQuickAction('elaborate')">
+          <span class="quick-action-btn__icon" aria-hidden="true"><i class="fa-solid fa-expand"></i></span>
+          <h4 class="quick-action-btn__title">Elaborate</h4>
+          <p class="quick-action-btn__body">Add more details and context.</p>
+        </button>
 
-          <button type="button" class="quick-action-btn prompt-box" data-action="improve" onclick="setQuickAction('improve')" style="cursor: pointer; text-align: left;">
-            <div class="cluster" style="justify-content: space-between;">
-              <strong style="font-size: var(--p-fs-h4);"><i class="fa-solid fa-wand-magic-sparkles" style="color: var(--p-color-primary); margin-right: 8px;"></i>Improve</strong>
-            </div>
-            <p class="t-body-sm">Enhance clarity and effectiveness.</p>
-          </button>
+        <button type="button" class="quick-action-btn" data-action="improve" onclick="setQuickAction('improve')">
+          <span class="quick-action-btn__icon" aria-hidden="true"><i class="fa-solid fa-wand-magic-sparkles"></i></span>
+          <h4 class="quick-action-btn__title">Improve</h4>
+          <p class="quick-action-btn__body">Enhance clarity and effectiveness.</p>
+        </button>
 
-          <button type="button" class="quick-action-btn prompt-box" data-action="fix" onclick="setQuickAction('fix')" style="cursor: pointer; text-align: left;">
-            <div class="cluster" style="justify-content: space-between;">
-              <strong style="font-size: var(--p-fs-h4);"><i class="fa-solid fa-wrench" style="color: var(--p-color-interactive); margin-right: 8px;"></i>Fix grammar</strong>
-            </div>
-            <p class="t-body-sm">Correct grammar and spelling.</p>
-          </button>
-        </div>
+        <button type="button" class="quick-action-btn" data-action="fix" onclick="setQuickAction('fix')">
+          <span class="quick-action-btn__icon" aria-hidden="true"><i class="fa-solid fa-wrench"></i></span>
+          <h4 class="quick-action-btn__title">Fix grammar</h4>
+          <p class="quick-action-btn__body">Correct grammar and spelling.</p>
+        </button>
       </div>
+    </div>
 
-      <div>
-        <span class="eyebrow" style="display: block; margin-bottom: var(--p-sp-3);">Custom instructions</span>
-        <div class="field">
-          <label class="field__label" for="custom-instructions">Tell me how to refine your prompt</label>
-          <textarea id="custom-instructions" name="custom_instructions" rows="6" class="textarea" placeholder="Example: Make it more professional, add technical details, change the tone to be more friendly, focus on specific aspects…"></textarea>
-        </div>
-        <details style="margin-top: var(--p-sp-3);">
-          <summary class="t-body-sm t-muted" style="cursor: pointer;">Tips for better refinements</summary>
-          <ul class="t-body-sm t-muted" style="margin: var(--p-sp-2) 0 0; padding-left: var(--p-sp-5); line-height: 1.6;">
-            <li>Be specific about what you want to change.</li>
-            <li>Mention tone, style, or format preferences.</li>
-            <li>Specify target audience or use case.</li>
-          </ul>
-        </details>
-      </div>
+    <div class="field" style="margin-top: var(--p-sp-6);">
+      <span class="eyebrow" style="display: block; margin-bottom: var(--p-sp-3);">Custom instructions</span>
+      <label class="field__label" for="custom-instructions">Tell me how to refine your prompt</label>
+      <textarea id="custom-instructions" name="custom_instructions" rows="5" class="textarea" placeholder="Example: Make it more professional, add technical details, change the tone to be more friendly, focus on specific aspects…"></textarea>
+      <details style="margin-top: var(--p-sp-3);">
+        <summary class="t-body-sm t-muted" style="cursor: pointer;">Tips for better refinements</summary>
+        <ul class="t-body-sm t-muted" style="margin: var(--p-sp-2) 0 0; padding-left: var(--p-sp-5); line-height: 1.6;">
+          <li>Be specific about what you want to change.</li>
+          <li>Mention tone, style, or format preferences.</li>
+          <li>Specify target audience or use case.</li>
+        </ul>
+      </details>
     </div>
   </section>
 

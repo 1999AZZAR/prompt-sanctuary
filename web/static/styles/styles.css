@@ -42,8 +42,65 @@
 .prompt-box__actions .btn--sm { height: 28px; padding: 0 var(--p-sp-2); font-size: var(--p-fs-body-sm); gap: var(--p-sp-1); }
 .prompt-box.is-active { border-color: var(--p-color-primary); background: var(--p-color-surface-selected); }
 .prompt-box.is-active:hover { border-color: var(--p-color-primary); }
-.quick-action-btn.is-active { border-color: var(--p-color-primary); background: var(--p-color-primary-subdued); }
-.quick-action-btn.is-active strong { color: var(--p-color-primary-hover); }
+
+/* ---------- QUICK ACTION BUTTON (refinement page action card) ---------- */
+.quick-action-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--p-sp-3);
+  padding: var(--p-sp-5);
+  background: var(--p-color-surface);
+  border: var(--p-border-hair);
+  border-radius: var(--p-r-3);
+  color: var(--p-color-text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  min-width: 0;
+  width: 100%;
+  transition: border-color var(--p-dur-fast) var(--p-ease), background var(--p-dur-fast) var(--p-ease);
+}
+.quick-action-btn:hover { border-color: var(--p-color-text); }
+.quick-action-btn:focus-visible { outline: 2px solid var(--p-color-primary); outline-offset: 2px; }
+.quick-action-btn__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: var(--p-color-surface-sunken);
+  border: var(--p-border-hair);
+  border-radius: var(--p-r-2);
+  color: var(--p-color-text);
+  font-size: 16px;
+  flex-shrink: 0;
+}
+.quick-action-btn__title {
+  font-size: var(--p-fs-h4);
+  font-weight: var(--p-fw-semibold);
+  margin: 0;
+  color: var(--p-color-text);
+  line-height: 1.2;
+}
+.quick-action-btn__body {
+  font-size: var(--p-fs-body-sm);
+  color: var(--p-color-text-subdued);
+  line-height: var(--p-lh-body-sm);
+  margin: 0;
+}
+.quick-action-btn.is-active {
+  border-color: var(--p-color-primary);
+  background: var(--p-color-primary-subdued);
+}
+.quick-action-btn.is-active .quick-action-btn__icon {
+  background: var(--p-color-surface);
+  border-color: var(--p-color-primary);
+  color: var(--p-color-primary-hover);
+}
+.quick-action-btn.is-active .quick-action-btn__title {
+  color: var(--p-color-primary-hover);
+}
 
 /* ---------- BACKDROP (modals / drawers) ---------- */
 #backdrop {
