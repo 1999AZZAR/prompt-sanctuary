@@ -153,6 +153,14 @@ def _run_migrations() -> None:
                 logger.error("stdout: %s", result.stdout)
             if result.stderr:
                 logger.error("stderr: %s", result.stderr)
+        else:
+            # Surface migration output (revision names, "imported N rows"
+            # lines from data migrations, etc.) on success too, so boot
+            # logs show what was applied.
+            if result.stdout and result.stdout.strip():
+                for line in result.stdout.splitlines():
+                    if line.strip():
+                        logger.info("alembic: %s", line)
 
 
 def init_app(app: Flask) -> None:

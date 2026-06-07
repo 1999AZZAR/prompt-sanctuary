@@ -225,6 +225,23 @@ class Feedback(Base):
     user: Mapped["User"] = relationship(back_populates="feedback_entries")
 
 
+class SystemPrompt(Base):
+    """Curated prompts shipped with the application.
+
+    Replaces the legacy community/query.db::community table. These are
+    system-owned (no FK to a user) and show up in the Community Library
+    under a "System" badge alongside user-shared prompts.
+    """
+    __tablename__ = "system_prompts"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    random_val: Mapped[str] = mapped_column(String(64), nullable=False, unique=True)
+    title: Mapped[str] = mapped_column(String(255), nullable=False)
+    prompt: Mapped[str] = mapped_column(Text, nullable=False)
+    tag: Mapped[Optional[str]] = mapped_column(String(255))
+    time: Mapped[Optional[datetime]] = mapped_column(DateTime, default=datetime.utcnow, nullable=True)
+
+
 __all__ = [
     "Base",
     "User",
@@ -237,5 +254,6 @@ __all__ = [
     "Prompt",
     "PromptVersion",
     "SharedPrompt",
+    "SystemPrompt",
     "Feedback",
 ]

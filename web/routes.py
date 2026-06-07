@@ -60,6 +60,7 @@ from db.models import (
     Prompt as DbPrompt,
     PromptVersion as DbPromptVersion,
     SharedPrompt as DbSharedPrompt,
+    SystemPrompt as DbSystemPrompt,
     Feedback as DbFeedback,
     Session as DbSession,
 )
@@ -544,11 +545,17 @@ def create_main_blueprint(
             current_points = 80.0  # Default fallback
 
         try:
-            # The legacy query.db::community table (built-in system prompts)
-            # has been retired along with the multi-DB layout. Its data was
-            # never persisted in the unified schema, so we just return an
-            # empty list and let the template handle that.
-            raw_system_prompts = []
+            # System prompts (curated, shipped with the app) - imported from
+            # the legacy community/query.db::community table by Alembic.
+            raw_system_prompts = g.db_session.execute(
+                select(
+                    DbSystemPrompt.random_val,
+                    DbSystemPrompt.title,
+                    DbSystemPrompt.prompt,
+                    DbSystemPrompt.tag,
+                    DbSystemPrompt.time,
+                )
+            ).all()
             raw_shared_prompts = g.db_session.execute(
                 select(
                     DbSharedPrompt.owner,
@@ -567,11 +574,10 @@ def create_main_blueprint(
         for prompt in raw_system_prompts:
             system_prompts.append({
                 'random_val': prompt[0] or '',
-                'username': prompt[1] or '',
-                'title': prompt[2] or '',  # Note: 'tittle' in DB but using 'title' in template
-                'prompt': prompt[3] or '',
-                'tag': prompt[4] or '',
-                'time': prompt[5] or '',
+                'title': prompt[1] or '',
+                'prompt': prompt[2] or '',
+                'tag': prompt[3] or '',
+                'time': prompt[4] or '',
                 'is_shared': False,  # System prompts are not shared by users
                 'type': 'system'
             })
