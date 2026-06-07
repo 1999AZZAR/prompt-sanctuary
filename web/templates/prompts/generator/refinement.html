@@ -1,17 +1,17 @@
 {% extends "base.html" %}
 {% set active_section = 'Generator' %}
 {% set active_nav = 'refinement' %}
-{% block title %}Refinement · Prompt Sanctuary{% endblock %}
-{% block bar_title %}Refinement{% endblock %}
+{% block title %}{{ _('Refinement') }} · {{ _('Prompt Sanctuary') }}{% endblock %}
+{% block bar_title %}{{ _('Refinement') }}{% endblock %}
 
 {% block content %}
 <header class="hero section--first" style="padding-top: var(--p-sp-7); padding-bottom: var(--p-sp-7);">
-  <span class="eyebrow hero__eyebrow">Step 04 · Refine workflow</span>
-  <h1 class="t-h1 hero__display" style="font-size: var(--p-fs-h1); max-width: 24ch;">Refine an existing prompt.</h1>
-  <p class="lede hero__lede">Pick a quick action or write custom instructions. Every refinement is versioned in your library.</p>
+  <span class="eyebrow hero__eyebrow">{{ _('Step 04 · Refine workflow') }}</span>
+  <h1 class="t-h1 hero__display" style="font-size: var(--p-fs-h1); max-width: 24ch;">{{ _('Refine an existing prompt.') }}</h1>
+  <p class="lede hero__lede">{{ _('Pick a quick action or write custom instructions. Every refinement is versioned in your library.') }}</p>
   <div class="cluster" style="margin-top: var(--p-sp-5);">
-    <span class="badge badge--warning"><span class="badge__dot"></span> 0.5 credits per refinement</span>
-    <span class="badge"><span class="badge__dot"></span> Versioned</span>
+    <span class="badge badge--warning"><span class="badge__dot"></span> {{ _('0.5 credits per refinement') }}</span>
+    <span class="badge"><span class="badge__dot"></span> {{ _('Versioned') }}</span>
   </div>
 </header>
 
@@ -19,22 +19,22 @@
   <div class="stepper__step is-complete">
     <span class="stepper__num">01</span>
     <span class="stepper__label">
-      <span class="stepper__label-eyebrow">Step</span>
-      <span class="stepper__label-title">Generate</span>
+      <span class="stepper__label-eyebrow">{{ _('Step') }}</span>
+      <span class="stepper__label-title">{{ _('Generate') }}</span>
     </span>
   </div>
   <div class="stepper__step is-active">
     <span class="stepper__num">02</span>
     <span class="stepper__label">
-      <span class="stepper__label-eyebrow">Step</span>
-      <span class="stepper__label-title">Refine</span>
+      <span class="stepper__label-eyebrow">{{ _('Step') }}</span>
+      <span class="stepper__label-title">{{ _('Refine') }}</span>
     </span>
   </div>
   <div class="stepper__step">
     <span class="stepper__num">03</span>
     <span class="stepper__label">
-      <span class="stepper__label-eyebrow">Step</span>
-      <span class="stepper__label-title">Save</span>
+      <span class="stepper__label-eyebrow">{{ _('Step') }}</span>
+      <span class="stepper__label-title">{{ _('Save') }}</span>
     </span>
   </div>
 </div>
@@ -44,26 +44,26 @@
   <section class="card" aria-labelledby="refine-step-1">
     <div class="card__header">
       <div>
-        <span class="eyebrow">01 · Source</span>
-        <h2 class="card__title" id="refine-step-1" style="margin-top: var(--p-sp-2);">Choose your prompt source</h2>
+        <span class="eyebrow">01 · {{ _('Source') }}</span>
+        <h2 class="card__title" id="refine-step-1" style="margin-top: var(--p-sp-2);">{{ _('Choose your prompt source') }}</h2>
       </div>
     </div>
 
     <div class="tabs" role="tablist" style="margin-bottom: var(--p-sp-5);">
       <button type="button" id="source-manual" class="tabs__item is-active" data-source="manual" onclick="selectSource('manual')" role="tab">
-        <i class="fa-solid fa-pen" aria-hidden="true"></i> Manual input
+        <i class="fa-solid fa-pen" aria-hidden="true"></i> {{ _('Manual input') }}
       </button>
       <button type="button" id="source-saved" class="tabs__item" data-source="saved" onclick="selectSource('saved')" role="tab">
-        <i class="fa-solid fa-bookmark" aria-hidden="true"></i> Saved
+        <i class="fa-solid fa-bookmark" aria-hidden="true"></i> {{ _('Saved') }}
       </button>
       <button type="button" id="source-community" class="tabs__item" data-source="community" onclick="selectSource('community')" role="tab">
-        <i class="fa-solid fa-users" aria-hidden="true"></i> Community
+        <i class="fa-solid fa-users" aria-hidden="true"></i> {{ _('Community') }}
       </button>
     </div>
 
     <div id="manual-input-section" class="field">
-      <label class="field__label" for="prompt-text">Your prompt</label>
-      <textarea id="prompt-text" name="prompt_text" rows="6" class="textarea textarea--mono" placeholder="Paste or type the prompt you want to refine…"></textarea>
+      <label class="field__label" for="prompt-text">{{ _('Your prompt') }}</label>
+      <textarea id="prompt-text" name="prompt_text" rows="6" class="textarea textarea--mono" placeholder="{{ _('Paste or type the prompt you want to refine…') }}"></textarea>
     </div>
 
     <div id="saved-prompts-section" hidden>
@@ -82,8 +82,8 @@
       {% else %}
         <div class="empty empty--compact">
           <div class="empty__icon"><i class="fa-solid fa-bookmark" aria-hidden="true"></i></div>
-          <div class="empty__title">No saved prompts yet</div>
-          <p class="empty__body">Save some prompts first to refine them.</p>
+          <div class="empty__title">{{ _('No saved prompts yet') }}</div>
+          <p class="empty__body">{{ _('Save some prompts first to refine them.') }}</p>
         </div>
       {% endif %}
     </div>
@@ -95,7 +95,7 @@
           <div class="prompt-box prompt-option" data-prompt-id="{{ prompt.prompt_id }}" data-prompt-title="{{ prompt.title }}" data-prompt-text="{{ prompt.prompt }}" data-prompt-owner="{{ prompt.owner }}" data-prompt-source="community">
             <div class="cluster" style="justify-content: space-between;">
               <h4 class="prompt-box__title" style="margin: 0;">{{ prompt.title }}</h4>
-              <span class="index">{{ prompt.time }} · by {{ prompt.owner }}</span>
+              <span class="index">{{ prompt.time }} · {% trans owner=prompt.owner %}by {{ owner }}{% endtrans %}</span>
             </div>
             <p class="prompt-box__body">{{ prompt.prompt[:160] }}{% if prompt.prompt|length > 160 %}…{% endif %}</p>
           </div>
@@ -104,8 +104,8 @@
       {% else %}
         <div class="empty empty--compact">
           <div class="empty__icon"><i class="fa-solid fa-users" aria-hidden="true"></i></div>
-          <div class="empty__title">No community prompts</div>
-          <p class="empty__body">Check back later for shared prompts.</p>
+          <div class="empty__title">{{ _('No community prompts') }}</div>
+          <p class="empty__body">{{ _('Check back later for shared prompts.') }}</p>
         </div>
       {% endif %}
     </div>
@@ -113,11 +113,11 @@
     <div id="selected-prompt-display" class="banner banner--success" hidden style="margin-top: var(--p-sp-5);">
       <i class="fa-solid fa-check banner__icon"></i>
       <div style="flex: 1; min-width: 0;">
-        <p class="banner__title" style="margin-bottom: 2px;">Selected <span id="selected-prompt-source"></span></p>
+        <p class="banner__title" style="margin-bottom: 2px;">{{ _('Selected') }} <span id="selected-prompt-source"></span></p>
         <h4 class="t-h4" id="selected-prompt-title" style="margin: 0 0 4px;"></h4>
         <p id="selected-prompt-text" class="t-mono t-body-sm" style="margin: 0; color: var(--p-color-text); white-space: pre-wrap;"></p>
       </div>
-      <button type="button" class="icon-btn" onclick="clearSelectedPrompt()" aria-label="Clear selection">
+      <button type="button" class="icon-btn" onclick="clearSelectedPrompt()" aria-label="{{ _('Clear selection') }}">
         <i class="fa-solid fa-xmark"></i>
       </button>
     </div>
@@ -126,50 +126,50 @@
   <section class="card" aria-labelledby="refine-step-2">
     <div class="card__header">
       <div>
-        <span class="eyebrow">02 · Action</span>
-        <h2 class="card__title" id="refine-step-2" style="margin-top: var(--p-sp-2);">Choose how to refine</h2>
+        <span class="eyebrow">02 · {{ _('Action') }}</span>
+        <h2 class="card__title" id="refine-step-2" style="margin-top: var(--p-sp-2);">{{ _('Choose how to refine') }}</h2>
       </div>
     </div>
 
     <div>
-      <span class="eyebrow" style="display: block; margin-bottom: var(--p-sp-3);">Quick actions</span>
+      <span class="eyebrow" style="display: block; margin-bottom: var(--p-sp-3);">{{ _('Quick actions') }}</span>
       <div class="grid--2">
         <button type="button" class="quick-action-btn" data-action="shorten" onclick="setQuickAction('shorten')">
           <span class="quick-action-btn__icon" aria-hidden="true"><i class="fa-solid fa-compress"></i></span>
-          <h4 class="quick-action-btn__title">Shorten</h4>
-          <p class="quick-action-btn__body">Make the prompt more concise.</p>
+          <h4 class="quick-action-btn__title">{{ _('Shorten') }}</h4>
+          <p class="quick-action-btn__body">{{ _('Make the prompt more concise.') }}</p>
         </button>
 
         <button type="button" class="quick-action-btn" data-action="elaborate" onclick="setQuickAction('elaborate')">
           <span class="quick-action-btn__icon" aria-hidden="true"><i class="fa-solid fa-expand"></i></span>
-          <h4 class="quick-action-btn__title">Elaborate</h4>
-          <p class="quick-action-btn__body">Add more details and context.</p>
+          <h4 class="quick-action-btn__title">{{ _('Elaborate') }}</h4>
+          <p class="quick-action-btn__body">{{ _('Add more details and context.') }}</p>
         </button>
 
         <button type="button" class="quick-action-btn" data-action="improve" onclick="setQuickAction('improve')">
           <span class="quick-action-btn__icon" aria-hidden="true"><i class="fa-solid fa-wand-magic-sparkles"></i></span>
-          <h4 class="quick-action-btn__title">Improve</h4>
-          <p class="quick-action-btn__body">Enhance clarity and effectiveness.</p>
+          <h4 class="quick-action-btn__title">{{ _('Improve') }}</h4>
+          <p class="quick-action-btn__body">{{ _('Enhance clarity and effectiveness.') }}</p>
         </button>
 
         <button type="button" class="quick-action-btn" data-action="fix" onclick="setQuickAction('fix')">
           <span class="quick-action-btn__icon" aria-hidden="true"><i class="fa-solid fa-wrench"></i></span>
-          <h4 class="quick-action-btn__title">Fix grammar</h4>
-          <p class="quick-action-btn__body">Correct grammar and spelling.</p>
+          <h4 class="quick-action-btn__title">{{ _('Fix grammar') }}</h4>
+          <p class="quick-action-btn__body">{{ _('Correct grammar and spelling.') }}</p>
         </button>
       </div>
     </div>
 
     <div class="field" style="margin-top: var(--p-sp-6);">
-      <span class="eyebrow" style="display: block; margin-bottom: var(--p-sp-3);">Custom instructions</span>
-      <label class="field__label" for="custom-instructions">Tell me how to refine your prompt</label>
-      <textarea id="custom-instructions" name="custom_instructions" rows="5" class="textarea" placeholder="Example: Make it more professional, add technical details, change the tone to be more friendly, focus on specific aspects…"></textarea>
+      <span class="eyebrow" style="display: block; margin-bottom: var(--p-sp-3);">{{ _('Custom instructions') }}</span>
+      <label class="field__label" for="custom-instructions">{{ _('Tell me how to refine your prompt') }}</label>
+      <textarea id="custom-instructions" name="custom_instructions" rows="5" class="textarea" placeholder="{{ _('Example: Make it more professional, add technical details, change the tone to be more friendly, focus on specific aspects…') }}"></textarea>
       <details style="margin-top: var(--p-sp-3);">
-        <summary class="t-body-sm t-muted" style="cursor: pointer;">Tips for better refinements</summary>
+        <summary class="t-body-sm t-muted" style="cursor: pointer;">{{ _('Tips for better refinements') }}</summary>
         <ul class="t-body-sm t-muted" style="margin: var(--p-sp-2) 0 0; padding-left: var(--p-sp-5); line-height: 1.6;">
-          <li>Be specific about what you want to change.</li>
-          <li>Mention tone, style, or format preferences.</li>
-          <li>Specify target audience or use case.</li>
+          <li>{{ _('Be specific about what you want to change.') }}</li>
+          <li>{{ _('Mention tone, style, or format preferences.') }}</li>
+          <li>{{ _('Specify target audience or use case.') }}</li>
         </ul>
       </details>
     </div>
@@ -177,9 +177,9 @@
 
   <div class="cluster" style="padding: var(--p-sp-5) 0;">
     <button type="submit" id="refine-btn" class="btn btn--primary btn--lg" disabled>
-      <i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i> Refine prompt
+      <i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i> {{ _('Refine prompt') }}
     </button>
-    <span class="t-body-sm t-muted">Costs 0.5 credits</span>
+    <span class="t-body-sm t-muted">{{ _('Costs 0.5 credits') }}</span>
   </div>
 </form>
 
@@ -187,12 +187,12 @@
 
 <div id="refined-result" class="result-panel" hidden style="margin-top: var(--p-sp-7);">
   <div class="result-panel__header">
-    <span class="eyebrow">Result</span>
+    <span class="eyebrow">{{ _('Result') }}</span>
     <h2 class="result-panel__title">
       <i class="fa-solid fa-star" style="color: var(--p-color-primary); margin-right: 8px;"></i>
-      Refined prompt
+      {{ _('Refined prompt') }}
     </h2>
-    <button type="button" class="icon-btn" onclick="document.getElementById('refined-result').setAttribute('hidden','')" aria-label="Close">
+    <button type="button" class="icon-btn" onclick="document.getElementById('refined-result').setAttribute('hidden','')" aria-label="{{ _('Close') }}">
       <i class="fa-solid fa-xmark"></i>
     </button>
   </div>
@@ -200,14 +200,14 @@
     <div class="prompt-body" id="refined-prompt-text"></div>
   </div>
   <div class="result-panel__footer">
-    <button type="button" class="btn btn--primary" onclick="copyRefinedPrompt()"><i class="fa-solid fa-copy"></i> Copy</button>
-    <button type="button" class="btn btn--secondary" onclick="saveRefinedPrompt()"><i class="fa-solid fa-bookmark"></i> Save as new</button>
-    <button type="button" class="btn--link" onclick="refineAgain()"><i class="fa-solid fa-rotate-right"></i> Refine again</button>
+    <button type="button" class="btn btn--primary" onclick="copyRefinedPrompt()"><i class="fa-solid fa-copy"></i> {{ _('Copy') }}</button>
+    <button type="button" class="btn btn--secondary" onclick="saveRefinedPrompt()"><i class="fa-solid fa-bookmark"></i> {{ _('Save as new') }}</button>
+    <button type="button" class="btn--link" onclick="refineAgain()"><i class="fa-solid fa-rotate-right"></i> {{ _('Refine again') }}</button>
   </div>
 </div>
 
 <div id="loading" class="modal-backdrop" hidden>
-  <div class="spinner spinner--lg" aria-label="Loading"></div>
+  <div class="spinner spinner--lg" aria-label="{{ _('Loading') }}"></div>
 </div>
 
 <div id="status-messages" style="position: fixed; top: calc(var(--p-grid-bar-height) + 12px); right: 20px; z-index: var(--p-z-overlay); display: flex; flex-direction: column; gap: var(--p-sp-2); max-width: 360px;"></div>
@@ -355,7 +355,6 @@ function showStatus(message, type) {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-  // Optional pre-selection from the library: ?source=personal|community|system&prompt_id=...
   var dataEl = document.getElementById('refinement-data');
   var preselect = null;
   if (dataEl) {
@@ -373,18 +372,14 @@ document.addEventListener('DOMContentLoaded', function () {
       selectSource(preselect.source === 'personal' ? 'saved' : 'community');
       var opt = document.querySelector('.prompt-option[data-prompt-id="' + cssEscape(preselect.id) + '"]');
       if (opt) {
-        // Call the helper directly. (We can't dispatch a click because the
-        // delegated click handler is registered further down in this callback.)
         if (opt.dataset.promptSource === 'saved') selectSavedPrompt(opt.dataset.promptId, opt.dataset.promptTitle, opt.dataset.promptText);
         else if (opt.dataset.promptSource === 'community') selectCommunityPrompt(opt.dataset.promptId, opt.dataset.promptTitle, opt.dataset.promptText, opt.dataset.promptOwner);
-        // Mark the option visually so the user sees which one is selected.
         opt.classList.add('is-selected');
         opt.setAttribute('aria-selected', 'true');
         matched = true;
       }
     }
     if (!matched) {
-      // Fallback: pre-fill the manual textarea with the prompt body.
       selectSource('manual');
       var ta = document.getElementById('prompt-text');
       if (ta) ta.value = preselect.text || '';
@@ -404,7 +399,6 @@ document.addEventListener('DOMContentLoaded', function () {
     var title = opt.dataset.promptTitle;
     var text = opt.dataset.promptText;
     var source = opt.dataset.promptSource;
-    // Visual selection: clear other selections in the same group, mark this one.
     var group = opt.parentElement;
     if (group) group.querySelectorAll('.prompt-option.is-selected').forEach(function (el) { el.classList.remove('is-selected'); el.removeAttribute('aria-selected'); });
     opt.classList.add('is-selected');

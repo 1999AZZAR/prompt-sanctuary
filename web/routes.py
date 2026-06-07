@@ -813,6 +813,9 @@ def create_main_blueprint(
         user_achievements = []
         try:
             user_achievements = get_user_achievements(main_blueprint.user_db, username)
+            from i18n_data import translate_achievement_row
+            _lang = session.get("language") or "en"
+            user_achievements = [translate_achievement_row(row, _lang) for row in user_achievements]
         except Exception:
             logger.exception("Failed to get user achievements")
 
@@ -1836,13 +1839,20 @@ Provide only the corrected version, no explanations."""
 
     @main_blueprint.route("/language/<language>")
     def set_language(language):
-        """Set user language preference"""
+        """Set user language preference. Accepts GET (link) and POST (form)."""
         if language not in LANGUAGES:
             flash(_("Language not supported"), "error")
             return redirect(request.referrer or url_for('main.home'))
 
         session['language'] = language
         flash(_("Language changed to %(language)s", language=LANGUAGES[language]), "success")
+
+        # Only follow the next= param if it points to the same host (open-redirect guard)
+        next_url = request.args.get("next") or request.form.get("next")
+        if next_url and next_url.startswith("/"):
+            return redirect(next_url)
+        if next_url and (request.host_url and next_url.startswith(request.host_url)):
+            return redirect(next_url)
         return redirect(request.referrer or url_for('main.home'))
 
     @main_blueprint.route("/src/main.tsx")

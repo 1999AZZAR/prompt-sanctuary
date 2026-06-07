@@ -1,28 +1,28 @@
 {% extends "base.html" %}
-{% block title %}Privacy Policy · Prompt Sanctuary{% endblock %}
+{% block title %}{{ _('Privacy Policy') }} · {{ _('Prompt Sanctuary') }}{% endblock %}
 
 {% block legal_content %}
 <div class="public-page">
   <header class="public-bar">
     <a class="brand" href="{{ url_for('main.index') }}">
       <span class="brand__mark">P</span>
-      <span class="brand__name">Sanctuary</span>
+      <span class="brand__name">{{ _('Sanctuary') }}</span>
       <span class="brand__sub">v1</span>
     </a>
     <span class="public-bar__spacer"></span>
-    <a href="{{ url_for('main.index') }}"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Back home</a>
+    <a href="{{ url_for('main.index') }}"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> {{ _('Back home') }}</a>
   </header>
 
   <main class="public-page__main">
     <div class="container container--narrow">
       <header style="margin-bottom: var(--p-sp-9);">
-        <span class="eyebrow">Legal · 10</span>
-        <h1 class="t-display-md" style="margin: var(--p-sp-3) 0 var(--p-sp-5); letter-spacing: -0.02em;">Privacy policy.</h1>
-        <p class="lede">What we collect, why, how long we keep it, and how to get it back. The short version: we keep what we need to run the service, nothing more, and you can delete your account at any time.</p>
+        <span class="eyebrow">{{ _('Legal · 10') }}</span>
+        <h1 class="t-display-md" style="margin: var(--p-sp-3) 0 var(--p-sp-5); letter-spacing: -0.02em;">{{ _('Privacy policy.') }}</h1>
+        <p class="lede">{{ _('What we collect, why, how long we keep it, and how to get it back. The short version: we keep what we need to run the service, nothing more, and you can delete your account at any time.') }}</p>
         <div class="prose-meta">
-          <span class="badge"><i class="fa-solid fa-calendar"></i> Last updated 6 June 2026</span>
-          <span class="badge"><i class="fa-solid fa-clock"></i> 5 min read</span>
-          <span class="badge"><i class="fa-solid fa-shield-halved"></i> GDPR-aligned</span>
+          <span class="badge"><i class="fa-solid fa-calendar"></i> {% trans date='6 June 2026' %}Last updated {{ date }}{% endtrans %}</span>
+          <span class="badge"><i class="fa-solid fa-clock"></i> {% trans minutes='5' %}{{ minutes }} min read{% endtrans %}</span>
+          <span class="badge"><i class="fa-solid fa-shield-halved"></i> {{ _('GDPR-aligned') }}</span>
         </div>
       </header>
 

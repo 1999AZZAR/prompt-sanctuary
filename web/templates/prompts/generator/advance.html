@@ -1,17 +1,17 @@
 {% extends "base.html" %}
 {% set active_section = 'Generator' %}
 {% set active_nav = 'advance' %}
-{% block title %}Advanced · Prompt Sanctuary{% endblock %}
-{% block bar_title %}Advanced generator{% endblock %}
+{% block title %}{{ _('Advanced') }} · {{ _('Prompt Sanctuary') }}{% endblock %}
+{% block bar_title %}{{ _('Advanced generator') }}{% endblock %}
 
 {% block content %}
 <header class="hero section--first" style="padding-top: var(--p-sp-7); padding-bottom: var(--p-sp-7);">
-  <span class="eyebrow hero__eyebrow">Step 03 · Pro mode</span>
-  <h1 class="t-h1 hero__display" style="font-size: var(--p-fs-h1); max-width: 24ch;">Generate from a system prompt.</h1>
-  <p class="lede hero__lede">Configure use case, structure, safety, and style. Optional knowledge base for domain-specific prompts.</p>
+  <span class="eyebrow hero__eyebrow">{{ _('Step 03 · Pro mode') }}</span>
+  <h1 class="t-h1 hero__display" style="font-size: var(--p-fs-h1); max-width: 24ch;">{{ _('Generate from a system prompt.') }}</h1>
+  <p class="lede hero__lede">{{ _('Configure use case, structure, safety, and style. Optional knowledge base for domain-specific prompts.') }}</p>
   <div class="cluster" style="margin-top: var(--p-sp-5);">
-    <span class="badge badge--info"><span class="badge__dot"></span> 1.0 credit per generation</span>
-    <span class="badge"><span class="badge__dot"></span> Image variants included</span>
+    <span class="badge badge--info"><span class="badge__dot"></span> {{ _('1.0 credit per generation') }}</span>
+    <span class="badge"><span class="badge__dot"></span> {{ _('Image variants included') }}</span>
   </div>
 </header>
 
@@ -19,22 +19,22 @@
   <div class="stepper__step">
     <span class="stepper__num">01</span>
     <span class="stepper__label">
-      <span class="stepper__label-eyebrow">Step</span>
-      <span class="stepper__label-title">Generate</span>
+      <span class="stepper__label-eyebrow">{{ _('Step') }}</span>
+      <span class="stepper__label-title">{{ _('Generate') }}</span>
     </span>
   </div>
   <div class="stepper__step is-active">
     <span class="stepper__num">02</span>
     <span class="stepper__label">
-      <span class="stepper__label-eyebrow">Step</span>
-      <span class="stepper__label-title">Refine</span>
+      <span class="stepper__label-eyebrow">{{ _('Step') }}</span>
+      <span class="stepper__label-title">{{ _('Refine') }}</span>
     </span>
   </div>
   <div class="stepper__step">
     <span class="stepper__num">03</span>
     <span class="stepper__label">
-      <span class="stepper__label-eyebrow">Step</span>
-      <span class="stepper__label-title">Save</span>
+      <span class="stepper__label-eyebrow">{{ _('Step') }}</span>
+      <span class="stepper__label-title">{{ _('Save') }}</span>
     </span>
   </div>
 </div>
@@ -43,14 +43,14 @@
   <section class="card" aria-labelledby="text-prompt-heading">
     <div class="card__header">
       <div>
-        <span class="eyebrow">01 · Text</span>
+        <span class="eyebrow">01 · {{ _('Text') }}</span>
         <h2 class="card__title" id="text-prompt-heading" style="margin-top: var(--p-sp-2);">
           <i class="fa-solid fa-font" style="color: var(--p-color-primary); margin-right: 8px;"></i>
-          Generate text prompt
+          {{ _('Generate text prompt') }}
         </h2>
-        <p class="card__sub">Configure use case, structure, and safety in detail.</p>
+        <p class="card__sub">{{ _('Configure use case, structure, and safety in detail.') }}</p>
       </div>
-      <button type="button" class="icon-btn" onclick="toggleTextHelp()" aria-controls="text-help-region" aria-expanded="false" aria-label="Toggle help">
+      <button type="button" class="icon-btn" onclick="toggleTextHelp()" aria-controls="text-help-region" aria-expanded="false" aria-label="{{ _('Toggle help') }}">
         <i class="fa-solid fa-circle-question"></i>
       </button>
     </div>
@@ -58,46 +58,46 @@
     <div id="text-help-region" class="banner banner--info" hidden>
       <i class="fa-solid fa-circle-info banner__icon"></i>
       <div>
-        <div class="banner__title">How this works</div>
-        <div class="banner__body">Enter your use case, select the prompt type, and configure other parameters to create a custom prompt.</div>
+        <div class="banner__title">{{ _('How this works') }}</div>
+        <div class="banner__body">{{ _('Enter your use case, select the prompt type, and configure other parameters to create a custom prompt.') }}</div>
       </div>
     </div>
 
     <form id="a-text-prompt-form" class="stack">
       <div class="field">
-        <label class="field__label" for="text_parameter0">Use case</label>
-        <input class="input" type="text" name="parameter0" id="text_parameter0" placeholder="Write a README file" maxlength="300" required>
+        <label class="field__label" for="text_parameter0">{{ _('Use case') }}</label>
+        <input class="input" type="text" name="parameter0" id="text_parameter0" placeholder="{{ _('Write a README file') }}" maxlength="300" required>
       </div>
 
       <div class="field">
-        <label class="field__label" for="text_parameter1">Prompt type</label>
+        <label class="field__label" for="text_parameter1">{{ _('Prompt type') }}</label>
         <select class="select" name="parameter1" id="text_parameter1">
-          <option value="simple">Simple</option>
-          <option value="standard">Standard</option>
-          <option value="detailed">Detailed</option>
-          <option value="step-by-step">Step by step</option>
+          <option value="simple">{{ _('Simple') }}</option>
+          <option value="standard">{{ _('Standard') }}</option>
+          <option value="detailed">{{ _('Detailed') }}</option>
+          <option value="step-by-step">{{ _('Step by step') }}</option>
         </select>
       </div>
 
       <div class="field">
-        <label class="field__label" for="text_parameter2">Harm content filter</label>
+        <label class="field__label" for="text_parameter2">{{ _('Harm content filter') }}</label>
         <select class="select" name="parameter2" id="text_parameter2">
-          <option value="unspecified">Unspecified</option>
-          <option value="none">Block none</option>
-          <option value="few">Block few</option>
-          <option value="some">Block some</option>
-          <option value="most">Block most</option>
+          <option value="unspecified">{{ _('Unspecified') }}</option>
+          <option value="none">{{ _('Block none') }}</option>
+          <option value="few">{{ _('Block few') }}</option>
+          <option value="some">{{ _('Block some') }}</option>
+          <option value="most">{{ _('Block most') }}</option>
         </select>
       </div>
 
       <div class="field">
-        <label class="field__label" for="text_parameter3">Knowledge base <span class="t-muted t-body-sm" style="font-weight: 400;">(optional)</span></label>
-        <textarea class="textarea" name="parameter3" id="text_parameter3" placeholder="Enter the knowledge base if any" maxlength="1000" rows="3"></textarea>
-        <span class="field__hint">Up to 1,000 characters of context for the model.</span>
+        <label class="field__label" for="text_parameter3">{{ _('Knowledge base') }} <span class="t-muted t-body-sm" style="font-weight: 400;">({{ _('optional') }})</span></label>
+        <textarea class="textarea" name="parameter3" id="text_parameter3" placeholder="{{ _('Enter the knowledge base if any') }}" maxlength="1000" rows="3"></textarea>
+        <span class="field__hint">{{ _('Up to 1,000 characters of context for the model.') }}</span>
       </div>
 
       <button type="submit" class="btn btn--primary btn--block">
-        <i class="fa-solid fa-wand-magic-sparkles"></i> Generate text prompt
+        <i class="fa-solid fa-wand-magic-sparkles"></i> {{ _('Generate text prompt') }}
       </button>
     </form>
   </section>
@@ -105,14 +105,14 @@
   <section class="card" aria-labelledby="imageSectionTitle">
     <div class="card__header">
       <div>
-        <span class="eyebrow">02 · Image</span>
+        <span class="eyebrow">02 · {{ _('Image') }}</span>
         <h2 class="card__title" id="imageSectionTitle" style="margin-top: var(--p-sp-2);">
           <i class="fa-solid fa-image" style="color: var(--p-color-interactive); margin-right: 8px;"></i>
-          Generate image prompt
+          {{ _('Generate image prompt') }}
         </h2>
-        <p class="card__sub">Pick a mode, mood, and style.</p>
+        <p class="card__sub">{{ _('Pick a mode, mood, and style.') }}</p>
       </div>
-      <button type="button" class="icon-btn" onclick="toggleImageHelp()" aria-controls="image-generate-help-region image-reverse-help-region" aria-expanded="false" aria-label="Toggle help">
+      <button type="button" class="icon-btn" onclick="toggleImageHelp()" aria-controls="image-generate-help-region image-reverse-help-region" aria-expanded="false" aria-label="{{ _('Toggle help') }}">
         <i class="fa-solid fa-circle-question"></i>
       </button>
     </div>
@@ -120,240 +120,240 @@
     <div id="image-generate-help-region" class="banner banner--info" hidden>
       <i class="fa-solid fa-circle-info banner__icon"></i>
       <div>
-        <div class="banner__title">Generate from text</div>
-        <div class="banner__body">Enter your input, select the mood, and choose the primary and secondary styles.</div>
+        <div class="banner__title">{{ _('Generate from text') }}</div>
+        <div class="banner__body">{{ _('Enter your input, select the mood, and choose the primary and secondary styles.') }}</div>
       </div>
     </div>
     <div id="image-reverse-help-region" class="banner banner--info" hidden>
       <i class="fa-solid fa-circle-info banner__icon"></i>
       <div>
-        <div class="banner__title">Reverse from image</div>
-        <div class="banner__body">Upload an image and we will generate a prompt based on it, with optional mood and style.</div>
+        <div class="banner__title">{{ _('Reverse from image') }}</div>
+        <div class="banner__body">{{ _('Upload an image and we will generate a prompt based on it, with optional mood and style.') }}</div>
       </div>
     </div>
 
-    <div class="choice-group" role="radiogroup" aria-label="Image prompt mode">
+    <div class="choice-group" role="radiogroup" aria-label="{{ _('Image prompt mode') }}">
       <label class="choice">
         <input type="radio" name="imageMode" value="generate" checked onchange="toggleImageForms()">
         <i class="fa-solid fa-pen-to-square"></i>
         <div>
-          <div class="choice__title">Generate from text</div>
-          <div class="choice__desc">Type a description</div>
+          <div class="choice__title">{{ _('Generate from text') }}</div>
+          <div class="choice__desc">{{ _('Type a description') }}</div>
         </div>
       </label>
       <label class="choice">
         <input type="radio" name="imageMode" value="reverse" onchange="toggleImageForms()">
         <i class="fa-solid fa-rotate"></i>
         <div>
-          <div class="choice__title">Reverse from image</div>
-          <div class="choice__desc">Upload and decode</div>
+          <div class="choice__title">{{ _('Reverse from image') }}</div>
+          <div class="choice__desc">{{ _('Upload and decode') }}</div>
         </div>
       </label>
     </div>
 
     <form id="a-image-prompt-form" class="stack" enctype="multipart/form-data">
       <div class="field">
-        <label class="field__label" for="image_gen_parameter0">Input</label>
-        <input class="input" type="text" name="parameter0" id="image_gen_parameter0" placeholder="Cat on the sky" maxlength="300" required>
+        <label class="field__label" for="image_gen_parameter0">{{ _('Input') }}</label>
+        <input class="input" type="text" name="parameter0" id="image_gen_parameter0" placeholder="{{ _('Cat on the sky') }}" maxlength="300" required>
       </div>
 
       <div class="field">
-        <label class="field__label" for="image_gen_parameter1">Primary mood</label>
+        <label class="field__label" for="image_gen_parameter1">{{ _('Primary mood') }}</label>
         <select class="select" name="parameter1" id="image_gen_parameter1">
-          <optgroup label="Positive">
-            <option value="happy">Happy</option>
-            <option value="joyful">Joyful</option>
-            <option value="excited">Excited</option>
-            <option value="cheerful">Cheerful</option>
-            <option value="content">Content</option>
+          <optgroup label="{{ _('Positive') }}">
+            <option value="happy">{{ _('Happy') }}</option>
+            <option value="joyful">{{ _('Joyful') }}</option>
+            <option value="excited">{{ _('Excited') }}</option>
+            <option value="cheerful">{{ _('Cheerful') }}</option>
+            <option value="content">{{ _('Content') }}</option>
           </optgroup>
-          <optgroup label="Negative">
-            <option value="angry">Angry</option>
-            <option value="disgust">Disgust</option>
-            <option value="fear">Fear</option>
-            <option value="sad">Sad</option>
-            <option value="depressed">Depressed</option>
+          <optgroup label="{{ _('Negative') }}">
+            <option value="angry">{{ _('Angry') }}</option>
+            <option value="disgust">{{ _('Disgust') }}</option>
+            <option value="fear">{{ _('Fear') }}</option>
+            <option value="sad">{{ _('Sad') }}</option>
+            <option value="depressed">{{ _('Depressed') }}</option>
           </optgroup>
-          <optgroup label="Neutral">
-            <option value="neutral">Neutral</option>
-            <option value="calm">Calm</option>
-            <option value="relaxed">Relaxed</option>
-            <option value="serene">Serene</option>
-            <option value="tranquil">Tranquil</option>
+          <optgroup label="{{ _('Neutral') }}">
+            <option value="neutral">{{ _('Neutral') }}</option>
+            <option value="calm">{{ _('Calm') }}</option>
+            <option value="relaxed">{{ _('Relaxed') }}</option>
+            <option value="serene">{{ _('Serene') }}</option>
+            <option value="tranquil">{{ _('Tranquil') }}</option>
           </optgroup>
-          <optgroup label="Other">
-            <option value="surprised">Surprised</option>
-            <option value="curious">Curious</option>
-            <option value="mysterious">Mysterious</option>
-            <option value="surreal">Surreal</option>
-            <option value="eerie">Eerie</option>
-            <option value="random">Random</option>
+          <optgroup label="{{ _('Other') }}">
+            <option value="surprised">{{ _('Surprised') }}</option>
+            <option value="curious">{{ _('Curious') }}</option>
+            <option value="mysterious">{{ _('Mysterious') }}</option>
+            <option value="surreal">{{ _('Surreal') }}</option>
+            <option value="eerie">{{ _('Eerie') }}</option>
+            <option value="random">{{ _('Random') }}</option>
           </optgroup>
         </select>
       </div>
 
       <div class="field">
-        <label class="field__label" for="image_gen_parameter2">Primary style</label>
+        <label class="field__label" for="image_gen_parameter2">{{ _('Primary style') }}</label>
         <select class="select" name="parameter2" id="image_gen_parameter2">
-          <optgroup label="Styles">
-            <option value="3d-model">3D Model</option>
-            <option value="abstract">Abstract</option>
-            <option value="analog-film">Analog Film</option>
-            <option value="anime">Anime</option>
-            <option value="cartoon">Cartoon</option>
-            <option value="digital-art">Digital Art</option>
-            <option value="fantasy-art">Fantasy Art</option>
+          <optgroup label="{{ _('Styles') }}">
+            <option value="3d-model">{{ _('3D Model') }}</option>
+            <option value="abstract">{{ _('Abstract') }}</option>
+            <option value="analog-film">{{ _('Analog Film') }}</option>
+            <option value="anime">{{ _('Anime') }}</option>
+            <option value="cartoon">{{ _('Cartoon') }}</option>
+            <option value="digital-art">{{ _('Digital Art') }}</option>
+            <option value="fantasy-art">{{ _('Fantasy Art') }}</option>
           </optgroup>
-          <optgroup label="Techniques">
-            <option value="photographic">Photographic</option>
-            <option value="pixel-art">Pixel Art</option>
-            <option value="watercolor">Watercolor</option>
-            <option value="isometric">Isometric</option>
-            <option value="low-poly">Low Poly</option>
-            <option value="cinematic">Cinematic</option>
+          <optgroup label="{{ _('Techniques') }}">
+            <option value="photographic">{{ _('Photographic') }}</option>
+            <option value="pixel-art">{{ _('Pixel Art') }}</option>
+            <option value="watercolor">{{ _('Watercolor') }}</option>
+            <option value="isometric">{{ _('Isometric') }}</option>
+            <option value="low-poly">{{ _('Low Poly') }}</option>
+            <option value="cinematic">{{ _('Cinematic') }}</option>
           </optgroup>
         </select>
       </div>
 
       <div class="field">
-        <label class="field__label" for="image_gen_parameter3">Secondary style</label>
+        <label class="field__label" for="image_gen_parameter3">{{ _('Secondary style') }}</label>
         <select class="select" name="parameter3" id="image_gen_parameter3">
-          <option value="">— None —</option>
-          <optgroup label="Styles">
-            <option value="3d-model">3D Model</option>
-            <option value="abstract">Abstract</option>
-            <option value="anime">Anime</option>
-            <option value="cartoon">Cartoon</option>
-            <option value="digital-art">Digital Art</option>
-            <option value="cyberpunk">Cyberpunk</option>
-            <option value="steampunk">Steampunk</option>
+          <option value="">{{ _('— None —') }}</option>
+          <optgroup label="{{ _('Styles') }}">
+            <option value="3d-model">{{ _('3D Model') }}</option>
+            <option value="abstract">{{ _('Abstract') }}</option>
+            <option value="anime">{{ _('Anime') }}</option>
+            <option value="cartoon">{{ _('Cartoon') }}</option>
+            <option value="digital-art">{{ _('Digital Art') }}</option>
+            <option value="cyberpunk">{{ _('Cyberpunk') }}</option>
+            <option value="steampunk">{{ _('Steampunk') }}</option>
           </optgroup>
-          <optgroup label="Techniques">
-            <option value="photographic">Photographic</option>
-            <option value="pixel-art">Pixel Art</option>
-            <option value="watercolor">Watercolor</option>
-            <option value="vaporwave">Vaporwave</option>
-            <option value="line-art">Line Art</option>
+          <optgroup label="{{ _('Techniques') }}">
+            <option value="photographic">{{ _('Photographic') }}</option>
+            <option value="pixel-art">{{ _('Pixel Art') }}</option>
+            <option value="watercolor">{{ _('Watercolor') }}</option>
+            <option value="vaporwave">{{ _('Vaporwave') }}</option>
+            <option value="line-art">{{ _('Line Art') }}</option>
           </optgroup>
         </select>
       </div>
 
       <button type="submit" class="btn btn--primary btn--block">
-        <i class="fa-solid fa-wand-magic-sparkles"></i> Generate image from text
+        <i class="fa-solid fa-wand-magic-sparkles"></i> {{ _('Generate image from text') }}
       </button>
     </form>
 
     <form id="a-reverse-image-form" class="stack" enctype="multipart/form-data" hidden>
       <div class="field">
-        <label class="field__label" for="image_upload_input">Upload image</label>
+        <label class="field__label" for="image_upload_input">{{ _('Upload image') }}</label>
         <label for="image_upload_input" style="display: flex; align-items: center; gap: var(--p-sp-3); padding: var(--p-sp-5); border: 1px dashed var(--p-color-border); border-radius: var(--p-r-2); cursor: pointer; color: var(--p-color-text-subdued);">
           <i class="fa-solid fa-cloud-arrow-up" style="color: var(--p-color-interactive); font-size: 20px;"></i>
-          <span>Click to choose an image</span>
+          <span>{{ _('Click to choose an image') }}</span>
         </label>
         <input type="file" name="image" id="image_upload_input" accept="image/*" required style="display: none;">
       </div>
 
       <div class="field">
-        <label class="field__label" for="image_rev_parameter1">Primary mood</label>
+        <label class="field__label" for="image_rev_parameter1">{{ _('Primary mood') }}</label>
         <select class="select" name="parameter1" id="image_rev_parameter1">
-          <option value="original">Original</option>
-          <optgroup label="Positive">
-            <option value="happy">Happy</option>
-            <option value="joyful">Joyful</option>
-            <option value="excited">Excited</option>
-            <option value="cheerful">Cheerful</option>
-            <option value="content">Content</option>
+          <option value="original">{{ _('Original') }}</option>
+          <optgroup label="{{ _('Positive') }}">
+            <option value="happy">{{ _('Happy') }}</option>
+            <option value="joyful">{{ _('Joyful') }}</option>
+            <option value="excited">{{ _('Excited') }}</option>
+            <option value="cheerful">{{ _('Cheerful') }}</option>
+            <option value="content">{{ _('Content') }}</option>
           </optgroup>
-          <optgroup label="Negative">
-            <option value="angry">Angry</option>
-            <option value="disgust">Disgust</option>
-            <option value="fear">Fear</option>
-            <option value="sad">Sad</option>
-            <option value="depressed">Depressed</option>
+          <optgroup label="{{ _('Negative') }}">
+            <option value="angry">{{ _('Angry') }}</option>
+            <option value="disgust">{{ _('Disgust') }}</option>
+            <option value="fear">{{ _('Fear') }}</option>
+            <option value="sad">{{ _('Sad') }}</option>
+            <option value="depressed">{{ _('Depressed') }}</option>
           </optgroup>
-          <optgroup label="Neutral">
-            <option value="neutral">Neutral</option>
-            <option value="calm">Calm</option>
-            <option value="relaxed">Relaxed</option>
-            <option value="serene">Serene</option>
-            <option value="tranquil">Tranquil</option>
+          <optgroup label="{{ _('Neutral') }}">
+            <option value="neutral">{{ _('Neutral') }}</option>
+            <option value="calm">{{ _('Calm') }}</option>
+            <option value="relaxed">{{ _('Relaxed') }}</option>
+            <option value="serene">{{ _('Serene') }}</option>
+            <option value="tranquil">{{ _('Tranquil') }}</option>
           </optgroup>
-          <optgroup label="Other">
-            <option value="surprised">Surprised</option>
-            <option value="curious">Curious</option>
-            <option value="mysterious">Mysterious</option>
-            <option value="surreal">Surreal</option>
-            <option value="eerie">Eerie</option>
-            <option value="random">Random</option>
+          <optgroup label="{{ _('Other') }}">
+            <option value="surprised">{{ _('Surprised') }}</option>
+            <option value="curious">{{ _('Curious') }}</option>
+            <option value="mysterious">{{ _('Mysterious') }}</option>
+            <option value="surreal">{{ _('Surreal') }}</option>
+            <option value="eerie">{{ _('Eerie') }}</option>
+            <option value="random">{{ _('Random') }}</option>
           </optgroup>
         </select>
       </div>
 
       <div class="field">
-        <label class="field__label" for="image_rev_parameter2">Primary style</label>
+        <label class="field__label" for="image_rev_parameter2">{{ _('Primary style') }}</label>
         <select class="select" name="parameter2" id="image_rev_parameter2">
-          <option value="original">Original</option>
-          <optgroup label="Styles">
-            <option value="3d-model">3D Model</option>
-            <option value="abstract">Abstract</option>
-            <option value="analog-film">Analog Film</option>
-            <option value="anime">Anime</option>
-            <option value="cartoon">Cartoon</option>
-            <option value="digital-art">Digital Art</option>
-            <option value="fantasy-art">Fantasy Art</option>
+          <option value="original">{{ _('Original') }}</option>
+          <optgroup label="{{ _('Styles') }}">
+            <option value="3d-model">{{ _('3D Model') }}</option>
+            <option value="abstract">{{ _('Abstract') }}</option>
+            <option value="analog-film">{{ _('Analog Film') }}</option>
+            <option value="anime">{{ _('Anime') }}</option>
+            <option value="cartoon">{{ _('Cartoon') }}</option>
+            <option value="digital-art">{{ _('Digital Art') }}</option>
+            <option value="fantasy-art">{{ _('Fantasy Art') }}</option>
           </optgroup>
-          <optgroup label="Techniques">
-            <option value="photographic">Photographic</option>
-            <option value="pixel-art">Pixel Art</option>
-            <option value="watercolor">Watercolor</option>
-            <option value="isometric">Isometric</option>
-            <option value="low-poly">Low Poly</option>
+          <optgroup label="{{ _('Techniques') }}">
+            <option value="photographic">{{ _('Photographic') }}</option>
+            <option value="pixel-art">{{ _('Pixel Art') }}</option>
+            <option value="watercolor">{{ _('Watercolor') }}</option>
+            <option value="isometric">{{ _('Isometric') }}</option>
+            <option value="low-poly">{{ _('Low Poly') }}</option>
           </optgroup>
         </select>
       </div>
 
       <div class="field">
-        <label class="field__label" for="image_rev_parameter3">Secondary style</label>
+        <label class="field__label" for="image_rev_parameter3">{{ _('Secondary style') }}</label>
         <select class="select" name="parameter3" id="image_rev_parameter3">
-          <option value="original">Original</option>
-          <optgroup label="Styles">
-            <option value="3d-model">3D Model</option>
-            <option value="abstract">Abstract</option>
-            <option value="analog-film">Analog Film</option>
-            <option value="anime">Anime</option>
-            <option value="cartoon">Cartoon</option>
+          <option value="original">{{ _('Original') }}</option>
+          <optgroup label="{{ _('Styles') }}">
+            <option value="3d-model">{{ _('3D Model') }}</option>
+            <option value="abstract">{{ _('Abstract') }}</option>
+            <option value="analog-film">{{ _('Analog Film') }}</option>
+            <option value="anime">{{ _('Anime') }}</option>
+            <option value="cartoon">{{ _('Cartoon') }}</option>
           </optgroup>
-          <optgroup label="Techniques">
-            <option value="photographic">Photographic</option>
-            <option value="pixel-art">Pixel Art</option>
-            <option value="watercolor">Watercolor</option>
+          <optgroup label="{{ _('Techniques') }}">
+            <option value="photographic">{{ _('Photographic') }}</option>
+            <option value="pixel-art">{{ _('Pixel Art') }}</option>
+            <option value="watercolor">{{ _('Watercolor') }}</option>
           </optgroup>
         </select>
       </div>
 
       <button type="submit" class="btn btn--primary btn--block">
-        <i class="fa-solid fa-wand-magic-sparkles"></i> Generate prompt from image
+        <i class="fa-solid fa-wand-magic-sparkles"></i> {{ _('Generate prompt from image') }}
       </button>
     </form>
   </section>
 </div>
 
 <div id="preview-container" class="card" hidden style="margin-top: var(--p-sp-7); text-align: center;">
-  <img id="preview-image" alt="Image preview" style="max-width: 256px; margin: 0 auto; border-radius: var(--p-r-2);">
+  <img id="preview-image" alt="{{ _('Image preview') }}" style="max-width: 256px; margin: 0 auto; border-radius: var(--p-r-2);">
 </div>
 
 <div id="loading" class="modal-backdrop" hidden>
-  <div class="spinner spinner--lg" aria-label="Loading"></div>
+  <div class="spinner spinner--lg" aria-label="{{ _('Loading') }}"></div>
 </div>
 
 <div id="resultSection" class="result-panel" hidden style="margin-top: var(--p-sp-7);">
   <div class="result-panel__header">
-    <span class="eyebrow">Result</span>
+    <span class="eyebrow">{{ _('Result') }}</span>
     <h2 class="result-panel__title">
       <i class="fa-solid fa-star" style="color: var(--p-color-primary); margin-right: 8px;"></i>
-      Generated prompt
+      {{ _('Generated prompt') }}
     </h2>
-    <button type="button" class="icon-btn" onclick="document.getElementById('resultSection').setAttribute('hidden','')" aria-label="Close">
+    <button type="button" class="icon-btn" onclick="document.getElementById('resultSection').setAttribute('hidden','')" aria-label="{{ _('Close') }}">
       <i class="fa-solid fa-xmark"></i>
     </button>
   </div>
@@ -361,9 +361,9 @@
     <div class="prompt-body" id="generated-prompt-text"></div>
   </div>
   <div class="result-panel__footer">
-    <button type="button" class="btn btn--primary" onclick="copyGeneratedPrompt()"><i class="fa-solid fa-copy"></i> Copy</button>
-    <button type="button" class="btn btn--secondary" onclick="saveGeneratedPrompt()"><i class="fa-solid fa-bookmark"></i> Save to library</button>
-    <button type="button" class="btn--link" onclick="generateAgain()"><i class="fa-solid fa-rotate-right"></i> Generate again</button>
+    <button type="button" class="btn btn--primary" onclick="copyGeneratedPrompt()"><i class="fa-solid fa-copy"></i> {{ _('Copy') }}</button>
+    <button type="button" class="btn btn--secondary" onclick="saveGeneratedPrompt()"><i class="fa-solid fa-bookmark"></i> {{ _('Save to library') }}</button>
+    <button type="button" class="btn--link" onclick="generateAgain()"><i class="fa-solid fa-rotate-right"></i> {{ _('Generate again') }}</button>
   </div>
 </div>
 {% endblock %}
@@ -396,8 +396,6 @@ function toggleImageForms() {
   var revForm = document.getElementById('a-reverse-image-form');
   if (genForm) genForm.hidden = (mode !== 'generate');
   if (revForm) revForm.hidden = (mode !== 'reverse');
-  var title = document.getElementById('imageSectionTitle');
-  if (title) title.textContent = mode === 'reverse' ? 'Reverse image prompt' : 'Generate image prompt';
 }
 function showLoading() { document.getElementById('loading')?.removeAttribute('hidden'); }
 function hideLoading() { document.getElementById('loading')?.setAttribute('hidden', ''); }

@@ -1,14 +1,14 @@
 {% extends "base.html" %}
 {% set active_section = 'Account' %}
 {% set active_nav = 'profile' %}
-{% block title %}Profile · Prompt Sanctuary{% endblock %}
-{% block bar_title %}Profile{% endblock %}
+{% block title %}{{ _('Profile') }} · {{ _('Prompt Sanctuary') }}{% endblock %}
+{% block bar_title %}{{ _('Profile') }}{% endblock %}
 
 {% block content %}
 <header class="hero section--first" style="padding-top: var(--p-sp-7); padding-bottom: var(--p-sp-7);">
-  <span class="eyebrow hero__eyebrow">Index 07 · Account</span>
-  <h1 class="t-h1 hero__display" style="font-size: var(--p-fs-h1); max-width: 24ch;">Profile &amp; settings.</h1>
-  <p class="lede hero__lede">Manage your account, sessions, API key, achievements, and points.</p>
+  <span class="eyebrow hero__eyebrow">{{ _('Index 07 · Account') }}</span>
+  <h1 class="t-h1 hero__display" style="font-size: var(--p-fs-h1); max-width: 24ch;">{{ _('Profile & settings.') }}</h1>
+  <p class="lede hero__lede">{{ _('Manage your account, sessions, API key, achievements, and points.') }}</p>
 </header>
 
 {% if error %}<div class="banner banner--critical" style="margin-bottom: var(--p-sp-5);" role="alert"><i class="fa-solid fa-triangle-exclamation banner__icon"></i><div>{{ error }}</div></div>{% endif %}
@@ -18,26 +18,26 @@
   <div class="card" style="text-align: center;">
     <svg width="96" height="96" data-jdenticon-value="{{ identicon_value or session.username }}" style="border-radius: 50%; background: var(--p-color-surface-sunken); margin: 0 auto var(--p-sp-3);"></svg>
     <h2 class="t-h3" style="margin: 0;">{{ session.username }}</h2>
-    <p class="t-body-sm t-muted" style="margin: var(--p-sp-1) 0 0;">Member</p>
+    <p class="t-body-sm t-muted" style="margin: var(--p-sp-1) 0 0;">{{ _('Member') }}</p>
 
     <button type="button" class="btn btn--secondary" id="points-display" onclick="showPointHistory()" style="margin-top: var(--p-sp-5);">
       <i class="fa-solid fa-coins" style="color: var(--p-color-warning);"></i>
-      {{ "%.1f"|format(current_user_points or 80.0) }} pts
+      {{ "%.1f"|format(current_user_points or 80.0) }} {{ _('pts') }}
     </button>
-    <p class="t-body-sm t-muted" style="margin: var(--p-sp-2) 0 0;">Click to view history</p>
+    <p class="t-body-sm t-muted" style="margin: var(--p-sp-2) 0 0;">{{ _('Click to view history') }}</p>
   </div>
 
   <div class="metric-row" style="align-content: center;">
     <div class="kpi">
-      <div class="kpi__label">Total prompts</div>
+      <div class="kpi__label">{{ _('Total prompts') }}</div>
       <div class="kpi__value">{{ (saved_prompts|length + shared_prompts|length) }}</div>
     </div>
     <div class="kpi">
-      <div class="kpi__label">Achievements</div>
+      <div class="kpi__label">{{ _('Achievements') }}</div>
       <div class="kpi__value">{{ user_achievements|length }}</div>
     </div>
     <div class="kpi">
-      <div class="kpi__label">Active sessions</div>
+      <div class="kpi__label">{{ _('Active sessions') }}</div>
       <div class="kpi__value">{{ sessions|length }}</div>
     </div>
   </div>
@@ -48,12 +48,12 @@
     <div class="card__header">
       <div>
         <span class="eyebrow">01</span>
-        <h2 class="card__title" style="margin-top: var(--p-sp-2);"><i class="fa-solid fa-id-card" style="color: var(--p-color-primary); margin-right: 8px;"></i>Account information</h2>
+        <h2 class="card__title" style="margin-top: var(--p-sp-2);"><i class="fa-solid fa-id-card" style="color: var(--p-color-primary); margin-right: 8px;"></i>{{ _('Account information') }}</h2>
       </div>
     </div>
 
     <div class="card card--flat" style="background: var(--p-color-surface-sunken);">
-      <p class="t-body-sm t-muted" style="margin: 0 0 4px;">Current username</p>
+      <p class="t-body-sm t-muted" style="margin: 0 0 4px;">{{ _('Current username') }}</p>
       <p class="t-mono" style="margin: 0; font-weight: 600;">{{ session.username }}</p>
     </div>
 
@@ -61,11 +61,11 @@
       <input type="hidden" name="action" value="change_username">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       <div class="field">
-        <label class="field__label" for="new_username">New username</label>
-        <input class="input" type="text" id="new_username" name="new_username" placeholder="New username" minlength="3" maxlength="32" pattern="[A-Za-z0-9_]+">
-        <p class="field__hint">Only letters, numbers and underscores. 3–32 chars.</p>
+        <label class="field__label" for="new_username">{{ _('New username') }}</label>
+        <input class="input" type="text" id="new_username" name="new_username" placeholder="{{ _('New username') }}" minlength="3" maxlength="32" pattern="[A-Za-z0-9_]+">
+        <p class="field__hint">{{ _('Only letters, numbers and underscores. 3–32 chars.') }}</p>
       </div>
-      <button type="submit" class="btn btn--primary btn--block">Change username</button>
+      <button type="submit" class="btn btn--primary btn--block">{{ _('Change username') }}</button>
     </form>
 
     <hr class="rule">
@@ -74,20 +74,20 @@
       <input type="hidden" name="action" value="update_email">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       <div class="field">
-        <label class="field__label" for="email">Email</label>
+        <label class="field__label" for="email">{{ _('Email') }}</label>
         <input class="input" type="email" id="email" name="email" value="{{ email or '' }}" placeholder="you@example.com">
       </div>
-      <button type="submit" class="btn btn--secondary btn--block">Update email</button>
+      <button type="submit" class="btn btn--secondary btn--block">{{ _('Update email') }}</button>
     </form>
 
     <hr class="rule">
 
     <div>
-      <h3 class="t-h4" style="margin: 0 0 var(--p-sp-2); color: var(--p-color-critical);">Danger zone</h3>
-      <form action="{{ url_for('main.delete_account') }}" method="post" onsubmit="return confirm('Are you sure? This cannot be undone.');">
+      <h3 class="t-h4" style="margin: 0 0 var(--p-sp-2); color: var(--p-color-critical);">{{ _('Danger zone') }}</h3>
+      <form action="{{ url_for('main.delete_account') }}" method="post" data-confirm="{{ _('Are you sure? This cannot be undone.') }}">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <button type="submit" class="btn btn--destructive btn--block">
-          <i class="fa-solid fa-trash"></i> Delete account
+          <i class="fa-solid fa-trash"></i> {{ _('Delete account') }}
         </button>
       </form>
     </div>
@@ -97,7 +97,7 @@
     <div class="card__header">
       <div>
         <span class="eyebrow">02</span>
-        <h2 class="card__title" style="margin-top: var(--p-sp-2);"><i class="fa-solid fa-lock" style="color: var(--p-color-interactive); margin-right: 8px;"></i>Security</h2>
+        <h2 class="card__title" style="margin-top: var(--p-sp-2);"><i class="fa-solid fa-lock" style="color: var(--p-color-interactive); margin-right: 8px;"></i>{{ _('Security') }}</h2>
       </div>
     </div>
 
@@ -105,45 +105,45 @@
       <input type="hidden" name="action" value="change_password">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       <div class="field">
-        <label class="field__label" for="old_password">Current password</label>
-        <input class="input" type="password" id="old_password" name="old_password" placeholder="Current password">
+        <label class="field__label" for="old_password">{{ _('Current password') }}</label>
+        <input class="input" type="password" id="old_password" name="old_password" placeholder="{{ _('Current password') }}">
       </div>
       <div class="field">
-        <label class="field__label" for="new_password">New password</label>
-        <input class="input" type="password" id="new_password" name="new_password" placeholder="New password">
+        <label class="field__label" for="new_password">{{ _('New password') }}</label>
+        <input class="input" type="password" id="new_password" name="new_password" placeholder="{{ _('New password') }}">
       </div>
       <div class="field">
-        <label class="field__label" for="confirm_password">Confirm new password</label>
-        <input class="input" type="password" id="confirm_password" name="confirm_password" placeholder="Confirm new password">
+        <label class="field__label" for="confirm_password">{{ _('Confirm new password') }}</label>
+        <input class="input" type="password" id="confirm_password" name="confirm_password" placeholder="{{ _('Confirm new password') }}">
       </div>
-      <button type="submit" class="btn btn--primary btn--block">Update password</button>
+      <button type="submit" class="btn btn--primary btn--block">{{ _('Update password') }}</button>
     </form>
 
     <hr class="rule">
 
     <div>
-      <h3 class="t-h4" style="margin: 0 0 4px;"><i class="fa-solid fa-key" style="color: var(--p-color-primary); margin-right: 6px;"></i>Gemini API key</h3>
-      <p class="t-body-sm t-muted" style="margin: 0 0 var(--p-sp-3);">Use your own API key to avoid point consumption and earn 100 points.</p>
+      <h3 class="t-h4" style="margin: 0 0 4px;"><i class="fa-solid fa-key" style="color: var(--p-color-primary); margin-right: 6px;"></i>{{ _('Gemini API key') }}</h3>
+      <p class="t-body-sm t-muted" style="margin: 0 0 var(--p-sp-3);">{{ _('Use your own API key to avoid point consumption and earn 100 points.') }}</p>
 
       <div id="api-key-status" class="banner banner--info" style="margin-bottom: var(--p-sp-3);">
         <i class="fa-solid fa-circle-info banner__icon"></i>
-        <div>Loading API key status…</div>
+        <div>{{ _('Loading API key status…') }}</div>
       </div>
 
       <div id="api-key-form" hidden>
         <form id="validate-api-key-form" class="stack">
           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
           <div class="field">
-            <label class="field__label" for="api_key_input">Your API key</label>
-            <input class="input input--mono" type="password" id="api_key_input" name="api_key" placeholder="Enter your Gemini API key">
+            <label class="field__label" for="api_key_input">{{ _('Your API key') }}</label>
+            <input class="input input--mono" type="password" id="api_key_input" name="api_key" placeholder="{{ _('Enter your Gemini API key') }}">
           </div>
           <div class="cluster">
-            <button type="submit" class="btn btn--primary"><i class="fa-solid fa-check"></i> Validate &amp; Save</button>
-            <button type="button" id="remove-api-key-btn" class="btn btn--destructive" hidden><i class="fa-solid fa-trash"></i> Remove</button>
+            <button type="submit" class="btn btn--primary"><i class="fa-solid fa-check"></i> {{ _('Validate & Save') }}</button>
+            <button type="button" id="remove-api-key-btn" class="btn btn--destructive" hidden><i class="fa-solid fa-trash"></i> {{ _('Remove') }}</button>
           </div>
         </form>
         <p class="t-body-sm t-muted" style="margin-top: var(--p-sp-3);">
-          Get your API key from <a href="https://makersuite.google.com/app/apikey" target="_blank" rel="noopener">Google AI Studio</a>.
+          {{ _('Get your API key from') }} <a href="https://makersuite.google.com/app/apikey" target="_blank" rel="noopener">{{ _('Google AI Studio') }}</a>.
         </p>
       </div>
     </div>
@@ -155,7 +155,7 @@
     <div class="card__header">
       <div>
         <span class="eyebrow">03</span>
-        <h2 class="card__title" style="margin-top: var(--p-sp-2);"><i class="fa-solid fa-shield-halved" style="color: var(--p-color-interactive); margin-right: 8px;"></i>Active sessions</h2>
+        <h2 class="card__title" style="margin-top: var(--p-sp-2);"><i class="fa-solid fa-shield-halved" style="color: var(--p-color-interactive); margin-right: 8px;"></i>{{ _('Active sessions') }}</h2>
       </div>
     </div>
 
@@ -165,22 +165,22 @@
       <div class="card card--flat" style="background: var(--p-color-surface-sunken);">
         <div class="cluster--between">
           <div style="min-width: 0; flex: 1;">
-            <p style="margin: 0; font-size: var(--p-fs-body-sm); font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ s.user_agent or 'Unknown device' }}</p>
-            <p class="t-body-sm t-muted" style="margin: 4px 0 0;">{{ s.ip or 'N/A' }} · {{ s.last_active or s.created_at }}</p>
+            <p style="margin: 0; font-size: var(--p-fs-body-sm); font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ s.user_agent or _('Unknown device') }}</p>
+            <p class="t-body-sm t-muted" style="margin: 4px 0 0;">{{ s.ip or _('N/A') }} · {{ s.last_active or s.created_at }}</p>
           </div>
           <div>
             {% if not s.revoked %}
               {% if s.token == current_token %}
-                <span class="badge badge--success"><i class="fa-solid fa-check"></i> Current</span>
+                <span class="badge badge--success"><i class="fa-solid fa-check"></i> {{ _('Current') }}</span>
               {% else %}
-              <form method="post" action="{{ url_for('main.revoke_a_session') }}" onsubmit="return confirm('Revoke this session?');" style="display: inline;">
+              <form method="post" action="{{ url_for('main.revoke_a_session') }}" data-confirm="{{ _('Revoke this session?') }}" style="display: inline;">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <input type="hidden" name="token" value="{{ s.token }}">
-                <button type="submit" class="btn btn--tertiary btn--sm" style="color: var(--p-color-critical);">Revoke</button>
+                <button type="submit" class="btn btn--tertiary btn--sm" style="color: var(--p-color-critical);">{{ _('Revoke') }}</button>
               </form>
               {% endif %}
             {% else %}
-              <span class="badge">Revoked</span>
+              <span class="badge">{{ _('Revoked') }}</span>
             {% endif %}
           </div>
         </div>
@@ -188,7 +188,7 @@
       {% endfor %}
     </div>
     {% else %}
-    <p class="t-body-sm t-muted text-center" style="margin: var(--p-sp-5) 0;">No active sessions.</p>
+    <p class="t-body-sm t-muted text-center" style="margin: var(--p-sp-5) 0;">{{ _('No active sessions.') }}</p>
     {% endif %}
   </div>
 
@@ -196,7 +196,7 @@
     <div class="card__header">
       <div>
         <span class="eyebrow">04</span>
-        <h2 class="card__title" style="margin-top: var(--p-sp-2);"><i class="fa-solid fa-bookmark" style="color: var(--p-color-primary); margin-right: 8px;"></i>Saved prompts <span class="badge" style="margin-left: 4px;">{{ saved_prompts|length }}</span></h2>
+        <h2 class="card__title" style="margin-top: var(--p-sp-2);"><i class="fa-solid fa-bookmark" style="color: var(--p-color-primary); margin-right: 8px;"></i>{{ _('Saved prompts') }} <span class="badge" style="margin-left: 4px;">{{ saved_prompts|length }}</span></h2>
       </div>
     </div>
     {% if saved_prompts %}
@@ -210,17 +210,17 @@
           </div>
         </div>
         <div class="cluster" style="margin-top: var(--p-sp-3);">
-          <button class="btn btn--tertiary btn--sm see-button" data-title="{{ pr['title']|e }}" data-content="{{ pr['prompt']|e }}" aria-label="View {{ pr['title'] }}"><i class="fa-solid fa-eye"></i> View</button>
+          <button class="btn btn--tertiary btn--sm see-button" data-title="{{ pr['title']|e }}" data-content="{{ pr['prompt']|e }}" aria-label="{{ _('View') }} {{ pr['title'] }}"><i class="fa-solid fa-eye"></i> {{ _('View') }}</button>
           {% if pr['is_shared'] %}
             {% if pr['needs_update'] %}
-            <button class="btn btn--tertiary btn--sm update-shared-button" style="color: var(--p-color-warning);" data-prompt-id="{{ pr['prompt_id'] }}" data-title="{{ pr['title']|e }}" data-content="{{ pr['prompt']|e }}" aria-label="Update shared {{ pr['title'] }}"><i class="fa-solid fa-arrows-rotate"></i> Update</button>
+            <button class="btn btn--tertiary btn--sm update-shared-button" style="color: var(--p-color-warning);" data-prompt-id="{{ pr['prompt_id'] }}" data-title="{{ pr['title']|e }}" data-content="{{ pr['prompt']|e }}" aria-label="{{ _('Update shared') }} {{ pr['title'] }}"><i class="fa-solid fa-arrows-rotate"></i> {{ _('Update') }}</button>
             {% else %}
-            <button class="btn btn--tertiary btn--sm unshare-button" style="color: var(--p-color-critical);" data-prompt-id="{{ pr['prompt_id'] }}" aria-label="Unshare {{ pr['title'] }}"><i class="fa-solid fa-share-from-square"></i> Unshare</button>
+            <button class="btn btn--tertiary btn--sm unshare-button" style="color: var(--p-color-critical);" data-prompt-id="{{ pr['prompt_id'] }}" aria-label="{{ _('Unshare') }} {{ pr['title'] }}"><i class="fa-solid fa-share-from-square"></i> {{ _('Unshare') }}</button>
             {% endif %}
           {% else %}
-            <button class="btn btn--tertiary btn--sm share-button" data-prompt-id="{{ pr['prompt_id'] }}" data-title="{{ pr['title']|e }}" data-content="{{ pr['prompt']|e }}" aria-label="Share {{ pr['title'] }}"><i class="fa-solid fa-share-from-square"></i> Share</button>
+            <button class="btn btn--tertiary btn--sm share-button" data-prompt-id="{{ pr['prompt_id'] }}" data-title="{{ pr['title']|e }}" data-content="{{ pr['prompt']|e }}" aria-label="{{ _('Share') }} {{ pr['title'] }}"><i class="fa-solid fa-share-from-square"></i> {{ _('Share') }}</button>
           {% endif %}
-          <button class="btn btn--tertiary btn--sm delete-button" style="color: var(--p-color-critical);" data-prompt-id="{{ pr['prompt_id'] }}" aria-label="Delete {{ pr['title'] }}"><i class="fa-solid fa-trash"></i> Delete</button>
+          <button class="btn btn--tertiary btn--sm delete-button" style="color: var(--p-color-critical);" data-prompt-id="{{ pr['prompt_id'] }}" aria-label="{{ _('Delete') }} {{ pr['title'] }}"><i class="fa-solid fa-trash"></i> {{ _('Delete') }}</button>
         </div>
       </div>
       {% endfor %}
@@ -228,8 +228,8 @@
     {% else %}
     <div class="empty empty--compact">
       <div class="empty__icon"><i class="fa-solid fa-bookmark" aria-hidden="true"></i></div>
-      <div class="empty__title">No saved prompts yet</div>
-      <p class="empty__body">Start creating prompts to see them here.</p>
+      <div class="empty__title">{{ _('No saved prompts yet') }}</div>
+      <p class="empty__body">{{ _('Start creating prompts to see them here.') }}</p>
     </div>
     {% endif %}
   </div>
@@ -238,7 +238,7 @@
     <div class="card__header">
       <div>
         <span class="eyebrow">05</span>
-        <h2 class="card__title" style="margin-top: var(--p-sp-2);"><i class="fa-solid fa-share-from-square" style="color: var(--p-color-warning); margin-right: 8px;"></i>Shared prompts <span class="badge" style="margin-left: 4px;">{{ shared_prompts|length }}</span></h2>
+        <h2 class="card__title" style="margin-top: var(--p-sp-2);"><i class="fa-solid fa-share-from-square" style="color: var(--p-color-warning); margin-right: 8px;"></i>{{ _('Shared prompts') }} <span class="badge" style="margin-left: 4px;">{{ shared_prompts|length }}</span></h2>
       </div>
     </div>
     {% if shared_prompts %}
@@ -248,8 +248,8 @@
         <h4 style="margin: 0 0 4px; font-size: var(--p-fs-h4); font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ pr['title'] }}</h4>
         <p class="t-body-sm t-muted" style="margin: 0;">{{ pr['time'] }}</p>
         <div class="cluster" style="margin-top: var(--p-sp-3);">
-          <button class="btn btn--tertiary btn--sm see-button" data-title="{{ pr['title']|e }}" data-content="{{ pr['prompt']|e }}" aria-label="View {{ pr['title'] }}"><i class="fa-solid fa-eye"></i> View</button>
-          <button class="btn btn--tertiary btn--sm unshare-button" style="color: var(--p-color-critical);" data-prompt-id="{{ pr['prompt_id'] }}" aria-label="Unshare {{ pr['title'] }}"><i class="fa-solid fa-share-from-square"></i> Unshare</button>
+          <button class="btn btn--tertiary btn--sm see-button" data-title="{{ pr['title']|e }}" data-content="{{ pr['prompt']|e }}" aria-label="{{ _('View') }} {{ pr['title'] }}"><i class="fa-solid fa-eye"></i> {{ _('View') }}</button>
+          <button class="btn btn--tertiary btn--sm unshare-button" style="color: var(--p-color-critical);" data-prompt-id="{{ pr['prompt_id'] }}" aria-label="{{ _('Unshare') }} {{ pr['title'] }}"><i class="fa-solid fa-share-from-square"></i> {{ _('Unshare') }}</button>
         </div>
       </div>
       {% endfor %}
@@ -257,8 +257,8 @@
     {% else %}
     <div class="empty empty--compact">
       <div class="empty__icon"><i class="fa-solid fa-users" aria-hidden="true"></i></div>
-      <div class="empty__title">No shared prompts yet</div>
-      <p class="empty__body">Share your prompts to help the community.</p>
+      <div class="empty__title">{{ _('No shared prompts yet') }}</div>
+      <p class="empty__body">{{ _('Share your prompts to help the community.') }}</p>
     </div>
     {% endif %}
   </div>
@@ -268,7 +268,7 @@
   <div class="card__header">
     <div>
       <span class="eyebrow">06</span>
-      <h2 class="card__title" style="margin-top: var(--p-sp-2);"><i class="fa-solid fa-trophy" style="color: var(--p-color-warning); margin-right: 8px;"></i>Achievements <span class="badge" style="margin-left: 4px;">{{ user_achievements|length }} unlocked</span></h2>
+      <h2 class="card__title" style="margin-top: var(--p-sp-2);"><i class="fa-solid fa-trophy" style="color: var(--p-color-warning); margin-right: 8px;"></i>{{ _('Achievements') }} <span class="badge" style="margin-left: 4px;">{% trans count=user_achievements|length %}{{ count }} unlocked{% endtrans %}</span></h2>
     </div>
   </div>
 
@@ -285,9 +285,9 @@
           <p class="t-body-sm t-muted" style="margin: 0 0 var(--p-sp-2); line-height: 1.5;">{{ achievement[2] }}</p>
           <div class="cluster--between">
             <span class="badge">{{ achievement[5] }}</span>
-            <span class="badge badge--success">+{{ achievement[4] }} pts</span>
+            <span class="badge badge--success">+{{ achievement[4] }} {{ _('pts') }}</span>
           </div>
-          <p class="t-body-sm t-muted" style="margin: var(--p-sp-2) 0 0;">Unlocked {{ achievement[6] }}</p>
+          <p class="t-body-sm t-muted" style="margin: var(--p-sp-2) 0 0;">{% trans when=achievement[6] %}Unlocked {{ when }}{% endtrans %}</p>
         </div>
       </div>
     </div>
@@ -296,8 +296,8 @@
   {% else %}
   <div class="empty empty--compact">
     <div class="empty__icon"><i class="fa-solid fa-medal" aria-hidden="true"></i></div>
-    <div class="empty__title">No achievements yet</div>
-    <p class="empty__body">Start generating and sharing prompts to earn your first achievement.</p>
+    <div class="empty__title">{{ _('No achievements yet') }}</div>
+    <p class="empty__body">{{ _('Start generating and sharing prompts to earn your first achievement.') }}</p>
   </div>
   {% endif %}
 </section>
@@ -307,9 +307,9 @@
     <div class="modal__header">
       <h2 class="modal__title">
         <i class="fa-solid fa-clock-rotate-left" style="color: var(--p-color-primary); margin-right: 8px;"></i>
-        Point history
+        {{ _('Point history') }}
       </h2>
-      <button type="button" class="icon-btn" onclick="hidePointHistory()" aria-label="Close">
+      <button type="button" class="icon-btn" onclick="hidePointHistory()" aria-label="{{ _('Close') }}">
         <i class="fa-solid fa-xmark"></i>
       </button>
     </div>
@@ -317,20 +317,20 @@
       <div id="point-history-content">
         <div id="point-history-loading" class="text-center" style="padding: var(--p-sp-7);">
           <div class="spinner spinner--lg" style="margin: 0 auto var(--p-sp-3);"></div>
-          <p class="t-body-sm t-muted" style="margin: 0;">Loading point history…</p>
+          <p class="t-body-sm t-muted" style="margin: 0;">{{ _('Loading point history…') }}</p>
         </div>
         <div id="point-history-items" hidden></div>
         <div id="point-history-empty" class="text-center" hidden style="padding: var(--p-sp-7);">
           <i class="fa-solid fa-coins" style="font-size: 36px; color: var(--p-color-text-disabled);"></i>
-          <p class="t-body-sm t-muted" style="margin: var(--p-sp-3) 0 0;">No point history available yet.</p>
+          <p class="t-body-sm t-muted" style="margin: var(--p-sp-3) 0 0;">{{ _('No point history available yet.') }}</p>
         </div>
       </div>
     </div>
     <div class="modal__footer" style="justify-content: space-between;">
       <p class="t-body-sm t-muted" style="margin: 0;">
-        <i class="fa-solid fa-circle-info"></i> Points expire based on their source. Original points never expire.
+        <i class="fa-solid fa-circle-info"></i> {{ _('Points expire based on their source. Original points never expire.') }}
       </p>
-      <button type="button" class="btn btn--secondary btn--sm" onclick="hidePointHistory()">Close</button>
+      <button type="button" class="btn btn--secondary btn--sm" onclick="hidePointHistory()">{{ _('Close') }}</button>
     </div>
   </div>
 </div>

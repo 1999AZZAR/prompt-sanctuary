@@ -1,20 +1,20 @@
 {% extends "base.html" %}
 {% set active_section = 'Library' %}
 {% set active_nav = 'mylib' %}
-{% block title %}My Library · Prompt Sanctuary{% endblock %}
-{% block bar_title %}My Library{% endblock %}
+{% block title %}{{ _('My Library') }} · {{ _('Prompt Sanctuary') }}{% endblock %}
+{% block bar_title %}{{ _('My Library') }}{% endblock %}
 
 {% block content %}
 <header class="hero section--first" style="padding-top: var(--p-sp-7); padding-bottom: var(--p-sp-7);">
-  <span class="eyebrow hero__eyebrow">Index 05 · Personal</span>
-  <h1 class="t-h1 hero__display" style="font-size: var(--p-fs-h1); max-width: 24ch;">Your prompt library.</h1>
-  <p class="lede hero__lede">Edit, share, or refine any prompt. Search by title or content. All your drafts live here.</p>
+  <span class="eyebrow hero__eyebrow">{{ _('Index 05 · Personal') }}</span>
+  <h1 class="t-h1 hero__display" style="font-size: var(--p-fs-h1); max-width: 24ch;">{{ _('Your prompt library.') }}</h1>
+  <p class="lede hero__lede">{{ _('Edit, share, or refine any prompt. Search by title or content. All your drafts live here.') }}</p>
   <div class="hero__cta">
     <a class="btn btn--primary" href="{{ url_for('main.refinement') }}">
-      <i class="fa-solid fa-wand-magic-sparkles"></i> Refine a prompt
+      <i class="fa-solid fa-wand-magic-sparkles"></i> {{ _('Refine a prompt') }}
     </a>
     <a class="btn btn--secondary" href="{{ url_for('main.generate') }}">
-      <i class="fa-solid fa-plus"></i> New prompt
+      <i class="fa-solid fa-plus"></i> {{ _('New prompt') }}
     </a>
   </div>
 </header>
@@ -22,11 +22,11 @@
 <section class="section--tight">
   <div class="cluster" style="margin-bottom: var(--p-sp-5); align-items: flex-end;">
     <div class="field" style="flex: 1; max-width: 480px; margin: 0;">
-      <label class="field__label" for="searchPersonalInput">Search</label>
-      <input class="input" type="text" id="searchPersonalInput" placeholder="Search by title or content…">
+      <label class="field__label" for="searchPersonalInput">{{ _('Search') }}</label>
+      <input class="input" type="text" id="searchPersonalInput" placeholder="{{ _('Search by title or content…') }}">
     </div>
-    <button type="button" id="clearPersonalSearchBtn" class="btn btn--ghost btn--sm" style="display: none;" aria-label="Clear search">
-      <i class="fa-solid fa-xmark"></i> Clear
+    <button type="button" id="clearPersonalSearchBtn" class="btn btn--ghost btn--sm" style="display: none;" aria-label="{{ _('Clear search') }}">
+      <i class="fa-solid fa-xmark"></i> {{ _('Clear') }}
     </button>
   </div>
 
@@ -35,40 +35,40 @@
     {% for prompt in saved_prompts %}
     <article class="prompt-box" role="article" aria-labelledby="prompt-title-{{ prompt.random_val }}">
       <div class="prompt-box__meta">
-        <span class="badge"><i class="fa-solid fa-bookmark"></i> Personal</span>
+        <span class="badge"><i class="fa-solid fa-bookmark"></i> {{ _('Personal') }}</span>
         {% if prompt.is_shared %}
-        <span class="badge badge--primary"><i class="fa-solid fa-users"></i> Shared</span>
+        <span class="badge badge--primary"><i class="fa-solid fa-users"></i> {{ _('Shared') }}</span>
         {% endif %}
         <span class="index" style="margin-left: auto;">{{ prompt.time }}</span>
       </div>
       <h3 class="prompt-box__title" id="prompt-title-{{ prompt.random_val }}">{{ prompt.title }}</h3>
       <p class="prompt-box__body prompt-text">{{ prompt.prompt | safe }}</p>
       <div class="prompt-box__actions">
-        <button class="btn btn--tertiary btn--sm copy-button" data-clipboard-text="{{ prompt.prompt | e }}" aria-label="Copy {{ prompt.title | e }}">
-          <i class="fa-solid fa-copy"></i> Copy
+        <button class="btn btn--tertiary btn--sm copy-button" data-clipboard-text="{{ prompt.prompt | e }}" aria-label="{{ _('Copy') }} {{ prompt.title | e }}">
+          <i class="fa-solid fa-copy"></i> {{ _('Copy') }}
         </button>
-        <button class="btn btn--tertiary btn--sm edit-button" data-random-val="{{ prompt.random_val }}" data-title="{{ prompt.title | e }}" data-prompt="{{ prompt.prompt | e }}" aria-label="Edit {{ prompt.title | e }}">
-          <i class="fa-solid fa-pen"></i> Edit
+        <button class="btn btn--tertiary btn--sm edit-button" data-random-val="{{ prompt.random_val }}" data-title="{{ prompt.title | e }}" data-prompt="{{ prompt.prompt | e }}" aria-label="{{ _('Edit') }} {{ prompt.title | e }}">
+          <i class="fa-solid fa-pen"></i> {{ _('Edit') }}
         </button>
-        <a class="btn btn--tertiary btn--sm refine-link" href="{{ url_for('main.refinement', source='personal', prompt_id=prompt.random_val) }}" aria-label="Refine {{ prompt.title | e }}">
-          <i class="fa-solid fa-wand-magic-sparkles"></i> Refine
+        <a class="btn btn--tertiary btn--sm refine-link" href="{{ url_for('main.refinement', source='personal', prompt_id=prompt.random_val) }}" aria-label="{{ _('Refine') }} {{ prompt.title | e }}">
+          <i class="fa-solid fa-wand-magic-sparkles"></i> {{ _('Refine') }}
         </a>
         {% if prompt.is_shared %}
-        <button class="btn btn--tertiary btn--sm unshare-button" data-prompt-id="{{ prompt.random_val }}" aria-label="Unshare {{ prompt.title | e }}">
-          <i class="fa-solid fa-share-from-square"></i> Unshare
+        <button class="btn btn--tertiary btn--sm unshare-button" data-prompt-id="{{ prompt.random_val }}" aria-label="{{ _('Unshare') }} {{ prompt.title | e }}">
+          <i class="fa-solid fa-share-from-square"></i> {{ _('Unshare') }}
         </button>
         {% else %}
-        <button class="btn btn--tertiary btn--sm share-button" data-prompt-id="{{ prompt.random_val }}" data-title="{{ prompt.title|e }}" data-prompt="{{ prompt.prompt|e }}" aria-label="Share {{ prompt.title | e }}">
-          <i class="fa-solid fa-share-from-square"></i> Share
+        <button class="btn btn--tertiary btn--sm share-button" data-prompt-id="{{ prompt.random_val }}" data-title="{{ prompt.title|e }}" data-prompt="{{ prompt.prompt|e }}" aria-label="{{ _('Share') }} {{ prompt.title | e }}">
+          <i class="fa-solid fa-share-from-square"></i> {{ _('Share') }}
         </button>
         {% endif %}
-        <button class="btn btn--tertiary btn--sm history-button" data-random-val="{{ prompt.random_val }}" data-title="{{ prompt.title | e }}" aria-label="History {{ prompt.title | e }}">
-          <i class="fa-solid fa-clock-rotate-left"></i> History
+        <button class="btn btn--tertiary btn--sm history-button" data-random-val="{{ prompt.random_val }}" data-title="{{ prompt.title | e }}" aria-label="{{ _('History') }} {{ prompt.title | e }}">
+          <i class="fa-solid fa-clock-rotate-left"></i> {{ _('History') }}
         </button>
-        <button class="btn btn--tertiary btn--sm see-button" data-title="{{ prompt.title | e }}" data-content="{{ prompt.prompt | e }}" data-tags="{{ prompt.tag | e }}" aria-label="Preview {{ prompt.title | e }}">
-          <i class="fa-solid fa-eye"></i> Preview
+        <button class="btn btn--tertiary btn--sm see-button" data-title="{{ prompt.title | e }}" data-content="{{ prompt.prompt | e }}" data-tags="{{ prompt.tag | e }}" aria-label="{{ _('Preview') }} {{ prompt.title | e }}">
+          <i class="fa-solid fa-eye"></i> {{ _('Preview') }}
         </button>
-        <button class="btn btn--tertiary btn--sm delete-button" data-random-val="{{ prompt.random_val }}" aria-label="Delete {{ prompt.title | e }}" style="color: var(--p-color-critical); margin-left: auto;">
+        <button class="btn btn--tertiary btn--sm delete-button" data-random-val="{{ prompt.random_val }}" aria-label="{{ _('Delete') }} {{ prompt.title | e }}" style="color: var(--p-color-critical); margin-left: auto;">
           <i class="fa-solid fa-trash"></i>
         </button>
       </div>
@@ -78,10 +78,10 @@
   {% else %}
   <div class="card empty">
     <div class="empty__icon"><i class="fa-solid fa-bookmark" aria-hidden="true"></i></div>
-    <div class="empty__title">No saved prompts yet</div>
-    <p class="empty__body">Generate a prompt and save it to build your library.</p>
+    <div class="empty__title">{{ _('No saved prompts yet') }}</div>
+    <p class="empty__body">{{ _('Generate a prompt and save it to build your library.') }}</p>
     <a href="{{ url_for('main.generate') }}" class="btn btn--primary">
-      <i class="fa-solid fa-wand-magic-sparkles"></i> Open generator
+      <i class="fa-solid fa-wand-magic-sparkles"></i> {{ _('Open generator') }}
     </a>
   </div>
   {% endif %}
@@ -110,10 +110,13 @@
 
   function formatTime(s) {
     if (!s) return 'Saved';
-    // Trim a datetime string to "YYYY-MM-DD HH:MM" for the index pill.
     return String(s).replace('T', ' ').slice(0, 16);
   }
 
+  // The strings used here live in the JS template — they're hardcoded English.
+  // For the server-rendered version, all user-facing strings are translated in
+  // the Jinja loop above. The dynamic re-render path intentionally keeps
+  // English labels so the JS bundle stays small.
   function renderSavedPrompts(list) {
     if (!list || list.length === 0) {
       container.innerHTML = '<div class="card empty" style="grid-column: 1 / -1;"><div class="empty__icon"><i class="fa-solid fa-magnifying-glass"></i></div><div class="empty__title">No matches</div><p class="empty__body">Try a different search term.</p></div>';

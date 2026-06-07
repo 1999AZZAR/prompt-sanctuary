@@ -1,17 +1,17 @@
 {% extends "base.html" %}
 {% set active_section = 'Library' %}
 {% set active_nav = 'library' %}
-{% block title %}Community · Prompt Sanctuary{% endblock %}
-{% block bar_title %}Community{% endblock %}
+{% block title %}{{ _('Community') }} · {{ _('Prompt Sanctuary') }}{% endblock %}
+{% block bar_title %}{{ _('Community') }}{% endblock %}
 
 {% block content %}
 <header class="hero section--first" style="padding-top: var(--p-sp-7); padding-bottom: var(--p-sp-7);">
-  <span class="eyebrow hero__eyebrow">Index 06 · Community</span>
-  <h1 class="t-h1 hero__display" style="font-size: var(--p-fs-h1); max-width: 24ch;">Community prompts.</h1>
-  <p class="lede hero__lede">System prompts and shared prompts from the community. Copy, save, or refine any of them.</p>
+  <span class="eyebrow hero__eyebrow">{{ _('Index 06 · Community') }}</span>
+  <h1 class="t-h1 hero__display" style="font-size: var(--p-fs-h1); max-width: 24ch;">{{ _('Community prompts.') }}</h1>
+  <p class="lede hero__lede">{{ _('System prompts and shared prompts from the community. Copy, save, or refine any of them.') }}</p>
   <div class="hero__cta">
     <a class="btn btn--primary" href="{{ url_for('main.refinement') }}">
-      <i class="fa-solid fa-wand-magic-sparkles"></i> Refine a prompt
+      <i class="fa-solid fa-wand-magic-sparkles"></i> {{ _('Refine a prompt') }}
     </a>
   </div>
 </header>
@@ -19,11 +19,11 @@
 <section class="section--tight">
   <div class="cluster" style="margin-bottom: var(--p-sp-5); align-items: flex-end;">
     <div class="field" style="flex: 1; max-width: 480px; margin: 0;">
-      <label class="field__label" for="searchInput">Search</label>
-      <input class="input" type="text" id="searchInput" placeholder="Search by title or content…">
+      <label class="field__label" for="searchInput">{{ _('Search') }}</label>
+      <input class="input" type="text" id="searchInput" placeholder="{{ _('Search by title or content…') }}">
     </div>
-    <button type="button" id="clearSearchBtn" class="btn btn--ghost btn--sm" style="display: none;" aria-label="Clear search">
-      <i class="fa-solid fa-xmark"></i> Clear
+    <button type="button" id="clearSearchBtn" class="btn btn--ghost btn--sm" style="display: none;" aria-label="{{ _('Clear search') }}">
+      <i class="fa-solid fa-xmark"></i> {{ _('Clear') }}
     </button>
   </div>
 
@@ -31,23 +31,23 @@
     {% for prompt in system_prompts %}
     <article class="prompt-box" role="article" aria-labelledby="prompt-title-{{ loop.index0 }}-default">
       <div class="prompt-box__meta">
-        <span class="badge badge--primary"><i class="fa-solid fa-shield-halved"></i> System</span>
-        <span class="index" style="margin-left: auto;">Default</span>
+        <span class="badge badge--primary"><i class="fa-solid fa-shield-halved"></i> {{ _('System') }}</span>
+        <span class="index" style="margin-left: auto;">{{ _('Default') }}</span>
       </div>
       <h3 class="prompt-box__title" id="prompt-title-{{ loop.index0 }}-default">{{ prompt.title }}</h3>
       <p class="prompt-box__body prompt-text">{{ prompt.prompt | safe }}</p>
       <div class="prompt-box__actions">
-        <button class="btn btn--tertiary btn--sm copy-button" data-clipboard-text="{{ prompt.prompt | e }}" aria-label="Copy {{ prompt.title | e }}">
-          <i class="fa-solid fa-copy"></i> Copy
+        <button class="btn btn--tertiary btn--sm copy-button" data-clipboard-text="{{ prompt.prompt | e }}" aria-label="{{ _('Copy') }} {{ prompt.title | e }}">
+          <i class="fa-solid fa-copy"></i> {{ _('Copy') }}
         </button>
-        <button class="btn btn--tertiary btn--sm save-button" data-title="{{ prompt.title | e }}" data-prompt="{{ prompt.prompt | e }}" aria-label="Save {{ prompt.title | e }}">
-          <i class="fa-solid fa-bookmark"></i> Save
+        <button class="btn btn--tertiary btn--sm save-button" data-title="{{ prompt.title | e }}" data-prompt="{{ prompt.prompt | e }}" aria-label="{{ _('Save') }} {{ prompt.title | e }}">
+          <i class="fa-solid fa-bookmark"></i> {{ _('Save') }}
         </button>
-        <a class="btn btn--tertiary btn--sm refine-link" href="{{ url_for('main.refinement', source='system', prompt_id=prompt.random_val) }}" aria-label="Refine {{ prompt.title | e }}">
-          <i class="fa-solid fa-wand-magic-sparkles"></i> Refine
+        <a class="btn btn--tertiary btn--sm refine-link" href="{{ url_for('main.refinement', source='system', prompt_id=prompt.random_val) }}" aria-label="{{ _('Refine') }} {{ prompt.title | e }}">
+          <i class="fa-solid fa-wand-magic-sparkles"></i> {{ _('Refine') }}
         </a>
-        <button class="btn btn--tertiary btn--sm see-button" data-title="{{ prompt.title | e }}" data-content="{{ prompt.prompt | e }}" data-tags="{{ prompt.tag | e }}" aria-label="Preview {{ prompt.title | e }}">
-          <i class="fa-solid fa-eye"></i> Preview
+        <button class="btn btn--tertiary btn--sm see-button" data-title="{{ prompt.title | e }}" data-content="{{ prompt.prompt | e }}" data-tags="{{ prompt.tag | e }}" aria-label="{{ _('Preview') }} {{ prompt.title | e }}">
+          <i class="fa-solid fa-eye"></i> {{ _('Preview') }}
         </button>
       </div>
     </article>
@@ -56,31 +56,31 @@
     {% for prompt in shared_prompts %}
     <article class="prompt-box" role="article" aria-labelledby="prompt-title-{{ loop.index0 }}-shared">
       <div class="prompt-box__meta">
-        <span class="badge"><i class="fa-solid fa-users"></i> Community</span>
+        <span class="badge"><i class="fa-solid fa-users"></i> {{ _('Community') }}</span>
         {% if prompt.is_user_owned %}
-        <span class="badge badge--warning"><i class="fa-solid fa-crown"></i> Yours</span>
+        <span class="badge badge--warning"><i class="fa-solid fa-crown"></i> {{ _('Yours') }}</span>
         {% endif %}
-        <span class="index" style="margin-left: auto;">Shared</span>
+        <span class="index" style="margin-left: auto;">{{ _('Shared') }}</span>
       </div>
       <h3 class="prompt-box__title" id="prompt-title-{{ loop.index0 }}-shared">{{ prompt.title }}</h3>
       <p class="prompt-box__body prompt-text">{{ prompt.prompt | safe }}</p>
       <div class="prompt-box__actions">
-        <button class="btn btn--tertiary btn--sm copy-button" data-clipboard-text="{{ prompt.prompt | e }}" aria-label="Copy {{ prompt.title | e }}">
-          <i class="fa-solid fa-copy"></i> Copy
+        <button class="btn btn--tertiary btn--sm copy-button" data-clipboard-text="{{ prompt.prompt | e }}" aria-label="{{ _('Copy') }} {{ prompt.title | e }}">
+          <i class="fa-solid fa-copy"></i> {{ _('Copy') }}
         </button>
-        <button class="btn btn--tertiary btn--sm save-button" data-title="{{ prompt.title | e }}" data-prompt="{{ prompt.prompt | e }}" aria-label="Save {{ prompt.title | e }}">
-          <i class="fa-solid fa-bookmark"></i> Save
+        <button class="btn btn--tertiary btn--sm save-button" data-title="{{ prompt.title | e }}" data-prompt="{{ prompt.prompt | e }}" aria-label="{{ _('Save') }} {{ prompt.title | e }}">
+          <i class="fa-solid fa-bookmark"></i> {{ _('Save') }}
         </button>
         {% if prompt.is_user_owned %}
-        <button class="btn btn--tertiary btn--sm unshare-button" data-prompt-id="{{ prompt.random_val }}" aria-label="Unshare {{ prompt.title | e }}">
-          <i class="fa-solid fa-share-from-square"></i> Unshare
+        <button class="btn btn--tertiary btn--sm unshare-button" data-prompt-id="{{ prompt.random_val }}" aria-label="{{ _('Unshare') }} {{ prompt.title | e }}">
+          <i class="fa-solid fa-share-from-square"></i> {{ _('Unshare') }}
         </button>
         {% endif %}
-        <a class="btn btn--tertiary btn--sm refine-link" href="{{ url_for('main.refinement', source='community', prompt_id=prompt.random_val) }}" aria-label="Refine {{ prompt.title | e }}">
-          <i class="fa-solid fa-wand-magic-sparkles"></i> Refine
+        <a class="btn btn--tertiary btn--sm refine-link" href="{{ url_for('main.refinement', source='community', prompt_id=prompt.random_val) }}" aria-label="{{ _('Refine') }} {{ prompt.title | e }}">
+          <i class="fa-solid fa-wand-magic-sparkles"></i> {{ _('Refine') }}
         </a>
-        <button class="btn btn--tertiary btn--sm see-button" data-title="{{ prompt.title | e }}" data-content="{{ prompt.prompt | e }}" data-tags="{{ prompt.tag | e }}" aria-label="Preview {{ prompt.title | e }}">
-          <i class="fa-solid fa-eye"></i> Preview
+        <button class="btn btn--tertiary btn--sm see-button" data-title="{{ prompt.title | e }}" data-content="{{ prompt.prompt | e }}" data-tags="{{ prompt.tag | e }}" aria-label="{{ _('Preview') }} {{ prompt.title | e }}">
+          <i class="fa-solid fa-eye"></i> {{ _('Preview') }}
         </button>
       </div>
     </article>
@@ -113,6 +113,8 @@
     return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
   }
 
+  // The strings used here live in the JS template — they're hardcoded English.
+  // Server-rendered HTML above is fully translated.
   function renderAllPrompts(promptsToRender) {
     if (!promptsToRender) promptsToRender = allPrompts;
     if (promptsToRender.length === 0) {

@@ -1,21 +1,21 @@
 {% extends "base.html" %}
-{% block title %}Prompt Sanctuary · Index 001{% endblock %}
+{% block title %}{{ _('Prompt Sanctuary') }} · {{ _('Index 001') }}{% endblock %}
 {% block public_content %}
 <div class="split">
   <aside class="split__cover">
     <a class="brand" href="{{ url_for('main.index') }}">
       <span class="brand__mark">P</span>
-      <span class="brand__name">Sanctuary</span>
+      <span class="brand__name">{{ _('Sanctuary') }}</span>
       <span class="brand__sub">v1</span>
     </a>
 
     <div>
-      <span class="eyebrow">Index 001</span>
+      <span class="eyebrow">{{ _('Index 001') }}</span>
       <h1 class="t-display-lg" style="color:#fff; margin: var(--p-sp-5) 0 var(--p-sp-6); max-width: 14ch;">
-        A workshop for prompts.
+        {{ _('A workshop for prompts.') }}
       </h1>
       <p style="color: rgba(255,255,255,0.72); font-size: var(--p-fs-h3); line-height: 1.45; max-width: 44ch; font-weight: 400;">
-        Generate, refine, and version your text prompts in one place. Built for makers who iterate.
+        {{ _('Generate, refine, and version your text prompts in one place. Built for makers who iterate.') }}
       </p>
     </div>
 
@@ -24,15 +24,15 @@
       <div class="cluster" style="gap: var(--p-sp-7);">
         <div>
           <span class="eyebrow" style="color: rgba(255,255,255,0.55);">01</span>
-          <div style="color:#fff; font-weight:600; margin-top: 2px;">Generate</div>
+          <div style="color:#fff; font-weight:600; margin-top: 2px;">{{ _('Generate') }}</div>
         </div>
         <div>
           <span class="eyebrow" style="color: rgba(255,255,255,0.55);">02</span>
-          <div style="color:#fff; font-weight:600; margin-top: 2px;">Refine</div>
+          <div style="color:#fff; font-weight:600; margin-top: 2px;">{{ _('Refine') }}</div>
         </div>
         <div>
           <span class="eyebrow" style="color: rgba(255,255,255,0.55);">03</span>
-          <div style="color:#fff; font-weight:600; margin-top: 2px;">Save</div>
+          <div style="color:#fff; font-weight:600; margin-top: 2px;">{{ _('Save') }}</div>
         </div>
       </div>
     </div>
@@ -41,16 +41,16 @@
   <section class="split__form">
     <div class="split__form-inner stack--xl">
       <div>
-        <span class="eyebrow">Index 002</span>
-        <h2 class="t-h1" style="margin-top: var(--p-sp-3);">Built on three principles.</h2>
+        <span class="eyebrow">{{ _('Index 002') }}</span>
+        <h2 class="t-h1" style="margin-top: var(--p-sp-3);">{{ _('Built on three principles.') }}</h2>
       </div>
 
       <div class="feature-row">
         <span class="feature-row__index">01</span>
         <div>
           <span class="feature-row__icon"><i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i></span>
-          <h3 class="feature-row__title">Generate from a topic or a system prompt.</h3>
-          <p class="feature-row__body">Two modes for two kinds of work. Describe a topic and let the model expand it, or paste a system prompt and iterate from there.</p>
+          <h3 class="feature-row__title">{{ _('Generate from a topic or a system prompt.') }}</h3>
+          <p class="feature-row__body">{{ _('Two modes for two kinds of work. Describe a topic and let the model expand it, or paste a system prompt and iterate from there.') }}</p>
         </div>
       </div>
 
@@ -58,8 +58,8 @@
         <span class="feature-row__index">02</span>
         <div>
           <span class="feature-row__icon"><i class="fa-solid fa-arrows-rotate" aria-hidden="true"></i></span>
-          <h3 class="feature-row__title">Refine with structured feedback.</h3>
-          <p class="feature-row__body">Tell the model what to change — tone, length, format, audience. Each refinement keeps a versioned history.</p>
+          <h3 class="feature-row__title">{{ _('Refine with structured feedback.') }}</h3>
+          <p class="feature-row__body">{{ _('Tell the model what to change — tone, length, format, audience. Each refinement keeps a versioned history.') }}</p>
         </div>
       </div>
 
@@ -67,25 +67,25 @@
         <span class="feature-row__index">03</span>
         <div>
           <span class="feature-row__icon"><i class="fa-solid fa-book" aria-hidden="true"></i></span>
-          <h3 class="feature-row__title">Keep everything in one library.</h3>
-          <p class="feature-row__body">Personal saves stay private. Share with the community when you're ready. Browse what others have shipped.</p>
+          <h3 class="feature-row__title">{{ _('Keep everything in one library.') }}</h3>
+          <p class="feature-row__body">{{ _('Personal saves stay private. Share with the community when you’re ready. Browse what others have shipped.') }}</p>
         </div>
       </div>
 
       <hr class="rule--subdued">
 
       <div class="cluster--between cluster--baseline">
-        <span class="eyebrow">Ready when you are.</span>
+        <span class="eyebrow">{{ _('Ready when you are.') }}</span>
         <a class="btn btn--primary btn--lg" href="{{ url_for('main.login') }}">
-          Open the app
+          {{ _('Open the app') }}
           <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
         </a>
       </div>
 
       <div class="cluster" style="gap: var(--p-sp-5); margin-top: var(--p-sp-5); font-size: var(--p-fs-body-sm); color: var(--p-color-text-subdued);">
-        <span>© 2026 Prompt Sanctuary</span>
-        <a href="{{ url_for('main.terms') }}" style="color: inherit;">Terms</a>
-        <a href="{{ url_for('main.privacy') }}" style="color: inherit;">Privacy</a>
+        <span>© 2026 {{ _('Prompt Sanctuary') }}</span>
+        <a href="{{ url_for('main.terms') }}" style="color: inherit;">{{ _('Terms') }}</a>
+        <a href="{{ url_for('main.privacy') }}" style="color: inherit;">{{ _('Privacy') }}</a>
       </div>
     </div>
   </section>

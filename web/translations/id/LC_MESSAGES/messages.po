@@ -1,14 +1,12 @@
-# Translation for Indonesian (id)
-# Copyright (C) 2025 Prompt Sanctuary
+# Indonesian translations for Prompt Sanctuary.
+# Copyright (C) 2026 Prompt Sanctuary
 # This file is distributed under the same license as the Prompt Sanctuary project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
-#
 msgid ""
 msgstr ""
 "Project-Id-Version: Prompt Sanctuary 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-01-26 12:00+0000\n"
-"PO-Revision-Date: 2025-01-26 12:00+0000\n"
+"POT-Creation-Date: 2026-06-07 00:00+0000\n"
+"PO-Revision-Date: 2026-06-07 00:00+0000\n"
 "Last-Translator: Prompt Sanctuary <admin@promptsanctuary.com>\n"
 "Language-Team: Indonesian <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -17,1101 +15,1684 @@ msgstr ""
 "Language: id\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: web/routes.py:796 web/routes.py:801
+#: web/routes.py:1841
 msgid "Language not supported"
 msgstr "Bahasa tidak didukung"
 
-#: web/routes.py:801
+#: web/routes.py:1845
+#, python-format
 msgid "Language changed to %(language)s"
 msgstr "Bahasa diubah ke %(language)s"
 
-#: web/templates/base.html:80
-msgid "Prompt Sanctuary"
-msgstr "Prompt Sanctuary"
-
-#: web/templates/base.html:81
-msgid "Your AI-powered prompt creation studio."
-msgstr "Studio pembuatan prompt bertenaga AI Anda."
-
-#: web/templates/base.html:88 web/templates/base.html:103
-msgid "Home"
-msgstr "Beranda"
-
-#: web/templates/base.html:91 web/templates/base.html:106
-msgid "Saved Prompts"
-msgstr "Prompt Tersimpan"
-
-#: web/templates/base.html:94 web/templates/base.html:109
-msgid "Community Prompt"
-msgstr "Prompt Komunitas"
-
-#: web/templates/base.html:97 web/templates/base.html:112
-msgid "Basic Prompt"
-msgstr "Prompt Dasar"
-
-#: web/templates/base.html:100 web/templates/base.html:115
-msgid "Advance Prompt"
-msgstr "Prompt Lanjutan"
-
-#: web/templates/base.html:118
-msgid "Profile"
-msgstr "Profil"
-
-#: web/templates/base.html:113 web/templates/base.html:126
-msgid "Logout"
-msgstr "Keluar"
-
-#: web/templates/base.html:119 web/templates/base.html:132
-msgid "Feedback"
-msgstr "Masukan"
-
-#: web/templates/base.html:146
-msgid "Created By"
-msgstr "Dibuat Oleh"
-
-#: web/templates/base.html:122
-msgid "Azzar Budiyanto"
-msgstr "Azzar Budiyanto"
-
-#: web/templates/base.html:125
-msgid "Share your feedback"
-msgstr "Bagikan masukan Anda"
-
-#: web/templates/base.html:145
-msgid "Submit"
-msgstr "Kirim"
-
-#: web/templates/base.html:144
-msgid "Enter your feedback here"
-msgstr "Masukkan masukan Anda di sini"
-
-#: web/templates/account/profile.html:6
-msgid "Profile"
-msgstr "Profil"
-
-#: web/templates/account/profile.html:7
-msgid "Manage your account and prompts."
-msgstr "Kelola akun dan prompt Anda."
-
-#: web/templates/account/profile.html:16
-msgid "Profile Picture"
-msgstr "Foto Profil"
-
-#: web/templates/account/profile.html:19
-msgid "Regenerate"
-msgstr "Hasilkan Ulang"
-
-#: web/templates/account/profile.html:25
-msgid "Settings"
-msgstr "Pengaturan"
-
-#: web/templates/account/profile.html:18
-msgid "Current username:"
-msgstr "Nama pengguna saat ini:"
-
-#: web/templates/account/profile.html:19
-msgid "Old Password"
-msgstr "Kata Sandi Lama"
-
-#: web/templates/account/profile.html:20
-msgid "New Password"
-msgstr "Kata Sandi Baru"
-
-#: web/templates/account/profile.html:21
-msgid "Confirm Password"
-msgstr "Konfirmasi Kata Sandi"
-
-#: web/templates/account/profile.html:22
-msgid "Update Password"
-msgstr "Perbarui Kata Sandi"
-
-#: web/templates/account/profile.html:37
-msgid "Email (optional)"
-msgstr "Email (opsional)"
-
-#: web/templates/account/profile.html:39
-msgid "Update Email"
-msgstr "Perbarui Email"
-
-#: web/templates/account/profile.html:48
-msgid "Change Username"
-msgstr "Ubah Nama Pengguna"
-
-#: web/templates/account/profile.html:49
-msgid "Only letters, numbers and underscores. 3–32 chars."
-msgstr "Hanya huruf, angka dan garis bawah. 3–32 karakter."
-
-#: web/templates/account/profile.html:51
-msgid "Change Username"
-msgstr "Ubah Nama Pengguna"
-
-#: web/templates/account/profile.html:56
-msgid "Delete Account"
-msgstr "Hapus Akun"
-
-#: web/templates/account/profile.html:66
-msgid "Saved Prompts"
-msgstr "Prompt Tersimpan"
-
-#: web/templates/account/profile.html:68
-msgid "No saved prompts yet."
-msgstr "Belum ada prompt tersimpan."
-
-#: web/templates/account/profile.html:72
-msgid "View"
-msgstr "Lihat"
-
-#: web/templates/account/profile.html:73
-msgid "Delete"
-msgstr "Hapus"
-
-#: web/templates/account/profile.html:84
-msgid "Shared Prompts"
-msgstr "Prompt Berbagi"
-
-#: web/templates/account/profile.html:86
-msgid "No shared prompts yet."
-msgstr "Belum ada prompt yang dibagikan."
-
-#: web/templates/account/profile.html:92
-msgid "Unshare"
-msgstr "Batalkan Berbagi"
-
-#: web/templates/account/profile.html:105
-msgid "Sessions"
-msgstr "Sesi"
-
-#: web/templates/account/profile.html:124
-msgid "No sessions."
-msgstr "Tidak ada sesi."
-
-#: web/templates/account/profile.html:128
-msgid "Current"
-msgstr "Saat Ini"
-
-#: web/templates/account/profile.html:134
-msgid "Revoke"
-msgstr "Cabut"
-
-#: web/templates/account/profile.html:138
-msgid "Revoked"
-msgstr "Dicabut"
-
-# Generator Template Translations
-#: web/templates/prompts/generator/basic.html:7
-msgid "Prompt Generator (Basic)"
-msgstr "Generator Prompt (Dasar)"
-
-#: web/templates/prompts/generator/basic.html:9
-msgid "Create custom prompts tailored to your needs."
-msgstr "Buat prompt khusus yang disesuaikan dengan kebutuhan Anda."
-
-#: web/templates/prompts/generator/basic.html:13
-msgid "Basic Prompt Generation Tools"
-msgstr "Alat Generasi Prompt Dasar"
-
-#: web/templates/prompts/generator/basic.html:17
-msgid "Generate Text Prompt"
-msgstr "Hasilkan Prompt Teks"
-
-#: web/templates/prompts/generator/basic.html:22
-msgid "This section allows you to generate text prompts. Enter your input and click \"Generate\" to create a custom prompt, or click \"Random\" for a surprise prompt."
-msgstr "Bagian ini memungkinkan Anda untuk menghasilkan prompt teks. Masukkan input Anda dan klik \"Hasilkan\" untuk membuat prompt khusus, atau klik \"Acak\" untuk kejutan."
-
-#: web/templates/prompts/generator/basic.html:26
-msgid "Input:"
-msgstr "Masukan:"
-
-#: web/templates/prompts/generator/basic.html:27
-msgid "Write a Python code"
-msgstr "Tulis kode Python"
-
-#: web/templates/prompts/generator/basic.html:29
-msgid "Generate text prompt based on input"
-msgstr "Hasilkan prompt teks berdasarkan input"
-
-#: web/templates/prompts/generator/basic.html:31
-msgid "Generate random text prompt"
-msgstr "Hasilkan prompt teks acak"
-
-#: web/templates/prompts/generator/basic.html:31
-msgid "Random"
-msgstr "Acak"
-
-#: web/templates/prompts/generator/basic.html:42
-msgid "Generate Image Prompt"
-msgstr "Hasilkan Prompt Gambar"
-
-#: web/templates/prompts/generator/basic.html:46
-msgid "This section allows you to generate image prompts. You can input text, upload an image, or choose a random prompt. Click \"Generate\" to create your prompt."
-msgstr "Bagian ini memungkinkan Anda untuk menghasilkan prompt gambar. Anda dapat memasukkan teks, mengunggah gambar, atau memilih prompt acak. Klik \"Hasilkan\" untuk membuat prompt Anda."
-
-#: web/templates/prompts/generator/basic.html:50
-msgid "Choose image input type"
-msgstr "Pilih jenis input gambar"
-
-#: web/templates/prompts/generator/basic.html:52
-msgid "Text"
-msgstr "Teks"
-
-#: web/templates/prompts/generator/basic.html:56
-msgid "File"
-msgstr "File"
-
-#: web/templates/prompts/generator/basic.html:66
-msgid "Whale on the desert"
-msgstr "Paus di padang pasir"
-
-#: web/templates/prompts/generator/basic.html:74
-msgid "Upload Image:"
-msgstr "Unggah Gambar:"
-
-#: web/templates/prompts/generator/basic.html:81
-msgid "Generate image prompt"
-msgstr "Hasilkan prompt gambar"
-
-#: web/templates/prompts/generator/basic.html:83
-msgid "Generate random image prompt"
-msgstr "Hasilkan prompt gambar acak"
-
-#: web/templates/prompts/generator/basic.html:92
-msgid "Image Preview"
-msgstr "Pratinjau Gambar"
-
-#: web/templates/prompts/generator/basic.html:101
-msgid "Generating..."
-msgstr "Menghasilkan..."
-
-#: web/templates/prompts/generator/basic.html:107
-msgid "Generated Prompt:"
-msgstr "Prompt yang Dihasilkan:"
-
-#: web/templates/prompts/generator/basic.html:110
-msgid "Copy generated prompt to clipboard"
-msgstr "Salin prompt yang dihasilkan ke clipboard"
-
-#: web/templates/prompts/generator/basic.html:110
-msgid "Copy"
-msgstr "Salin"
-
-#: web/templates/prompts/generator/basic.html:112
-msgid "Save generated prompt to your library"
-msgstr "Simpan prompt yang dihasilkan ke perpustakaan Anda"
-
-#: web/templates/prompts/generator/basic.html:112
-msgid "Save"
-msgstr "Simpan"
-
-#: web/templates/prompts/generator/basic.html:117
-msgid "Prompt Generator (Advanced)"
-msgstr "Generator Prompt (Lanjutan)"
-
-#: web/templates/prompts/generator/basic.html:118
-msgid "Create custom and specialized prompts tailored to your needs."
-msgstr "Buat prompt khusus dan terspesialisasi yang disesuaikan dengan kebutuhan Anda."
-
-#: web/templates/prompts/generator/basic.html:119
-msgid "Prompt Generation Tools"
-msgstr "Alat Generasi Prompt"
-
-#: web/templates/prompts/generator/basic.html:122
-msgid "Use case:"
-msgstr "Kasus penggunaan:"
-
-#: web/templates/prompts/generator/basic.html:123
-msgid "Write a README file"
-msgstr "Tulis file README"
-
-#: web/templates/prompts/generator/basic.html:124
-msgid "Prompt type:"
-msgstr "Jenis prompt:"
-
-#: web/templates/prompts/generator/basic.html:125
-msgid "Simple"
-msgstr "Sederhana"
-
-#: web/templates/prompts/generator/basic.html:126
-msgid "Standard"
-msgstr "Standar"
-
-#: web/templates/prompts/generator/basic.html:127
-msgid "Detailed"
-msgstr "Detail"
-
-#: web/templates/prompts/generator/basic.html:128
-msgid "Step by Step"
-msgstr "Langkah demi Langkah"
-
-#: web/templates/prompts/generator/basic.html:129
-msgid "Harm content:"
-msgstr "Konten berbahaya:"
-
-#: web/templates/prompts/generator/basic.html:130
-msgid "Unspecified"
-msgstr "Tidak ditentukan"
-
-#: web/templates/prompts/generator/basic.html:131
-msgid "Block none"
-msgstr "Blokir tidak ada"
-
-#: web/templates/prompts/generator/basic.html:132
-msgid "Block few"
-msgstr "Blokir sedikit"
-
-#: web/templates/prompts/generator/basic.html:133
-msgid "Block some"
-msgstr "Blokir beberapa"
-
-#: web/templates/prompts/generator/basic.html:134
-msgid "Block most"
-msgstr "Blokir sebagian besar"
-
-#: web/templates/prompts/generator/basic.html:135
-msgid "Knowledge base:"
-msgstr "Basis pengetahuan:"
-
-#: web/templates/prompts/generator/basic.html:136
-msgid "Enter the Knowledge base if any"
-msgstr "Masukkan basis pengetahuan jika ada"
-
-#: web/templates/prompts/generator/basic.html:137
-msgid "Generate Text Prompt"
-msgstr "Hasilkan Prompt Teks"
-
-#: web/templates/prompts/generator/basic.html:138
-msgid "Toggle help for text prompt generation"
-msgstr "Alihkan bantuan untuk generasi prompt teks"
-
-#: web/templates/prompts/generator/basic.html:139
-msgid "This section allows you to generate text prompts. Enter your use case, select the prompt type, and configure other parameters to create a custom prompt."
-msgstr "Bagian ini memungkinkan Anda untuk menghasilkan prompt teks. Masukkan kasus penggunaan Anda, pilih jenis prompt, dan konfigurasikan parameter lain untuk membuat prompt khusus."
-
-#: web/templates/prompts/generator/basic.html:140
-msgid "Choose Image Prompt Mode"
-msgstr "Pilih Mode Prompt Gambar"
-
-#: web/templates/prompts/generator/basic.html:141
-msgid "Generate from Text"
-msgstr "Hasilkan dari Teks"
-
-#: web/templates/prompts/generator/basic.html:142
-msgid "Reverse from Image"
-msgstr "Balik dari Gambar"
-
-#: web/templates/prompts/generator/basic.html:143
-msgid "Toggle help for image prompt generation"
-msgstr "Alihkan bantuan untuk generasi prompt gambar"
-
-#: web/templates/prompts/generator/basic.html:144
-msgid "This section allows you to generate image prompts. Enter your input, select the mood, and choose the primary and secondary styles to create a custom image prompt."
-msgstr "Bagian ini memungkinkan Anda untuk menghasilkan prompt gambar. Masukkan input Anda, pilih suasana hati, dan pilih gaya utama dan sekunder untuk membuat prompt gambar khusus."
-
-#: web/templates/prompts/generator/basic.html:145
-msgid "This section allows you to upload an image and generate a prompt based on it. You can also select the mood and style to customize the output."
-msgstr "Bagian ini memungkinkan Anda untuk mengunggah gambar dan menghasilkan prompt berdasarkan itu. Anda juga dapat memilih suasana hati dan gaya untuk menyesuaikan output."
-
-#: web/templates/prompts/generator/basic.html:146
-msgid "Image Generation from Text Form"
-msgstr "Formulir Generasi Gambar dari Teks"
-
-#: web/templates/prompts/generator/basic.html:147
-msgid "Cat on the sky"
-msgstr "Kucing di langit"
-
-#: web/templates/prompts/generator/basic.html:148
-msgid "Primary mood:"
-msgstr "Suasana hati utama:"
-
-#: web/templates/prompts/generator/basic.html:149
-msgid "Happy"
-msgstr "Bahagia"
-
-#: web/templates/prompts/generator/basic.html:150
-msgid "Joyful"
-msgstr "Gembira"
-
-#: web/templates/prompts/generator/basic.html:151
-msgid "Excited"
-msgstr "Bersemangat"
-
-#: web/templates/prompts/generator/basic.html:152
-msgid "Cheerful"
-msgstr "Ceria"
-
-#: web/templates/prompts/generator/basic.html:153
-msgid "Content"
-msgstr "Konten"
-
-#: web/templates/prompts/generator/basic.html:154
-msgid "Angry"
-msgstr "Marah"
-
-#: web/templates/prompts/generator/basic.html:155
-msgid "Disgust"
-msgstr "Jijik"
-
-#: web/templates/prompts/generator/basic.html:156
-msgid "Fear"
-msgstr "Takut"
-
-#: web/templates/prompts/generator/basic.html:157
-msgid "Sad"
-msgstr "Sedih"
-
-#: web/templates/prompts/generator/basic.html:158
-msgid "Depressed"
-msgstr "Depresi"
-
-#: web/templates/prompts/generator/basic.html:159
-msgid "Neutral"
-msgstr "Netral"
-
-#: web/templates/prompts/generator/basic.html:160
-msgid "Calm"
-msgstr "Tenang"
-
-#: web/templates/prompts/generator/basic.html:161
-msgid "Relaxed"
-msgstr "Santai"
-
-#: web/templates/prompts/generator/basic.html:162
-msgid "Serene"
-msgstr "Damai"
-
-#: web/templates/prompts/generator/basic.html:163
-msgid "Tranquil"
-msgstr "Tentram"
-
-#: web/templates/prompts/generator/basic.html:164
-msgid "Surprised"
-msgstr "Terkejut"
-
-#: web/templates/prompts/generator/basic.html:165
-msgid "Curious"
-msgstr "Penasaran"
-
-#: web/templates/prompts/generator/basic.html:166
-msgid "Mysterious"
-msgstr "Misterius"
-
-#: web/templates/prompts/generator/basic.html:167
-msgid "Surreal"
-msgstr "Surealis"
-
-#: web/templates/prompts/generator/basic.html:168
-msgid "Eerie"
-msgstr "Mengerikan"
-
-#: web/templates/prompts/generator/basic.html:169
-msgid "Random"
-msgstr "Acak"
-
-#: web/templates/prompts/generator/basic.html:170
-msgid "Positive Moods"
-msgstr "Suasana Hati Positif"
-
-#: web/templates/prompts/generator/basic.html:171
-msgid "Negative Moods"
-msgstr "Suasana Hati Negatif"
-
-#: web/templates/prompts/generator/basic.html:172
-msgid "Other Moods"
-msgstr "Suasana Hati Lainnya"
-
-#: web/templates/prompts/generator/basic.html:173
-msgid "Styles"
-msgstr "Gaya"
-
-#: web/templates/prompts/generator/basic.html:174
-msgid "Genres"
-msgstr "Genre"
-
-#: web/templates/prompts/generator/basic.html:175
-msgid "Techniques"
-msgstr "Teknik"
-
-#: web/templates/prompts/generator/basic.html:176
-msgid "3D Model"
-msgstr "Model 3D"
-
-#: web/templates/prompts/generator/basic.html:177
-msgid "Abstract"
-msgstr "Abstrak"
-
-#: web/templates/prompts/generator/basic.html:178
-msgid "Analog Film"
-msgstr "Film Analog"
-
-#: web/templates/prompts/generator/basic.html:179
-msgid "Anime"
-msgstr "Anime"
-
-#: web/templates/account/profile.html:73
-msgid "Edit"
-msgstr "Edit"
-
-#: web/templates/prompts/generator/basic.html:180
-msgid "Cartoon"
-msgstr "Kartun"
-
-#: web/templates/prompts/generator/basic.html:181
-msgid "Chalk Art"
-msgstr "Seni Kapur"
-
-#: web/templates/prompts/generator/basic.html:182
-msgid "Comic Book"
-msgstr "Buku Komik"
-
-#: web/templates/prompts/generator/basic.html:183
-msgid "Digital Art"
-msgstr "Seni Digital"
-
-#: web/templates/prompts/generator/basic.html:184
-msgid "Disney"
-msgstr "Disney"
-
-#: web/templates/prompts/generator/basic.html:185
-msgid "Fantasy Art"
-msgstr "Seni Fantasi"
-
-#: web/templates/prompts/generator/basic.html:186
-msgid "Glitch Art"
-msgstr "Seni Glitch"
-
-#: web/templates/prompts/generator/basic.html:187
-msgid "Graffiti"
-msgstr "Graffiti"
-
-#: web/templates/prompts/generator/basic.html:188
-msgid "Cinematic"
-msgstr "Sinematik"
-
-#: web/templates/prompts/generator/basic.html:189
-msgid "Cyberpunk"
-msgstr "Cyberpunk"
-
-#: web/templates/prompts/generator/basic.html:190
-msgid "Pop Art"
-msgstr "Seni Pop"
-
-#: web/templates/prompts/generator/basic.html:191
-msgid "Steampunk"
-msgstr "Steampunk"
-
-#: web/templates/prompts/generator/basic.html:192
-msgid "Cubism"
-msgstr "Kubisme"
-
-#: web/templates/prompts/generator/basic.html:193
-msgid "Decoupage"
-msgstr "Dekupage"
-
-#: web/templates/prompts/generator/basic.html:194
-msgid "Enhance"
-msgstr "Tingkatkan"
-
-#: web/templates/prompts/generator/basic.html:195
-msgid "Expressionistic"
-msgstr "Ekspresionis"
-
-#: web/templates/prompts/generator/basic.html:196
-msgid "Hyperrealistic"
-msgstr "Hiperrealis"
-
-#: web/templates/prompts/generator/basic.html:197
-msgid "Impressionistic"
-msgstr "Impresionis"
-
-#: web/templates/prompts/generator/basic.html:198
-msgid "Isometric"
-msgstr "Isometrik"
-
-#: web/templates/prompts/generator/basic.html:199
-msgid "Line Art"
-msgstr "Seni Garis"
-
-#: web/templates/prompts/generator/basic.html:200
-msgid "Low Poly"
-msgstr "Poligon Rendah"
-
-#: web/templates/prompts/generator/basic.html:201
-msgid "Minimalist"
-msgstr "Minimalis"
-
-#: web/templates/prompts/generator/basic.html:202
-msgid "Modeling Compound"
-msgstr "Komponen Pemodelan"
-
-#: web/templates/prompts/generator/basic.html:203
-msgid "Origami"
-msgstr "Origami"
-
-#: web/templates/prompts/generator/basic.html:204
-msgid "Paper Cut"
-msgstr "Potongan Kertas"
-
-#: web/templates/prompts/generator/basic.html:205
-msgid "Photographic"
-msgstr "Fotografis"
-
-#: web/templates/prompts/generator/basic.html:206
-msgid "Pixel Art"
-msgstr "Seni Piksel"
-
-#: web/templates/prompts/generator/basic.html:207
-msgid "Tile Texture"
-msgstr "Tekstur Ubin"
-
-#: web/templates/prompts/generator/basic.html:208
-msgid "Vaporwave"
-msgstr "Vaporwave"
-
-#: web/templates/prompts/generator/basic.html:209
-msgid "Watercolor"
-msgstr "Cat Air"
-
-#: web/templates/prompts/generator/basic.html:210
-msgid "Secondary style:"
-msgstr "Gaya sekunder:"
-
-#: web/templates/prompts/generator/basic.html:211
-msgid "Generate Image from Text"
-msgstr "Hasilkan Gambar dari Teks"
-
-#: web/templates/prompts/generator/basic.html:212
-msgid "Image Generation from Uploaded Image Form"
-msgstr "Formulir Generasi Gambar dari Gambar yang Diunggah"
-
-#: web/templates/prompts/generator/basic.html:213
-msgid "Original"
-msgstr "Asli"
-
-#: web/templates/prompts/generator/basic.html:214
-msgid "Generate Prompt from Image"
-msgstr "Hasilkan Prompt dari Gambar"
-
-#: web/templates/prompts/generator/basic.html:215
-msgid "Reverse Image Prompt"
-msgstr "Prompt Gambar Balik"
-
-#: web/templates/prompts/generator/basic.html:148
-msgid "Primary style:"
-msgstr "Gaya utama:"
-
-
-#: web/templates/prompts/generator/basic.html:172
-msgid "Neutral Moods"
-msgstr "Suasana Hati Netral"
-
-#: web/templates/landing.html:7
-msgid "Your one-stop platform to browse, generate, and refine AI prompts for creative storytelling, coding, and more."
-msgstr "Platform satu atap Anda untuk menjelajahi, menghasilkan, dan menyempurnakan prompt AI untuk bercerita kreatif, pemrograman, dan banyak lagi."
-
-#: web/templates/landing.html:21
-msgid "Dive into a diverse collection of prompts crafted by users like you. Share your own creations, discover new ideas, and get inspired by the collective creativity of the Prompt Sanctuary community."
-msgstr "Selami koleksi prompt yang beragam yang dibuat oleh pengguna seperti Anda. Bagikan kreasi Anda sendiri, temukan ide-ide baru, dan terinspirasi oleh kreativitas kolektif komunitas Prompt Sanctuary."
-
-#: web/templates/landing.html:24
-msgid "Browse Community Library"
-msgstr "Jelajahi Perpustakaan Komunitas"
-
-#: web/templates/landing.html:33
-msgid "Unleash your creativity with our intuitive prompt generator. Whether you're brainstorming for a story, a coding project, or artistic inspiration, quickly generate tailored prompts with our basic tool to get you started."
-msgstr "Lepaskan kreativitas Anda dengan generator prompt intuitif kami. Baik Anda sedang memikirkan cerita, proyek pemrograman, atau inspirasi artistik, hasilkan prompt yang disesuaikan dengan cepat menggunakan alat dasar kami untuk memulai."
-
-#: web/templates/landing.html:36
-msgid "Try Basic Generator"
-msgstr "Coba Generator Dasar"
-
-#: web/templates/landing.html:45
-msgid "Take full control with our advanced tools. Fine-tune every parameter, experiment with complex structures, and craft highly specific prompts for sophisticated AI interactions and specialized tasks."
-msgstr "Ambil kendali penuh dengan alat canggih kami. Sesuaikan setiap parameter, bereksperimen dengan struktur yang kompleks, dan buat prompt yang sangat spesifik untuk interaksi AI yang canggih dan tugas-tugas khusus."
-
-#: web/templates/landing.html:48
-msgid "Access Advanced Tools"
-msgstr "Akses Alat Canggih"
-
-#: web/templates/index.html:20
-msgid "Our basic generator helps you get started quickly. Key features include:"
-msgstr "Generator dasar kami membantu Anda memulai dengan cepat. Fitur utama meliputi:"
-
-#: web/templates/index.html:23
-msgid "Quickly generate creative prompts."
-msgstr "Cepat menghasilkan prompt kreatif."
-
-#: web/templates/index.html:24
-msgid "Ideal for sparking ideas in simple use cases."
-msgstr "Ideal untuk memicu ide dalam kasus penggunaan sederhana."
-
-#: web/templates/index.html:25
-msgid "Overcome writer's block with ease."
-msgstr "Atasi hambatan penulis dengan mudah."
-
-#: web/templates/index.html:39
-msgid "With advanced engineering, you gain more control. You can:"
-msgstr "Dengan rekayasa canggih, Anda mendapatkan kontrol lebih. Anda bisa:"
-
-#: web/templates/index.html:42
-msgid "Fine-tune multiple prompt parameters."
-msgstr "Menyesuaikan parameter prompt ganda."
-
-#: web/templates/index.html:43
-msgid "Regenerate and refine prompts on demand."
-msgstr "Regenerasi dan sempurnakan prompt sesuai permintaan."
-
-#: web/templates/index.html:44
-msgid "Craft complex and highly specific instructions."
-msgstr "Buat instruksi yang kompleks dan sangat spesifik."
-
-#: web/templates/index.html:58
-msgid "In our community library, you will find inspiration. Key benefits are:"
-msgstr "Di perpustakaan komunitas kami, Anda akan menemukan inspirasi. Manfaat utama adalah:"
-
-#: web/templates/index.html:61
-msgid "Explore a diverse collection of prompts from users."
-msgstr "Jelajahi koleksi prompt yang beragam dari pengguna."
-
-#: web/templates/index.html:62
-msgid "Share your own creative prompts with others."
-msgstr "Bagikan prompt kreatif Anda sendiri dengan orang lain."
-
-#: web/templates/index.html:63
-msgid "Discover new ideas and techniques."
-msgstr "Temukan ide dan teknik baru."
-
-#: web/templates/base.html:6
-msgid "Prompt Sanctuary"
-msgstr "Prompt Sanctuary"
-
-#: web/templates/base.html:159
-msgid "✖️"
-msgstr "✖️"
-
-#: web/templates/base.html:159
-msgid "Close feedback popup"
-msgstr "Tutup popup masukan"
-
-#: web/templates/landing.html:15
-msgid "Feature 1: Community Prompts"
-msgstr "Fitur 1: Prompt Komunitas"
-
-#: web/templates/landing.html:27
-msgid "Feature 2: Custom Prompt Generation"
-msgstr "Fitur 2: Pembuatan Prompt Kustom"
-
-#: web/templates/landing.html:39
-msgid "Feature 3: Advanced Prompt Engineering"
-msgstr "Fitur 3: Rekayasa Prompt Lanjutan"
-
-#: web/templates/index.html:5
-msgid "Hero Card"
-msgstr "Kartu Pahlawan"
-
-#: web/templates/index.html:11
-msgid "Feature Cards"
-msgstr "Kartu Fitur"
-
-#: web/templates/index.html:13
-msgid "Feature 1: Basic Prompt"
-msgstr "Fitur 1: Prompt Dasar"
-
-#: web/templates/index.html:32
-msgid "Feature 2: Advanced Prompt"
-msgstr "Fitur 2: Prompt Lanjutan"
-
-#: web/templates/index.html:51
-msgid "Feature 3: Community Prompts"
-msgstr "Fitur 3: Prompt Komunitas"
-
-#: web/templates/prompts/generator/basic.html:4
-msgid "Hero Section"
-msgstr "Bagian Pahlawan"
-
-#: web/templates/prompts/generator/basic.html:12
-msgid "Tools Section"
-msgstr "Bagian Alat"
-
-#: web/templates/prompts/generator/basic.html:15
-msgid "Text Prompt"
-msgstr "Prompt Teks"
-
-#: web/templates/prompts/generator/basic.html:39
-msgid "Image Prompt"
-msgstr "Prompt Gambar"
-
-#: web/templates/prompts/generator/basic.html:90
-msgid "Preview Section (hidden by default, shown only when image is uploaded)"
-msgstr "Bagian Pratinjau (tersembunyi secara default, ditampilkan hanya saat gambar diunggah)"
-
-#: web/templates/prompts/generator/basic.html:96
-msgid "Loading Section"
-msgstr "Bagian Pemuatan"
-
-#: web/templates/prompts/generator/basic.html:105
-msgid "Result Section (hidden by default, shown only when a prompt is generated)"
-msgstr "Bagian Hasil (tersembunyi secara default, ditampilkan hanya saat prompt dihasilkan)"
-
+#: web/templates/account/profile.html:4 web/templates/base.html:7
+#: web/templates/feedback_list.html:4 web/templates/index.html:4
+#: web/templates/landing.html:2 web/templates/landing.html:86
+#: web/templates/login.html:2 web/templates/privacy.html:2
 #: web/templates/prompts/generator/advance.html:4
-msgid "Hero Section"
-msgstr "Bagian Pahlawan"
+#: web/templates/prompts/generator/basic.html:4
+#: web/templates/prompts/generator/refinement.html:4
+#: web/templates/prompts/lib/community.html:4
+#: web/templates/prompts/lib/personal.html:4 web/templates/terms.html:2
+msgid "Prompt Sanctuary"
+msgstr "Prompt Sanctuary"
 
-#: web/templates/prompts/generator/advance.html:12
-msgid "Tools Section"
-msgstr "Bagian Alat"
+#: web/templates/base.html:25
+msgid "Skip to main content"
+msgstr "Lewati ke konten utama"
 
-#: web/templates/prompts/generator/advance.html:15
-msgid "Text Prompt"
-msgstr "Prompt Teks"
+#: web/templates/base.html:36
+msgid "Primary navigation"
+msgstr "Navigasi utama"
 
-#: web/templates/prompts/generator/advance.html:394
-msgid "Tools Section End"
-msgstr "Akhir Bagian Alat"
+#: web/templates/base.html:39 web/templates/base.html:119
+#: web/templates/base.html:134 web/templates/landing.html:8
+#: web/templates/login.html:8 web/templates/privacy.html:9
+#: web/templates/terms.html:9
+msgid "Sanctuary"
+msgstr "Sanctuary"
 
-#: web/templates/prompts/generator/advance.html:396
-msgid "Preview Section (hidden by default, shown only when image is uploaded)"
-msgstr "Bagian Pratinjau (tersembunyi secara default, ditampilkan hanya saat gambar diunggah)"
+#: web/templates/base.html:43
+msgid "Main"
+msgstr "Utama"
 
-#: web/templates/prompts/generator/advance.html:402
-msgid "Loading Section"
-msgstr "Bagian Pemuatan"
+#: web/templates/base.html:45 web/templates/base.html:153
+msgid "Workspace"
+msgstr "Ruang Kerja"
 
-#: web/templates/prompts/generator/advance.html:411
-msgid "Result Section (hidden by default, shown only when a prompt is generated)"
-msgstr "Bagian Hasil (tersembunyi secara default, ditampilkan hanya saat prompt dihasilkan)"
+#: web/templates/base.html:48 web/templates/base.html:137
+#: web/templates/index.html:4 web/templates/index.html:5
+msgid "Overview"
+msgstr "Ikhtisar"
 
-#: web/templates/base.html:103
-msgid "Prompt Refinement"
-msgstr "Penyempurnaan Prompt"
+#: web/templates/base.html:53 web/templates/base.html:138
+#: web/templates/landing.html:27
+#: web/templates/prompts/generator/advance.html:23
+#: web/templates/prompts/generator/basic.html:4
+#: web/templates/prompts/generator/basic.html:5
+#: web/templates/prompts/generator/basic.html:19
+#: web/templates/prompts/generator/basic.html:70
+#: web/templates/prompts/generator/basic.html:139
+#: web/templates/prompts/generator/refinement.html:23
+msgid "Generate"
+msgstr "Buat"
 
-#: web/templates/index.html:51
-msgid "Feature 3: Prompt Refinement"
-msgstr "Fitur 3: Penyempurnaan Prompt"
+#: web/templates/base.html:58 web/templates/base.html:139
+#: web/templates/index.html:86 web/templates/prompts/generator/advance.html:4
+msgid "Advanced"
+msgstr "Lanjutan"
 
-#: web/templates/index.html:57
-msgid "Optimize and improve your prompts with AI-powered refinement. Features include:"
-msgstr "Optimalkan dan tingkatkan prompt Anda dengan penyempurnaan bertenaga AI. Fitur meliputi:"
+#: web/templates/base.html:63 web/templates/base.html:140
+#: web/templates/prompts/generator/refinement.html:4
+#: web/templates/prompts/generator/refinement.html:5
+msgid "Refinement"
+msgstr "Penyempurnaan"
 
-#: web/templates/index.html:60
-msgid "Refine prompts from multiple sources."
-msgstr "Sempurnakan prompt dari berbagai sumber."
+#: web/templates/base.html:69 web/templates/index.html:108
+msgid "Library"
+msgstr "Pustaka"
 
-#: web/templates/index.html:61
-msgid "Quick actions: shorten, elaborate, improve, fix grammar."
-msgstr "Aksi cepat: persingkat, jelaskan, tingkatkan, perbaiki tata bahasa."
+#: web/templates/base.html:72 web/templates/base.html:141
+#: web/templates/prompts/lib/personal.html:4
+#: web/templates/prompts/lib/personal.html:5
+msgid "My Library"
+msgstr "Pustaka Saya"
 
-#: web/templates/index.html:62
-msgid "Custom refinement instructions."
-msgstr "Instruksi penyempurnaan kustom."
-
-#: web/templates/index.html:63
-msgid "AI-powered smart titles for saved prompts."
-msgstr "Judul pintar bertenaga AI untuk prompt tersimpan."
-
-#: web/templates/index.html:67
-msgid "Refine Your Prompts"
-msgstr "Sempurnakan Prompt Anda"
-
-#: web/templates/index.html:71
-msgid "Feature 4: Community Prompts"
-msgstr "Fitur 4: Prompt Komunitas"
-
-#: web/templates/landing.html:51
-msgid "Feature 4: Prompt Refinement"
-msgstr "Fitur 4: Penyempurnaan Prompt"
-
-#: web/templates/landing.html:55
-msgid "Transform and optimize your prompts with AI-powered refinement. Choose from multiple sources, apply smart improvements, and generate intelligent titles for better prompt management and effectiveness."
-msgstr "Ubah dan optimalkan prompt Anda dengan penyempurnaan bertenaga AI. Pilih dari berbagai sumber, terapkan peningkatan pintar, dan hasilkan judul cerdas untuk manajemen prompt yang lebih baik dan efektivitas."
-
-#: web/templates/landing.html:59
-msgid "Refine Your Prompts"
-msgstr "Sempurnakan Prompt Anda"
-
-#: web/templates/prompts/generator/refinement.html:7
-msgid "Prompt Refinement"
-msgstr "Penyempurnaan Prompt"
-
-#: web/templates/prompts/generator/refinement.html:9
-msgid "Refine and improve your prompts with custom instructions or choose from quick actions."
-msgstr "Sempurnakan dan tingkatkan prompt Anda dengan instruksi kustom atau pilih dari aksi cepat."
-
-#: web/templates/prompts/generator/refinement.html:12
-msgid "Cost: 0.5 points per refinement"
-msgstr "Biaya: 0.5 poin per penyempurnaan"
-
-#: web/templates/prompts/generator/refinement.html:22
-msgid "Step 1: Choose Your Prompt Source"
-msgstr "Langkah 1: Pilih Sumber Prompt Anda"
-
-#: web/templates/prompts/generator/refinement.html:28
-msgid "Manual Input"
-msgstr "Input Manual"
-
-#: web/templates/prompts/generator/refinement.html:30
-msgid "Type or paste your own prompt"
-msgstr "Ketik atau tempel prompt Anda sendiri"
-
-#: web/templates/prompts/generator/refinement.html:37
-msgid "Saved Prompts"
-msgstr "Prompt Tersimpan"
-
-#: web/templates/prompts/generator/refinement.html:39
-msgid "Choose from your saved prompts"
-msgstr "Pilih dari prompt tersimpan Anda"
-
-#: web/templates/prompts/generator/refinement.html:45
+#: web/templates/base.html:77 web/templates/base.html:142
+#: web/templates/prompts/generator/refinement.html:60
+#: web/templates/prompts/lib/community.html:4
+#: web/templates/prompts/lib/community.html:5
+#: web/templates/prompts/lib/community.html:59
 msgid "Community"
 msgstr "Komunitas"
 
+#: web/templates/base.html:83
+msgid "Account"
+msgstr "Akun"
+
+#: web/templates/account/profile.html:4 web/templates/account/profile.html:5
+#: web/templates/base.html:86 web/templates/base.html:143
+msgid "Profile"
+msgstr "Profil"
+
+#: web/templates/base.html:91 web/templates/base.html:144
+#: web/templates/feedback_list.html:4 web/templates/feedback_list.html:5
+msgid "Feedback"
+msgstr "Masukan"
+
+#: web/templates/base.html:96 web/templates/base.html:145
+msgid "Sign out"
+msgstr "Keluar"
+
+#: web/templates/base.html:105 web/templates/index.html:38
+msgid "Credits"
+msgstr "Kredit"
+
+#: web/templates/base.html:109
+msgid "API status"
+msgstr "Status API"
+
+#: web/templates/base.html:116
+msgid "Open menu"
+msgstr "Buka menu"
+
+#: web/templates/base.html:123
+msgid "cr"
+msgstr "kr"
+
+#: web/templates/base.html:129
+msgid "Close menu"
+msgstr "Tutup menu"
+
+#: web/templates/base.html:136
+msgid "Mobile"
+msgstr "Seluler"
+
+#: web/templates/base.html:156
+msgid "Open command palette"
+msgstr "Buka palet perintah"
+
+#: web/templates/base.html:158 web/templates/prompts/lib/community.html:22
+#: web/templates/prompts/lib/personal.html:25
+msgid "Search"
+msgstr "Cari"
+
+#: web/templates/base.html:162
+msgid "Interface language"
+msgstr "Bahasa antarmuka"
+
+#: web/templates/base.html:192
+msgid "Command palette"
+msgstr "Palet perintah"
+
+#: web/templates/base.html:193
+msgid "Search actions, prompts, settings…"
+msgstr "Cari aksi, prompt, pengaturan…"
+
+#: web/templates/base.html:196
+msgid "navigate"
+msgstr "navigasi"
+
+#: web/templates/base.html:197
+msgid "open"
+msgstr "buka"
+
+#: web/templates/base.html:198
+msgid "close"
+msgstr "tutup"
+
+#: web/templates/feedback_list.html:9
+msgid "Index 08 · Feedback"
+msgstr "Indeks 08 · Masukan"
+
+#: web/templates/feedback_list.html:10
+msgid "Feedback log."
+msgstr "Catatan masukan."
+
+#: web/templates/feedback_list.html:11
+msgid "Browse all feedback messages. Click an item to read the full text."
+msgstr "Jelajahi semua pesan masukan. Klik item untuk membaca teks lengkap."
+
+#: web/templates/feedback_list.html:18
+msgid "All feedback"
+msgstr "Semua masukan"
+
+#: web/templates/feedback_list.html:19
+#, python-format
+msgid "%(count)s entries"
+msgstr "%(count)s entri"
+
+#: web/templates/feedback_list.html:32
+msgid "View feedback #"
+msgstr "Lihat masukan #"
+
+#: web/templates/account/profile.html:213
+#: web/templates/account/profile.html:251 web/templates/feedback_list.html:33
+msgid "View"
+msgstr "Lihat"
+
+#: web/templates/feedback_list.html:42
+msgid "No feedback available"
+msgstr "Tidak ada masukan tersedia"
+
+#: web/templates/feedback_list.html:43
+msgid "When users submit feedback, it will appear here."
+msgstr "Saat pengguna mengirim masukan, itu akan muncul di sini."
+
+#: web/templates/index.html:9
+msgid "Index 001 · Today"
+msgstr "Indeks 001 · Hari Ini"
+
+#: web/templates/index.html:10
+#, python-format
+msgid "Good day, %(username)s."
+msgstr "Selamat datang, %(username)s."
+
+#: web/templates/index.html:11
+#, python-format
+msgid "You have <span class=\"t-accent\"><strong id=\"heroPoints\">%(points)s</strong> credits</span> available. Start a new prompt, refine a draft, or browse the community library."
+msgstr "Anda memiliki <span class=\"t-accent\"><strong id=\"heroPoints\">%(points)s</strong> kredit</span> yang tersedia. Buat prompt baru, sempurnakan draf, atau jelajahi pustaka komunitas."
+
+#: web/templates/index.html:15
+msgid "Generate a prompt"
+msgstr "Buat prompt"
+
+#: web/templates/index.html:19
+msgid "Advanced mode"
+msgstr "Mode lanjutan"
+
+#: web/templates/index.html:21
+msgid "Browse community →"
+msgstr "Jelajahi komunitas →"
+
+#: web/templates/index.html:30 web/templates/landing.html:44
+msgid "Index 002"
+msgstr "Indeks 002"
+
+#: web/templates/index.html:31
+msgid "At a glance."
+msgstr "Sekilas."
+
+#: web/templates/index.html:33
+msgid "Updated just now"
+msgstr "Baru diperbarui"
+
+#: web/templates/index.html:40
+msgid "+ 80 on signup"
+msgstr "+ 80 saat daftar"
+
+#: web/templates/index.html:43
+#: web/templates/prompts/generator/refinement.html:57
+msgid "Saved"
+msgstr "Tersimpan"
+
+#: web/templates/index.html:45
+msgid "prompts in your library"
+msgstr "prompt di pustaka Anda"
+
+#: web/templates/index.html:48
+msgid "Refinements"
+msgstr "Penyempurnaan"
+
+#: web/templates/index.html:50
+msgid "versioned edits"
+msgstr "suntingan versi"
+
+#: web/templates/index.html:53 web/templates/prompts/lib/community.html:63
+#: web/templates/prompts/lib/personal.html:40
+msgid "Shared"
+msgstr "Dibagikan"
+
+#: web/templates/index.html:55
+msgid "with the community"
+msgstr "dengan komunitas"
+
+#: web/templates/index.html:65
+msgid "Index 003"
+msgstr "Indeks 003"
+
+#: web/templates/index.html:66
+msgid "Four ways to work."
+msgstr "Empat cara bekerja."
+
+#: web/templates/index.html:68
+msgid "Generate, refine, share, and revisit — all from one place."
+msgstr "Buat, sempurnakan, bagikan, dan tinjau ulang — semua dari satu tempat."
+
+#: web/templates/index.html:75
+msgid "Basic"
+msgstr "Dasar"
+
+#: web/templates/index.html:78
+msgid "Generate from a topic"
+msgstr "Buat dari topik"
+
+#: web/templates/index.html:79
+msgid "Describe what you want. The model expands it into a structured prompt with variables you can fill in later."
+msgstr "Jelaskan apa yang Anda inginkan. Model mengembangkannya menjadi prompt terstruktur dengan variabel yang bisa Anda isi nanti."
+
+#: web/templates/index.html:80 web/templates/index.html:91
+#: web/templates/index.html:102 web/templates/index.html:113
+msgid "Open"
+msgstr "Buka"
+
+#: web/templates/index.html:89
+msgid "Generate from a system prompt"
+msgstr "Buat dari prompt sistem"
+
+#: web/templates/index.html:90
+msgid "Paste a system prompt and the model writes a new one in the same voice. Optional image variants included."
+msgstr "Tempel prompt sistem dan model akan menulis yang baru dengan nada yang sama. Varian gambar opsional disertakan."
+
+#: web/templates/index.html:97
+msgid "Workflow"
+msgstr "Alur kerja"
+
+#: web/templates/index.html:100
+msgid "Refine an existing prompt"
+msgstr "Sempurnakan prompt yang ada"
+
+#: web/templates/index.html:101
+msgid "Tell the model what to change — tone, length, format, audience. Every refinement is versioned."
+msgstr "Beri tahu model apa yang harus diubah — nada, panjang, format, audiens. Setiap penyempurnaan diberi versi."
+
+#: web/templates/index.html:111
+msgid "Browse your saved prompts"
+msgstr "Jelajahi prompt tersimpan"
+
+#: web/templates/index.html:112
+msgid "All your drafts, refinements, and shared prompts in one searchable list with side detail."
+msgstr "Semua draf, penyempurnaan, dan prompt yang dibagikan dalam satu daftar yang bisa dicari dengan detail di samping."
+
+#: web/templates/index.html:123
+msgid "Index 004"
+msgstr "Indeks 004"
+
+#: web/templates/index.html:124
+msgid "Getting started."
+msgstr "Mulai dari sini."
+
+#: web/templates/index.html:133
+msgid "Bring your own API key"
+msgstr "Bawa kunci API Anda sendiri"
+
+#: web/templates/index.html:134
+msgid "Add a Google Generative AI key in your profile. Or use the shared pool with your credits. Either way, generations route through your account."
+msgstr "Tambahkan kunci Google Generative AI di profil Anda. Atau gunakan kolam bersama dengan kredit Anda. Bagaimanapun, pembuatan dirutekan melalui akun Anda."
+
+#: web/templates/index.html:135
+msgid "Add key →"
+msgstr "Tambah kunci →"
+
+#: web/templates/index.html:143
+msgid "Share with the community"
+msgstr "Bagikan dengan komunitas"
+
+#: web/templates/index.html:144
+msgid "When a prompt is ready, share it. Browse what others have shipped. Fork anything you like into your own library."
+msgstr "Saat prompt siap, bagikan. Jelajahi apa yang telah dikirim orang lain. Garpu apa pun yang Anda suka ke pustaka Anda sendiri."
+
+#: web/templates/index.html:145
+msgid "Browse →"
+msgstr "Jelajahi →"
+
+#: web/templates/landing.html:2 web/templates/landing.html:13
+msgid "Index 001"
+msgstr "Indeks 001"
+
+#: web/templates/landing.html:15
+msgid "A workshop for prompts."
+msgstr "Bengkel untuk prompt."
+
+#: web/templates/landing.html:18
+msgid "Generate, refine, and version your text prompts in one place. Built for makers who iterate."
+msgstr "Buat, sempurnakan, dan kelola versi prompt teks Anda di satu tempat. Dibuat untuk pembuat yang berulang kali menyempurnakan."
+
+#: web/templates/landing.html:31
+#: web/templates/prompts/generator/advance.html:30
+#: web/templates/prompts/generator/basic.html:26
+#: web/templates/prompts/generator/refinement.html:30
+#: web/templates/prompts/lib/community.html:46
+#: web/templates/prompts/lib/community.html:47
+#: web/templates/prompts/lib/community.html:79
+#: web/templates/prompts/lib/community.html:80
+#: web/templates/prompts/lib/personal.html:53
+#: web/templates/prompts/lib/personal.html:54
+msgid "Refine"
+msgstr "Sempurnakan"
+
+#: web/templates/landing.html:35
+#: web/templates/prompts/generator/advance.html:37
+#: web/templates/prompts/generator/basic.html:33
+#: web/templates/prompts/generator/refinement.html:37
+#: web/templates/prompts/lib/community.html:43
+#: web/templates/prompts/lib/community.html:44
+#: web/templates/prompts/lib/community.html:71
+#: web/templates/prompts/lib/community.html:72
+msgid "Save"
+msgstr "Simpan"
+
+#: web/templates/landing.html:45
+msgid "Built on three principles."
+msgstr "Dibangun di atas tiga prinsip."
+
+#: web/templates/landing.html:52
+msgid "Generate from a topic or a system prompt."
+msgstr "Buat dari topik atau prompt sistem."
+
+#: web/templates/landing.html:53
+msgid "Two modes for two kinds of work. Describe a topic and let the model expand it, or paste a system prompt and iterate from there."
+msgstr "Dua mode untuk dua jenis pekerjaan. Jelaskan topik dan biarkan model mengembangkannya, atau tempel prompt sistem dan ulangi dari situ."
+
+#: web/templates/landing.html:61
+msgid "Refine with structured feedback."
+msgstr "Sempurnakan dengan masukan terstruktur."
+
+#: web/templates/landing.html:62
+msgid "Tell the model what to change — tone, length, format, audience. Each refinement keeps a versioned history."
+msgstr "Beri tahu model apa yang harus diubah — nada, panjang, format, audiens. Setiap penyempurnaan menyimpan riwayat versi."
+
+#: web/templates/landing.html:70
+msgid "Keep everything in one library."
+msgstr "Simpan semuanya dalam satu pustaka."
+
+#: web/templates/landing.html:71
+msgid "Personal saves stay private. Share with the community when you’re ready. Browse what others have shipped."
+msgstr "Simpanan pribadi tetap privat. Bagikan ke komunitas saat Anda siap. Jelajahi apa yang telah dikirim orang lain."
+
+#: web/templates/landing.html:78
+msgid "Ready when you are."
+msgstr "Siap saat Anda siap."
+
+#: web/templates/landing.html:80
+msgid "Open the app"
+msgstr "Buka aplikasi"
+
+#: web/templates/landing.html:87
+msgid "Terms"
+msgstr "Ketentuan"
+
+#: web/templates/landing.html:88
+msgid "Privacy"
+msgstr "Privasi"
+
+#: web/templates/login.html:2 web/templates/login.html:39
+#: web/templates/login.html:85
+msgid "Create account"
+msgstr "Buat akun"
+
+#: web/templates/login.html:2 web/templates/login.html:38
+#: web/templates/login.html:89 web/templates/login.html:116
+msgid "Sign in"
+msgstr "Masuk"
+
+#: web/templates/login.html:13
+msgid "Index 011 · Sign up"
+msgstr "Indeks 011 · Daftar"
+
+#: web/templates/login.html:13
+msgid "Index 010 · Sign in"
+msgstr "Indeks 010 · Masuk"
+
+#: web/templates/login.html:15
+msgid "Start a new account."
+msgstr "Mulai akun baru."
+
+#: web/templates/login.html:15
+msgid "Welcome back."
+msgstr "Selamat datang kembali."
+
+#: web/templates/login.html:19
+msgid "Eighty credits to start. No card. No expiry on drafts."
+msgstr "Delapan puluh kredit untuk memulai. Tanpa kartu. Tidak ada kedaluwarsa untuk draf."
+
+#: web/templates/login.html:21
+msgid "Pick up where you left off. Your library and refinement history are waiting."
+msgstr "Lanjutkan dari terakhir kali. Pustaka dan riwayat penyempurnaan Anda menanti."
+
+#: web/templates/login.html:30
+msgid "Back to index"
+msgstr "Kembali ke beranda"
+
+#: web/templates/login.html:46
+msgid "New account"
+msgstr "Akun baru"
+
+#: web/templates/login.html:47
+msgid "Three fields. Under ten seconds."
+msgstr "Tiga kolom. Kurang dari sepuluh detik."
+
+#: web/templates/login.html:54 web/templates/login.html:97
+msgid "Username"
+msgstr "Nama pengguna"
+
+#: web/templates/login.html:56
+msgid "Letters, numbers, underscore. 3 to 32 characters."
+msgstr "Huruf, angka, garis bawah. 3 hingga 32 karakter."
+
+#: web/templates/account/profile.html:77 web/templates/login.html:60
+msgid "Email"
+msgstr "Surel"
+
+#: web/templates/login.html:60 web/templates/prompts/generator/advance.html:94
+msgid "optional"
+msgstr "opsional"
+
+#: web/templates/login.html:62
+msgid "Used only for security alerts. Never shared."
+msgstr "Hanya untuk peringatan keamanan. Tidak pernah dibagikan."
+
+#: web/templates/login.html:66 web/templates/login.html:102
+msgid "Password"
+msgstr "Kata sandi"
+
+#: web/templates/login.html:68
+msgid "Six or more characters."
+msgstr "Enam karakter atau lebih."
+
+#: web/templates/login.html:72
+msgid "Confirm password"
+msgstr "Konfirmasi kata sandi"
+
+#: web/templates/login.html:79
+msgid "I agree to the"
+msgstr "Saya menyetujui"
+
+#: web/templates/login.html:79
+msgid "terms of service"
+msgstr "ketentuan layanan"
+
+#: web/templates/login.html:79
+msgid "and"
+msgstr "dan"
+
+#: web/templates/login.html:79
+msgid "privacy policy"
+msgstr "kebijakan privasi"
+
+#: web/templates/login.html:90
+msgid "Use your username and password."
+msgstr "Gunakan nama pengguna dan kata sandi Anda."
+
+#: web/templates/login.html:109
+msgid "Remember me"
+msgstr "Ingat saya"
+
+#: web/templates/login.html:111
+msgid "Forgot password?"
+msgstr "Lupa kata sandi?"
+
+#: web/templates/privacy.html:2
+msgid "Privacy Policy"
+msgstr "Kebijakan Privasi"
+
+#: web/templates/privacy.html:13 web/templates/terms.html:13
+msgid "Back home"
+msgstr "Kembali beranda"
+
+#: web/templates/privacy.html:19
+msgid "Legal · 10"
+msgstr "Legal · 10"
+
+#: web/templates/privacy.html:20
+msgid "Privacy policy."
+msgstr "Kebijakan privasi."
+
+#: web/templates/privacy.html:21
+msgid "What we collect, why, how long we keep it, and how to get it back. The short version: we keep what we need to run the service, nothing more, and you can delete your account at any time."
+msgstr "Apa yang kami kumpulkan, mengapa, berapa lama kami menyimpannya, dan bagaimana mendapatkannya kembali. Versi singkat: kami menyimpan apa yang kami butuhkan untuk menjalankan layanan, tidak lebih, dan Anda dapat menghapus akun Anda kapan saja."
+
+#: web/templates/privacy.html:23 web/templates/terms.html:23
+#, python-format
+msgid "Last updated %(date)s"
+msgstr "Terakhir diperbarui %(date)s"
+
+#: web/templates/privacy.html:24 web/templates/terms.html:24
+#, python-format
+msgid "%(minutes)s min read"
+msgstr "Membaca %(minutes)s menit"
+
+#: web/templates/privacy.html:25
+msgid "GDPR-aligned"
+msgstr "Sesuai GDPR"
+
+#: web/templates/terms.html:2
+msgid "Terms of Service"
+msgstr "Ketentuan Layanan"
+
+#: web/templates/terms.html:19
+msgid "Legal · 09"
+msgstr "Legal · 09"
+
+#: web/templates/terms.html:20
+msgid "Terms of service."
+msgstr "Ketentuan layanan."
+
+#: web/templates/terms.html:21
+msgid "The rules that govern your use of Prompt Sanctuary. Plain language, no surprises. By creating an account or using the service, you agree to these terms."
+msgstr "Aturan yang mengatur penggunaan Prompt Sanctuary Anda. Bahasa yang jelas, tanpa kejutan. Dengan membuat akun atau menggunakan layanan, Anda menyetujui ketentuan ini."
+
+#: web/templates/terms.html:25
+msgid "Effective immediately"
+msgstr "Berlaku segera"
+
+#: web/templates/account/profile.html:9
+msgid "Index 07 · Account"
+msgstr "Indeks 07 · Akun"
+
+#: web/templates/account/profile.html:10
+msgid "Profile & settings."
+msgstr "Profil & pengaturan."
+
+#: web/templates/account/profile.html:11
+msgid "Manage your account, sessions, API key, achievements, and points."
+msgstr "Kelola akun, sesi, kunci API, pencapaian, dan poin Anda."
+
+#: web/templates/account/profile.html:21
+msgid "Member"
+msgstr "Anggota"
+
+#: web/templates/account/profile.html:25 web/templates/account/profile.html:288
+msgid "pts"
+msgstr "poin"
+
+#: web/templates/account/profile.html:27
+msgid "Click to view history"
+msgstr "Klik untuk melihat riwayat"
+
+#: web/templates/account/profile.html:32
+msgid "Total prompts"
+msgstr "Total prompt"
+
+#: web/templates/account/profile.html:36 web/templates/account/profile.html:271
+msgid "Achievements"
+msgstr "Pencapaian"
+
+#: web/templates/account/profile.html:40 web/templates/account/profile.html:158
+msgid "Active sessions"
+msgstr "Sesi aktif"
+
+#: web/templates/account/profile.html:51
+msgid "Account information"
+msgstr "Informasi akun"
+
+#: web/templates/account/profile.html:56
+msgid "Current username"
+msgstr "Nama pengguna saat ini"
+
+#: web/templates/account/profile.html:64 web/templates/account/profile.html:65
+msgid "New username"
+msgstr "Nama pengguna baru"
+
+#: web/templates/account/profile.html:66
+msgid "Only letters, numbers and underscores. 3–32 chars."
+msgstr "Hanya huruf, angka, dan garis bawah. 3–32 karakter."
+
+#: web/templates/account/profile.html:68
+msgid "Change username"
+msgstr "Ubah nama pengguna"
+
+#: web/templates/account/profile.html:80
+msgid "Update email"
+msgstr "Perbarui surel"
+
+#: web/templates/account/profile.html:86
+msgid "Danger zone"
+msgstr "Zona berbahaya"
+
+#: web/templates/account/profile.html:87
+msgid "Are you sure? This cannot be undone."
+msgstr "Apakah Anda yakin? Tindakan ini tidak dapat dibatalkan."
+
+#: web/templates/account/profile.html:90
+msgid "Delete account"
+msgstr "Hapus akun"
+
+#: web/templates/account/profile.html:100
+msgid "Security"
+msgstr "Keamanan"
+
+#: web/templates/account/profile.html:108
+#: web/templates/account/profile.html:109
+msgid "Current password"
+msgstr "Kata sandi saat ini"
+
+#: web/templates/account/profile.html:112
+#: web/templates/account/profile.html:113
+msgid "New password"
+msgstr "Kata sandi baru"
+
+#: web/templates/account/profile.html:116
+#: web/templates/account/profile.html:117
+msgid "Confirm new password"
+msgstr "Konfirmasi kata sandi baru"
+
+#: web/templates/account/profile.html:119
+msgid "Update password"
+msgstr "Perbarui kata sandi"
+
+#: web/templates/account/profile.html:125
+msgid "Gemini API key"
+msgstr "Kunci API Gemini"
+
+#: web/templates/account/profile.html:126
+msgid "Use your own API key to avoid point consumption and earn 100 points."
+msgstr "Gunakan kunci API Anda sendiri untuk menghindari konsumsi poin dan dapatkan 100 poin."
+
+#: web/templates/account/profile.html:130
+msgid "Loading API key status…"
+msgstr "Memuat status kunci API…"
+
+#: web/templates/account/profile.html:137
+msgid "Your API key"
+msgstr "Kunci API Anda"
+
+#: web/templates/account/profile.html:138
+msgid "Enter your Gemini API key"
+msgstr "Masukkan kunci API Gemini Anda"
+
+#: web/templates/account/profile.html:141
+msgid "Validate & Save"
+msgstr "Validasi & Simpan"
+
+#: web/templates/account/profile.html:142
+msgid "Remove"
+msgstr "Hapus"
+
+#: web/templates/account/profile.html:146
+msgid "Get your API key from"
+msgstr "Dapatkan kunci API Anda dari"
+
+#: web/templates/account/profile.html:146
+msgid "Google AI Studio"
+msgstr "Google AI Studio"
+
+#: web/templates/account/profile.html:168
+msgid "Unknown device"
+msgstr "Perangkat tidak dikenal"
+
+#: web/templates/account/profile.html:169
+msgid "N/A"
+msgstr "T/A"
+
+#: web/templates/account/profile.html:174
+msgid "Current"
+msgstr "Saat ini"
+
+#: web/templates/account/profile.html:176
+msgid "Revoke this session?"
+msgstr "Cabut sesi ini?"
+
+#: web/templates/account/profile.html:179
+msgid "Revoke"
+msgstr "Cabut"
+
+#: web/templates/account/profile.html:183
+msgid "Revoked"
+msgstr "Dicabut"
+
+#: web/templates/account/profile.html:191
+msgid "No active sessions."
+msgstr "Tidak ada sesi aktif."
+
+#: web/templates/account/profile.html:199
+msgid "Saved prompts"
+msgstr "Prompt tersimpan"
+
+#: web/templates/account/profile.html:216
+msgid "Update shared"
+msgstr "Perbarui dibagikan"
+
+#: web/templates/account/profile.html:216
+msgid "Update"
+msgstr "Perbarui"
+
+#: web/templates/account/profile.html:218
+#: web/templates/account/profile.html:252
+#: web/templates/prompts/lib/community.html:75
+#: web/templates/prompts/lib/community.html:76
+#: web/templates/prompts/lib/personal.html:57
+#: web/templates/prompts/lib/personal.html:58
+msgid "Unshare"
+msgstr "Batalkan berbagi"
+
+#: web/templates/account/profile.html:221
+#: web/templates/prompts/lib/personal.html:61
+#: web/templates/prompts/lib/personal.html:62
+msgid "Share"
+msgstr "Bagikan"
+
+#: web/templates/account/profile.html:223
+#: web/templates/prompts/lib/personal.html:71
+msgid "Delete"
+msgstr "Hapus"
+
+#: web/templates/account/profile.html:231
+#: web/templates/prompts/generator/refinement.html:85
+#: web/templates/prompts/lib/personal.html:81
+msgid "No saved prompts yet"
+msgstr "Belum ada prompt tersimpan"
+
+#: web/templates/account/profile.html:232
+msgid "Start creating prompts to see them here."
+msgstr "Mulai buat prompt untuk melihatnya di sini."
+
+#: web/templates/account/profile.html:241
+msgid "Shared prompts"
+msgstr "Prompt yang dibagikan"
+
+#: web/templates/account/profile.html:260
+msgid "No shared prompts yet"
+msgstr "Belum ada prompt yang dibagikan"
+
+#: web/templates/account/profile.html:261
+msgid "Share your prompts to help the community."
+msgstr "Bagikan prompt Anda untuk membantu komunitas."
+
+#: web/templates/account/profile.html:271
+#, python-format
+msgid "%(count)s unlocked"
+msgstr "%(count)s terbuka"
+
+#: web/templates/account/profile.html:290
+#, python-format
+msgid "Unlocked %(when)s"
+msgstr "Dibuka %(when)s"
+
+#: web/templates/account/profile.html:299
+msgid "No achievements yet"
+msgstr "Belum ada pencapaian"
+
+#: web/templates/account/profile.html:300
+msgid "Start generating and sharing prompts to earn your first achievement."
+msgstr "Mulai buat dan bagikan prompt untuk mendapatkan pencapaian pertama Anda."
+
+#: web/templates/account/profile.html:310
+msgid "Point history"
+msgstr "Riwayat poin"
+
+#: web/templates/account/profile.html:312
+#: web/templates/account/profile.html:333
+#: web/templates/prompts/generator/advance.html:356
+#: web/templates/prompts/generator/basic.html:164
+#: web/templates/prompts/generator/refinement.html:195
+msgid "Close"
+msgstr "Tutup"
+
+#: web/templates/account/profile.html:320
+msgid "Loading point history…"
+msgstr "Memuat riwayat poin…"
+
+#: web/templates/account/profile.html:325
+msgid "No point history available yet."
+msgstr "Belum ada riwayat poin."
+
+#: web/templates/account/profile.html:331
+msgid "Points expire based on their source. Original points never expire."
+msgstr "Poin kedaluwarsa berdasarkan sumbernya. Poin asli tidak pernah kedaluwarsa."
+
+#: web/templates/prompts/generator/advance.html:5
+msgid "Advanced generator"
+msgstr "Pembuat lanjutan"
+
+#: web/templates/prompts/generator/advance.html:9
+msgid "Step 03 · Pro mode"
+msgstr "Langkah 03 · Mode pro"
+
+#: web/templates/prompts/generator/advance.html:10
+msgid "Generate from a system prompt."
+msgstr "Buat dari prompt sistem."
+
+#: web/templates/prompts/generator/advance.html:11
+msgid "Configure use case, structure, safety, and style. Optional knowledge base for domain-specific prompts."
+msgstr "Konfigurasikan kasus penggunaan, struktur, keamanan, dan gaya. Basis pengetahuan opsional untuk prompt spesifik domain."
+
+#: web/templates/prompts/generator/advance.html:13
+msgid "1.0 credit per generation"
+msgstr "1,0 kredit per pembuatan"
+
+#: web/templates/prompts/generator/advance.html:14
+msgid "Image variants included"
+msgstr "Varian gambar disertakan"
+
+#: web/templates/prompts/generator/advance.html:22
+#: web/templates/prompts/generator/advance.html:29
+#: web/templates/prompts/generator/advance.html:36
+#: web/templates/prompts/generator/basic.html:18
+#: web/templates/prompts/generator/basic.html:25
+#: web/templates/prompts/generator/basic.html:32
+#: web/templates/prompts/generator/refinement.html:22
+#: web/templates/prompts/generator/refinement.html:29
+#: web/templates/prompts/generator/refinement.html:36
+msgid "Step"
+msgstr "Langkah"
+
+#: web/templates/prompts/generator/advance.html:46
+#: web/templates/prompts/generator/basic.html:42
+#: web/templates/prompts/generator/basic.html:108
+msgid "Text"
+msgstr "Teks"
+
+#: web/templates/prompts/generator/advance.html:49
+#: web/templates/prompts/generator/advance.html:100
+msgid "Generate text prompt"
+msgstr "Buat prompt teks"
+
+#: web/templates/prompts/generator/advance.html:51
+msgid "Configure use case, structure, and safety in detail."
+msgstr "Konfigurasikan kasus penggunaan, struktur, dan keamanan secara rinci."
+
+#: web/templates/prompts/generator/advance.html:53
+#: web/templates/prompts/generator/advance.html:115
+#: web/templates/prompts/generator/basic.html:49
+#: web/templates/prompts/generator/basic.html:90
+msgid "Toggle help"
+msgstr "Bantuan"
+
+#: web/templates/prompts/generator/advance.html:61
+#: web/templates/prompts/generator/basic.html:57
+msgid "How this works"
+msgstr "Cara kerjanya"
+
+#: web/templates/prompts/generator/advance.html:62
+msgid "Enter your use case, select the prompt type, and configure other parameters to create a custom prompt."
+msgstr "Enter your use case, select the prompt type, and configure other parameters to create a custom prompt."
+
+#: web/templates/prompts/generator/advance.html:68
+msgid "Use case"
+msgstr "Kasus penggunaan"
+
+#: web/templates/prompts/generator/advance.html:69
+msgid "Write a README file"
+msgstr "Tulis berkas README"
+
+#: web/templates/prompts/generator/advance.html:73
+msgid "Prompt type"
+msgstr "Jenis prompt"
+
+#: web/templates/prompts/generator/advance.html:75
+msgid "Simple"
+msgstr "Sederhana"
+
+#: web/templates/prompts/generator/advance.html:76
+msgid "Standard"
+msgstr "Standar"
+
+#: web/templates/prompts/generator/advance.html:77
+msgid "Detailed"
+msgstr "Rinci"
+
+#: web/templates/prompts/generator/advance.html:78
+msgid "Step by step"
+msgstr "Langkah demi langkah"
+
+#: web/templates/prompts/generator/advance.html:83
+msgid "Harm content filter"
+msgstr "Filter konten berbahaya"
+
+#: web/templates/prompts/generator/advance.html:85
+msgid "Unspecified"
+msgstr "Tidak ditentukan"
+
+#: web/templates/prompts/generator/advance.html:86
+msgid "Block none"
+msgstr "Blokir tidak ada"
+
+#: web/templates/prompts/generator/advance.html:87
+msgid "Block few"
+msgstr "Blokir sedikit"
+
+#: web/templates/prompts/generator/advance.html:88
+msgid "Block some"
+msgstr "Blokir beberapa"
+
+#: web/templates/prompts/generator/advance.html:89
+msgid "Block most"
+msgstr "Blokir sebagian besar"
+
+#: web/templates/prompts/generator/advance.html:94
+msgid "Knowledge base"
+msgstr "Basis pengetahuan"
+
+#: web/templates/prompts/generator/advance.html:95
+msgid "Enter the knowledge base if any"
+msgstr "Masukkan basis pengetahuan jika ada"
+
+#: web/templates/prompts/generator/advance.html:96
+msgid "Up to 1,000 characters of context for the model."
+msgstr "Hingga 1.000 karakter konteks untuk model."
+
+#: web/templates/prompts/generator/advance.html:108
+#: web/templates/prompts/generator/basic.html:83
+msgid "Image"
+msgstr "Gambar"
+
+#: web/templates/prompts/generator/advance.html:111
+msgid "Generate image prompt"
+msgstr "Buat prompt gambar"
+
+#: web/templates/prompts/generator/advance.html:113
+msgid "Pick a mode, mood, and style."
+msgstr "Pilih mode, suasana hati, dan gaya."
+
+#: web/templates/prompts/generator/advance.html:123
+#: web/templates/prompts/generator/advance.html:140
+msgid "Generate from text"
+msgstr "Buat dari teks"
+
+#: web/templates/prompts/generator/advance.html:124
+msgid "Enter your input, select the mood, and choose the primary and secondary styles."
+msgstr "Masukkan input Anda, pilih suasana hati, dan pilih gaya utama dan sekunder."
+
+#: web/templates/prompts/generator/advance.html:130
+#: web/templates/prompts/generator/advance.html:148
+msgid "Reverse from image"
+msgstr "Balik dari gambar"
+
+#: web/templates/prompts/generator/advance.html:131
+msgid "Upload an image and we will generate a prompt based on it, with optional mood and style."
+msgstr "Unggah gambar dan kami akan membuat prompt berdasarkan itu, dengan suasana hati dan gaya opsional."
+
+#: web/templates/prompts/generator/advance.html:135
+msgid "Image prompt mode"
+msgstr "Mode prompt gambar"
+
+#: web/templates/prompts/generator/advance.html:141
+msgid "Type a description"
+msgstr "Ketik deskripsi"
+
+#: web/templates/prompts/generator/advance.html:149
+msgid "Upload and decode"
+msgstr "Unggah dan dekode"
+
+#: web/templates/prompts/generator/advance.html:156
+msgid "Input"
+msgstr "Input"
+
+#: web/templates/prompts/generator/advance.html:157
+msgid "Cat on the sky"
+msgstr "Kucing di langit"
+
+#: web/templates/prompts/generator/advance.html:161
+#: web/templates/prompts/generator/advance.html:257
+msgid "Primary mood"
+msgstr "Suasana utama"
+
+#: web/templates/prompts/generator/advance.html:163
+#: web/templates/prompts/generator/advance.html:260
+msgid "Positive"
+msgstr "Positif"
+
+#: web/templates/prompts/generator/advance.html:164
+#: web/templates/prompts/generator/advance.html:261
+msgid "Happy"
+msgstr "Bahagia"
+
+#: web/templates/prompts/generator/advance.html:165
+#: web/templates/prompts/generator/advance.html:262
+msgid "Joyful"
+msgstr "Gembira"
+
+#: web/templates/prompts/generator/advance.html:166
+#: web/templates/prompts/generator/advance.html:263
+msgid "Excited"
+msgstr "Bersemangat"
+
+#: web/templates/prompts/generator/advance.html:167
+#: web/templates/prompts/generator/advance.html:264
+msgid "Cheerful"
+msgstr "Riang"
+
+#: web/templates/prompts/generator/advance.html:168
+#: web/templates/prompts/generator/advance.html:265
+msgid "Content"
+msgstr "Puas"
+
+#: web/templates/prompts/generator/advance.html:170
+#: web/templates/prompts/generator/advance.html:267
+msgid "Negative"
+msgstr "Negatif"
+
+#: web/templates/prompts/generator/advance.html:171
+#: web/templates/prompts/generator/advance.html:268
+msgid "Angry"
+msgstr "Marah"
+
+#: web/templates/prompts/generator/advance.html:172
+#: web/templates/prompts/generator/advance.html:269
+msgid "Disgust"
+msgstr "Jijik"
+
+#: web/templates/prompts/generator/advance.html:173
+#: web/templates/prompts/generator/advance.html:270
+msgid "Fear"
+msgstr "Takut"
+
+#: web/templates/prompts/generator/advance.html:174
+#: web/templates/prompts/generator/advance.html:271
+msgid "Sad"
+msgstr "Sedih"
+
+#: web/templates/prompts/generator/advance.html:175
+#: web/templates/prompts/generator/advance.html:272
+msgid "Depressed"
+msgstr "Murung"
+
+#: web/templates/prompts/generator/advance.html:177
+#: web/templates/prompts/generator/advance.html:178
+#: web/templates/prompts/generator/advance.html:274
+#: web/templates/prompts/generator/advance.html:275
+msgid "Neutral"
+msgstr "Netral"
+
+#: web/templates/prompts/generator/advance.html:179
+#: web/templates/prompts/generator/advance.html:276
+msgid "Calm"
+msgstr "Tenang"
+
+#: web/templates/prompts/generator/advance.html:180
+#: web/templates/prompts/generator/advance.html:277
+msgid "Relaxed"
+msgstr "Santai"
+
+#: web/templates/prompts/generator/advance.html:181
+#: web/templates/prompts/generator/advance.html:278
+msgid "Serene"
+msgstr "Teduh"
+
+#: web/templates/prompts/generator/advance.html:182
+#: web/templates/prompts/generator/advance.html:279
+msgid "Tranquil"
+msgstr "Damai"
+
+#: web/templates/prompts/generator/advance.html:184
+#: web/templates/prompts/generator/advance.html:281
+msgid "Other"
+msgstr "Lainnya"
+
+#: web/templates/prompts/generator/advance.html:185
+#: web/templates/prompts/generator/advance.html:282
+msgid "Surprised"
+msgstr "Terkejut"
+
+#: web/templates/prompts/generator/advance.html:186
+#: web/templates/prompts/generator/advance.html:283
+msgid "Curious"
+msgstr "Penasaran"
+
+#: web/templates/prompts/generator/advance.html:187
+#: web/templates/prompts/generator/advance.html:284
+msgid "Mysterious"
+msgstr "Misterius"
+
+#: web/templates/prompts/generator/advance.html:188
+#: web/templates/prompts/generator/advance.html:285
+msgid "Surreal"
+msgstr "Surealis"
+
+#: web/templates/prompts/generator/advance.html:189
+#: web/templates/prompts/generator/advance.html:286
+msgid "Eerie"
+msgstr "Menakutkan"
+
+#: web/templates/prompts/generator/advance.html:190
+#: web/templates/prompts/generator/advance.html:287
+#: web/templates/prompts/generator/basic.html:73
+#: web/templates/prompts/generator/basic.html:142
+msgid "Random"
+msgstr "Acak"
+
+#: web/templates/prompts/generator/advance.html:196
+#: web/templates/prompts/generator/advance.html:293
+msgid "Primary style"
+msgstr "Gaya utama"
+
+#: web/templates/prompts/generator/advance.html:198
+#: web/templates/prompts/generator/advance.html:222
+#: web/templates/prompts/generator/advance.html:296
+#: web/templates/prompts/generator/advance.html:319
+msgid "Styles"
+msgstr "Gaya"
+
+#: web/templates/prompts/generator/advance.html:199
+#: web/templates/prompts/generator/advance.html:223
+#: web/templates/prompts/generator/advance.html:297
+#: web/templates/prompts/generator/advance.html:320
+msgid "3D Model"
+msgstr "Model 3D"
+
+#: web/templates/prompts/generator/advance.html:200
+#: web/templates/prompts/generator/advance.html:224
+#: web/templates/prompts/generator/advance.html:298
+#: web/templates/prompts/generator/advance.html:321
+msgid "Abstract"
+msgstr "Abstrak"
+
+#: web/templates/prompts/generator/advance.html:201
+#: web/templates/prompts/generator/advance.html:299
+#: web/templates/prompts/generator/advance.html:322
+msgid "Analog Film"
+msgstr "Film Analog"
+
+#: web/templates/prompts/generator/advance.html:202
+#: web/templates/prompts/generator/advance.html:225
+#: web/templates/prompts/generator/advance.html:300
+#: web/templates/prompts/generator/advance.html:323
+msgid "Anime"
+msgstr "Anime"
+
+#: web/templates/prompts/generator/advance.html:203
+#: web/templates/prompts/generator/advance.html:226
+#: web/templates/prompts/generator/advance.html:301
+#: web/templates/prompts/generator/advance.html:324
+msgid "Cartoon"
+msgstr "Kartun"
+
+#: web/templates/prompts/generator/advance.html:204
+#: web/templates/prompts/generator/advance.html:227
+#: web/templates/prompts/generator/advance.html:302
+msgid "Digital Art"
+msgstr "Seni Digital"
+
+#: web/templates/prompts/generator/advance.html:205
+#: web/templates/prompts/generator/advance.html:303
+msgid "Fantasy Art"
+msgstr "Seni Fantasi"
+
+#: web/templates/prompts/generator/advance.html:207
+#: web/templates/prompts/generator/advance.html:231
+#: web/templates/prompts/generator/advance.html:305
+#: web/templates/prompts/generator/advance.html:326
+msgid "Techniques"
+msgstr "Teknik"
+
+#: web/templates/prompts/generator/advance.html:208
+#: web/templates/prompts/generator/advance.html:232
+#: web/templates/prompts/generator/advance.html:306
+#: web/templates/prompts/generator/advance.html:327
+msgid "Photographic"
+msgstr "Fotografis"
+
+#: web/templates/prompts/generator/advance.html:209
+#: web/templates/prompts/generator/advance.html:233
+#: web/templates/prompts/generator/advance.html:307
+#: web/templates/prompts/generator/advance.html:328
+msgid "Pixel Art"
+msgstr "Seni Piksel"
+
+#: web/templates/prompts/generator/advance.html:210
+#: web/templates/prompts/generator/advance.html:234
+#: web/templates/prompts/generator/advance.html:308
+#: web/templates/prompts/generator/advance.html:329
+msgid "Watercolor"
+msgstr "Cat Air"
+
+#: web/templates/prompts/generator/advance.html:211
+#: web/templates/prompts/generator/advance.html:309
+msgid "Isometric"
+msgstr "Isometrik"
+
+#: web/templates/prompts/generator/advance.html:212
+#: web/templates/prompts/generator/advance.html:310
+msgid "Low Poly"
+msgstr "Poli Rendah"
+
+#: web/templates/prompts/generator/advance.html:213
+msgid "Cinematic"
+msgstr "Sinematik"
+
+#: web/templates/prompts/generator/advance.html:219
+#: web/templates/prompts/generator/advance.html:316
+msgid "Secondary style"
+msgstr "Gaya sekunder"
+
+#: web/templates/prompts/generator/advance.html:221
+msgid "— None —"
+msgstr "— Tidak ada —"
+
+#: web/templates/prompts/generator/advance.html:228
+msgid "Cyberpunk"
+msgstr "Cyberpunk"
+
+#: web/templates/prompts/generator/advance.html:229
+msgid "Steampunk"
+msgstr "Steampunk"
+
+#: web/templates/prompts/generator/advance.html:235
+msgid "Vaporwave"
+msgstr "Vaporwave"
+
+#: web/templates/prompts/generator/advance.html:236
+msgid "Line Art"
+msgstr "Seni Garis"
+
+#: web/templates/prompts/generator/advance.html:242
+msgid "Generate image from text"
+msgstr "Buat gambar dari teks"
+
+#: web/templates/prompts/generator/advance.html:248
+msgid "Upload image"
+msgstr "Unggah gambar"
+
+#: web/templates/prompts/generator/advance.html:251
+#: web/templates/prompts/generator/basic.html:132
+msgid "Click to choose an image"
+msgstr "Klik untuk memilih gambar"
+
+#: web/templates/prompts/generator/advance.html:259
+#: web/templates/prompts/generator/advance.html:295
+#: web/templates/prompts/generator/advance.html:318
+msgid "Original"
+msgstr "Asli"
+
+#: web/templates/prompts/generator/advance.html:335
+msgid "Generate prompt from image"
+msgstr "Buat prompt dari gambar"
+
+#: web/templates/prompts/generator/advance.html:342
+#: web/templates/prompts/generator/basic.html:150
+msgid "Image preview"
+msgstr "Pratinjau gambar"
+
+#: web/templates/prompts/generator/advance.html:346
+#: web/templates/prompts/generator/basic.html:154
+#: web/templates/prompts/generator/refinement.html:210
+msgid "Loading"
+msgstr "Memuat"
+
+#: web/templates/prompts/generator/advance.html:351
+#: web/templates/prompts/generator/basic.html:159
+#: web/templates/prompts/generator/refinement.html:190
+msgid "Result"
+msgstr "Hasil"
+
+#: web/templates/prompts/generator/advance.html:354
+#: web/templates/prompts/generator/basic.html:162
+msgid "Generated prompt"
+msgstr "Prompt yang dibuat"
+
+#: web/templates/prompts/generator/advance.html:364
+#: web/templates/prompts/generator/basic.html:173
+#: web/templates/prompts/generator/refinement.html:203
+#: web/templates/prompts/lib/community.html:40
+#: web/templates/prompts/lib/community.html:41
+#: web/templates/prompts/lib/community.html:68
+#: web/templates/prompts/lib/community.html:69
+#: web/templates/prompts/lib/personal.html:47
+#: web/templates/prompts/lib/personal.html:48
+msgid "Copy"
+msgstr "Salin"
+
+#: web/templates/prompts/generator/advance.html:365
+#: web/templates/prompts/generator/basic.html:176
+msgid "Save to library"
+msgstr "Simpan ke pustaka"
+
+#: web/templates/prompts/generator/advance.html:366
+#: web/templates/prompts/generator/basic.html:179
+msgid "Generate again"
+msgstr "Buat lagi"
+
+#: web/templates/prompts/generator/basic.html:9
+msgid "Step 02 · Topic mode"
+msgstr "Langkah 02 · Mode topik"
+
+#: web/templates/prompts/generator/basic.html:10
+msgid "Generate from a topic."
+msgstr "Buat dari topik."
+
+#: web/templates/prompts/generator/basic.html:11
+msgid "Describe what you need. The model expands it into a structured prompt with variables you can fill in later."
+msgstr "Jelaskan apa yang Anda butuhkan. Model mengembangkannya menjadi prompt terstruktur dengan variabel yang bisa Anda isi nanti."
+
+#: web/templates/prompts/generator/basic.html:45
+msgid "Generate a text prompt"
+msgstr "Buat prompt teks"
+
+#: web/templates/prompts/generator/basic.html:47
+msgid "Describe what you need. Click \"Generate\" or \"Random\" for a surprise."
+msgstr "Jelaskan apa yang Anda butuhkan. Klik \"Buat\" atau \"Acak\" untuk kejutan."
+
+#: web/templates/prompts/generator/basic.html:58
+msgid "Type a topic or task, hit Generate. The model crafts a structured prompt you can save, refine, or share."
+msgstr "Ketik topik atau tugas, tekan Buat. Model akan membuat prompt terstruktur yang bisa Anda simpan, sempurnakan, atau bagikan."
+
+#: web/templates/prompts/generator/basic.html:64
+msgid "Topic or task"
+msgstr "Topik atau tugas"
+
+#: web/templates/prompts/generator/basic.html:65
+msgid "Write a Python script that…"
+msgstr "Tulis skrip Python yang…"
+
+#: web/templates/prompts/generator/basic.html:66
+msgid "The more specific, the better the result."
+msgstr "Semakin spesifik, semakin baik hasilnya."
+
+#: web/templates/prompts/generator/basic.html:86
+msgid "Generate an image prompt"
+msgstr "Buat prompt gambar"
+
+#: web/templates/prompts/generator/basic.html:88
+msgid "Text-to-image, or reverse-engineer an image."
+msgstr "Teks-ke-gambar, atau merekayasa-balik gambar."
+
+#: web/templates/prompts/generator/basic.html:98
+msgid "Two ways to start"
+msgstr "Dua cara untuk mulai"
+
+#: web/templates/prompts/generator/basic.html:99
+msgid "Type a description for a text-to-image prompt, or upload an image to reverse-engineer it."
+msgstr "Ketik deskripsi untuk prompt teks-ke-gambar, atau unggah gambar untuk merekayasa-baliknya."
+
+#: web/templates/prompts/generator/basic.html:103
+msgid "Input type"
+msgstr "Jenis input"
+
+#: web/templates/prompts/generator/basic.html:109
+msgid "Describe a new image"
+msgstr "Jelaskan gambar baru"
+
+#: web/templates/prompts/generator/basic.html:116
+msgid "File"
+msgstr "Berkas"
+
+#: web/templates/prompts/generator/basic.html:117
+msgid "Reverse-engineer from an image"
+msgstr "Rekayasa-balik dari gambar"
+
+#: web/templates/prompts/generator/basic.html:124
+msgid "Describe your image"
+msgstr "Jelaskan gambar Anda"
+
+#: web/templates/prompts/generator/basic.html:125
+msgid "Whale on the desert"
+msgstr "Paus di padang pasir"
+
+#: web/templates/prompts/generator/refinement.html:9
+msgid "Step 04 · Refine workflow"
+msgstr "Langkah 04 · Alur penyempurnaan"
+
+#: web/templates/prompts/generator/refinement.html:10
+msgid "Refine an existing prompt."
+msgstr "Sempurnakan prompt yang ada."
+
+#: web/templates/prompts/generator/refinement.html:11
+msgid "Pick a quick action or write custom instructions. Every refinement is versioned in your library."
+msgstr "Pilih aksi cepat atau tulis instruksi khusus. Setiap penyempurnaan diberi versi di pustaka Anda."
+
+#: web/templates/prompts/generator/refinement.html:13
+msgid "0.5 credits per refinement"
+msgstr "0,5 kredit per penyempurnaan"
+
+#: web/templates/prompts/generator/refinement.html:14
+msgid "Versioned"
+msgstr "Diberi versi"
+
 #: web/templates/prompts/generator/refinement.html:47
-msgid "Browse community prompts"
-msgstr "Jelajahi prompt komunitas"
+msgid "Source"
+msgstr "Sumber"
 
-#: web/templates/prompts/generator/refinement.html:53
-msgid "Your Prompt:"
-msgstr "Prompt Anda:"
+#: web/templates/prompts/generator/refinement.html:48
+msgid "Choose your prompt source"
+msgstr "Pilih sumber prompt Anda"
 
-#: web/templates/prompts/generator/refinement.html:56
-msgid "Enter your prompt here..."
-msgstr "Masukkan prompt Anda di sini..."
+#: web/templates/prompts/generator/refinement.html:54
+msgid "Manual input"
+msgstr "Input manual"
 
-#: web/templates/prompts/generator/refinement.html:81
-msgid "No saved prompts yet."
-msgstr "Belum ada prompt tersimpan."
+#: web/templates/prompts/generator/refinement.html:65
+msgid "Your prompt"
+msgstr "Prompt Anda"
 
-#: web/templates/prompts/generator/refinement.html:83
-msgid "Save some prompts first to refine them!"
-msgstr "Simpan beberapa prompt terlebih dahulu untuk menyempurnakannya!"
+#: web/templates/prompts/generator/refinement.html:66
+msgid "Paste or type the prompt you want to refine…"
+msgstr "Tempel atau ketik prompt yang ingin Anda sempurnakan…"
 
-#: web/templates/prompts/generator/refinement.html:115
-msgid "No community prompts available."
-msgstr "Tidak ada prompt komunitas yang tersedia."
+#: web/templates/prompts/generator/refinement.html:86
+msgid "Save some prompts first to refine them."
+msgstr "Simpan beberapa prompt terlebih dahulu untuk menyempurnakannya."
 
-#: web/templates/prompts/generator/refinement.html:117
-msgid "Check back later for shared prompts!"
-msgstr "Cek kembali nanti untuk prompt yang dibagikan!"
+#: web/templates/prompts/generator/refinement.html:98
+#, python-format
+msgid "by %(owner)s"
+msgstr "oleh %(owner)s"
 
-#: web/templates/prompts/generator/refinement.html:140
-msgid "Step 2: Choose How to Refine"
-msgstr "Langkah 2: Pilih Cara Menyempurnakan"
+#: web/templates/prompts/generator/refinement.html:107
+msgid "No community prompts"
+msgstr "Tidak ada prompt komunitas"
 
-#: web/templates/prompts/generator/refinement.html:146
-msgid "Quick Actions"
-msgstr "Aksi Cepat"
+#: web/templates/prompts/generator/refinement.html:108
+msgid "Check back later for shared prompts."
+msgstr "Cek lagi nanti untuk prompt yang dibagikan."
 
-#: web/templates/prompts/generator/refinement.html:149
+#: web/templates/prompts/generator/refinement.html:116
+msgid "Selected"
+msgstr "Terpilih"
+
+#: web/templates/prompts/generator/refinement.html:120
+msgid "Clear selection"
+msgstr "Hapus pilihan"
+
+#: web/templates/prompts/generator/refinement.html:129
+msgid "Action"
+msgstr "Aksi"
+
+#: web/templates/prompts/generator/refinement.html:130
+msgid "Choose how to refine"
+msgstr "Pilih cara menyempurnakan"
+
+#: web/templates/prompts/generator/refinement.html:135
+msgid "Quick actions"
+msgstr "Aksi cepat"
+
+#: web/templates/prompts/generator/refinement.html:139
 msgid "Shorten"
 msgstr "Persingkat"
 
-#: web/templates/prompts/generator/refinement.html:152
-msgid "Make the prompt more concise"
-msgstr "Buat prompt lebih ringkas"
+#: web/templates/prompts/generator/refinement.html:140
+msgid "Make the prompt more concise."
+msgstr "Buat prompt lebih ringkas."
 
-#: web/templates/prompts/generator/refinement.html:156
+#: web/templates/prompts/generator/refinement.html:145
 msgid "Elaborate"
-msgstr "Jelaskan"
+msgstr "Perluas"
 
-#: web/templates/prompts/generator/refinement.html:159
-msgid "Add more details and context"
-msgstr "Tambahkan lebih banyak detail dan konteks"
+#: web/templates/prompts/generator/refinement.html:146
+msgid "Add more details and context."
+msgstr "Tambahkan lebih banyak detail dan konteks."
 
-#: web/templates/prompts/generator/refinement.html:164
+#: web/templates/prompts/generator/refinement.html:151
 msgid "Improve"
 msgstr "Tingkatkan"
 
-#: web/templates/prompts/generator/refinement.html:167
-msgid "Enhance clarity and effectiveness"
-msgstr "Tingkatkan kejelasan dan efektivitas"
+#: web/templates/prompts/generator/refinement.html:152
+msgid "Enhance clarity and effectiveness."
+msgstr "Tingkatkan kejelasan dan efektivitas."
+
+#: web/templates/prompts/generator/refinement.html:157
+msgid "Fix grammar"
+msgstr "Perbaiki tata bahasa"
+
+#: web/templates/prompts/generator/refinement.html:158
+msgid "Correct grammar and spelling."
+msgstr "Perbaiki tata bahasa dan ejaan."
+
+#: web/templates/prompts/generator/refinement.html:164
+msgid "Custom instructions"
+msgstr "Instruksi khusus"
+
+#: web/templates/prompts/generator/refinement.html:165
+msgid "Tell me how to refine your prompt"
+msgstr "Beri tahu saya cara menyempurnakan prompt Anda"
+
+#: web/templates/prompts/generator/refinement.html:166
+msgid "Example: Make it more professional, add technical details, change the tone to be more friendly, focus on specific aspects…"
+msgstr "Contoh: Buat lebih profesional, tambahkan detail teknis, ubah nadanya agar lebih ramah, fokuskan pada aspek tertentu…"
+
+#: web/templates/prompts/generator/refinement.html:168
+msgid "Tips for better refinements"
+msgstr "Tips untuk penyempurnaan yang lebih baik"
+
+#: web/templates/prompts/generator/refinement.html:170
+msgid "Be specific about what you want to change."
+msgstr "Jelaskan secara spesifik apa yang ingin Anda ubah."
+
+#: web/templates/prompts/generator/refinement.html:171
+msgid "Mention tone, style, or format preferences."
+msgstr "Sebutkan preferensi nada, gaya, atau format."
 
 #: web/templates/prompts/generator/refinement.html:172
-msgid "Fix Grammar"
-msgstr "Perbaiki Tata Bahasa"
+msgid "Specify target audience or use case."
+msgstr "Tentukan audiens target atau kasus penggunaan."
 
-#: web/templates/prompts/generator/refinement.html:175
-msgid "Correct grammar and spelling"
-msgstr "Perbaiki tata bahasa dan ejaan"
+#: web/templates/prompts/generator/refinement.html:180
+msgid "Refine prompt"
+msgstr "Sempurnakan prompt"
 
 #: web/templates/prompts/generator/refinement.html:182
-msgid "Custom Instructions"
-msgstr "Instruksi Kustom"
-
-#: web/templates/prompts/generator/refinement.html:185
-msgid "Tell me how to refine your prompt:"
-msgstr "Beritahu saya cara menyempurnakan prompt Anda:"
-
-#: web/templates/prompts/generator/refinement.html:188
-msgid "Example: Make it more professional, add technical details, change the tone to be more friendly, focus on specific aspects..."
-msgstr "Contoh: Buat lebih profesional, tambahkan detail teknis, ubah nada menjadi lebih ramah, fokus pada aspek spesifik..."
-
-#: web/templates/prompts/generator/refinement.html:191
-msgid "Tips:"
-msgstr "Tips:"
+msgid "Costs 0.5 credits"
+msgstr "Biaya 0,5 kredit"
 
 #: web/templates/prompts/generator/refinement.html:193
-msgid "Be specific about what you want to change"
-msgstr "Jadilah spesifik tentang apa yang ingin Anda ubah"
+msgid "Refined prompt"
+msgstr "Prompt yang disempurnakan"
 
-#: web/templates/prompts/generator/refinement.html:194
-msgid "Mention tone, style, or format preferences"
-msgstr "Sebutkan preferensi nada, gaya, atau format"
+#: web/templates/prompts/generator/refinement.html:204
+msgid "Save as new"
+msgstr "Simpan sebagai baru"
 
-#: web/templates/prompts/generator/refinement.html:195
-msgid "Specify target audience or use case"
-msgstr "Tentukan target audiens atau kasus penggunaan"
+#: web/templates/prompts/generator/refinement.html:205
+msgid "Refine again"
+msgstr "Sempurnakan lagi"
 
-#: web/templates/prompts/generator/refinement.html:220
-msgid "Refine Prompt"
-msgstr "Sempurnakan Prompt"
+#: web/templates/prompts/lib/community.html:9
+msgid "Index 06 · Community"
+msgstr "Indeks 06 · Komunitas"
 
-#: web/templates/prompts/generator/refinement.html:232
-msgid "Refined Prompt"
-msgstr "Prompt yang Disempurnakan"
+#: web/templates/prompts/lib/community.html:10
+msgid "Community prompts."
+msgstr "Prompt komunitas."
 
-#: web/templates/prompts/generator/refinement.html:240
-msgid "Copy Refined Prompt"
-msgstr "Salin Prompt yang Disempurnakan"
+#: web/templates/prompts/lib/community.html:11
+msgid "System prompts and shared prompts from the community. Copy, save, or refine any of them."
+msgstr "Prompt sistem dan prompt yang dibagikan dari komunitas. Salin, simpan, atau sempurnakan salah satunya."
 
-#: web/templates/prompts/generator/refinement.html:243
-msgid "Save as New Prompt"
-msgstr "Simpan sebagai Prompt Baru"
+#: web/templates/prompts/lib/community.html:14
+#: web/templates/prompts/lib/personal.html:14
+msgid "Refine a prompt"
+msgstr "Sempurnakan prompt"
 
-#: web/templates/prompts/generator/refinement.html:246
-msgid "Refine Again"
-msgstr "Sempurnakan Lagi"
+#: web/templates/prompts/lib/community.html:23
+#: web/templates/prompts/lib/personal.html:26
+msgid "Search by title or content…"
+msgstr "Cari berdasarkan judul atau konten…"
 
-#: web/templates/prompts/generator/refinement.html:257
-msgid "Refining prompt..."
-msgstr "Menyempurnakan prompt..."
+#: web/templates/prompts/lib/community.html:25
+#: web/templates/prompts/lib/personal.html:28
+msgid "Clear search"
+msgstr "Hapus pencarian"
 
-#: web/templates/prompts/generator/basic.html:17
-msgid "Generated Prompt"
-msgstr "Prompt yang Dihasilkan"
+#: web/templates/prompts/lib/community.html:26
+#: web/templates/prompts/lib/personal.html:29
+msgid "Clear"
+msgstr "Hapus"
 
-#: web/templates/prompts/generator/basic.html:25
-msgid "Copy Prompt"
-msgstr "Salin Prompt"
+#: web/templates/prompts/lib/community.html:34
+msgid "System"
+msgstr "Sistem"
 
-#: web/templates/prompts/generator/basic.html:28
-msgid "Save to Library"
-msgstr "Simpan ke Perpustakaan"
+#: web/templates/prompts/lib/community.html:35
+msgid "Default"
+msgstr "Bawaan"
 
-#: web/templates/prompts/generator/basic.html:31
-msgid "Generate Again"
-msgstr "Hasilkan Lagi"
+#: web/templates/prompts/lib/community.html:49
+#: web/templates/prompts/lib/community.html:50
+#: web/templates/prompts/lib/community.html:82
+#: web/templates/prompts/lib/community.html:83
+#: web/templates/prompts/lib/personal.html:68
+#: web/templates/prompts/lib/personal.html:69
+msgid "Preview"
+msgstr "Pratinjau"
 
-#: web/templates/prompts/generator/advance.html:17
-msgid "Generated Prompt"
-msgstr "Prompt yang Dihasilkan"
+#: web/templates/prompts/lib/community.html:61
+msgid "Yours"
+msgstr "Milik Anda"
 
-#: web/templates/prompts/generator/advance.html:25
-msgid "Copy Prompt"
-msgstr "Salin Prompt"
+#: web/templates/prompts/lib/personal.html:9
+msgid "Index 05 · Personal"
+msgstr "Indeks 05 · Pribadi"
 
-#: web/templates/prompts/generator/advance.html:28
-msgid "Save to Library"
-msgstr "Simpan ke Perpustakaan"
+#: web/templates/prompts/lib/personal.html:10
+msgid "Your prompt library."
+msgstr "Pustaka prompt Anda."
 
-#: web/templates/prompts/generator/advance.html:31
-msgid "Generate Again"
-msgstr "Hasilkan Lagi"
+#: web/templates/prompts/lib/personal.html:11
+msgid "Edit, share, or refine any prompt. Search by title or content. All your drafts live here."
+msgstr "Sunting, bagikan, atau sempurnakan prompt apa pun. Cari berdasarkan judul atau konten. Semua draf Anda ada di sini."
+
+#: web/templates/prompts/lib/personal.html:17
+msgid "New prompt"
+msgstr "Prompt baru"
+
+#: web/templates/prompts/lib/personal.html:38
+msgid "Personal"
+msgstr "Pribadi"
+
+#: web/templates/prompts/lib/personal.html:50
+#: web/templates/prompts/lib/personal.html:51
+msgid "Edit"
+msgstr "Sunting"
+
+#: web/templates/prompts/lib/personal.html:65
+#: web/templates/prompts/lib/personal.html:66
+msgid "History"
+msgstr "Riwayat"
+
+#: web/templates/prompts/lib/personal.html:82
+msgid "Generate a prompt and save it to build your library."
+msgstr "Buat prompt dan simpan untuk membangun pustaka Anda."
+
+#: web/templates/prompts/lib/personal.html:84
+msgid "Open generator"
+msgstr "Buka pembuat"
 

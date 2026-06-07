@@ -1,22 +1,22 @@
 {% extends "base.html" %}
 {% set active_section = 'Account' %}
 {% set active_nav = 'feedback' %}
-{% block title %}Feedback · Prompt Sanctuary{% endblock %}
-{% block bar_title %}Feedback{% endblock %}
+{% block title %}{{ _('Feedback') }} · {{ _('Prompt Sanctuary') }}{% endblock %}
+{% block bar_title %}{{ _('Feedback') }}{% endblock %}
 
 {% block content %}
 <header class="hero section--first" style="padding-top: var(--p-sp-7); padding-bottom: var(--p-sp-7);">
-  <span class="eyebrow hero__eyebrow">Index 08 · Feedback</span>
-  <h1 class="t-h1 hero__display" style="font-size: var(--p-fs-h1); max-width: 24ch;">Feedback log.</h1>
-  <p class="lede hero__lede">Browse all feedback messages. Click an item to read the full text.</p>
+  <span class="eyebrow hero__eyebrow">{{ _('Index 08 · Feedback') }}</span>
+  <h1 class="t-h1 hero__display" style="font-size: var(--p-fs-h1); max-width: 24ch;">{{ _('Feedback log.') }}</h1>
+  <p class="lede hero__lede">{{ _('Browse all feedback messages. Click an item to read the full text.') }}</p>
 </header>
 
 <section class="section--tight">
   <div class="card" style="max-width: 800px;">
     <div class="card__header">
       <div>
-        <span class="eyebrow">All feedback</span>
-        <h2 class="card__title" style="margin-top: var(--p-sp-2);">{{ feedbacks|length }} {{ 'entry' if feedbacks|length == 1 else 'entries' }}</h2>
+        <span class="eyebrow">{{ _('All feedback') }}</span>
+        <h2 class="card__title" style="margin-top: var(--p-sp-2);">{% trans count=feedbacks|length %}{{ count }} entries{% endtrans %}</h2>
       </div>
     </div>
 
@@ -29,8 +29,8 @@
             <p class="t-mono t-body-sm" style="margin: 0 0 var(--p-sp-1); color: var(--p-color-text-subdued);">#{{ "%03d"|format(fb.id) }} · {{ fb.username }}</p>
             <p class="t-body" style="margin: 0; line-height: 1.5; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">{{ fb.feedback }}</p>
           </div>
-          <button data-id="{{ fb.id }}" class="btn btn--tertiary btn--sm view-button" aria-label="View feedback #{{ fb.id }}">
-            <i class="fa-solid fa-eye"></i> View
+          <button data-id="{{ fb.id }}" class="btn btn--tertiary btn--sm view-button" aria-label="{{ _('View feedback #') }}{{ fb.id }}">
+            <i class="fa-solid fa-eye"></i> {{ _('View') }}
           </button>
         </div>
       </article>
@@ -39,8 +39,8 @@
     {% else %}
     <div class="empty empty--compact">
       <div class="empty__icon"><i class="fa-solid fa-inbox" aria-hidden="true"></i></div>
-      <div class="empty__title">No feedback available</div>
-      <p class="empty__body">When users submit feedback, it will appear here.</p>
+      <div class="empty__title">{{ _('No feedback available') }}</div>
+      <p class="empty__body">{{ _('When users submit feedback, it will appear here.') }}</p>
     </div>
     {% endif %}
   </div>

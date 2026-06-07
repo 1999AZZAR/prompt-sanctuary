@@ -1,24 +1,24 @@
 {% extends "base.html" %}
 {% set active_section = 'Workspace' %}
 {% set active_nav = 'home' %}
-{% block title %}Overview · Prompt Sanctuary{% endblock %}
-{% block bar_title %}Overview{% endblock %}
+{% block title %}{{ _('Overview') }} · {{ _('Prompt Sanctuary') }}{% endblock %}
+{% block bar_title %}{{ _('Overview') }}{% endblock %}
 
 {% block content %}
 <header class="hero section--first" style="padding-top: var(--p-sp-7); padding-bottom: var(--p-sp-9);">
-  <span class="eyebrow hero__eyebrow">Index 001 · Today</span>
-  <h1 class="t-display-lg hero__display">Good day, {{ session.username }}.</h1>
-  <p class="lede hero__lede">You have <span class="t-accent"><strong id="heroPoints">{{ "%.0f"|format(current_user_points or 0) }}</strong> credits</span> available. Start a new prompt, refine a draft, or browse the community library.</p>
+  <span class="eyebrow hero__eyebrow">{{ _('Index 001 · Today') }}</span>
+  <h1 class="t-display-lg hero__display">{% trans username=session.username %}Good day, {{ username }}.{% endtrans %}</h1>
+  <p class="lede hero__lede">{% trans points="%.0f"|format(current_user_points or 0) %}You have <span class="t-accent"><strong id="heroPoints">{{ points }}</strong> credits</span> available. Start a new prompt, refine a draft, or browse the community library.{% endtrans %}</p>
   <div class="hero__cta">
     <a class="btn btn--primary btn--lg" href="{{ url_for('main.generate') }}">
       <i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i>
-      Generate a prompt
+      {{ _('Generate a prompt') }}
     </a>
     <a class="btn btn--secondary btn--lg" href="{{ url_for('main.advance') }}">
       <i class="fa-solid fa-sliders" aria-hidden="true"></i>
-      Advanced mode
+      {{ _('Advanced mode') }}
     </a>
-    <a class="btn--link" href="{{ url_for('main.library') }}">Browse community →</a>
+    <a class="btn--link" href="{{ url_for('main.library') }}">{{ _('Browse community →') }}</a>
   </div>
 </header>
 
@@ -27,32 +27,32 @@
 <section class="section--tight">
   <div class="cluster--between cluster--baseline" style="margin-bottom: var(--p-sp-7);">
     <div>
-      <span class="eyebrow">Index 002</span>
-      <h2 class="t-h1" style="margin-top: var(--p-sp-3);">At a glance.</h2>
+      <span class="eyebrow">{{ _('Index 002') }}</span>
+      <h2 class="t-h1" style="margin-top: var(--p-sp-3);">{{ _('At a glance.') }}</h2>
     </div>
-    <span class="t-body-sm t-muted">Updated just now</span>
+    <span class="t-body-sm t-muted">{{ _('Updated just now') }}</span>
   </div>
 
   <div class="kpi-strip">
     <div class="kpi">
-      <div class="kpi__label">Credits</div>
+      <div class="kpi__label">{{ _('Credits') }}</div>
       <div class="kpi__value" id="kpiPoints">{{ "%.0f"|format(current_user_points or 0) }}</div>
-      <div class="kpi__delta kpi__delta--up">+ 80 on signup</div>
+      <div class="kpi__delta kpi__delta--up">{{ _('+ 80 on signup') }}</div>
     </div>
     <div class="kpi">
-      <div class="kpi__label">Saved</div>
+      <div class="kpi__label">{{ _('Saved') }}</div>
       <div class="kpi__value" id="kpiSaved">{{ saved_count }}</div>
-      <div class="kpi__delta">prompts in your library</div>
+      <div class="kpi__delta">{{ _('prompts in your library') }}</div>
     </div>
     <div class="kpi">
-      <div class="kpi__label">Refinements</div>
+      <div class="kpi__label">{{ _('Refinements') }}</div>
       <div class="kpi__value" id="kpiRefinements">{{ refinements_count }}</div>
-      <div class="kpi__delta">versioned edits</div>
+      <div class="kpi__delta">{{ _('versioned edits') }}</div>
     </div>
     <div class="kpi">
-      <div class="kpi__label">Shared</div>
+      <div class="kpi__label">{{ _('Shared') }}</div>
       <div class="kpi__value" id="kpiShared">{{ shared_count }}</div>
-      <div class="kpi__delta">with the community</div>
+      <div class="kpi__delta">{{ _('with the community') }}</div>
     </div>
   </div>
 </section>
@@ -62,55 +62,55 @@
 <section class="section--tight">
   <div class="cluster--between cluster--baseline" style="margin-bottom: var(--p-sp-7);">
     <div>
-      <span class="eyebrow">Index 003</span>
-      <h2 class="t-h1" style="margin-top: var(--p-sp-3);">Four ways to work.</h2>
+      <span class="eyebrow">{{ _('Index 003') }}</span>
+      <h2 class="t-h1" style="margin-top: var(--p-sp-3);">{{ _('Four ways to work.') }}</h2>
     </div>
-    <span class="t-body-sm t-muted" style="text-align: right; max-width: 32ch;">Generate, refine, share, and revisit — all from one place.</span>
+    <span class="t-body-sm t-muted" style="text-align: right; max-width: 32ch;">{{ _('Generate, refine, share, and revisit — all from one place.') }}</span>
   </div>
 
   <div class="feature-grid">
     <a class="feature-card" href="{{ url_for('main.generate') }}">
       <div class="feature-card__meta">
         <span class="feature-card__index">01</span>
-        <span class="badge"><span class="badge__dot"></span> Basic</span>
+        <span class="badge"><span class="badge__dot"></span> {{ _('Basic') }}</span>
       </div>
       <span class="feature-card__icon" aria-hidden="true"><i class="fa-solid fa-wand-magic-sparkles"></i></span>
-      <h3 class="feature-card__title">Generate from a topic</h3>
-      <p class="feature-card__body">Describe what you want. The model expands it into a structured prompt with variables you can fill in later.</p>
-      <span class="feature-card__cta">Open</span>
+      <h3 class="feature-card__title">{{ _('Generate from a topic') }}</h3>
+      <p class="feature-card__body">{{ _('Describe what you want. The model expands it into a structured prompt with variables you can fill in later.') }}</p>
+      <span class="feature-card__cta">{{ _('Open') }}</span>
     </a>
 
     <a class="feature-card" href="{{ url_for('main.advance') }}">
       <div class="feature-card__meta">
         <span class="feature-card__index">02</span>
-        <span class="badge"><span class="badge__dot"></span> Advanced</span>
+        <span class="badge"><span class="badge__dot"></span> {{ _('Advanced') }}</span>
       </div>
       <span class="feature-card__icon" aria-hidden="true"><i class="fa-solid fa-sliders"></i></span>
-      <h3 class="feature-card__title">Generate from a system prompt</h3>
-      <p class="feature-card__body">Paste a system prompt and the model writes a new one in the same voice. Optional image variants included.</p>
-      <span class="feature-card__cta">Open</span>
+      <h3 class="feature-card__title">{{ _('Generate from a system prompt') }}</h3>
+      <p class="feature-card__body">{{ _('Paste a system prompt and the model writes a new one in the same voice. Optional image variants included.') }}</p>
+      <span class="feature-card__cta">{{ _('Open') }}</span>
     </a>
 
     <a class="feature-card" href="{{ url_for('main.refinement') }}">
       <div class="feature-card__meta">
         <span class="feature-card__index">03</span>
-        <span class="badge"><span class="badge__dot"></span> Workflow</span>
+        <span class="badge"><span class="badge__dot"></span> {{ _('Workflow') }}</span>
       </div>
       <span class="feature-card__icon" aria-hidden="true"><i class="fa-solid fa-arrows-rotate"></i></span>
-      <h3 class="feature-card__title">Refine an existing prompt</h3>
-      <p class="feature-card__body">Tell the model what to change — tone, length, format, audience. Every refinement is versioned.</p>
-      <span class="feature-card__cta">Open</span>
+      <h3 class="feature-card__title">{{ _('Refine an existing prompt') }}</h3>
+      <p class="feature-card__body">{{ _('Tell the model what to change — tone, length, format, audience. Every refinement is versioned.') }}</p>
+      <span class="feature-card__cta">{{ _('Open') }}</span>
     </a>
 
     <a class="feature-card" href="{{ url_for('main.mylib') }}">
       <div class="feature-card__meta">
         <span class="feature-card__index">04</span>
-        <span class="badge"><span class="badge__dot"></span> Library</span>
+        <span class="badge"><span class="badge__dot"></span> {{ _('Library') }}</span>
       </div>
       <span class="feature-card__icon" aria-hidden="true"><i class="fa-solid fa-bookmark"></i></span>
-      <h3 class="feature-card__title">Browse your saved prompts</h3>
-      <p class="feature-card__body">All your drafts, refinements, and shared prompts in one searchable list with side detail.</p>
-      <span class="feature-card__cta">Open</span>
+      <h3 class="feature-card__title">{{ _('Browse your saved prompts') }}</h3>
+      <p class="feature-card__body">{{ _('All your drafts, refinements, and shared prompts in one searchable list with side detail.') }}</p>
+      <span class="feature-card__cta">{{ _('Open') }}</span>
     </a>
   </div>
 </section>
@@ -120,8 +120,8 @@
 <section class="section--tight">
   <div class="cluster--between cluster--baseline" style="margin-bottom: var(--p-sp-7);">
     <div>
-      <span class="eyebrow">Index 004</span>
-      <h2 class="t-h1" style="margin-top: var(--p-sp-3);">Getting started.</h2>
+      <span class="eyebrow">{{ _('Index 004') }}</span>
+      <h2 class="t-h1" style="margin-top: var(--p-sp-3);">{{ _('Getting started.') }}</h2>
     </div>
   </div>
 
@@ -130,9 +130,9 @@
       <span class="feature-row__index">01</span>
       <div>
         <span class="feature-row__icon"><i class="fa-solid fa-key" aria-hidden="true"></i></span>
-        <h3 class="feature-row__title">Bring your own API key</h3>
-        <p class="feature-row__body">Add a Google Generative AI key in your profile. Or use the shared pool with your credits. Either way, generations route through your account.</p>
-        <a class="btn--link" href="{{ url_for('main.profile') }}">Add key →</a>
+        <h3 class="feature-row__title">{{ _('Bring your own API key') }}</h3>
+        <p class="feature-row__body">{{ _('Add a Google Generative AI key in your profile. Or use the shared pool with your credits. Either way, generations route through your account.') }}</p>
+        <a class="btn--link" href="{{ url_for('main.profile') }}">{{ _('Add key →') }}</a>
       </div>
     </div>
 
@@ -140,9 +140,9 @@
       <span class="feature-row__index">02</span>
       <div>
         <span class="feature-row__icon"><i class="fa-solid fa-share-nodes" aria-hidden="true"></i></span>
-        <h3 class="feature-row__title">Share with the community</h3>
-        <p class="feature-row__body">When a prompt is ready, share it. Browse what others have shipped. Fork anything you like into your own library.</p>
-        <a class="btn--link" href="{{ url_for('main.library') }}">Browse →</a>
+        <h3 class="feature-row__title">{{ _('Share with the community') }}</h3>
+        <p class="feature-row__body">{{ _('When a prompt is ready, share it. Browse what others have shipped. Fork anything you like into your own library.') }}</p>
+        <a class="btn--link" href="{{ url_for('main.library') }}">{{ _('Browse →') }}</a>
       </div>
     </div>
   </div>

@@ -1,28 +1,28 @@
 {% extends "base.html" %}
-{% block title %}Terms of Service · Prompt Sanctuary{% endblock %}
+{% block title %}{{ _('Terms of Service') }} · {{ _('Prompt Sanctuary') }}{% endblock %}
 
 {% block legal_content %}
 <div class="public-page">
   <header class="public-bar">
     <a class="brand" href="{{ url_for('main.index') }}">
       <span class="brand__mark">P</span>
-      <span class="brand__name">Sanctuary</span>
+      <span class="brand__name">{{ _('Sanctuary') }}</span>
       <span class="brand__sub">v1</span>
     </a>
     <span class="public-bar__spacer"></span>
-    <a href="{{ url_for('main.index') }}"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Back home</a>
+    <a href="{{ url_for('main.index') }}"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> {{ _('Back home') }}</a>
   </header>
 
   <main class="public-page__main">
     <div class="container container--narrow">
       <header style="margin-bottom: var(--p-sp-9);">
-        <span class="eyebrow">Legal · 09</span>
-        <h1 class="t-display-md" style="margin: var(--p-sp-3) 0 var(--p-sp-5); letter-spacing: -0.02em;">Terms of service.</h1>
-        <p class="lede">The rules that govern your use of Prompt Sanctuary. Plain language, no surprises. By creating an account or using the service, you agree to these terms.</p>
+        <span class="eyebrow">{{ _('Legal · 09') }}</span>
+        <h1 class="t-display-md" style="margin: var(--p-sp-3) 0 var(--p-sp-5); letter-spacing: -0.02em;">{{ _('Terms of service.') }}</h1>
+        <p class="lede">{{ _('The rules that govern your use of Prompt Sanctuary. Plain language, no surprises. By creating an account or using the service, you agree to these terms.') }}</p>
         <div class="prose-meta">
-          <span class="badge"><i class="fa-solid fa-calendar"></i> Last updated 6 June 2026</span>
-          <span class="badge"><i class="fa-solid fa-clock"></i> 6 min read</span>
-          <span class="badge"><i class="fa-solid fa-file-lines"></i> Effective immediately</span>
+          <span class="badge"><i class="fa-solid fa-calendar"></i> {% trans date='6 June 2026' %}Last updated {{ date }}{% endtrans %}</span>
+          <span class="badge"><i class="fa-solid fa-clock"></i> {% trans minutes='6' %}{{ minutes }} min read{% endtrans %}</span>
+          <span class="badge"><i class="fa-solid fa-file-lines"></i> {{ _('Effective immediately') }}</span>
         </div>
       </header>
 

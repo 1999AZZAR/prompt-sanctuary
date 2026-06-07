@@ -79,6 +79,14 @@ main_blueprint = create_main_blueprint(
 import routes
 routes.LANGUAGES = LANGUAGES
 
+# Inject LANGUAGES into every template for the language switcher
+@app.context_processor
+def inject_globals():
+    return {
+        "LANGUAGES": LANGUAGES,
+        "ACTIVE_LANGUAGE": session.get("language") or "en",
+    }
+
 app.register_blueprint(main_blueprint)
 
 # Set CSRF cookie for frontend fetches

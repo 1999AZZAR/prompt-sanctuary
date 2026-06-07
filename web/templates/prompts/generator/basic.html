@@ -1,36 +1,36 @@
 {% extends "base.html" %}
 {% set active_section = 'Generator' %}
 {% set active_nav = 'generate' %}
-{% block title %}Generate · Prompt Sanctuary{% endblock %}
-{% block bar_title %}Generate{% endblock %}
+{% block title %}{{ _('Generate') }} · {{ _('Prompt Sanctuary') }}{% endblock %}
+{% block bar_title %}{{ _('Generate') }}{% endblock %}
 
 {% block content %}
 <header class="hero section--first" style="padding-top: var(--p-sp-7); padding-bottom: var(--p-sp-7);">
-  <span class="eyebrow hero__eyebrow">Step 02 · Topic mode</span>
-  <h1 class="t-h1 hero__display" style="font-size: var(--p-fs-h1); max-width: 24ch;">Generate from a topic.</h1>
-  <p class="lede hero__lede">Describe what you need. The model expands it into a structured prompt with variables you can fill in later.</p>
+  <span class="eyebrow hero__eyebrow">{{ _('Step 02 · Topic mode') }}</span>
+  <h1 class="t-h1 hero__display" style="font-size: var(--p-fs-h1); max-width: 24ch;">{{ _('Generate from a topic.') }}</h1>
+  <p class="lede hero__lede">{{ _('Describe what you need. The model expands it into a structured prompt with variables you can fill in later.') }}</p>
 </header>
 
 <div class="stepper" style="margin-bottom: var(--p-sp-7);">
   <div class="stepper__step is-active">
     <span class="stepper__num">01</span>
     <span class="stepper__label">
-      <span class="stepper__label-eyebrow">Step</span>
-      <span class="stepper__label-title">Generate</span>
+      <span class="stepper__label-eyebrow">{{ _('Step') }}</span>
+      <span class="stepper__label-title">{{ _('Generate') }}</span>
     </span>
   </div>
   <div class="stepper__step">
     <span class="stepper__num">02</span>
     <span class="stepper__label">
-      <span class="stepper__label-eyebrow">Step</span>
-      <span class="stepper__label-title">Refine</span>
+      <span class="stepper__label-eyebrow">{{ _('Step') }}</span>
+      <span class="stepper__label-title">{{ _('Refine') }}</span>
     </span>
   </div>
   <div class="stepper__step">
     <span class="stepper__num">03</span>
     <span class="stepper__label">
-      <span class="stepper__label-eyebrow">Step</span>
-      <span class="stepper__label-title">Save</span>
+      <span class="stepper__label-eyebrow">{{ _('Step') }}</span>
+      <span class="stepper__label-title">{{ _('Save') }}</span>
     </span>
   </div>
 </div>
@@ -39,14 +39,14 @@
   <section class="card" aria-labelledby="basic-text-heading">
     <div class="card__header">
       <div>
-        <span class="eyebrow">01 · Text</span>
+        <span class="eyebrow">01 · {{ _('Text') }}</span>
         <h2 class="card__title" id="basic-text-heading" style="margin-top: var(--p-sp-2);">
           <i class="fa-solid fa-font" style="color: var(--p-color-primary); margin-right: 8px;"></i>
-          Generate a text prompt
+          {{ _('Generate a text prompt') }}
         </h2>
-        <p class="card__sub">Describe what you need. Click "Generate" or "Random" for a surprise.</p>
+        <p class="card__sub">{{ _('Describe what you need. Click "Generate" or "Random" for a surprise.') }}</p>
       </div>
-      <button type="button" class="icon-btn" onclick="toggleHelp('text-help-basic-region')" aria-controls="text-help-basic-region" aria-expanded="false" aria-label="Toggle help">
+      <button type="button" class="icon-btn" onclick="toggleHelp('text-help-basic-region')" aria-controls="text-help-basic-region" aria-expanded="false" aria-label="{{ _('Toggle help') }}">
         <i class="fa-solid fa-circle-question"></i>
       </button>
     </div>
@@ -54,23 +54,23 @@
     <div id="text-help-basic-region" class="banner banner--info" hidden>
       <i class="fa-solid fa-circle-info banner__icon"></i>
       <div>
-        <div class="banner__title">How this works</div>
-        <div class="banner__body">Type a topic or task, hit Generate. The model crafts a structured prompt you can save, refine, or share.</div>
+        <div class="banner__title">{{ _('How this works') }}</div>
+        <div class="banner__body">{{ _('Type a topic or task, hit Generate. The model crafts a structured prompt you can save, refine, or share.') }}</div>
       </div>
     </div>
 
     <form id="text-prompt-form" class="stack">
       <div class="field">
-        <label class="field__label" for="user_input_text">Topic or task</label>
-        <input class="input" type="text" name="user_input" id="user_input_text" placeholder="Write a Python script that…" required>
-        <span class="field__hint">The more specific, the better the result.</span>
+        <label class="field__label" for="user_input_text">{{ _('Topic or task') }}</label>
+        <input class="input" type="text" name="user_input" id="user_input_text" placeholder="{{ _('Write a Python script that…') }}" required>
+        <span class="field__hint">{{ _('The more specific, the better the result.') }}</span>
       </div>
       <div class="cluster">
         <button type="submit" class="btn btn--primary">
-          <i class="fa-solid fa-wand-magic-sparkles"></i> Generate
+          <i class="fa-solid fa-wand-magic-sparkles"></i> {{ _('Generate') }}
         </button>
         <button type="button" class="btn btn--secondary" onclick="submitForm('random-text-prompt-form','/generate/trandom')">
-          <i class="fa-solid fa-shuffle"></i> Random
+          <i class="fa-solid fa-shuffle"></i> {{ _('Random') }}
         </button>
       </div>
     </form>
@@ -80,14 +80,14 @@
   <section class="card" aria-labelledby="basic-image-heading">
     <div class="card__header">
       <div>
-        <span class="eyebrow">02 · Image</span>
+        <span class="eyebrow">02 · {{ _('Image') }}</span>
         <h2 class="card__title" id="basic-image-heading" style="margin-top: var(--p-sp-2);">
           <i class="fa-solid fa-image" style="color: var(--p-color-interactive); margin-right: 8px;"></i>
-          Generate an image prompt
+          {{ _('Generate an image prompt') }}
         </h2>
-        <p class="card__sub">Text-to-image, or reverse-engineer an image.</p>
+        <p class="card__sub">{{ _('Text-to-image, or reverse-engineer an image.') }}</p>
       </div>
-      <button type="button" class="icon-btn" onclick="toggleHelp('image-help-basic-region')" aria-controls="image-help-basic-region" aria-expanded="false" aria-label="Toggle help">
+      <button type="button" class="icon-btn" onclick="toggleHelp('image-help-basic-region')" aria-controls="image-help-basic-region" aria-expanded="false" aria-label="{{ _('Toggle help') }}">
         <i class="fa-solid fa-circle-question"></i>
       </button>
     </div>
@@ -95,51 +95,51 @@
     <div id="image-help-basic-region" class="banner banner--info" hidden>
       <i class="fa-solid fa-circle-info banner__icon"></i>
       <div>
-        <div class="banner__title">Two ways to start</div>
-        <div class="banner__body">Type a description for a text-to-image prompt, or upload an image to reverse-engineer it.</div>
+        <div class="banner__title">{{ _('Two ways to start') }}</div>
+        <div class="banner__body">{{ _('Type a description for a text-to-image prompt, or upload an image to reverse-engineer it.') }}</div>
       </div>
     </div>
 
-    <div class="choice-group" role="radiogroup" aria-label="Input type">
+    <div class="choice-group" role="radiogroup" aria-label="{{ _('Input type') }}">
       <label class="choice">
         <input type="radio" name="prompt-option" value="text" checked onclick="togglePromptInput('text')">
         <i class="fa-solid fa-font"></i>
         <div>
-          <div class="choice__title">Text</div>
-          <div class="choice__desc">Describe a new image</div>
+          <div class="choice__title">{{ _('Text') }}</div>
+          <div class="choice__desc">{{ _('Describe a new image') }}</div>
         </div>
       </label>
       <label class="choice">
         <input type="radio" name="prompt-option" value="image" onclick="togglePromptInput('image')">
         <i class="fa-solid fa-upload"></i>
         <div>
-          <div class="choice__title">File</div>
-          <div class="choice__desc">Reverse-engineer from an image</div>
+          <div class="choice__title">{{ _('File') }}</div>
+          <div class="choice__desc">{{ _('Reverse-engineer from an image') }}</div>
         </div>
       </label>
     </div>
 
     <form id="image-prompt-form" class="stack" onsubmit="generatePrompt(); return false;">
       <div class="field">
-        <label class="field__label" for="user_input_image">Describe your image</label>
-        <input class="input" type="text" name="user_input" id="user_input_image" placeholder="Whale on the desert" required>
+        <label class="field__label" for="user_input_image">{{ _('Describe your image') }}</label>
+        <input class="input" type="text" name="user_input" id="user_input_image" placeholder="{{ _('Whale on the desert') }}" required>
       </div>
     </form>
 
     <form id="image-upload-form" enctype="multipart/form-data" class="stack" hidden>
       <label class="file-input" for="image" style="display: flex; align-items: center; gap: var(--p-sp-3); padding: var(--p-sp-5); border: 1px dashed var(--p-color-border); border-radius: var(--p-r-2); cursor: pointer; color: var(--p-color-text-subdued);">
         <i class="fa-solid fa-cloud-arrow-up" style="color: var(--p-color-primary); font-size: 20px;"></i>
-        <span>Click to choose an image</span>
+        <span>{{ _('Click to choose an image') }}</span>
         <input type="file" name="image" id="image" accept="image/*" required style="display: none;">
       </label>
     </form>
 
     <div class="cluster">
       <button id="generate-button" type="button" class="btn btn--primary" onclick="generatePrompt()">
-        <i class="fa-solid fa-wand-magic-sparkles"></i> Generate
+        <i class="fa-solid fa-wand-magic-sparkles"></i> {{ _('Generate') }}
       </button>
       <button type="button" class="btn btn--secondary" onclick="submitForm('random-image-prompt-form','/generate/irandom')">
-        <i class="fa-solid fa-shuffle"></i> Random
+        <i class="fa-solid fa-shuffle"></i> {{ _('Random') }}
       </button>
     </div>
     <form id="random-image-prompt-form" hidden></form>
@@ -147,21 +147,21 @@
 </div>
 
 <div id="preview-container" class="card" hidden style="margin-top: var(--p-sp-7); text-align: center;">
-  <img id="preview-image" alt="Image preview" style="max-width: 320px; margin: 0 auto; border-radius: var(--p-r-2);">
+  <img id="preview-image" alt="{{ _('Image preview') }}" style="max-width: 320px; margin: 0 auto; border-radius: var(--p-r-2);">
 </div>
 
 <div id="loading" class="modal-backdrop" hidden>
-  <div class="spinner spinner--lg" aria-label="Loading"></div>
+  <div class="spinner spinner--lg" aria-label="{{ _('Loading') }}"></div>
 </div>
 
 <div id="resultSection" class="result-panel" hidden style="margin-top: var(--p-sp-7);">
   <div class="result-panel__header">
-    <span class="eyebrow">Result</span>
+    <span class="eyebrow">{{ _('Result') }}</span>
     <h2 class="result-panel__title">
       <i class="fa-solid fa-star" style="color: var(--p-color-primary); margin-right: 8px;"></i>
-      Generated prompt
+      {{ _('Generated prompt') }}
     </h2>
-    <button type="button" class="icon-btn" onclick="document.getElementById('resultSection').setAttribute('hidden','')" aria-label="Close">
+    <button type="button" class="icon-btn" onclick="document.getElementById('resultSection').setAttribute('hidden','')" aria-label="{{ _('Close') }}">
       <i class="fa-solid fa-xmark"></i>
     </button>
   </div>
@@ -170,13 +170,13 @@
   </div>
   <div class="result-panel__footer">
     <button type="button" class="btn btn--primary" onclick="copyGeneratedPrompt()">
-      <i class="fa-solid fa-copy"></i> Copy
+      <i class="fa-solid fa-copy"></i> {{ _('Copy') }}
     </button>
     <button type="button" class="btn btn--secondary" onclick="saveGeneratedPrompt()">
-      <i class="fa-solid fa-bookmark"></i> Save to library
+      <i class="fa-solid fa-bookmark"></i> {{ _('Save to library') }}
     </button>
     <button type="button" class="btn--link" onclick="generateAgain()">
-      <i class="fa-solid fa-rotate-right"></i> Generate again
+      <i class="fa-solid fa-rotate-right"></i> {{ _('Generate again') }}
     </button>
   </div>
 </div>
