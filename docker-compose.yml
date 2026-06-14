@@ -11,8 +11,6 @@ services:
     depends_on:
       sanctuary-postgres:
         condition: service_healthy
-      sanctuary-redis:
-        condition: service_healthy
     ports:
       - "${HOST_PORT:-5000}:5000"
     environment:
@@ -22,7 +20,7 @@ services:
       GUNICORN_TIMEOUT: "${GUNICORN_TIMEOUT:-120}"
       SECURE_COOKIES: "${SECURE_COOKIES:-false}"
       DATABASE_URL: "postgresql+psycopg://${POSTGRES_USER:-sanctuary}:${POSTGRES_PASSWORD:-sanctuary_dev_pw}@sanctuary-postgres:5432/${POSTGRES_DB:-sanctuary}"
-      REDIS_URL: "redis://sanctuary-redis:6379/0"
+      REDIS_URL: "redis://shared-redis:6379/8"
       SECRET_KEY: "${SECRET_KEY:-dev-secret-key-only-for-local-preview}"
       GENAI_API_KEY: "${GENAI_API_KEY:-}"
     healthcheck:
@@ -36,6 +34,8 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
+    networks:
+      - shared-redis-net
 
   sanctuary-postgres:
     image: postgres:16-alpine
@@ -59,27 +59,13 @@ services:
         max-size: "10m"
         max-file: "3"
 
-  sanctuary-redis:
-    image: redis:7-alpine
-    container_name: sanctuary-redis
-    restart: unless-stopped
-    command: ["redis-server", "--maxmemory", "128mb", "--maxmemory-policy", "allkeys-lru", "--save", "60", "1000"]
-    volumes:
-      - sanctuary-redis-data:/data
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
-      timeout: 3s
-      retries: 5
-      start_period: 5s
-    logging:
-      driver: json-file
-      options:
-        max-size: "10m"
-        max-file: "3"
+    networks:
+      - shared-redis-net
 
 volumes:
   sanctuary-postgres-data:
     name: sanctuary-postgres-data
-  sanctuary-redis-data:
-    name: sanctuary-redis-data
+
+networks:
+  shared-redis-net:
+    external: true
