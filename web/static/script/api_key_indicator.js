@@ -2,7 +2,7 @@
 
 document.addEventListener('DOMContentLoaded', function() {
     const apiKeyIndicator = document.getElementById('api-key-indicator');
-    
+
     if (apiKeyIndicator) {
         updateApiKeyIndicator();
     }
@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 async function updateApiKeyIndicator() {
     const apiKeyIndicator = document.getElementById('api-key-indicator');
-    
+
     if (!apiKeyIndicator) {
         return;
     }

@@ -56,7 +56,7 @@ function submitFormStream(formId, url) {
 
                 // Decode the chunk
                 buffer += decoder.decode(value, { stream: true });
-                
+
                 // Process complete lines
                 const lines = buffer.split('\n');
                 buffer = lines.pop(); // Keep the incomplete line in buffer
@@ -64,7 +64,7 @@ function submitFormStream(formId, url) {
                 for (const line of lines) {
                     if (line.startsWith('data: ')) {
                         const data = line.slice(6); // Remove 'data: ' prefix
-                        
+
                         if (data === '[DONE]') {
                             // Stream complete
                             if (fullResponse.trim()) {
@@ -72,7 +72,7 @@ function submitFormStream(formId, url) {
                             }
                             return;
                         }
-                        
+
                         if (data.trim()) {
                             fullResponse += data;
                             // Update display progressively
@@ -126,7 +126,7 @@ function processCompleteResponse(text) {
     if (!responseContainer) {
         responseContainer = document.getElementById('response');
     }
-    
+
     if (responseContainer && text.trim()) {
         // Use raw text directly like refinement.html (no cleaning)
         responseContainer.textContent = text;
@@ -197,7 +197,7 @@ function submitForm(formId, url) {
         if (!responseContainer) {
             responseContainer = document.getElementById('response');
         }
-        
+
         if (resultSection && responseContainer) {
             if (result && result.trim() !== '') {
                 resultSection.removeAttribute('hidden');
@@ -523,7 +523,7 @@ function copyToClipboard() {
     if (responseText) {
         var textArea = document.createElement("textarea");
         // Preserve formatting (especially newlines) by using innerText
-        textArea.value = responseText.innerText; 
+        textArea.value = responseText.innerText;
         document.body.appendChild(textArea);
         textArea.select();
         try {
@@ -583,8 +583,8 @@ function promptForTitleModal(promptText) {
         }
     ];
 
-    showAppPopup("Save Prompt to Library", contentHtml, { 
-        type: 'custom', 
+    showAppPopup("Save Prompt to Library", contentHtml, {
+        type: 'custom',
         buttons: buttons,
         size: 'sm' // Keep this popup relatively small
     });
@@ -592,7 +592,7 @@ function promptForTitleModal(promptText) {
 
 // Saves the prompt to the user's library
 // Removed 'tags' parameter from function definition
-function saveToLibrary(title, promptContent) { 
+function saveToLibrary(title, promptContent) {
     const formData = new FormData();
     formData.append('title', title);
     formData.append('prompt', promptContent);

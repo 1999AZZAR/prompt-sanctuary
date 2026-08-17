@@ -130,9 +130,9 @@ document.getElementById('feedback-form').addEventListener('submit', function (ev
             if (!response.ok) {
             // Try to parse error JSON, else throw generic error
             return response.json().then(errData => {
-                throw { serverError: true, data: errData }; 
+                throw { serverError: true, data: errData };
             }).catch(() => { // Catch if response.json() fails (not valid JSON)
-                throw { networkError: true, status: response.status }; 
+                throw { networkError: true, status: response.status };
             });
             }
             return response.json();

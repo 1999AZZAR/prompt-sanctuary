@@ -65,7 +65,7 @@ The refinement feature provides a comprehensive interface at `/refinement` with:
 
 #### Shorten Prompt
 ```
-"Please shorten the following text while keeping the essential meaning and key information. 
+"Please shorten the following text while keeping the essential meaning and key information.
 Make it more concise and to the point:
 
 '{original_text}'
@@ -75,7 +75,7 @@ Provide only the shortened version, no explanations."
 
 #### Elaborate Prompt
 ```
-"Please elaborate on the following text by adding more details, context, and specificity 
+"Please elaborate on the following text by adding more details, context, and specificity
 while maintaining the core meaning:
 
 '{original_text}'
@@ -85,7 +85,7 @@ Provide only the elaborated version, no explanations."
 
 #### Improve Prompt
 ```
-"Please improve the following prompt to make it more effective, clear, and likely to produce better AI responses. 
+"Please improve the following prompt to make it more effective, clear, and likely to produce better AI responses.
 Enhance clarity, specificity, and overall quality:
 
 '{original_text}'

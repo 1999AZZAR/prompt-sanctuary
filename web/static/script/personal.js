@@ -492,7 +492,7 @@ function saveEditedPrompt(randomVal, title, prompt) {
 function attachDeleteButtonListeners() {
     document.querySelectorAll('.delete-button:not(.listener-attached)').forEach(button => {
         button.addEventListener('click', function (e) {
-            e.preventDefault(); 
+            e.preventDefault();
             const randomVal = button.getAttribute('data-random-val');
             openDeleteConfirmationModal(randomVal);
         });
@@ -800,4 +800,3 @@ function attachSeeButtonListeners() {
         button.classList.add('listener-attached');
     });
 }
-

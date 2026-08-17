@@ -10,10 +10,10 @@ def validate_csrf_token():
     """Validate CSRF token from form data or headers"""
     try:
         # Try to get token from form data first
-        token = request.form.get('csrf_token')
+        token = request.form.get("csrf_token")
         if not token:
             # Try to get token from headers
-            token = request.headers.get('X-CSRFToken') or request.headers.get('X-CSRF-Token')
+            token = request.headers.get("X-CSRFToken") or request.headers.get("X-CSRF-Token")
 
         if token:
             validate_csrf(token)

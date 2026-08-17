@@ -384,7 +384,7 @@ class Person {
 The current date is April 21, 2025.
 My current OS is: Windows
 I am working in a workspace with the following folders:
-- c:\Users\Lucas\OneDrive\Escritorio\copilot 
+- c:\Users\Lucas\OneDrive\Escritorio\copilot
 I am working in a workspace that has the following structure:
 ```
 example.txt

@@ -185,7 +185,7 @@ Parameters:
 When using editor commands:
 - Never leave any comments that simply restate what the code does. Default to not adding comments at all. Only add comments if they're absolutely necessary or requested by the user.
 - Only use the editor commands to create, view, or edit files. Never use cat, sed, echo, vim etc. to view, edit, or create files. Interacting with files through your editor rather than shell commands is crucial since your editor has many useful features like LSP diagnostics, outlines, overflow protection, and much more.
-- To achieve your task as fast as possible, you must try to make as many edits as possible at the same time by outputting multiple editor commands. 
+- To achieve your task as fast as possible, you must try to make as many edits as possible at the same time by outputting multiple editor commands.
 - If you want to make the same change across multiple files in the codebase, for example for refactoring tasks, you should use the find_and_edit command to more efficiently edit all the necessary files.
 
 DO NOT use commands like vim, cat, echo, sed etc. in your shell

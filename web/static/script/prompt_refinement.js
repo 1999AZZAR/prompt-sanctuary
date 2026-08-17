@@ -6,43 +6,43 @@ class PromptRefinement {
             long: 1000,    // Show "Shorten" button if > 1000 chars
             veryLong: 1500 // Show warning if > 1500 chars
         };
-        
+
         this.init();
     }
-    
+
     init() {
         console.log('Prompt refinement script loaded');
         // No need for input field listeners since we're working with generated prompts
     }
-    
+
     showRefinementButtons() {
         const resultSection = document.getElementById('resultSection');
         const responseDiv = document.getElementById('response');
-        
+
         if (!resultSection || !responseDiv) {
             console.log('Result section or response div not found');
             return;
         }
-        
+
         // Only show buttons if result section is visible and has content
         if (resultSection.classList.contains('hidden') || !responseDiv.textContent.trim()) {
             this.hideRefinementButtons();
             return;
         }
-        
+
         const promptText = this.extractPromptText(responseDiv);
         const length = promptText.length;
-        
+
         console.log(`Generated prompt length: ${length} characters`);
-        
+
         const shortenBtn = document.getElementById('shorten-prompt-btn');
         const elaborateBtn = document.getElementById('elaborate-prompt-btn');
-        
+
         if (!shortenBtn || !elaborateBtn) {
             console.log('Refinement buttons not found');
             return;
         }
-        
+
         // Show appropriate buttons based on length
         if (length < this.thresholds.short) {
             // Short prompt - show elaborate button
@@ -60,28 +60,28 @@ class PromptRefinement {
             elaborateBtn.classList.remove('hidden');
             console.log('Showing both buttons');
         }
-        
+
         // Update status
         this.updateRefinementStatus(length);
     }
-    
+
     hideRefinementButtons() {
         const shortenBtn = document.getElementById('shorten-prompt-btn');
         const elaborateBtn = document.getElementById('elaborate-prompt-btn');
         const statusDiv = document.getElementById('refinement-status');
-        
+
         if (shortenBtn) shortenBtn.classList.add('hidden');
         if (elaborateBtn) elaborateBtn.classList.add('hidden');
         if (statusDiv) statusDiv.classList.add('hidden');
     }
-    
+
     updateRefinementStatus(length) {
         const statusDiv = document.getElementById('refinement-status');
         if (!statusDiv) return;
-        
+
         let message = '';
         let className = 'text-gray-500';
-        
+
         if (length < this.thresholds.short) {
             message = `${length} characters - Consider elaborating for more detail`;
             className = 'text-blue-500';
@@ -95,16 +95,16 @@ class PromptRefinement {
             message = `${length} characters - Good prompt length`;
             className = 'text-green-500';
         }
-        
+
         statusDiv.textContent = message;
         statusDiv.className = `text-sm mt-3 ${className}`;
         statusDiv.classList.remove('hidden');
     }
-    
+
     extractPromptText(responseDiv) {
         // Extract text content from the response div, handling various HTML structures
         let text = '';
-        
+
         // If response div contains HTML, extract text content
         if (responseDiv.innerHTML) {
             // Create a temporary div to strip HTML tags
@@ -114,43 +114,43 @@ class PromptRefinement {
         } else {
             text = responseDiv.textContent || '';
         }
-        
+
         return text.trim();
     }
-    
+
     async refineGeneratedPrompt(action) {
         const responseDiv = document.getElementById('response');
         const statusDiv = document.getElementById('refinement-status');
-        
+
         if (!responseDiv || !responseDiv.textContent.trim()) {
             showToast('No generated prompt to refine.', 'warning');
             return;
         }
-        
+
         const originalText = this.extractPromptText(responseDiv);
-        
+
         if (!originalText) {
             showToast('No prompt text found to refine.', 'error');
             return;
         }
-        
+
         try {
             // Show loading state
             this.showRefinementStatus('Processing refinement...', 'loading');
-            
+
             // Disable buttons during processing
             this.setButtonsDisabled(true);
-            
+
             // Call the refinement API
             const refinedText = await this.callRefinementAPI(originalText, action);
-            
+
             if (refinedText && refinedText !== originalText) {
                 // Update the response div with refined text
                 responseDiv.innerHTML = `<div class="rendered">${refinedText.replace(/\n/g, '<br>')}</div>`;
-                
+
                 this.showRefinementStatus(`Prompt ${action}ed successfully!`, 'success');
                 showToast(`Prompt ${action}ed successfully!`, 'success');
-                
+
                 // Re-evaluate which buttons to show
                 setTimeout(() => this.showRefinementButtons(), 100);
             } else {
@@ -165,34 +165,34 @@ class PromptRefinement {
             this.setButtonsDisabled(false);
         }
     }
-    
+
     async callRefinementAPI(text, action) {
         const formData = new FormData();
         formData.append('text', text);
         formData.append('action', action);
-        
+
         const response = await fetch('/refine_prompt', {
             method: 'POST',
             headers: window.CSRF.getFormHeaders(),
             body: formData
         });
-        
+
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
-        
+
         const result = await response.text();
         return result.trim();
     }
-    
+
     showRefinementStatus(message, type) {
         const statusDiv = document.getElementById('refinement-status');
         if (!statusDiv) return;
-        
+
         statusDiv.textContent = message;
         statusDiv.className = `text-sm mt-3 refinement-status ${type}`;
         statusDiv.classList.remove('hidden');
-        
+
         // Auto-hide success/error messages after 3 seconds
         if (type === 'success' || type === 'error') {
             setTimeout(() => {
@@ -200,11 +200,11 @@ class PromptRefinement {
             }, 3000);
         }
     }
-    
+
     setButtonsDisabled(disabled) {
         const shortenBtn = document.getElementById('shorten-prompt-btn');
         const elaborateBtn = document.getElementById('elaborate-prompt-btn');
-        
+
         [shortenBtn, elaborateBtn].forEach(btn => {
             if (btn) {
                 btn.disabled = disabled;

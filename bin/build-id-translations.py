@@ -222,7 +222,7 @@ TRANSLATIONS = {
     "Text": "Teks",
     "Image": "Gambar",
     "Generate a text prompt": "Buat prompt teks",
-    "Describe what you need. Click \"Generate\" or \"Random\" for a surprise.": "Jelaskan apa yang Anda butuhkan. Klik \"Buat\" atau \"Acak\" untuk kejutan.",
+    'Describe what you need. Click "Generate" or "Random" for a surprise.': 'Jelaskan apa yang Anda butuhkan. Klik "Buat" atau "Acak" untuk kejutan.',
     "Toggle help": "Bantuan",
     "How this works": "Cara kerjanya",
     "Type a topic or task, hit Generate. The model crafts a structured prompt you can save, refine, or share.": "Ketik topik atau tugas, tekan Buat. Model akan membuat prompt terstruktur yang bisa Anda simpan, sempurnakan, atau bagikan.",
@@ -423,9 +423,9 @@ TRANSLATIONS = {
     "Open generator": "Buka pembuat",
     "Search by title or content…": "Cari berdasarkan judul atau konten…",
     # ===== {% trans %} block: index.html hero =====
-    "You have <span class=\"t-accent\"><strong id=\"heroPoints\">%(points)s</strong> credits</span> available. Start a new prompt, refine a draft, or browse the community library.": "Anda memiliki <span class=\"t-accent\"><strong id=\"heroPoints\">%(points)s</strong> kredit</span> yang tersedia. Buat prompt baru, sempurnakan draf, atau jelajahi pustaka komunitas.",
+    'You have <span class="t-accent"><strong id="heroPoints">%(points)s</strong> credits</span> available. Start a new prompt, refine a draft, or browse the community library.': 'Anda memiliki <span class="t-accent"><strong id="heroPoints">%(points)s</strong> kredit</span> yang tersedia. Buat prompt baru, sempurnakan draf, atau jelajahi pustaka komunitas.',
     # ===== {% trans %} block: basic.html help =====
-    "Describe what you need. Click \"Generate\" or \"Random\" for a surprise.": "Jelaskan apa yang Anda butuhkan. Klik \"Buat\" atau \"Acak\" untuk kejutan.",
+    'Describe what you need. Click "Generate" or "Random" for a surprise.': 'Jelaskan apa yang Anda butuhkan. Klik "Buat" atau "Acak" untuk kejutan.',
     # ===== Library (community.html) =====
     "Community prompts.": "Prompt komunitas.",
     "System prompts and shared prompts from the community. Copy, save, or refine any of them.": "Prompt sistem dan prompt yang dibagikan dari komunitas. Salin, simpan, atau sempurnakan salah satunya.",
@@ -670,19 +670,19 @@ TRANSLATIONS = {
 
 def escape_po(s):
     """Escape a string for PO format: " → \\\\, \\\\n, etc."""
-    s = s.replace('\\', '\\\\')
+    s = s.replace("\\", "\\\\")
     s = s.replace('"', '\\"')
-    s = s.replace('\n', '\\n')
-    s = s.replace('\t', '\\t')
+    s = s.replace("\n", "\\n")
+    s = s.replace("\t", "\\t")
     return s
 
 
 def unescape_po(s):
     """Unescape a PO string: \\\" → \", \\n → \n, etc."""
     s = s.replace('\\"', '"')
-    s = s.replace('\\n', '\n')
-    s = s.replace('\\t', '\t')
-    s = s.replace('\\\\', '\\')
+    s = s.replace("\\n", "\n")
+    s = s.replace("\\t", "\t")
+    s = s.replace("\\\\", "\\")
     return s
 
 

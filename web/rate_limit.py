@@ -97,7 +97,9 @@ class LimitConfig:
     @property
     def ttl(self) -> int:
         # 2x the time to fully refill from 0, with a floor of 60s
-        full_refill_s = (self.capacity / self.refill_per_minute) * 60.0 if self.refill_per_minute else 600.0
+        full_refill_s = (
+            (self.capacity / self.refill_per_minute) * 60.0 if self.refill_per_minute else 600.0
+        )
         return max(60, int(full_refill_s * 2))
 
 
@@ -152,10 +154,12 @@ def rate_limit(endpoint_name: str | None = None, config: LimitConfig | None = No
     match against DEFAULT_LIMITS by the request path, falling back to
     `config` if provided, else a conservative default of 10/min.
     """
+
     def decorator(view):
         @functools.wraps(view)
         def wrapped(*args, **kwargs):
             from flask import request
+
             username = session.get("username")
             if not username:
                 # Unauthenticated endpoints (login, signup) are not rate-limited
@@ -185,7 +189,9 @@ def rate_limit(endpoint_name: str | None = None, config: LimitConfig | None = No
                 response.headers["Retry-After"] = str(retry_after_s)
                 return response
             return view(*args, **kwargs)
+
         return wrapped
+
     return decorator
 
 

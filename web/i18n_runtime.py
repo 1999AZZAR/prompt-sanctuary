@@ -4,6 +4,7 @@ it as a {msgid: msgstr} dict for embedding in the HTML page.
 This avoids an extra HTTP request and makes translations available
 synchronously before any user-facing JS runs.
 """
+
 from __future__ import annotations
 
 import os
@@ -31,6 +32,7 @@ def _load_catalog(locale: str, domain: str = "messages") -> dict[str, str]:
 
     try:
         from babel.messages.mofile import read_mo
+
         with open(mo_path, "rb") as f:
             catalog = read_mo(f)
         out = {}

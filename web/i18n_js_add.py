@@ -8,8 +8,8 @@ They are translated at runtime via window._, which reads
 Run: docker exec prompt-sanctuary python3 /tmp/i18n_js.py
 Or locally if babel is installed: python3 web/i18n_js_add.py
 """
+
 import os
-import re
 from babel.messages.pofile import read_po, write_po
 from babel.messages.mofile import write_mo
 
@@ -21,7 +21,7 @@ JS_TRANSLATIONS = {
     "Prompt copied to clipboard!": "Prompt disalin ke papan klip!",
     "Failed to copy prompt. Please try again.": "Gagal menyalin prompt. Silakan coba lagi.",
     "Confirm Save": "Konfirmasi Simpan",
-    "Are you sure you want to save \"%(title)s\" to your personal library?": "Apakah Anda yakin ingin menyimpan \"%(title)s\" ke pustaka pribadi Anda?",
+    'Are you sure you want to save "%(title)s" to your personal library?': 'Apakah Anda yakin ingin menyimpan "%(title)s" ke pustaka pribadi Anda?',
     "Save canceled.": "Penyimpanan dibatalkan.",
     "Prompt unshared successfully!": "Berhasil membatalkan berbagi prompt!",
     "Failed to unshare prompt: %(error)s": "Gagal membatalkan berbagi prompt: %(error)s",
@@ -33,7 +33,6 @@ JS_TRANSLATIONS = {
     "Prompt saved successfully!": "Prompt berhasil disimpan!",
     "Failed to save prompt.": "Gagal menyimpan prompt.",
     "Failed to save prompt: %(message)s": "Gagal menyimpan prompt: %(message)s",
-
     # ===== personal.js =====
     "Clipboard not available in this browser.": "Papan klip tidak tersedia di peramban ini.",
     "Failed to copy prompt.": "Gagal menyalin prompt.",
@@ -81,7 +80,6 @@ JS_TRANSLATIONS = {
     "Error sharing prompt: %(message)s": "Kesalahan membagikan prompt: %(message)s",
     "Cannot unshare: missing prompt ID.": "Tidak dapat membatalkan berbagi: ID prompt hilang.",
     "Cannot update: critical data missing from button.": "Tidak dapat memperbarui: data penting hilang dari tombol.",
-
     # ===== generator.js =====
     "An error occurred while generating the response.": "Terjadi kesalahan saat membuat respons.",
     "Error generating response. Please try again.": "Kesalahan membuat respons. Silakan coba lagi.",
@@ -95,14 +93,12 @@ JS_TRANSLATIONS = {
     "Failed to copy response.": "Gagal menyalin respons.",
     "Failed to copy response: content not found.": "Gagal menyalin respons: konten tidak ditemukan.",
     "An error occurred while saving the prompt. Check console for details.": "Terjadi kesalahan saat menyimpan prompt. Periksa konsol untuk detail.",
-
     # ===== feedback.js =====
     "Error": "Kesalahan",
     "Please enter your feedback before submitting.": "Silakan masukkan umpan balik Anda sebelum mengirim.",
     "An error occurred. Please try again.": "Terjadi kesalahan. Silakan coba lagi.",
     "Network error (status %(status)s). Please try again.": "Kesalahan jaringan (status %(status)s). Silakan coba lagi.",
     "An unexpected error occurred. Please try again.": "Terjadi kesalahan tak terduga. Silakan coba lagi.",
-
     # ===== login.js =====
     "An error occurred.": "Terjadi kesalahan.",
     "A network error occurred. Please try again.": "Terjadi kesalahan jaringan. Silakan coba lagi.",
@@ -123,7 +119,6 @@ JS_TRANSLATIONS = {
     "You unlocked a new achievement: %(achievement)s! ": "Anda membuka pencapaian baru: %(achievement)s! ",
     "You unlocked %(count)s new achievements! ": "Anda membuka %(count)s pencapaian baru! ",
     "You earned %(points)s achievement points!": "Anda mendapatkan %(points)s poin pencapaian!",
-
     # ===== api_key_manager.js =====
     "Failed to load API key status": "Gagal memuat status kunci API",
     "API key active": "Kunci API aktif",
@@ -141,7 +136,6 @@ JS_TRANSLATIONS = {
     "New achievement unlocked: %(list)s": "Pencapaian baru terbuka: %(list)s",
     "Are you sure you want to remove your API key? You will start consuming points again.": "Apakah Anda yakin ingin menghapus kunci API Anda? Anda akan mulai mengonsumsi poin lagi.",
     "Failed to remove API key": "Gagal menghapus kunci API",
-
     # ===== notifications.js =====
     "OK": "OKE",
     "Yes": "Ya",
@@ -170,7 +164,7 @@ def update_po(po_path: str, translations: dict) -> int:
             if msgstr:
                 m.string = msgstr
         else:
-            from babel.messages.catalog import Message
+
             catalog.add(msgid, msgstr or msgid)
             added += 1
 
@@ -189,6 +183,7 @@ def compile_mo(po_path: str, mo_path: str) -> None:
 
 if __name__ == "__main__":
     import sys
+
     # Default to the script's directory's parent (i.e. web/) but allow override
     # when the script is copied to /tmp.
     if len(sys.argv) > 1:

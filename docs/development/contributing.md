@@ -90,16 +90,16 @@ test: add unit tests for prompt generation
 def validate_api_key(api_key: str) -> Tuple[bool, str]:
     """
     Validate a Gemini API key by making a test request.
-    
+
     Args:
         api_key: The API key to validate
-        
+
     Returns:
         Tuple of (is_valid, message)
     """
     if not api_key or len(api_key) < 20:
         return False, "Invalid API key format"
-    
+
     try:
         # Test the API key
         genai.configure(api_key=api_key)
@@ -129,7 +129,7 @@ class PromptRefinement {
         };
         this.init();
     }
-    
+
     async refinePrompt(text, action) {
         try {
             const response = await fetch('/refine_prompt', {
@@ -140,7 +140,7 @@ class PromptRefinement {
                 },
                 body: `text=${encodeURIComponent(text)}&action=${action}`
             });
-            
+
             const data = await response.json();
             return data.success ? data.result : null;
         } catch (error) {
@@ -212,7 +212,7 @@ def test_validate_api_key_valid():
         mock_model = MagicMock()
         mock_model.generate_content.return_value = MagicMock(text="Test")
         mock_genai.GenerativeModel.return_value = mock_model
-        
+
         result = validate_api_key("AIzaSyC...")
         assert result[0] is True
         assert "valid" in result[1]
@@ -232,7 +232,7 @@ def test_prompt_generation(client, authenticated_user):
         'user_input_text': 'Create a story about a robot',
         'csrf_token': get_csrf_token()
     })
-    
+
     assert response.status_code == 200
     data = response.get_json()
     assert data['success'] is True

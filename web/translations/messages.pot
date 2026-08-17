@@ -1735,4 +1735,3 @@ msgstr ""
 #: templates/prompts/lib/personal.html:84
 msgid "Open generator"
 msgstr ""
-

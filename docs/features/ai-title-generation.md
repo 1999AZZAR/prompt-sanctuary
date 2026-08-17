@@ -164,10 +164,10 @@ title = `${originalTitle} - Refined (${action})`;
 ```javascript
 async function saveGeneratedPrompt() {
     const generatedText = document.getElementById('generated-prompt-text').textContent;
-    
+
     // Show loading state
     showLoading();
-    
+
     try {
         // Generate AI title
         const titleResponse = await fetch('/generate_title', {
@@ -181,17 +181,17 @@ async function saveGeneratedPrompt() {
                 'prompt_type': 'basic' // or 'advanced', 'refinement', etc.
             })
         });
-        
+
         const titleData = await titleResponse.json();
         let title = 'Generated Prompt';
-        
+
         if (titleData.success && titleData.title) {
             title = titleData.title;
         } else {
             // Fallback to content-based title
             title = generateFallbackTitle(generatedText, promptType);
         }
-        
+
         // Save prompt with title
         const response = await fetch('/save_prompt', {
             method: 'POST',
@@ -204,9 +204,9 @@ async function saveGeneratedPrompt() {
                 'prompt': generatedText.trim()
             })
         });
-        
+
         // Handle response...
-        
+
     } catch (error) {
         // Error handling...
     }
@@ -232,7 +232,7 @@ def generate_title():
             # Check if user has enough points (title generation costs 0.2 points)
             cost = 0.2
             user_has_api_key = is_api_key_validated(main_blueprint.user_db, username)
-            
+
             if not user_has_api_key:
                 if not deduct_user_points_with_source(main_blueprint.user_db, username, cost, 'title_generation', f'Generated title for {prompt_type} prompt'):
                     current_points = get_user_points(main_blueprint.user_db, username)
@@ -246,7 +246,7 @@ def generate_title():
                 'advanced_reverse': "Generate a concise, descriptive title (3-8 words) for this reverse image prompt. Focus on the analysis or description:",
                 'refinement': "Generate a concise, descriptive title (3-8 words) for this refined prompt. Focus on the improvement or enhancement:"
             }
-            
+
             title_prompt = title_prompts.get(prompt_type, title_prompts['basic'])
             full_prompt = f"{title_prompt}\n\nPrompt content:\n{prompt_text}\n\nTitle:"
 
@@ -257,7 +257,7 @@ def generate_title():
 
             # Generate title using AI
             title = model._generate_content_with_retry(full_prompt, model.get_effective_api_key(), use_streaming=False)
-            
+
             if title and title.strip():
                 # Clean up the title
                 clean_title = title.strip()
@@ -266,7 +266,7 @@ def generate_title():
                 # Ensure it's not too long
                 if len(clean_title) > 60:
                     clean_title = clean_title[:57] + "..."
-                
+
                 return jsonify({"success": True, "title": clean_title})
             else:
                 return jsonify({"success": False, "error": "Failed to generate title."}), 500

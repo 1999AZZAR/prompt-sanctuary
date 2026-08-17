@@ -47,7 +47,7 @@
           pip install black flake8 pylint pytest
         '';
       };
-      
+
       onStart = {
         welcome = "echo 'Development environment ready!'";
       };
@@ -58,7 +58,7 @@
       previews = {
         web = {
           command = [ "./devserver.sh" ];
-          env = { 
+          env = {
             PORT = "$PORT";
             PYTHONPATH = "$PYTHONPATH";
             VIRTUAL_ENV = "$VIRTUAL_ENV";

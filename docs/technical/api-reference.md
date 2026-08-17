@@ -509,7 +509,7 @@ prompt_text=Prompt content&prompt_type=basic&csrf_token=token
 
 **Supported prompt types:**
 - `basic` - Basic text prompts
-- `advanced` - Advanced text prompts  
+- `advanced` - Advanced text prompts
 - `advanced_image` - Image generation prompts
 - `advanced_reverse` - Reverse image prompts
 - `refinement` - Refined prompts
@@ -587,11 +587,11 @@ class PromptSanctuaryAPI {
         this.baseUrl = baseUrl;
         this.csrfToken = this.getCSRFToken();
     }
-    
+
     getCSRFToken() {
         return document.querySelector('meta[name=csrf-token]').getAttribute('content');
     }
-    
+
     async generatePrompt(text) {
         const response = await fetch(`${this.baseUrl}/generate/tprompt`, {
             method: 'POST',
@@ -601,10 +601,10 @@ class PromptSanctuaryAPI {
             },
             body: `user_input_text=${encodeURIComponent(text)}&csrf_token=${this.csrfToken}`
         });
-        
+
         return response.json();
     }
-    
+
     async savePrompt(title, prompt) {
         const response = await fetch(`${this.baseUrl}/save_prompt`, {
             method: 'POST',
@@ -614,7 +614,7 @@ class PromptSanctuaryAPI {
             },
             body: `title=${encodeURIComponent(title)}&prompt=${encodeURIComponent(prompt)}&csrf_token=${this.csrfToken}`
         });
-        
+
         return response.json();
     }
 }
@@ -633,20 +633,20 @@ class PromptSanctuaryAPI:
     def __init__(self, base_url):
         self.base_url = base_url
         self.session = requests.Session()
-    
+
     def login(self, username, password):
         response = self.session.post(f"{self.base_url}/login", data={
             'username': username,
             'password': password
         })
         return response.json()
-    
+
     def generate_prompt(self, text):
         response = self.session.post(f"{self.base_url}/generate/tprompt", data={
             'user_input_text': text
         })
         return response.json()
-    
+
     def save_prompt(self, title, prompt):
         response = self.session.post(f"{self.base_url}/save_prompt", data={
             'title': title,

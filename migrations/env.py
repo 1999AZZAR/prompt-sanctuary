@@ -29,6 +29,7 @@ config = context.config
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
+
 # Resolve the database URL the same way web.db does
 def _resolve_url() -> str:
     url = os.getenv("DATABASE_URL")

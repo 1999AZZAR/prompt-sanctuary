@@ -130,7 +130,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             if (data.success) {
                 showSuccess(data.message);
-                
+
                 // Show points awarded if applicable
                 if (data.points_awarded) {
                     showNotification(`+${data.points_awarded} points awarded!`, 'success');
@@ -177,7 +177,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Update user statistics
         const userUsageCount = document.getElementById('user-usage-count');
         const userCompensation = document.getElementById('user-compensation');
-        
+
         if (userStats.has_key) {
             userUsageCount.textContent = userStats.usage_count || 0;
             userCompensation.textContent = `${userStats.total_compensation || 0} pts`;

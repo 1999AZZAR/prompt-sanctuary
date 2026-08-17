@@ -119,17 +119,17 @@ The API Key Management system provides:
 def validate_gemini_api_key(api_key: str) -> Tuple[bool, str]:
     """
     Validate a Gemini API key by making a test request.
-    
+
     Args:
         api_key: The API key to validate
-        
+
     Returns:
         Tuple[is_valid, message]
     """
     # Format validation
     if len(api_key) < 20 or not api_key.startswith('AI'):
         return False, "Invalid API key format"
-    
+
     # API test request
     try:
         genai.configure(api_key=api_key)
@@ -152,24 +152,24 @@ def validate_gemini_api_key(api_key: str) -> Tuple[bool, str]:
 ```python
 class ApiKeyPool:
     """Manages a pool of user API keys with fair rotation."""
-    
+
     def get_next_key(self, exclude_user: str = None) -> ApiKeyInfo:
         """Get the next API key using LRU rotation."""
         available_keys = self.get_available_keys()
-        
+
         # Filter out user's own key if specified
         if exclude_user:
-            available_keys = [k for k in available_keys 
+            available_keys = [k for k in available_keys
                             if k.username != exclude_user]
-        
+
         # Sort by last_used time for fair rotation
         available_keys.sort(key=lambda k: k.last_used)
         selected_key = available_keys[0]
-        
+
         # Update usage statistics
         selected_key.last_used = time.time()
         selected_key.usage_count += 1
-        
+
         return selected_key
 ```
 

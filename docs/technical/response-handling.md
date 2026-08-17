@@ -16,7 +16,7 @@ The response handling system has been significantly enhanced to provide better u
 ### 2. Streaming Response Support
 - **New Feature**: Real-time streaming of responses as they are generated
 - **Implementation**: Server-Sent Events (SSE) with client-side progressive display
-- **Benefits**: 
+- **Benefits**:
   - Users see responses as they're generated
   - Better handling of long responses
   - Reduced perceived wait time

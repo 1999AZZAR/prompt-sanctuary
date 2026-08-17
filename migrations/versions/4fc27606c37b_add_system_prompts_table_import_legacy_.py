@@ -5,6 +5,7 @@ Revises: 5fa1bf417796
 Create Date: 2026-06-07 03:19:59.621566
 
 """
+
 from pathlib import Path
 from typing import Sequence, Union
 
@@ -13,8 +14,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '4fc27606c37b'
-down_revision: Union[str, Sequence[str], None] = '5fa1bf417796'
+revision: str = "4fc27606c37b"
+down_revision: Union[str, Sequence[str], None] = "5fa1bf417796"
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
@@ -26,6 +27,7 @@ def _coerce_dt(value) -> "datetime | None":
     so the new DateTime column stays null instead of erroring on insert.
     """
     from datetime import datetime
+
     if value is None or value == "":
         return None
     if isinstance(value, datetime):
@@ -67,9 +69,7 @@ def _import_legacy_system_prompts(conn) -> int:
 
     # Fetch already-imported random_vals to skip duplicates (idempotency)
     existing = {
-        rv for (rv,) in conn.execute(
-            sa.text("SELECT random_val FROM system_prompts")
-        ).fetchall()
+        rv for (rv,) in conn.execute(sa.text("SELECT random_val FROM system_prompts")).fetchall()
     }
 
     def _insert(row: dict) -> bool:
@@ -102,11 +102,12 @@ def _import_legacy_system_prompts(conn) -> int:
     legacy_rows = []
     if legacy_db.exists():
         import sqlite3
+
         try:
             legacy_conn = sqlite3.connect(str(legacy_db))
             legacy_conn.row_factory = sqlite3.Row
             cur = legacy_conn.execute(
-                'SELECT random_val, username AS owner, tittle AS title, prompt, tag, time FROM community'
+                "SELECT random_val, username AS owner, tittle AS title, prompt, tag, time FROM community"
             )
             legacy_rows = [dict(r) for r in cur.fetchall()]
             legacy_conn.close()
@@ -119,6 +120,7 @@ def _import_legacy_system_prompts(conn) -> int:
     # 2) Fall back to bundled seed JSON
     if seed_json.exists():
         import json
+
         with seed_json.open(encoding="utf-8") as f:
             seed_rows = json.load(f)
         return sum(1 for r in seed_rows if _insert(r))
@@ -129,15 +131,15 @@ def _import_legacy_system_prompts(conn) -> int:
 def upgrade() -> None:
     """Upgrade schema."""
     op.create_table(
-        'system_prompts',
-        sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
-        sa.Column('random_val', sa.String(length=64), nullable=False),
-        sa.Column('title', sa.String(length=255), nullable=False),
-        sa.Column('prompt', sa.Text(), nullable=False),
-        sa.Column('tag', sa.String(length=255), nullable=True),
-        sa.Column('time', sa.DateTime(), nullable=True),
-        sa.PrimaryKeyConstraint('id'),
-        sa.UniqueConstraint('random_val'),
+        "system_prompts",
+        sa.Column("id", sa.Integer(), autoincrement=True, nullable=False),
+        sa.Column("random_val", sa.String(length=64), nullable=False),
+        sa.Column("title", sa.String(length=255), nullable=False),
+        sa.Column("prompt", sa.Text(), nullable=False),
+        sa.Column("tag", sa.String(length=255), nullable=True),
+        sa.Column("time", sa.DateTime(), nullable=True),
+        sa.PrimaryKeyConstraint("id"),
+        sa.UniqueConstraint("random_val"),
     )
 
     # Import from legacy community/query.db::community, or fall back to
@@ -150,4 +152,4 @@ def upgrade() -> None:
 
 def downgrade() -> None:
     """Downgrade schema."""
-    op.drop_table('system_prompts')
+    op.drop_table("system_prompts")

@@ -1,7 +1,6 @@
 import os
 import google.generativeai as genai
 from dotenv import load_dotenv
-from typing import Optional
 
 
 class GenerativeAI:
@@ -25,8 +24,8 @@ class GenerativeAI:
 
         self.generation_config = {
             "temperature": 0.75,  # Controls the randomness of generated responses
-            "top_p": 0.65,        # Top-p (nucleus) sampling parameter
-            "top_k": 35,          # Top-k filtering parameter for token sampling
+            "top_p": 0.65,  # Top-p (nucleus) sampling parameter
+            "top_k": 35,  # Top-k filtering parameter for token sampling
             "max_output_tokens": 8192,  # Increased from 2048 to allow longer responses
             "stop_sequences": [],
         }
@@ -72,7 +71,9 @@ class GenerativeAI:
         prompt_part = prompt_part.replace("{parameter0}", parameter0 or "")
         prompt_part = prompt_part.replace("{parameter1}", parameter1 or "")
         prompt_part = prompt_part.replace("{parameter2}", parameter2 or "")
-        prompt_part = prompt_part.replace("{parameter3}", parameter3 or "ask me on the conversation")
+        prompt_part = prompt_part.replace(
+            "{parameter3}", parameter3 or "ask me on the conversation"
+        )
         return prompt_part
 
     def setup_model(self, parameter2: str):

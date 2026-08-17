@@ -3,8 +3,6 @@ history reasons, etc.) that can't be extracted by pybabel from templates.
 
 Add a key for each language code in LANGUAGES (web/app.py).
 """
-from typing import Optional
-
 
 # Each entry: (name_en, description_en) -> (name_<lang>, description_<lang>)
 ACHIEVEMENT_TRANSLATIONS_ID = {
@@ -252,8 +250,7 @@ def translate_achievement(name_en: str, description_en: str, language: str) -> t
 
 
 def translate_achievement_row(row: tuple, language: str) -> tuple:
-    """Translate a (id, name, desc, icon, points, category, unlocked_at) row.
-    """
+    """Translate a (id, name, desc, icon, points, category, unlocked_at) row."""
     ach_id, name, desc, icon, points, category, unlocked_at = row
     new_name, new_desc = translate_achievement(name, desc, language)
     return (ach_id, new_name, new_desc, icon, points, category, unlocked_at)

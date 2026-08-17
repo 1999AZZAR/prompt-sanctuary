@@ -254,7 +254,7 @@ web/database/
 
 #### Installation Issues
 **Problem**: `pip install` fails with dependency conflicts
-**Solution**: 
+**Solution**:
 ```bash
 # Create fresh virtual environment
 rm -rf .venv
