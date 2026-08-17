@@ -1,12 +1,13 @@
 import os
 import sys
+
 # Add current directory to path for imports
 sys.path.insert(0, os.path.dirname(__file__))
 
 from flask import Flask, request, session
-from flask_wtf.csrf import CSRFProtect, generate_csrf, validate_csrf
-from flask_babel import Babel, gettext, ngettext, _
-from db import init_app as db_init_app, get_session
+from flask_wtf.csrf import CSRFProtect, generate_csrf
+from flask_babel import Babel
+from db import init_app as db_init_app
 from routes import create_main_blueprint
 
 # Initialize Flask app
@@ -15,36 +16,37 @@ app.secret_key = os.getenv("SECRET_KEY", "default_secret_key")
 csrf = CSRFProtect(app)
 
 # Configure CSRF to accept tokens from headers for AJAX requests
-app.config['WTF_CSRF_HEADERS'] = ['X-CSRFToken', 'X-CSRF-Token']
-app.config['WTF_CSRF_CHECK_DEFAULT'] = False  # Disable automatic CSRF checking for all requests
+app.config["WTF_CSRF_HEADERS"] = ["X-CSRFToken", "X-CSRF-Token"]
+app.config["WTF_CSRF_CHECK_DEFAULT"] = False  # Disable automatic CSRF checking for all requests
 
 # Initialize Babel
 babel = Babel(app)
 
 # Define supported languages
-LANGUAGES = {
-    'en': 'English',
-    'id': 'Bahasa Indonesia'
-}
+LANGUAGES = {"en": "English", "id": "Bahasa Indonesia"}
 
 # Babel configuration
-app.config['BABEL_DEFAULT_LOCALE'] = 'en'
-app.config['BABEL_DEFAULT_TIMEZONE'] = 'UTC'
-app.config['BABEL_TRANSLATION_DIRECTORIES'] = os.path.join(os.path.dirname(__file__), 'translations')
-app.config['BABEL_LANGUAGES'] = list(LANGUAGES.keys())  # Explicitly specify supported languages
+app.config["BABEL_DEFAULT_LOCALE"] = "en"
+app.config["BABEL_DEFAULT_TIMEZONE"] = "UTC"
+app.config["BABEL_TRANSLATION_DIRECTORIES"] = os.path.join(
+    os.path.dirname(__file__), "translations"
+)
+app.config["BABEL_LANGUAGES"] = list(LANGUAGES.keys())  # Explicitly specify supported languages
+
 
 def get_locale():
     """Get locale from user session or browser preferences"""
     # Check if user has set a language preference
-    if 'language' in session:
-        return session['language']
+    if "language" in session:
+        return session["language"]
 
     # Try to get language from browser Accept-Language header
     best_match = request.accept_languages.best_match(list(LANGUAGES.keys()))
     if best_match:
         return best_match
 
-    return 'en'  # Default fallback
+    return "en"  # Default fallback
+
 
 babel.init_app(app, locale_selector=get_locale)
 
@@ -56,8 +58,11 @@ db_init_app(app)
 # docker-compose / config, but routes.py no longer uses them (all data lives
 # in web.database.app.db now). We pass the unified path as each of the four.
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+
+
 def default_path(*parts):
     return os.path.join(BASE_DIR, *parts)
+
 
 DEFAULT_APP_DB = os.getenv("APP_DATABASE", default_path("database", "app.db"))
 USER_DATABASE = os.getenv("USER_DATABASE", DEFAULT_APP_DB)
@@ -76,30 +81,36 @@ main_blueprint = create_main_blueprint(
 )
 
 # Set LANGUAGES in routes module to avoid circular import
-import routes
+import routes  # noqa: E402
+
 routes.LANGUAGES = LANGUAGES
+
 
 # Inject LANGUAGES into every template for the language switcher
 @app.context_processor
 def inject_globals():
     from i18n_runtime import get_runtime_catalog
+
     return {
         "LANGUAGES": LANGUAGES,
         "ACTIVE_LANGUAGE": session.get("language") or "en",
         "I18N_CATALOG": get_runtime_catalog(session.get("language") or "en"),
     }
 
+
 app.register_blueprint(main_blueprint)
+
 
 # Set CSRF cookie for frontend fetches
 @app.after_request
 def set_csrf_cookie(response):
     try:
         token = generate_csrf()
-        response.set_cookie('csrf_token', token, httponly=False, samesite='Lax')
+        response.set_cookie("csrf_token", token, httponly=False, samesite="Lax")
     except Exception:
         pass
     return response
+
 
 # Secure cookies and security headers (configurable)
 SECURE_COOKIES = os.getenv("SECURE_COOKIES", "false").lower() in {"1", "true", "yes"}
@@ -108,6 +119,7 @@ app.config.update(
     SESSION_COOKIE_SAMESITE="Lax",
     SESSION_COOKIE_SECURE=SECURE_COOKIES,
 )
+
 
 @app.after_request
 def add_security_headers(resp):
@@ -131,11 +143,13 @@ def add_security_headers(resp):
     resp.headers.setdefault("Permissions-Policy", "camera=(), microphone=(), geolocation=()")
     return resp
 
+
 # Health endpoint — uses SQLAlchemy session to verify the toolchain works.
 @app.route("/api/health")
 def health():
     from flask import g
     from db.models import User, Achievement
+
     s = g.db_session
     user_count = s.query(User).count()
     ach_count = s.query(Achievement).count()
@@ -145,6 +159,7 @@ def health():
         "users": user_count,
         "achievements": ach_count,
     }
+
 
 if __name__ == "__main__":
     # app.run(debug=True, port=int(os.environ.get('PORT', 80)))

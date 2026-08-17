@@ -8,16 +8,16 @@ from flask import (
     jsonify,
     flash,
     Response,
-    stream_template,
     g,
 )
 from utils import validate_csrf_token
-from flask_babel import _, gettext
+from flask_babel import _
 from werkzeug.exceptions import BadRequestKeyError
 from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
 import os
 import sys
+
 # Add current directory to path for imports
 sys.path.insert(0, os.path.dirname(__file__))
 
@@ -39,8 +39,6 @@ from models import (
     set_user_identicon_value,
     generate_identicon_value,
     get_user_points,
-    deduct_user_points,
-    add_user_points,
     add_user_points_with_source,
     deduct_user_points_with_source,
     expire_user_points,
@@ -62,21 +60,19 @@ from db.models import (
     SharedPrompt as DbSharedPrompt,
     SystemPrompt as DbSystemPrompt,
     Feedback as DbFeedback,
-    Session as DbSession,
 )
-from sqlalchemy import select, and_, or_, func
+from sqlalchemy import select, func
 
 # LANGUAGES will be imported from app after initialization
 LANGUAGES = None
-from response2 import GenerativeAI
-from response import GenerativeModel
-from api_key_validator import validate_gemini_api_key
-from api_key_pool import get_api_key_pool
-from rate_limit import rate_limit
-import logging
-import secrets
-from datetime import datetime
-import re
+from response2 import GenerativeAI  # noqa: E402
+from response import GenerativeModel  # noqa: E402
+from api_key_validator import validate_gemini_api_key  # noqa: E402
+from api_key_pool import get_api_key_pool  # noqa: E402
+from rate_limit import rate_limit  # noqa: E402
+import logging  # noqa: E402
+import secrets  # noqa: E402
+import re  # noqa: E402
 
 # Initialize logging
 logging.basicConfig(level=logging.INFO)
@@ -90,7 +86,7 @@ model = GenerativeModel()
 def sanitize_for_json(obj):
     """Sanitize data to ensure it's JSON serializable."""
     if obj is None:
-        return ''
+        return ""
     elif isinstance(obj, (str, int, float, bool)):
         return obj
     elif isinstance(obj, dict):
@@ -98,11 +94,10 @@ def sanitize_for_json(obj):
     elif isinstance(obj, (list, tuple)):
         return [sanitize_for_json(item) for item in obj]
     else:
-        return str(obj) if obj is not None else ''
+        return str(obj) if obj is not None else ""
 
-def create_main_blueprint(
-    user_db, prompt_db, query_db, community_db, feedback_db
-):
+
+def create_main_blueprint(user_db, prompt_db, query_db, community_db, feedback_db):
     """Create and return the main Blueprint with database paths."""
     main_blueprint = Blueprint("main", __name__)
 
@@ -153,7 +148,7 @@ def create_main_blueprint(
 
     def is_valid_username(name):
         """Check if the username contains only allowed characters (A-Za-z0-9_)."""
-        return bool(re.match(r'^[A-Za-z0-9_]+$', name))
+        return bool(re.match(r"^[A-Za-z0-9_]+$", name))
 
     @main_blueprint.route("/")
     def index():
@@ -179,9 +174,7 @@ def create_main_blueprint(
 
         honeypot_value = request.form.get("honeypot", "")
         if honeypot_value:
-            return jsonify(
-                {"success": False, "error": "Bot activity detected. Access denied."}
-            )
+            return jsonify({"success": False, "error": "Bot activity detected. Access denied."})
 
         username = request.form.get("username", "").strip()
         password = request.form.get("password", "")
@@ -190,11 +183,27 @@ def create_main_blueprint(
         if not username or not password:
             return jsonify({"success": False, "error": "Username and password are required."}), 400
         if len(username) < 3 or len(username) > 32:
-            return jsonify({"success": False, "error": "Username must be between 3 and 32 characters."}), 400
+            return (
+                jsonify(
+                    {"success": False, "error": "Username must be between 3 and 32 characters."}
+                ),
+                400,
+            )
         if len(password) < 6:
-            return jsonify({"success": False, "error": "Password must be at least 6 characters."}), 400
+            return (
+                jsonify({"success": False, "error": "Password must be at least 6 characters."}),
+                400,
+            )
         if not is_valid_username(username):
-            return jsonify({"success": False, "error": "Invalid username format. Only letters, numbers, and underscores are allowed."}), 400
+            return (
+                jsonify(
+                    {
+                        "success": False,
+                        "error": "Invalid username format. Only letters, numbers, and underscores are allowed.",
+                    }
+                ),
+                400,
+            )
         if email and (len(email) > 254 or "@" not in email):
             return jsonify({"success": False, "error": "Invalid email address."}), 400
 
@@ -202,7 +211,15 @@ def create_main_blueprint(
             sess = g.db_session
             existing = sess.get(User, username)
             if existing is not None:
-                return jsonify({"success": False, "error": "Username already exists. Please choose another."}), 409
+                return (
+                    jsonify(
+                        {
+                            "success": False,
+                            "error": "Username already exists. Please choose another.",
+                        }
+                    ),
+                    409,
+                )
             if email:
                 email_taken = sess.execute(
                     select(User).where(User.email == email)
@@ -211,15 +228,17 @@ def create_main_blueprint(
                     return jsonify({"success": False, "error": "Email is already in use."}), 409
 
             hashed_password = generate_password_hash(password)
-            sess.add(User(
-                username=username,
-                password=hashed_password,
-                email=email,
-                points=80.0,
-            ))
+            sess.add(
+                User(
+                    username=username,
+                    password=hashed_password,
+                    email=email,
+                    points=80.0,
+                )
+            )
             sess.flush()  # surface any unique-constraint violations now
             create_user_table_if_not_exists(username, main_blueprint.prompt_db)
-        except Exception as e:
+        except Exception:
             logger.exception("Signup error")
             return jsonify({"success": False, "error": "Internal server error."}), 500
 
@@ -237,9 +256,7 @@ def create_main_blueprint(
 
         honeypot_value = request.form.get("honeypot", "")
         if honeypot_value:
-            return jsonify(
-                {"success": False, "error": "Bot activity detected. Access denied."}
-            )
+            return jsonify({"success": False, "error": "Bot activity detected. Access denied."})
 
         username = request.form.get("username", "").strip()
         password = request.form.get("password", "")
@@ -247,14 +264,22 @@ def create_main_blueprint(
         if not username or not password:
             return jsonify({"success": False, "error": "Username and password are required."}), 400
         if not is_valid_username(username):
-            return jsonify({"success": False, "error": "Invalid username format. Only letters, numbers, and underscores are allowed."}), 400
+            return (
+                jsonify(
+                    {
+                        "success": False,
+                        "error": "Invalid username format. Only letters, numbers, and underscores are allowed.",
+                    }
+                ),
+                400,
+            )
 
         try:
             sess = g.db_session
             user_row = sess.execute(
                 select(User.username, User.password).where(User.username == username)
             ).first()
-        except Exception as e:
+        except Exception:
             logger.exception("Login error")
             return jsonify({"success": False, "error": "Internal server error."}), 500
 
@@ -280,19 +305,22 @@ def create_main_blueprint(
                     daily_bonus = process_daily_login_bonus(main_blueprint.user_db, username)
                     if daily_bonus > 0:
                         response_data["daily_bonus"] = daily_bonus
-                except Exception as e:
+                except Exception:
                     logger.exception("Failed to process daily login bonus, continuing without it")
                     daily_bonus = 0
 
                 # Check for new achievements and get notifications
                 try:
                     newly_unlocked, achievement_points = check_and_award_achievements(
-                        main_blueprint.user_db, username, main_blueprint.prompt_db, main_blueprint.community_db
+                        main_blueprint.user_db,
+                        username,
+                        main_blueprint.prompt_db,
+                        main_blueprint.community_db,
                     )
                     if newly_unlocked:
                         response_data["new_achievements"] = newly_unlocked
                         response_data["achievement_points"] = achievement_points
-                except Exception as e:
+                except Exception:
                     logger.exception("Failed to check achievements, continuing without them")
 
             except Exception:
@@ -300,7 +328,10 @@ def create_main_blueprint(
 
             return jsonify(response_data)
 
-        return jsonify({"success": False, "error": "Invalid username or password. Please try again."}), 401
+        return (
+            jsonify({"success": False, "error": "Invalid username or password. Please try again."}),
+            401,
+        )
 
     @main_blueprint.route("/logout")
     def logout():
@@ -334,13 +365,17 @@ def create_main_blueprint(
             logger.error(f"Error counting saved prompts: {e}")
         try:
             refinements_count = g.db_session.execute(
-                select(func.count()).select_from(DbPromptVersion).where(DbPromptVersion.username == username)
+                select(func.count())
+                .select_from(DbPromptVersion)
+                .where(DbPromptVersion.username == username)
             ).scalar_one()
         except Exception as e:
             logger.error(f"Error counting refinements: {e}")
         try:
             shared_count = g.db_session.execute(
-                select(func.count()).select_from(DbSharedPrompt).where(DbSharedPrompt.owner == username)
+                select(func.count())
+                .select_from(DbSharedPrompt)
+                .where(DbSharedPrompt.owner == username)
             ).scalar_one()
         except Exception as e:
             logger.error(f"Error counting shared prompts: {e}")
@@ -383,21 +418,30 @@ def create_main_blueprint(
             time = prompt[3]
 
             sharing_status = get_prompt_sharing_status(
-                username, prompt_id, title, content,
-                main_blueprint.prompt_db, main_blueprint.community_db
+                username,
+                prompt_id,
+                title,
+                content,
+                main_blueprint.prompt_db,
+                main_blueprint.community_db,
             )
 
             enhanced_prompt = {
-                'random_val': prompt_id,
-                'title': title,
-                'prompt': content,
-                'time': time,
-                'is_shared': sharing_status['is_shared'],
-                'needs_update': sharing_status['needs_update']
+                "random_val": prompt_id,
+                "title": title,
+                "prompt": content,
+                "time": time,
+                "is_shared": sharing_status["is_shared"],
+                "needs_update": sharing_status["needs_update"],
             }
             saved_prompts.append(enhanced_prompt)
 
-        return render_template("prompts/lib/personal.html", saved_prompts=saved_prompts, title="My Library", current_user_points=current_points)
+        return render_template(
+            "prompts/lib/personal.html",
+            saved_prompts=saved_prompts,
+            title="My Library",
+            current_user_points=current_points,
+        )
 
     @main_blueprint.route("/save_edit", methods=["POST"])
     @required_login
@@ -420,8 +464,17 @@ def create_main_blueprint(
                     .values(title=edited_title, prompt=edited_prompt)
                 )
                 # Insert new version after edit
-                version_number = get_next_version_number(username, prompt_id, main_blueprint.prompt_db)
-                insert_prompt_version(username, prompt_id, version_number, edited_title, edited_prompt, main_blueprint.prompt_db)
+                version_number = get_next_version_number(
+                    username, prompt_id, main_blueprint.prompt_db
+                )
+                insert_prompt_version(
+                    username,
+                    prompt_id,
+                    version_number,
+                    edited_title,
+                    edited_prompt,
+                    main_blueprint.prompt_db,
+                )
                 return jsonify(success=True, message="Prompt updated successfully!")
             except Exception as e:
                 logger.error(f"Error updating prompt {prompt_id} for {username}: {e}")
@@ -433,7 +486,12 @@ def create_main_blueprint(
     def list_versions(prompt_id):
         username = session["username"]
         rows = g.db_session.execute(
-            select(DbPromptVersion.version_number, DbPromptVersion.title, DbPromptVersion.prompt, DbPromptVersion.created_at)
+            select(
+                DbPromptVersion.version_number,
+                DbPromptVersion.title,
+                DbPromptVersion.prompt,
+                DbPromptVersion.created_at,
+            )
             .where(DbPromptVersion.username == username, DbPromptVersion.prompt_id == prompt_id)
             .order_by(DbPromptVersion.version_number.desc())
         ).all()
@@ -459,8 +517,7 @@ def create_main_blueprint(
         try:
             sess = g.db_session
             row = sess.execute(
-                select(DbPromptVersion.title, DbPromptVersion.prompt)
-                .where(
+                select(DbPromptVersion.title, DbPromptVersion.prompt).where(
                     DbPromptVersion.username == username,
                     DbPromptVersion.prompt_id == prompt_id,
                     DbPromptVersion.version_number == version_number,
@@ -477,9 +534,11 @@ def create_main_blueprint(
             )
             # Record a new version snapshot for the rollback action
             new_version = get_next_version_number(username, prompt_id, main_blueprint.prompt_db)
-            insert_prompt_version(username, prompt_id, new_version, title, prompt_text, main_blueprint.prompt_db)
+            insert_prompt_version(
+                username, prompt_id, new_version, title, prompt_text, main_blueprint.prompt_db
+            )
             return jsonify({"success": True, "message": "Rolled back to selected version."})
-        except Exception as e:
+        except Exception:
             logger.exception("Rollback error")
             return jsonify({"success": False, "error": "Internal server error."}), 500
 
@@ -500,8 +559,9 @@ def create_main_blueprint(
         try:
             sess = g.db_session
             existing = sess.execute(
-                select(DbSharedPrompt.title, DbSharedPrompt.prompt)
-                .where(DbSharedPrompt.owner == owner, DbSharedPrompt.random_val == random_val)
+                select(DbSharedPrompt.title, DbSharedPrompt.prompt).where(
+                    DbSharedPrompt.owner == owner, DbSharedPrompt.random_val == random_val
+                )
             ).first()
 
             if existing:
@@ -511,21 +571,27 @@ def create_main_blueprint(
                 else:
                     sess.execute(
                         DbSharedPrompt.__table__.update()
-                        .where(DbSharedPrompt.owner == owner, DbSharedPrompt.random_val == random_val)
+                        .where(
+                            DbSharedPrompt.owner == owner, DbSharedPrompt.random_val == random_val
+                        )
                         .values(title=title, prompt=prompt_text)
                     )
                     return jsonify({"success": True, "message": "Shared prompt updated."})
             else:
-                sess.add(DbSharedPrompt(
-                    owner=owner,
-                    random_val=random_val,
-                    title=title,
-                    prompt=prompt_text,
-                ))
+                sess.add(
+                    DbSharedPrompt(
+                        owner=owner,
+                        random_val=random_val,
+                        title=title,
+                        prompt=prompt_text,
+                    )
+                )
 
             # Reward user with 1 point for sharing (only for new shares, not updates)
-            add_user_points_with_source(main_blueprint.user_db, owner, 1.0, 'prompt_share', 'Shared prompt to community')
-        except Exception as e:
+            add_user_points_with_source(
+                main_blueprint.user_db, owner, 1.0, "prompt_share", "Shared prompt to community"
+            )
+        except Exception:
             logger.exception("Error sharing prompt")
             return jsonify({"success": False, "error": "Internal server error."}), 500
         return jsonify({"success": True})
@@ -541,13 +607,20 @@ def create_main_blueprint(
         try:
             sess = g.db_session
             sess.execute(
-                DbSharedPrompt.__table__.delete()
-                .where(DbSharedPrompt.owner == owner, DbSharedPrompt.random_val == prompt_id)
+                DbSharedPrompt.__table__.delete().where(
+                    DbSharedPrompt.owner == owner, DbSharedPrompt.random_val == prompt_id
+                )
             )
 
             # Deduct 1 point for unsharing
-            deduct_user_points_with_source(main_blueprint.user_db, owner, 1.0, 'prompt_unshare', 'Unshared prompt from community')
-        except Exception as e:
+            deduct_user_points_with_source(
+                main_blueprint.user_db,
+                owner,
+                1.0,
+                "prompt_unshare",
+                "Unshared prompt from community",
+            )
+        except Exception:
             logger.exception("Error unsharing prompt")
             return jsonify({"success": False, "error": "Internal server error."}), 500
         return jsonify({"success": True, "message": "Prompt deleted successfully!"})
@@ -559,8 +632,9 @@ def create_main_blueprint(
         username = session["username"]
 
         g.db_session.execute(
-            DbPrompt.__table__.delete()
-            .where(DbPrompt.username == username, DbPrompt.random_val == prompt_id)
+            DbPrompt.__table__.delete().where(
+                DbPrompt.username == username, DbPrompt.random_val == prompt_id
+            )
         )
 
         return jsonify({"success": True, "message": "Prompt deleted successfully!"})
@@ -580,6 +654,7 @@ def create_main_blueprint(
             # Cached in Redis for 5 min — the list is read on every /library
             # page load and changes only when an admin ships a new bundle.
             from cache import cache_through, k as cache_k
+
             def _load_system_prompts():
                 return g.db_session.execute(
                     select(
@@ -590,6 +665,7 @@ def create_main_blueprint(
                         DbSystemPrompt.time,
                     )
                 ).all()
+
             raw_system_prompts = cache_through(
                 cache_k("library", "system_prompts"), 300, _load_system_prompts
             )
@@ -609,43 +685,47 @@ def create_main_blueprint(
         # Convert system prompts to dictionary structure
         system_prompts = []
         for prompt in raw_system_prompts:
-            system_prompts.append({
-                'random_val': prompt[0] or '',
-                'title': prompt[1] or '',
-                'prompt': prompt[2] or '',
-                'tag': prompt[3] or '',
-                'time': prompt[4] or '',
-                'is_shared': False,  # System prompts are not shared by users
-                'type': 'system'
-            })
+            system_prompts.append(
+                {
+                    "random_val": prompt[0] or "",
+                    "title": prompt[1] or "",
+                    "prompt": prompt[2] or "",
+                    "tag": prompt[3] or "",
+                    "time": prompt[4] or "",
+                    "is_shared": False,  # System prompts are not shared by users
+                    "type": "system",
+                }
+            )
 
         # Convert shared prompts to dictionary structure
         shared_prompts = []
         for prompt in raw_shared_prompts:
-            owner = prompt[0] or ''
-            prompt_id = prompt[1] or ''
-            title = prompt[2] or ''
-            content = prompt[3] or ''
-            time = prompt[4] or ''
+            owner = prompt[0] or ""
+            prompt_id = prompt[1] or ""
+            title = prompt[2] or ""
+            content = prompt[3] or ""
+            time = prompt[4] or ""
 
             # Check if current user owns this prompt
-            is_user_owned = (owner == username)
+            is_user_owned = owner == username
 
-            shared_prompts.append({
-                'owner': owner,
-                'random_val': prompt_id,
-                'title': title,
-                'prompt': content,
-                'time': time,
-                'is_shared': True,  # These are already shared
-                'type': 'shared',
-                'is_user_owned': is_user_owned
-            })
+            shared_prompts.append(
+                {
+                    "owner": owner,
+                    "random_val": prompt_id,
+                    "title": title,
+                    "prompt": content,
+                    "time": time,
+                    "is_shared": True,  # These are already shared
+                    "type": "shared",
+                    "is_user_owned": is_user_owned,
+                }
+            )
 
         # Sanitize data to ensure JSON serialization works
         sanitized_system_prompts = sanitize_for_json(system_prompts)
         sanitized_shared_prompts = sanitize_for_json(shared_prompts)
-        
+
         return render_template(
             "prompts/lib/community.html",
             system_prompts=sanitized_system_prompts,
@@ -657,9 +737,9 @@ def create_main_blueprint(
     @required_login
     def profile():
         # Get messages from URL parameters (for redirects from other routes)
-        error = request.args.get('error', None)
-        success = request.args.get('success', None)
-        
+        error = request.args.get("error", None)
+        success = request.args.get("success", None)
+
         # Override with POST form messages if this is a POST request
         if request.method == "POST":
             action = request.form.get("action", "")
@@ -692,12 +772,16 @@ def create_main_blueprint(
                     try:
                         update_user_email(main_blueprint.user_db, session["username"], email)
                         success = "Email updated."
-                    except Exception as e:
+                    except Exception:
                         logger.exception("Email update error")
                         error = "Email already in use."
             elif action == "change_username":
                 new_username = request.form.get("new_username", "").strip()
-                if not new_username or not is_valid_username(new_username) or not (3 <= len(new_username) <= 32):
+                if (
+                    not new_username
+                    or not is_valid_username(new_username)
+                    or not (3 <= len(new_username) <= 32)
+                ):
                     error = "Invalid username format."
                 else:
                     try:
@@ -714,9 +798,13 @@ def create_main_blueprint(
                         session["username"] = new_username
                         token = session.get("session_token")
                         try:
-                            revoke_other_sessions(main_blueprint.user_db, new_username, except_token=token)
+                            revoke_other_sessions(
+                                main_blueprint.user_db, new_username, except_token=token
+                            )
                         except Exception:
-                            logger.exception("Failed to revoke other sessions after username change")
+                            logger.exception(
+                                "Failed to revoke other sessions after username change"
+                            )
                         success = "Username updated."
                     except ValueError as ve:
                         error = str(ve)
@@ -751,18 +839,22 @@ def create_main_blueprint(
             time = prompt[3]
 
             sharing_status = get_prompt_sharing_status(
-                username, prompt_id, title, content,
-                main_blueprint.prompt_db, main_blueprint.community_db
+                username,
+                prompt_id,
+                title,
+                content,
+                main_blueprint.prompt_db,
+                main_blueprint.community_db,
             )
 
             # Create enhanced prompt object with sharing status
             enhanced_prompt = {
-                'prompt_id': prompt_id,
-                'title': title,
-                'prompt': content,
-                'time': time,
-                'is_shared': sharing_status['is_shared'],
-                'needs_update': sharing_status['needs_update']
+                "prompt_id": prompt_id,
+                "title": title,
+                "prompt": content,
+                "time": time,
+                "is_shared": sharing_status["is_shared"],
+                "needs_update": sharing_status["needs_update"],
             }
             saved_prompts.append(enhanced_prompt)
         shared_prompts = g.db_session.execute(
@@ -814,24 +906,21 @@ def create_main_blueprint(
         try:
             user_achievements = get_user_achievements(main_blueprint.user_db, username)
             from i18n_data import translate_achievement_row
+
             _lang = session.get("language") or "en"
             user_achievements = [translate_achievement_row(row, _lang) for row in user_achievements]
         except Exception:
             logger.exception("Failed to get user achievements")
 
         # Get API key status
-        api_key_status = {
-            'has_api_key': False,
-            'is_validated': False,
-            'masked_key': None
-        }
+        api_key_status = {"has_api_key": False, "is_validated": False, "masked_key": None}
         try:
             user_api_key = get_user_api_key(main_blueprint.user_db, username)
             is_validated = is_api_key_validated(main_blueprint.user_db, username)
             api_key_status = {
-                'has_api_key': bool(user_api_key),
-                'is_validated': is_validated,
-                'masked_key': f"***{user_api_key[-4:]}" if user_api_key else None
+                "has_api_key": bool(user_api_key),
+                "is_validated": is_validated,
+                "masked_key": f"***{user_api_key[-4:]}" if user_api_key else None,
             }
         except Exception:
             logger.exception("Failed to get API key status")
@@ -871,24 +960,29 @@ def create_main_blueprint(
     def revoke_a_session():
         token = request.form.get("token", "")
         if not token:
-            return redirect(url_for('main.profile', error='Missing session token.'))
-        
+            return redirect(url_for("main.profile", error="Missing session token."))
+
         ok = False
         try:
             ok = revoke_session(main_blueprint.user_db, token, session["username"])
         except Exception:
             logger.exception("Failed to revoke session")
-        
+
         if not ok:
-            return redirect(url_for('main.profile', error='Unable to revoke session.'))
+            return redirect(url_for("main.profile", error="Unable to revoke session."))
         else:
-            return redirect(url_for('main.profile', success='Session revoked successfully.'))
+            return redirect(url_for("main.profile", success="Session revoked successfully."))
 
     @main_blueprint.route("/sessions/list", methods=["GET"])
     @required_login
     def list_my_sessions():
         try:
-            return jsonify({"success": True, "sessions": list_sessions_for_user(main_blueprint.user_db, session["username"])})
+            return jsonify(
+                {
+                    "success": True,
+                    "sessions": list_sessions_for_user(main_blueprint.user_db, session["username"]),
+                }
+            )
         except Exception:
             logger.exception("Failed to list sessions")
             return jsonify({"success": False}), 500
@@ -915,16 +1009,33 @@ def create_main_blueprint(
         if not user_input:
             return jsonify({"success": False, "error": "Input cannot be empty."}), 400
         if len(user_input) > 500:
-            return jsonify({"success": False, "error": "Input is too long (max 500 characters)."}), 400
+            return (
+                jsonify({"success": False, "error": "Input is too long (max 500 characters)."}),
+                400,
+            )
 
         # Check if user has a validated API key
         user_has_api_key = is_api_key_validated(main_blueprint.user_db, username)
-        
+
         # Only deduct points if user doesn't have their own API key
         if not user_has_api_key:
-            if not deduct_user_points_with_source(main_blueprint.user_db, username, cost, 'prompt_generation', 'Generated basic prompt'):
+            if not deduct_user_points_with_source(
+                main_blueprint.user_db,
+                username,
+                cost,
+                "prompt_generation",
+                "Generated basic prompt",
+            ):
                 current_points = get_user_points(main_blueprint.user_db, username)
-                return jsonify({"success": False, "error": f"Insufficient points. You need {cost} points but have {current_points}."}), 402
+                return (
+                    jsonify(
+                        {
+                            "success": False,
+                            "error": f"Insufficient points. You need {cost} points but have {current_points}.",
+                        }
+                    ),
+                    402,
+                )
 
         try:
             # Set user API key if available
@@ -935,8 +1046,10 @@ def create_main_blueprint(
                 model.set_user_api_key(user_api_key)
             else:
                 model.clear_user_api_key()
-            
-            response_text = model.generate_response("./instruction/basic1.txt", user_input, use_streaming=model.streaming_enabled)
+
+            response_text = model.generate_response(
+                "./instruction/basic1.txt", user_input, use_streaming=model.streaming_enabled
+            )
             return response_text
         except Exception as e:
             logger.exception("Error generating prompt response")
@@ -954,16 +1067,33 @@ def create_main_blueprint(
         if not user_input:
             return jsonify({"success": False, "error": "Input cannot be empty."}), 400
         if len(user_input) > 500:
-            return jsonify({"success": False, "error": "Input is too long (max 500 characters)."}), 400
+            return (
+                jsonify({"success": False, "error": "Input is too long (max 500 characters)."}),
+                400,
+            )
 
         # Check if user has a validated API key
         user_has_api_key = is_api_key_validated(main_blueprint.user_db, username)
-        
+
         # Only deduct points if user doesn't have their own API key
         if not user_has_api_key:
-            if not deduct_user_points_with_source(main_blueprint.user_db, username, cost, 'prompt_generation', 'Generated basic prompt'):
+            if not deduct_user_points_with_source(
+                main_blueprint.user_db,
+                username,
+                cost,
+                "prompt_generation",
+                "Generated basic prompt",
+            ):
                 current_points = get_user_points(main_blueprint.user_db, username)
-                return jsonify({"success": False, "error": f"Insufficient points. You need {cost} points but have {current_points}."}), 402
+                return (
+                    jsonify(
+                        {
+                            "success": False,
+                            "error": f"Insufficient points. You need {cost} points but have {current_points}.",
+                        }
+                    ),
+                    402,
+                )
 
         try:
             # Set user API key if available
@@ -974,18 +1104,20 @@ def create_main_blueprint(
                 model.set_user_api_key(user_api_key)
             else:
                 model.clear_user_api_key()
-            
+
             def generate():
                 try:
                     yield "data: \n\n"  # Start streaming
-                    for chunk in model.generate_response_stream("./instruction/basic1.txt", user_input):
+                    for chunk in model.generate_response_stream(
+                        "./instruction/basic1.txt", user_input
+                    ):
                         yield chunk
                     yield "data: [DONE]\n\n"  # End streaming
                 except Exception as e:
                     logger.exception("Error in streaming response")
                     yield f"data: Error: {str(e)}\n\n"
-            
-            return Response(generate(), mimetype='text/plain')
+
+            return Response(generate(), mimetype="text/plain")
         except Exception as e:
             logger.exception("Error setting up streaming response")
             return f"Error: {str(e)}"
@@ -999,12 +1131,26 @@ def create_main_blueprint(
 
         # Check if user has a validated API key
         user_has_api_key = is_api_key_validated(main_blueprint.user_db, username)
-        
+
         # Only deduct points if user doesn't have their own API key
         if not user_has_api_key:
-            if not deduct_user_points_with_source(main_blueprint.user_db, username, cost, 'prompt_generation', 'Generated basic prompt'):
+            if not deduct_user_points_with_source(
+                main_blueprint.user_db,
+                username,
+                cost,
+                "prompt_generation",
+                "Generated basic prompt",
+            ):
                 current_points = get_user_points(main_blueprint.user_db, username)
-                return jsonify({"success": False, "error": f"Insufficient points. You need {cost} points but have {current_points}."}), 402
+                return (
+                    jsonify(
+                        {
+                            "success": False,
+                            "error": f"Insufficient points. You need {cost} points but have {current_points}.",
+                        }
+                    ),
+                    402,
+                )
 
         try:
             # Set user API key if available
@@ -1015,8 +1161,10 @@ def create_main_blueprint(
                 model.set_user_api_key(user_api_key)
             else:
                 model.clear_user_api_key()
-            
-            response_text = model.generate_random("./instruction/basic2.txt", use_streaming=model.streaming_enabled)
+
+            response_text = model.generate_random(
+                "./instruction/basic2.txt", use_streaming=model.streaming_enabled
+            )
             return response_text
         except Exception as e:
             logger.exception("Error generating random prompt")
@@ -1032,12 +1180,26 @@ def create_main_blueprint(
 
         # Check if user has a validated API key
         user_has_api_key = is_api_key_validated(main_blueprint.user_db, username)
-        
+
         # Only deduct points if user doesn't have their own API key
         if not user_has_api_key:
-            if not deduct_user_points_with_source(main_blueprint.user_db, username, cost, 'prompt_generation', 'Generated basic prompt'):
+            if not deduct_user_points_with_source(
+                main_blueprint.user_db,
+                username,
+                cost,
+                "prompt_generation",
+                "Generated basic prompt",
+            ):
                 current_points = get_user_points(main_blueprint.user_db, username)
-                return jsonify({"success": False, "error": f"Insufficient points. You need {cost} points but have {current_points}."}), 402
+                return (
+                    jsonify(
+                        {
+                            "success": False,
+                            "error": f"Insufficient points. You need {cost} points but have {current_points}.",
+                        }
+                    ),
+                    402,
+                )
 
         try:
             # Set user API key if available
@@ -1048,7 +1210,7 @@ def create_main_blueprint(
                 model.set_user_api_key(user_api_key)
             else:
                 model.clear_user_api_key()
-            
+
             response_text = model.generate_imgdescription(
                 "./instruction/image_styles.txt", user_input, use_streaming=model.streaming_enabled
             )
@@ -1066,12 +1228,26 @@ def create_main_blueprint(
 
         # Check if user has a validated API key
         user_has_api_key = is_api_key_validated(main_blueprint.user_db, username)
-        
+
         # Only deduct points if user doesn't have their own API key
         if not user_has_api_key:
-            if not deduct_user_points_with_source(main_blueprint.user_db, username, cost, 'prompt_generation', 'Generated basic prompt'):
+            if not deduct_user_points_with_source(
+                main_blueprint.user_db,
+                username,
+                cost,
+                "prompt_generation",
+                "Generated basic prompt",
+            ):
                 current_points = get_user_points(main_blueprint.user_db, username)
-                return jsonify({"success": False, "error": f"Insufficient points. You need {cost} points but have {current_points}."}), 402
+                return (
+                    jsonify(
+                        {
+                            "success": False,
+                            "error": f"Insufficient points. You need {cost} points but have {current_points}.",
+                        }
+                    ),
+                    402,
+                )
 
         try:
             # Set user API key if available
@@ -1082,8 +1258,10 @@ def create_main_blueprint(
                 model.set_user_api_key(user_api_key)
             else:
                 model.clear_user_api_key()
-            
-            response_text = model.generate_vrandom("./instruction/image_styles.txt", use_streaming=model.streaming_enabled)
+
+            response_text = model.generate_vrandom(
+                "./instruction/image_styles.txt", use_streaming=model.streaming_enabled
+            )
             return response_text
         except Exception as e:
             logger.exception("Error generating random image prompt")
@@ -1099,12 +1277,26 @@ def create_main_blueprint(
 
             # Check if user has a validated API key
             user_has_api_key = is_api_key_validated(main_blueprint.user_db, username)
-            
+
             # Only deduct points if user doesn't have their own API key
             if not user_has_api_key:
-                if not deduct_user_points_with_source(main_blueprint.user_db, username, cost, 'advance_generation', 'Generated advance prompt'):
+                if not deduct_user_points_with_source(
+                    main_blueprint.user_db,
+                    username,
+                    cost,
+                    "advance_generation",
+                    "Generated advance prompt",
+                ):
                     current_points = get_user_points(main_blueprint.user_db, username)
-                    return jsonify({"success": False, "error": f"Insufficient points. You need {cost} points but have {current_points}."}), 402
+                    return (
+                        jsonify(
+                            {
+                                "success": False,
+                                "error": f"Insufficient points. You need {cost} points but have {current_points}.",
+                            }
+                        ),
+                        402,
+                    )
 
             # Set user API key if available
             user_api_key = get_user_api_key(main_blueprint.user_db, username)
@@ -1147,12 +1339,26 @@ def create_main_blueprint(
 
             # Check if user has a validated API key
             user_has_api_key = is_api_key_validated(main_blueprint.user_db, username)
-            
+
             # Only deduct points if user doesn't have their own API key
             if not user_has_api_key:
-                if not deduct_user_points_with_source(main_blueprint.user_db, username, cost, 'advance_generation', 'Generated advance prompt'):
+                if not deduct_user_points_with_source(
+                    main_blueprint.user_db,
+                    username,
+                    cost,
+                    "advance_generation",
+                    "Generated advance prompt",
+                ):
                     current_points = get_user_points(main_blueprint.user_db, username)
-                    return jsonify({"success": False, "error": f"Insufficient points. You need {cost} points but have {current_points}."}), 402
+                    return (
+                        jsonify(
+                            {
+                                "success": False,
+                                "error": f"Insufficient points. You need {cost} points but have {current_points}.",
+                            }
+                        ),
+                        402,
+                    )
 
             parameters = [request.form[f"parameter{i}"] for i in range(4)]
             response_text = ai.response(*parameters, "./instruction/advance1.txt")
@@ -1173,12 +1379,26 @@ def create_main_blueprint(
 
             # Check if user has a validated API key
             user_has_api_key = is_api_key_validated(main_blueprint.user_db, username)
-            
+
             # Only deduct points if user doesn't have their own API key
             if not user_has_api_key:
-                if not deduct_user_points_with_source(main_blueprint.user_db, username, cost, 'advance_generation', 'Generated advance prompt'):
+                if not deduct_user_points_with_source(
+                    main_blueprint.user_db,
+                    username,
+                    cost,
+                    "advance_generation",
+                    "Generated advance prompt",
+                ):
                     current_points = get_user_points(main_blueprint.user_db, username)
-                    return jsonify({"success": False, "error": f"Insufficient points. You need {cost} points but have {current_points}."}), 402
+                    return (
+                        jsonify(
+                            {
+                                "success": False,
+                                "error": f"Insufficient points. You need {cost} points but have {current_points}.",
+                            }
+                        ),
+                        402,
+                    )
 
             parameters = [request.form[f"parameter{i}"] for i in range(4)]
             response_text = ai.response(*parameters, "./instruction/advance2.txt")
@@ -1197,12 +1417,26 @@ def create_main_blueprint(
 
             # Check if user has a validated API key
             user_has_api_key = is_api_key_validated(main_blueprint.user_db, username)
-            
+
             # Only deduct points if user doesn't have their own API key
             if not user_has_api_key:
-                if not deduct_user_points_with_source(main_blueprint.user_db, username, cost, 'advance_generation', 'Generated advance prompt'):
+                if not deduct_user_points_with_source(
+                    main_blueprint.user_db,
+                    username,
+                    cost,
+                    "advance_generation",
+                    "Generated advance prompt",
+                ):
                     current_points = get_user_points(main_blueprint.user_db, username)
-                    return jsonify({"success": False, "error": f"Insufficient points. You need {cost} points but have {current_points}."}), 402
+                    return (
+                        jsonify(
+                            {
+                                "success": False,
+                                "error": f"Insufficient points. You need {cost} points but have {current_points}.",
+                            }
+                        ),
+                        402,
+                    )
 
             # Set user API key if available
             user_api_key = get_user_api_key(main_blueprint.user_db, username)
@@ -1216,7 +1450,9 @@ def create_main_blueprint(
             image_file = request.files["image"]
             image_data = image_file.read()
             parameters = [request.form[f"parameter{i}"] for i in range(1, 4)]
-            response_text = model.generate_visual2(image_data, *parameters, use_streaming=model.streaming_enabled)
+            response_text = model.generate_visual2(
+                image_data, *parameters, use_streaming=model.streaming_enabled
+            )
             return response_text
         except Exception as e:
             logger.error(f"Error processing advance image: {e}")
@@ -1227,7 +1463,7 @@ def create_main_blueprint(
     def key_health():
         try:
             return jsonify({"success": True, **model.get_health()})
-        except Exception as e:
+        except Exception:
             logger.exception("Health endpoint error")
             return jsonify({"success": False, "error": "Internal server error."}), 500
 
@@ -1245,14 +1481,18 @@ def create_main_blueprint(
             try:
                 create_user_table_if_not_exists(username, main_blueprint.prompt_db)
 
-                random_val = secrets.token_urlsafe(8) 
-                if save_prompt_to_db(username, random_val, title, prompt_text, main_blueprint.prompt_db):
+                random_val = secrets.token_urlsafe(8)
+                if save_prompt_to_db(
+                    username, random_val, title, prompt_text, main_blueprint.prompt_db
+                ):
                     # Initial version = 1
-                    insert_prompt_version(username, random_val, 1, title, prompt_text, main_blueprint.prompt_db)
+                    insert_prompt_version(
+                        username, random_val, 1, title, prompt_text, main_blueprint.prompt_db
+                    )
                     return jsonify(success=True, message="Prompt saved successfully!")
                 else:
                     return jsonify(success=False, message="Failed to save prompt."), 500
-            except ValueError as e: 
+            except ValueError as e:
                 return jsonify(success=False, message=str(e)), 400
             except Exception as e:
                 logger.error(f"Error saving prompt for {username}: {e}")
@@ -1271,17 +1511,16 @@ def create_main_blueprint(
 
         g.db_session.add(DbFeedback(username=username, feedback=feedback))
 
-        return jsonify(
-            {"status": "success", "message": "Feedback submitted successfully!"}
-        )
+        return jsonify({"status": "success", "message": "Feedback submitted successfully!"})
 
     # Additional CRUD endpoints for feedback
     @main_blueprint.route("/feedback", methods=["GET"])
     @required_login
     def feedback_list():
         rows = g.db_session.execute(
-            select(DbFeedback.id, DbFeedback.username, DbFeedback.feedback)
-            .order_by(DbFeedback.id.desc())
+            select(DbFeedback.id, DbFeedback.username, DbFeedback.feedback).order_by(
+                DbFeedback.id.desc()
+            )
         ).all()
         return render_template("feedback_list.html", feedbacks=rows)
 
@@ -1294,19 +1533,13 @@ def create_main_blueprint(
             .where(DbFeedback.id == feedback_id)
             .values(feedback=feedback)
         )
-        return jsonify(
-            {"status": "success", "message": "Feedback updated successfully!"}
-        )
+        return jsonify({"status": "success", "message": "Feedback updated successfully!"})
 
     @main_blueprint.route("/feedback/<int:feedback_id>", methods=["DELETE"])
     @required_login
     def delete_feedback(feedback_id):
-        g.db_session.execute(
-            DbFeedback.__table__.delete().where(DbFeedback.id == feedback_id)
-        )
-        return jsonify(
-            {"status": "success", "message": "Feedback deleted successfully!"}
-        )
+        g.db_session.execute(DbFeedback.__table__.delete().where(DbFeedback.id == feedback_id))
+        return jsonify({"status": "success", "message": "Feedback deleted successfully!"})
 
     @main_blueprint.route("/feedback/<int:feedback_id>/json", methods=["GET"])
     @required_login
@@ -1326,7 +1559,7 @@ def create_main_blueprint(
             username = session["username"]
             points = get_user_points(main_blueprint.user_db, username)
             return jsonify({"success": True, "points": points})
-        except Exception as e:
+        except Exception:
             logger.exception("Error getting user points")
             return jsonify({"success": False, "error": "Internal server error."}), 500
 
@@ -1336,53 +1569,59 @@ def create_main_blueprint(
         """Validate and store user's Gemini API key."""
         if not validate_csrf_token():
             return jsonify({"success": False, "error": "CSRF token validation failed."}), 400
-        
+
         username = session["username"]
         api_key = request.form.get("api_key", "").strip()
-        
+
         if not api_key:
             return jsonify({"success": False, "error": "API key is required."}), 400
-        
+
         try:
             # Validate the API key
             is_valid, message = validate_gemini_api_key(api_key)
-            
+
             if not is_valid:
                 return jsonify({"success": False, "error": message}), 400
-            
+
             # Store the API key
             set_user_api_key(main_blueprint.user_db, username, api_key)
-            
+
             # Check if this is the first time validating an API key
             was_validated = is_api_key_validated(main_blueprint.user_db, username)
             if not was_validated:
                 # Mark as validated
                 set_api_key_validated(main_blueprint.user_db, username, True)
-                
+
                 # Award 100 points for API key validation (will be capped at 500)
-                add_user_points_with_source(main_blueprint.user_db, username, 100.0, 'api_key_add', 'Added and validated Gemini API key')
-                
+                add_user_points_with_source(
+                    main_blueprint.user_db,
+                    username,
+                    100.0,
+                    "api_key_add",
+                    "Added and validated Gemini API key",
+                )
+
                 # Check for achievements
                 newly_unlocked, achievement_points = check_and_award_achievements(
-                    main_blueprint.user_db, username, main_blueprint.prompt_db, main_blueprint.community_db
+                    main_blueprint.user_db,
+                    username,
+                    main_blueprint.prompt_db,
+                    main_blueprint.community_db,
                 )
-                
+
                 response_data = {
-                    "success": True, 
+                    "success": True,
                     "message": "API key validated successfully! You earned 100 points.",
                     "points_awarded": 100.0,
                     "new_achievements": newly_unlocked,
-                    "achievement_points": achievement_points
+                    "achievement_points": achievement_points,
                 }
             else:
-                response_data = {
-                    "success": True, 
-                    "message": "API key updated successfully!"
-                }
-            
+                response_data = {"success": True, "message": "API key updated successfully!"}
+
             return jsonify(response_data)
-            
-        except Exception as e:
+
+        except Exception:
             logger.exception("Error validating API key")
             return jsonify({"success": False, "error": "Internal server error."}), 500
 
@@ -1392,28 +1631,52 @@ def create_main_blueprint(
         """Remove user's Gemini API key."""
         if not validate_csrf_token():
             return jsonify({"success": False, "error": "CSRF token validation failed."}), 400
-        
+
         username = session["username"]
-        
+
         try:
             # Check if user has enough points to remove API key (costs 100 points)
             current_points = get_user_points(main_blueprint.user_db, username)
             removal_cost = 100.0
-            
+
             if current_points < removal_cost:
-                return jsonify({"success": False, "error": f"Insufficient points. Removing API key costs {removal_cost} points but you have {current_points}."}), 402
-            
+                return (
+                    jsonify(
+                        {
+                            "success": False,
+                            "error": f"Insufficient points. Removing API key costs {removal_cost} points but you have {current_points}.",
+                        }
+                    ),
+                    402,
+                )
+
             # Deduct 100 points for removing API key
-            if not deduct_user_points_with_source(main_blueprint.user_db, username, removal_cost, 'api_key_remove', 'Removed Gemini API key'):
-                return jsonify({"success": False, "error": "Failed to deduct points for API key removal."}), 500
-            
+            if not deduct_user_points_with_source(
+                main_blueprint.user_db,
+                username,
+                removal_cost,
+                "api_key_remove",
+                "Removed Gemini API key",
+            ):
+                return (
+                    jsonify(
+                        {"success": False, "error": "Failed to deduct points for API key removal."}
+                    ),
+                    500,
+                )
+
             # Clear the API key and validation status
             set_user_api_key(main_blueprint.user_db, username, "")
             set_api_key_validated(main_blueprint.user_db, username, False)
-            
-            return jsonify({"success": True, "message": f"API key removed successfully. {removal_cost} points deducted."})
-            
-        except Exception as e:
+
+            return jsonify(
+                {
+                    "success": True,
+                    "message": f"API key removed successfully. {removal_cost} points deducted.",
+                }
+            )
+
+        except Exception:
             logger.exception("Error removing API key")
             return jsonify({"success": False, "error": "Internal server error."}), 500
 
@@ -1422,19 +1685,21 @@ def create_main_blueprint(
     def api_key_status():
         """Get user's API key status."""
         username = session["username"]
-        
+
         try:
             api_key = get_user_api_key(main_blueprint.user_db, username)
             is_validated = is_api_key_validated(main_blueprint.user_db, username)
-            
-            return jsonify({
-                "success": True, 
-                "has_api_key": bool(api_key),
-                "is_validated": is_validated,
-                "masked_key": f"***{api_key[-4:]}" if api_key else None
-            })
-            
-        except Exception as e:
+
+            return jsonify(
+                {
+                    "success": True,
+                    "has_api_key": bool(api_key),
+                    "is_validated": is_validated,
+                    "masked_key": f"***{api_key[-4:]}" if api_key else None,
+                }
+            )
+
+        except Exception:
             logger.exception("Error getting API key status")
             return jsonify({"success": False, "error": "Internal server error."}), 500
 
@@ -1443,39 +1708,51 @@ def create_main_blueprint(
     def point_history():
         """Get user's point transaction history."""
         username = session["username"]
-        
+
         try:
             # Check and expire points first
             expire_user_points(main_blueprint.user_db, username)
-            
+
             # Get point history
             history = get_point_history(main_blueprint.user_db, username, limit=100)
-            
+
             # Format history for JSON response
             formatted_history = []
             for record in history:
-                points, source, description, created_at, expires_at, is_expired, action, points_before, points_after = record
-                
+                (
+                    points,
+                    source,
+                    description,
+                    created_at,
+                    expires_at,
+                    is_expired,
+                    action,
+                    points_before,
+                    points_after,
+                ) = record
+
                 formatted_record = {
-                    'points': points,
-                    'source': source,
-                    'description': description or '',
-                    'created_at': created_at,
-                    'expires_at': expires_at,
-                    'is_expired': bool(is_expired),
-                    'action': action or '',
-                    'points_before': points_before,
-                    'points_after': points_after
+                    "points": points,
+                    "source": source,
+                    "description": description or "",
+                    "created_at": created_at,
+                    "expires_at": expires_at,
+                    "is_expired": bool(is_expired),
+                    "action": action or "",
+                    "points_before": points_before,
+                    "points_after": points_after,
                 }
                 formatted_history.append(formatted_record)
-            
-            return jsonify({
-                "success": True,
-                "history": formatted_history,
-                "current_points": get_user_points(main_blueprint.user_db, username)
-            })
-            
-        except Exception as e:
+
+            return jsonify(
+                {
+                    "success": True,
+                    "history": formatted_history,
+                    "current_points": get_user_points(main_blueprint.user_db, username),
+                }
+            )
+
+        except Exception:
             logger.exception("Error getting point history")
             return jsonify({"success": False, "error": "Internal server error."}), 500
 
@@ -1484,20 +1761,16 @@ def create_main_blueprint(
     def api_key_pool_stats():
         """Get API key pool statistics for system administrators."""
         username = session["username"]
-        
+
         try:
             # Get user's own API key stats
             pool = get_api_key_pool(main_blueprint.user_db)
             user_stats = pool.get_user_stats(username)
             pool_stats = pool.get_pool_stats()
-            
-            return jsonify({
-                "success": True,
-                "user_stats": user_stats,
-                "pool_stats": pool_stats
-            })
-            
-        except Exception as e:
+
+            return jsonify({"success": True, "user_stats": user_stats, "pool_stats": pool_stats})
+
+        except Exception:
             logger.exception("Error getting API key pool stats")
             return jsonify({"success": False, "error": "Internal server error."}), 500
 
@@ -1507,33 +1780,63 @@ def create_main_blueprint(
         """Refine a prompt using AI with various actions and custom instructions."""
         if not validate_csrf_token():
             return jsonify({"success": False, "error": "CSRF token validation failed."}), 400
-        
+
         username = session["username"]
         text = request.form.get("prompt_text", "").strip()
         action = request.form.get("action", "").strip().lower()
         custom_instructions = request.form.get("custom_instructions", "").strip()
-        
+
         if not text:
             return jsonify({"success": False, "error": "No prompt text provided."}), 400
-        
+
         # Validate action or custom instructions
         if not action and not custom_instructions:
-            return jsonify({"success": False, "error": "Please provide either an action or custom instructions."}), 400
-        
+            return (
+                jsonify(
+                    {
+                        "success": False,
+                        "error": "Please provide either an action or custom instructions.",
+                    }
+                ),
+                400,
+            )
+
         if action and action not in ["shorten", "elaborate", "improve", "fix", "custom"]:
-            return jsonify({"success": False, "error": "Invalid action. Use 'shorten', 'elaborate', 'improve', 'fix', or 'custom'."}), 400
-        
+            return (
+                jsonify(
+                    {
+                        "success": False,
+                        "error": "Invalid action. Use 'shorten', 'elaborate', 'improve', 'fix', or 'custom'.",
+                    }
+                ),
+                400,
+            )
+
         # Check if user has a validated API key
         user_has_api_key = is_api_key_validated(main_blueprint.user_db, username)
-        
+
         # Only deduct points if user doesn't have their own API key
         if not user_has_api_key:
             cost = 0.5  # Refinement cost
-            action_description = action if action != 'custom' else 'custom refinement'
-            if not deduct_user_points_with_source(main_blueprint.user_db, username, cost, 'prompt_refinement', f'Refined prompt ({action_description})'):
+            action_description = action if action != "custom" else "custom refinement"
+            if not deduct_user_points_with_source(
+                main_blueprint.user_db,
+                username,
+                cost,
+                "prompt_refinement",
+                f"Refined prompt ({action_description})",
+            ):
                 current_points = get_user_points(main_blueprint.user_db, username)
-                return jsonify({"success": False, "error": f"Insufficient points. You need {cost} points but have {current_points}."}), 402
-        
+                return (
+                    jsonify(
+                        {
+                            "success": False,
+                            "error": f"Insufficient points. You need {cost} points but have {current_points}.",
+                        }
+                    ),
+                    402,
+                )
+
         try:
             # Set user API key if available
             user_api_key = get_user_api_key(main_blueprint.user_db, username)
@@ -1543,7 +1846,7 @@ def create_main_blueprint(
                 model.set_user_api_key(user_api_key)
             else:
                 model.clear_user_api_key()
-            
+
             # Generate refinement prompt based on action or custom instructions
             if custom_instructions:
                 refinement_prompt = f"""Please refine the following text according to these specific instructions: "{custom_instructions}"
@@ -1577,15 +1880,17 @@ Provide only the improved version, no explanations."""
 "{text}"
 
 Provide only the corrected version, no explanations."""
-            
+
             # Use the AI model to refine the prompt
-            refined_text = model._generate_content_with_retry(refinement_prompt, model.get_effective_api_key(), use_streaming=False)
-            
+            refined_text = model._generate_content_with_retry(
+                refinement_prompt, model.get_effective_api_key(), use_streaming=False
+            )
+
             if refined_text and refined_text.strip():
                 return jsonify({"success": True, "response": refined_text.strip()})
             else:
                 return jsonify({"success": False, "error": "Failed to refine prompt."}), 500
-                
+
         except Exception as e:
             logger.exception("Error refining prompt")
             return jsonify({"success": False, "error": f"Error refining prompt: {str(e)}"}), 500
@@ -1595,20 +1900,20 @@ Provide only the corrected version, no explanations."""
     def debug_refinement():
         """Debug route to test database connections for refinement."""
         username = session["username"]
-        
+
         debug_info = {
-            'username': username,
-            'prompt_db_path': main_blueprint.prompt_db,
-            'community_db_path': main_blueprint.community_db,
-            'prompt_db_exists': os.path.exists(main_blueprint.prompt_db),
-            'community_db_exists': os.path.exists(main_blueprint.community_db),
-            'saved_prompts_count': 0,
-            'community_prompts_count': 0,
-            'saved_prompts': [],
-            'community_prompts': [],
-            'errors': []
+            "username": username,
+            "prompt_db_path": main_blueprint.prompt_db,
+            "community_db_path": main_blueprint.community_db,
+            "prompt_db_exists": os.path.exists(main_blueprint.prompt_db),
+            "community_db_exists": os.path.exists(main_blueprint.community_db),
+            "saved_prompts_count": 0,
+            "community_prompts_count": 0,
+            "saved_prompts": [],
+            "community_prompts": [],
+            "errors": [],
         }
-        
+
         try:
             # Test user's saved prompts
             saved_rows = g.db_session.execute(
@@ -1617,39 +1922,41 @@ Provide only the corrected version, no explanations."""
                 .order_by(DbPrompt.time.desc())
                 .limit(50)
             ).all()
-            debug_info['saved_prompts_count'] = len(saved_rows)
+            debug_info["saved_prompts_count"] = len(saved_rows)
 
             for row in saved_rows:
-                debug_info['saved_prompts'].append({
-                    'prompt_id': row.random_val,
-                    'title': row.title,
-                    'prompt': row.prompt[:100] + '...' if len(row.prompt) > 100 else row.prompt,
-                    'time': row.time,
-                    'source': 'personal'
-                })
+                debug_info["saved_prompts"].append(
+                    {
+                        "prompt_id": row.random_val,
+                        "title": row.title,
+                        "prompt": row.prompt[:100] + "..." if len(row.prompt) > 100 else row.prompt,
+                        "time": row.time,
+                        "source": "personal",
+                    }
+                )
         except Exception as e:
-            debug_info['errors'].append(f"Saved prompts error: {str(e)}")
+            debug_info["errors"].append(f"Saved prompts error: {str(e)}")
 
         try:
             # Test community prompts
             community_rows = g.db_session.execute(
-                select(DbSharedPrompt)
-                .order_by(DbSharedPrompt.time.desc())
-                .limit(50)
+                select(DbSharedPrompt).order_by(DbSharedPrompt.time.desc()).limit(50)
             ).all()
-            debug_info['community_prompts_count'] = len(community_rows)
+            debug_info["community_prompts_count"] = len(community_rows)
 
             for row in community_rows:
-                debug_info['community_prompts'].append({
-                    'prompt_id': row.random_val,
-                    'title': row.title,
-                    'prompt': row.prompt[:100] + '...' if len(row.prompt) > 100 else row.prompt,
-                    'time': row.time,
-                    'owner': row.owner,
-                    'source': 'community'
-                })
+                debug_info["community_prompts"].append(
+                    {
+                        "prompt_id": row.random_val,
+                        "title": row.title,
+                        "prompt": row.prompt[:100] + "..." if len(row.prompt) > 100 else row.prompt,
+                        "time": row.time,
+                        "owner": row.owner,
+                        "source": "community",
+                    }
+                )
         except Exception as e:
-            debug_info['errors'].append(f"Community prompts error: {str(e)}")
+            debug_info["errors"].append(f"Community prompts error: {str(e)}")
 
         return jsonify(debug_info)
 
@@ -1678,35 +1985,37 @@ Provide only the corrected version, no explanations."""
 
             for row in saved_rows:
                 p = row[0]
-                saved_prompts.append({
-                    'prompt_id': p.random_val,
-                    'title': p.title,
-                    'prompt': p.prompt,
-                    'time': p.time,
-                    'source': 'personal'
-                })
+                saved_prompts.append(
+                    {
+                        "prompt_id": p.random_val,
+                        "title": p.title,
+                        "prompt": p.prompt,
+                        "time": p.time,
+                        "source": "personal",
+                    }
+                )
 
             # Get community prompts
             community_prompts = []
-            logger.info(f"Loading community prompts")
+            logger.info("Loading community prompts")
 
             community_rows = g.db_session.execute(
-                select(DbSharedPrompt)
-                .order_by(DbSharedPrompt.time.desc())
-                .limit(50)
+                select(DbSharedPrompt).order_by(DbSharedPrompt.time.desc()).limit(50)
             ).all()
             logger.info(f"Found {len(community_rows)} community prompts")
 
             for row in community_rows:
                 p = row[0]
-                community_prompts.append({
-                    'prompt_id': p.random_val or '',
-                    'title': p.title or '',
-                    'prompt': p.prompt or '',
-                    'time': p.time or '',
-                    'owner': p.owner or '',
-                    'source': 'community'
-                })
+                community_prompts.append(
+                    {
+                        "prompt_id": p.random_val or "",
+                        "title": p.title or "",
+                        "prompt": p.prompt or "",
+                        "time": p.time or "",
+                        "owner": p.owner or "",
+                        "source": "community",
+                    }
+                )
 
         except Exception as e:
             logger.exception("Failed to load prompts for refinement")
@@ -1773,7 +2082,7 @@ Provide only the corrected version, no explanations."""
             saved_prompts=sanitized_saved_prompts,
             community_prompts=sanitized_community_prompts,
             preselect=sanitized_preselect,
-            current_user_points=current_points
+            current_user_points=current_points,
         )
 
     @main_blueprint.route("/generate_title", methods=["POST"])
@@ -1792,22 +2101,36 @@ Provide only the corrected version, no explanations."""
                 # Check if user has enough points (title generation costs 0.2 points)
                 cost = 0.2
                 user_has_api_key = is_api_key_validated(main_blueprint.user_db, username)
-                
+
                 if not user_has_api_key:
-                    if not deduct_user_points_with_source(main_blueprint.user_db, username, cost, 'title_generation', f'Generated title for {prompt_type} prompt'):
+                    if not deduct_user_points_with_source(
+                        main_blueprint.user_db,
+                        username,
+                        cost,
+                        "title_generation",
+                        f"Generated title for {prompt_type} prompt",
+                    ):
                         current_points = get_user_points(main_blueprint.user_db, username)
-                        return jsonify({"success": False, "error": f"Insufficient points. You need {cost} points but have {current_points}."}), 402
+                        return (
+                            jsonify(
+                                {
+                                    "success": False,
+                                    "error": f"Insufficient points. You need {cost} points but have {current_points}.",
+                                }
+                            ),
+                            402,
+                        )
 
                 # Create title generation prompt based on type
                 title_prompts = {
-                    'basic': "Generate a concise, descriptive title (3-8 words) for this basic prompt. Focus on the main purpose or topic:",
-                    'advanced': "Generate a concise, descriptive title (3-8 words) for this advanced prompt. Focus on the main purpose or topic:",
-                    'advanced_image': "Generate a concise, descriptive title (3-8 words) for this image generation prompt. Focus on the visual content or style:",
-                    'advanced_reverse': "Generate a concise, descriptive title (3-8 words) for this reverse image prompt. Focus on the analysis or description:",
-                    'refinement': "Generate a concise, descriptive title (3-8 words) for this refined prompt. Focus on the improvement or enhancement:"
+                    "basic": "Generate a concise, descriptive title (3-8 words) for this basic prompt. Focus on the main purpose or topic:",
+                    "advanced": "Generate a concise, descriptive title (3-8 words) for this advanced prompt. Focus on the main purpose or topic:",
+                    "advanced_image": "Generate a concise, descriptive title (3-8 words) for this image generation prompt. Focus on the visual content or style:",
+                    "advanced_reverse": "Generate a concise, descriptive title (3-8 words) for this reverse image prompt. Focus on the analysis or description:",
+                    "refinement": "Generate a concise, descriptive title (3-8 words) for this refined prompt. Focus on the improvement or enhancement:",
                 }
-                
-                title_prompt = title_prompts.get(prompt_type, title_prompts['basic'])
+
+                title_prompt = title_prompts.get(prompt_type, title_prompts["basic"])
                 full_prompt = f"{title_prompt}\n\nPrompt content:\n{prompt_text}\n\nTitle:"
 
                 # Set user API key if available
@@ -1816,17 +2139,19 @@ Provide only the corrected version, no explanations."""
                     model.set_user_api_key(user_api_key)
 
                 # Generate title using AI
-                title = model._generate_content_with_retry(full_prompt, model.get_effective_api_key(), use_streaming=False)
-                
+                title = model._generate_content_with_retry(
+                    full_prompt, model.get_effective_api_key(), use_streaming=False
+                )
+
                 if title and title.strip():
                     # Clean up the title
                     clean_title = title.strip()
                     # Remove quotes if present
-                    clean_title = clean_title.strip('"\'')
+                    clean_title = clean_title.strip("\"'")
                     # Ensure it's not too long
                     if len(clean_title) > 60:
                         clean_title = clean_title[:57] + "..."
-                    
+
                     return jsonify({"success": True, "title": clean_title})
                 else:
                     return jsonify({"success": False, "error": "Failed to generate title."}), 500
@@ -1842,9 +2167,9 @@ Provide only the corrected version, no explanations."""
         """Set user language preference. Accepts GET (link) and POST (form)."""
         if language not in LANGUAGES:
             flash(_("Language not supported"), "error")
-            return redirect(request.referrer or url_for('main.home'))
+            return redirect(request.referrer or url_for("main.home"))
 
-        session['language'] = language
+        session["language"] = language
         flash(_("Language changed to %(language)s", language=LANGUAGES[language]), "success")
 
         # Only follow the next= param if it points to the same host (open-redirect guard)
@@ -1853,16 +2178,16 @@ Provide only the corrected version, no explanations."""
             return redirect(next_url)
         if next_url and (request.host_url and next_url.startswith(request.host_url)):
             return redirect(next_url)
-        return redirect(request.referrer or url_for('main.home'))
+        return redirect(request.referrer or url_for("main.home"))
 
     @main_blueprint.route("/src/main.tsx")
     def handle_missing_main_tsx():
         """Handle requests for missing main.tsx file - return 404 with proper headers"""
-        return "File not found", 404, {'Content-Type': 'text/plain'}
+        return "File not found", 404, {"Content-Type": "text/plain"}
 
     @main_blueprint.route("/src/<path:filename>")
     def handle_missing_src_files(filename):
         """Handle requests for missing files in src/ directory - return 404 with proper headers"""
-        return "File not found", 404, {'Content-Type': 'text/plain'}
+        return "File not found", 404, {"Content-Type": "text/plain"}
 
     return main_blueprint

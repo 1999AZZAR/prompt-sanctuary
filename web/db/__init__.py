@@ -26,9 +26,9 @@ from sqlalchemy import create_engine, event, text
 from sqlalchemy.engine import Engine
 
 logger = logging.getLogger(__name__)
-from sqlalchemy.orm import Session, sessionmaker
+from sqlalchemy.orm import Session, sessionmaker  # noqa: E402
 
-from .models import Base
+from .models import Base  # noqa: E402
 
 
 def _database_url() -> str:
@@ -186,6 +186,7 @@ class _PostgresAdvisoryLock:
         # Use a separate engine with no pool so we can keep the connection
         # open for the migration lifetime without it being reused.
         from sqlalchemy.pool import NullPool
+
         eng = create_engine(_database_url(), poolclass=NullPool, future=True)
         self._conn = eng.connect()
         self._conn.execution_options(isolation_level="AUTOCOMMIT")
@@ -215,7 +216,8 @@ def _run_migrations() -> None:
     if not (migrations_dir.exists() and alembic_ini.exists()):
         logger.warning(
             "Skipping alembic migrations: %s or %s not found",
-            migrations_dir, alembic_ini,
+            migrations_dir,
+            alembic_ini,
         )
         return
 
