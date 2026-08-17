@@ -56,7 +56,8 @@
 | Area                    | Item                                                  | Priority | Status         | Notes                                                                                     |
 | ----------------------- | ----------------------------------------------------- | -------- | -------------- | ----------------------------------------------------------------------------------------- |
 | **Quality**             | Automated Testing Suite (pytest)                      | P1       | ❌ Not Started | Unit/integration tests for routes and models using SQLite temp DB fixtures                |
-| **Quality**             | CI/CD Pipeline (GitHub Actions)                       | P1       | ❌ Not Started | Automated ruff formatting, black/mypy checks, and pytest runs on push                     |
+| **Quality**             | Pre-commit Hooks (Local CI)                           | P1       | ✅ Done        | Automated ruff, black checks on commit                                                    |
+| **Quality**             | CI/CD Pipeline (GitHub Actions)                       | P1       | ❌ Not Started | Automated pytest runs and deployment on push                                              |
 | **Image Gen**           | Combine image generator input                         | P1       | 🔄 In Progress | Unify text and file modes for image generation (~50% done)                                |
 | **Data/Features**       | Categorize prompts + advanced facets                  | P1       | ❌ Not Started | Extend tags to facets, multi-filter UI, and saved filters                                 |
 | **Backend/AI**          | Structured Outputs (JSON schema) for advanced prompts | P2       | 📋 Planned     | Toggle JSON mode for advanced prompts; validate schema; add "Copy JSON/Use in app"        |

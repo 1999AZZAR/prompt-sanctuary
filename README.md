@@ -1,5 +1,6 @@
 # Prompt Sanctuary
 
+![Prompt Sanctuary Illustration](assets/prompt-sanctuary-illustrations/01_prompt_sanctuary.jpg)
 A Flask web app for generating, refining, and managing AI prompts.
 Combines a generator, personal library, community sharing, an API key
 pool, and a point economy into a single self-hostable service.
